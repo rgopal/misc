@@ -10,9 +10,11 @@ package com.erudyo.com;
  *
  * @author rgopal
  */
-public class Common {
+public class Com {
     public enum Band {L, C, KU, KA, Q, V, W};
     public enum Orbit {LEO, MEO, GEO};
     public enum code {FEC_1_2, FEC_2_3, FEC_4_5, FEC_8_9};
     public enum modulation {BPSK, QPSK, PSK8, PSK16};
+    public final static double PI = 3.14;
+    public final static double C = 2.99792458E8;
 }
