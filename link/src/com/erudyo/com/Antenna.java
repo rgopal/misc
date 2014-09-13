@@ -12,7 +12,7 @@ package com.erudyo.com;
  */
 public class Antenna {
     private float diameter;
-    private float size;
+    private float size = 20;
     private float efficiency;
     private float temperature;
     

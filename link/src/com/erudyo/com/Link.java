@@ -6,6 +6,8 @@ import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
+import com.codename1.ui.table.Table;
+import com.codename1.ui.table.DefaultTableModel;
 import java.io.IOException;
 
 public class Link {
@@ -38,8 +40,20 @@ public class Link {
             current.show();
             return;
         }
+        Antenna antenna = new Antenna();
+        
         Form hi = new Form("Hi World");
-        hi.addComponent(new Label("Hi World"));
+        Object[][] m = new Object[5][3];
+        m[0][0] = "Transmitter";
+        m[1][0] = "Path";
+        m[2][0] = "Satellite";
+        m[3][0] = "Path";
+        m[4][0] = "Receiver";
+        String[] names = {"item", "value", "units"};
+        Table table = new Table(new DefaultTableModel(names, m, true));
+        hi.addComponent (table);
+        hi.addComponent(new Label(antenna.getBand().toString() + antenna.getSize()));
+       
         hi.show();
     }
 
