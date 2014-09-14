@@ -7,6 +7,8 @@
 package com.erudyo.com;
 
 import com.codename1.util.MathUtil;
+import static com.erudyo.com.Com.centerFrequency;
+import static com.erudyo.com.Com.findBand;
 
 
 /**
@@ -182,46 +184,8 @@ public class Antenna {
     public void setBand(Com.Band band) {
         double f = 1E9;
         this.band = band;
-        switch (band) {
-            case X_DL:
-                f = (Com.X_DL_HI + Com.X_DL_LO)/2.0;
-                break;
-            case X_UL:
-                f = (Com.X_UL_HI + Com.X_UL_LO)/2.0;
-                break;
-            case C_DL:
-                f = (Com.C_DL_HI + Com.C_DL_LO)/2.0;
-                break;
-            case C_UL:
-                f = (Com.C_UL_HI + Com.C_UL_LO)/2.0;
-                break;
-            case KA_DL:
-                f = (Com.KA_DL_HI + Com.KA_DL_LO)/2.0;
-                break;
-            case KA_UL:
-                f = (Com.KA_UL_HI + Com.KA_UL_LO)/2.0;
-                break;
-             case KA2_DL:
-                f = (Com.KA2_DL_HI + Com.KA2_DL_LO)/2.0;
-                break;
-            case KA2_UL:
-                f = (Com.KA2_UL_HI + Com.KA2_UL_LO)/2.0;
-                break;
-            case KU_DL:
-                f = (Com.KU_DL_HI + Com.KU_DL_LO)/2.0;
-                break;
-            case KU_UL:
-                f = (Com.KU_UL_HI + Com.KU_UL_LO)/2.0;
-                break;
-            case KA:
-                f = (Com.KA_HI + Com.KA_LO)/2.0;
-                break;
-            case KU:
-                f = (Com.KU_HI + Com.KU_LO)/2.0;
-                break;
-            default:
-                f = 0;
-        }
+        f = centerFrequency(band);
+        
         this.frequency = f;
         this.gain = calcGain (diameter, frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
@@ -258,26 +222,8 @@ public class Antenna {
         this.frequency = f;
         this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = 70*Com.C/(frequency*diameter);
-        if (f >= Com.C_DL_LO && f <= Com.C_DL_HI)
-            band = (Com.Band.C_DL);
-        else if (f >= Com.C_UL_LO && f <= Com.C_UL_HI )
-            band = (Com.Band.C_UL);
-        else if (f >= Com.X_DL_LO && f <= Com.X_DL_HI)
-            band = (Com.Band.X_DL);
-        else if (f >= Com.X_UL_LO && f <= Com.X_UL_HI )
-            band = (Com.Band.X_UL);
-        else if (f >= Com.KU_DL_LO && f <= Com.KU_DL_HI)
-            band = (Com.Band.KU_DL);
-        else if (f >= Com.KU_UL_LO && f <= Com.KU_UL_HI )
-            band = (Com.Band.KU_UL);
-        else    if (f >= Com.KA_DL_LO && f <= Com.KA_DL_HI)
-            band = (Com.Band.KA_DL);
-        else if (f >= Com.KA_UL_LO && f <= Com.KA_UL_HI )
-            band = (Com.Band.KA_UL);
-        else if (f >= Com.KA_DL_LO && f <= Com.KA_DL_HI)
-            band = (Com.Band.KA_DL);
-        else if (f >= Com.KA2_UL_LO && f <= Com.KA2_UL_HI )
-            band = (Com.Band.KA2_UL);
+        band = Com.findBand(f);
+        
     }
 
     public boolean validateFrequency(double f) {
