@@ -52,8 +52,9 @@ public class Link {
         String[] names = {"item", "value", "units"};
         Table table = new Table(new DefaultTableModel(names, m, true));
         hi.addComponent (table);
-        antenna.setGain(53.1);
-        hi.addComponent(new Label(antenna.getBand().toString() + antenna.getDiameter()));
+        antenna.setDiameter(1);
+        antenna.setFrequency(12E9);
+        hi.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
        
         hi.show();
     }
