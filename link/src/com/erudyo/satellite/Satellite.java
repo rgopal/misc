@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.erudyo.com;
+package com.erudyo.satellite;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.

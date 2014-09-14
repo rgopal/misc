@@ -1,4 +1,4 @@
-package com.erudyo.com;
+package com.erudyo.satellite;
 
 
 import com.codename1.ui.Display;

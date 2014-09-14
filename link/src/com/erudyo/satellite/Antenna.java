@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 
-package com.erudyo.com;
+package com.erudyo.satellite;
 
 import com.codename1.util.MathUtil;
-import static com.erudyo.com.Com.centerFrequency;
-import static com.erudyo.com.Com.findBand;
+import static com.erudyo.satellite.Com.centerFrequency;
+import static com.erudyo.satellite.Com.findBand;
 
 
 /**
