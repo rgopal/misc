@@ -8,6 +8,7 @@ import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import com.codename1.ui.table.Table;
 import com.codename1.ui.table.DefaultTableModel;
+import com.codename1.components.WebBrowser;
 import java.io.IOException;
 
 public class Link {
@@ -55,6 +56,10 @@ public class Link {
         antenna.setDiameter(1);
         antenna.setFrequency(12E9);
         hi.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
+        WebBrowser browser = new WebBrowser();
+        
+        hi.addComponent(browser);
+        browser.setURL("jar:///satellite.html");
        
         hi.show();
     }
