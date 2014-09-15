@@ -17,6 +17,8 @@ public class Com {
     public enum Modulation {BPSK, QPSK, PSK8, PSK16};
     public final static double PI = 3.14159;
     public final static double C = 2.99792458E8;
+    public final static double RE=6378.1E3;     // mean equatorial radius
+
     
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
@@ -53,7 +55,7 @@ public class Com {
     public final static double KA2_UL_LO = 29.5E9;
     public final static double KA2_UL_HI = 30.0E9;   
 
-    static Band findBand(double f) {
+    public static Band findBand(double f) {
         Com.Band band = Band.C;
         if (f >= Com.C_DL_LO && f <= Com.C_DL_HI)
             band = (Com.Band.C_DL);

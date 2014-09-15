@@ -15,7 +15,7 @@ import static com.erudyo.satellite.Com.findBand;
  *
  * @author rgopal
  */
-public class Antenna {
+public class Antenna extends Entity {
     private double diameter;
     private double area;
     private double efficiency;
@@ -42,6 +42,20 @@ public class Antenna {
     // setGain changes diameter and area (in future other things)
     
     public Antenna () {
+        init();
+    }
+    
+    public Antenna (String n) {
+        super(n);
+        init();
+     
+    }
+     public Antenna (String n, String d, String s) {
+        super(n,d,s);
+         init();
+    }
+    private void init() {
+    
         diameter = 4;
         area = calcArea(diameter);
         efficiency=0.6;

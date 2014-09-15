@@ -10,6 +10,6 @@ package com.erudyo.satellite;
  * (c) R. Gopal, 2014, All Rights Reserved.
  * @author rgopal
  */
-public class Transmitter {
+public class Transmitter extends Entity {
 
 }
