@@ -6,6 +6,7 @@
 
 package com.erudyo.satellite;
 
+
 import com.codename1.util.MathUtil;
 
 /**
@@ -14,8 +15,8 @@ import com.codename1.util.MathUtil;
  */
 public class Satellite extends Entity {
    
-    protected double phi;     // latitude
-    protected double lambda;  // longitude
+    protected double latitude;     // latitude
+    protected double longitude;  // longitude
     protected double r;       // distance from center of Earth
     protected double h;       // altitude of satellite from sub-satellite point
     protected double a;       // semi major axis
@@ -33,19 +34,24 @@ public class Satellite extends Entity {
     public Satellite (String n, String d, String s) {
         super(n,d,s);
     }
-   
+
+    public double maxCoverage() {
+        double angle;
+        angle = MathUtil.asin(Com.RE/(Com.RE+this.R0));
+        return angle;
+    }
     /**
-     * @return the lambda
+     * @return the longitude
      */
-    public double getLambda() {
-        return lambda;
+    public double getLongitude() {
+        return longitude;
     }
 
     /**
-     * @param lambda the lambda to set
+     * @param longitude the longitude to set
      */
-    public void setLambda(double lambda) {
-        this.lambda = lambda;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     /**
@@ -63,17 +69,17 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @return the phi
+     * @return the latitude
      */
-    public double getPhi() {
-        return phi;
+    public double getLatitude() {
+        return latitude;
     }
 
     /**
-     * @param phi the phi to set
+     * @param latitude the latitude to set
      */
-    public void setPhi(double phi) {
-        this.phi = phi;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     /**

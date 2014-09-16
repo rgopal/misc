@@ -11,8 +11,8 @@ package com.erudyo.satellite;
  * @author rgopal
  */
 public class Terminal extends Entity {
-    private double psi;     //longitude
-    private double l;       //latitude
+    private double longitude;     //longitude
+    private double latitude;       //latitude
             
     public Terminal () {
         
@@ -26,30 +26,38 @@ public class Terminal extends Entity {
     }
 
     /**
-     * @return the psi
+     * @return the longitude
      */
-    public double getPsi() {
-        return psi;
+    public double getLongitude() {
+        return longitude;
     }
 
     /**
-     * @param psi the psi to set
+     * @param longitude the longitude to set
      */
-    public void setPsi(double psi) {
-        this.psi = psi;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+   
+    public void setLongitude(double d, double m, double s) {
+        this.longitude = Com.toRadian(d,m,s);
+    }
+    
+    public void setLatitude(double d, double m, double s) {
+        this.latitude = Com.toRadian(d,m,s);
+    }
+    /**
+     * @return the latitude
+     */
+    public double getLatitude() {
+        return latitude;
     }
 
     /**
-     * @return the l
+     * @param latitude the latitude to set
      */
-    public double getL() {
-        return l;
-    }
-
-    /**
-     * @param l the l to set
-     */
-    public void setL(double l) {
-        this.l = l;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }

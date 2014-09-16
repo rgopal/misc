@@ -22,7 +22,7 @@ public class GeoSatellite extends Satellite {
         setA(42164.2E3);     //semi major axis of GEO orbit
         setV(3075E3);        // GEO satellite velocity
         setR0(Com.RE/.178);       // height of GEO satellite
-        setPhi(0.0);         // latitude is zero
+        setLatitude(0.0);         // latitude is zero
         orbit = Com.Orbit.GEO;
     }
     public GeoSatellite(String n) {

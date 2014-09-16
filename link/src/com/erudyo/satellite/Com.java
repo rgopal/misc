@@ -9,6 +9,9 @@ package com.erudyo.satellite;
 /**
  *
  * @author rgopal
+ * 
+ * All measurements are in Hz, Meter, Radian, Second, Watt.   Friendly print 
+ * functions are provided for user interface.
  */
 public class Com {
     public enum Band {C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL};
@@ -19,7 +22,11 @@ public class Com {
     public final static double C = 2.99792458E8;
     public final static double RE=6378.1E3;     // mean equatorial radius
 
-    
+    public class DMS {
+        double degree;
+        double minute;
+        double second;
+    }
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
     public final static double C_DL_LO = 3.7E9;
@@ -122,5 +129,23 @@ public class Com {
                 f = 0;
         }
         return f;
+    }
+    public static double toRadian(double d, double m, double s) {
+        return Math.toRadians(d + m/60.0 + s/3600.0);
+    }
+    
+    public static String toDegree(double r) {
+        String dms;
+        double degree;
+        degree = Math.toDegrees(r);
+        dms = String.valueOf(degree);
+        return dms;
+    }
+    
+    public static boolean sameValue (double one, double two) {
+        if (Math.abs(one-two) < .000001) 
+            return true;
+        else 
+            return false;
     }
 }
