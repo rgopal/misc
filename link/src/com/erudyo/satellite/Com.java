@@ -5,28 +5,32 @@
  */
 
 package com.erudyo.satellite;
-
+import java.text.Format;
+import java.lang.Math;
 /**
  *
  * @author rgopal
  * 
  * All measurements are in Hz, Meter, Radian, Second, Watt.   Friendly print 
  * functions are provided for user interface.
+ * 
+ * Longitude are positive for Eastern hemisphere.   Latitude is positive in Northern
+ * hemisphere.  
+ * 
+ * Includes functions for degree processing which can go to its own class 
+ * in future.
+  * Does not know about North South etc.   Simple radian to degree conversions
  */
 public class Com {
     public enum Band {C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL};
     public enum Orbit {LEO, MEO, GEO};
     public enum Code {FEC_1_2, FEC_2_3, FEC_4_5, FEC_8_9};
     public enum Modulation {BPSK, QPSK, PSK8, PSK16};
-    public final static double PI = 3.14159;
+    public final static double PI = Math.PI;
     public final static double C = 2.99792458E8;
     public final static double RE=6378.1E3;     // mean equatorial radius
 
-    public class DMS {
-        double degree;
-        double minute;
-        double second;
-    }
+
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
     public final static double C_DL_LO = 3.7E9;
@@ -130,18 +134,68 @@ public class Com {
         }
         return f;
     }
+    // convert degree, minute, second to radian.  Note it does not know about
+    // North or South etc.   
     public static double toRadian(double d, double m, double s) {
         return Math.toRadians(d + m/60.0 + s/3600.0);
     }
     
     public static String toDegree(double r) {
         String dms;
+      
         double degree;
         degree = Math.toDegrees(r);
-        dms = String.valueOf(degree);
+        dms = String.valueOf (degree);
         return dms;
     }
     
+     public static String toDMS(double radian) {
+        
+        double dfFrac;			// fraction after decimal
+	double dfSec;			// fraction converted to seconds
+        double dfDecimal, dfDegree, dfMinute, dfSecond;
+        String dms;
+        
+        dfDecimal = Math.toDegrees(radian);
+	// Get degrees by chopping off at the decimal
+	dfDegree = Math.floor( dfDecimal );
+	// correction required since floor() is not the same as int()
+	if ( dfDegree < 0 )
+		dfDegree = dfDegree + 1;
+
+	// Get fraction after the decimal
+        dfFrac = Math.abs( dfDecimal - dfDegree );
+
+	// Convert this fraction to seconds (without minutes)
+	dfSec = dfFrac * 3600;
+
+	// Determine number of whole minutes in the fraction
+	dfMinute = Math.floor( dfSec / 60 );
+
+	// Put the remainder in seconds
+	dfSecond = dfSec - dfMinute * 60;
+
+	// Fix rounoff errors
+	if ( Math.round( dfSecond ) == 60 )
+	{
+		dfMinute = dfMinute + 1;
+		dfSecond = 0;
+	}
+
+		if ( Math.round( dfMinute ) == 60 )
+		{
+			if ( dfDegree < 0 )
+				dfDegree = dfDegree - 1;
+			else // ( dfDegree => 0 )
+				dfDegree = dfDegree + 1;
+
+			dfMinute = 0;
+		}
+
+        dms = String.valueOf((int) dfDegree) + " " + 
+                String.valueOf((int) dfMinute) + " " + String.valueOf((int) dfSecond);
+        return dms;
+    }
     public static boolean sameValue (double one, double two) {
         if (Math.abs(one-two) < .000001) 
             return true;

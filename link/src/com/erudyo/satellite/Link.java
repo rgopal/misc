@@ -55,9 +55,10 @@ public class Link {
         hi.addComponent (table);
         antenna.setDiameter(1);
         antenna.setFrequency(12E9);
-        GeoSatellite g = new GeoSatellite(); g.setLongitude(99.0); g.setLatitude(0.0);
-        Terminal t = new Terminal(); t.setLatitude(30);
-        Path p = new Path(g,t); System.out.println (p.getAzimuth());
+        GeoSatellite g = new GeoSatellite(); g.setLongitude(-Com.PI/2.0); g.setLatitude(0.0);
+        Terminal t = new Terminal(); t.setLatitude(Com.PI/4.0); t.setLongitude(-Com.PI/4.0);
+       
+        Path p = new Path(g,t); System.out.println (Com.toDMS(p.getAzimuth()));
         hi.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
         WebBrowser browser = new WebBrowser();
         
