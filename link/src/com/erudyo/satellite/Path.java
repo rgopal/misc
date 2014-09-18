@@ -8,7 +8,6 @@ package com.erudyo.satellite;
 import com.codename1.util.MathUtil;
 import java.lang.Math;
 
-
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
  *
@@ -118,7 +117,7 @@ public class Path extends Entity {
     }
 
     public double calcRelativeLong() {
-        
+
         double relativeLong;
         // get relative longitdue between satellite and terminal
         if (s.longitude > t.getLongitude()) {
@@ -137,8 +136,8 @@ public class Path extends Entity {
         double Phi;
         double relativeLong;
         relativeLong = calcRelativeLong();
-        Phi = MathUtil.acos(Math.cos(relativeLong) * 
-                Math.cos(Math.abs(t.getLatitude())));
+        Phi = MathUtil.acos(Math.cos(relativeLong)
+                * Math.cos(Math.abs(t.getLatitude())));
         return Phi;
     }
 
@@ -150,16 +149,17 @@ public class Path extends Entity {
 
     public double calcElevation() {
 
-        double num;
-        double denom, bigPhi;
-       
+        double elev;
+        double bigPhi;
+
         bigPhi = calcBigPhi();
-          if (Com.sameValue(bigPhi,0.0))
-               return (Com.PI/2.0);
-         num = MathUtil.atan(Math.cos(calcBigPhi()) - (Com.RE/(Com.RE+s.getR0())));
-      
-        denom = MathUtil.pow(1.0 - Math.cos(bigPhi)*Math.cos(bigPhi), 0.5);
-        return num / denom;
+        // if bigPhi is zero then you have to look straight up
+        if (Com.sameValue(bigPhi, 0.0)) {
+            return (Com.PI / 2.0);
+        }
+        elev = MathUtil.atan( (Math.cos(bigPhi) - (Com.RE / (Com.RE + s.getR0())))
+                    / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
+        return elev;
 
     }
 
@@ -170,23 +170,31 @@ public class Path extends Entity {
         double relLong, bigPhi;
         relLong = calcRelativeLong();
         bigPhi = calcBigPhi();
-        
-        // does not work for zero values
-        if (Com.sameValue(relLong,0.0) || Com.sameValue(bigPhi,0.0))
+
+        // if terminal and satellite are on the same longitude
+        // then terminal is either looking south (in northern hemi)
+        // or north (in southern hemisphere).  Phi may not be zero.
+        // If Phi is zero then relLong is also zero?
+        if (Com.sameValue(relLong, 0.0) || Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI);
-        
+        }
+
         a = MathUtil.asin(Math.sin(relLong) * Math.cos(s.getLatitude())
                 / Math.sin(bigPhi));
         rel = findRelativePosition();
         switch (rel) {
-            case SE:
-                azimuth = Com.PI - a;
             case NE:
-                azimuth = a;
-            case SW:
-                azimuth = Com.PI + a;
+                azimuth = Com.PI - a;
+                break;
             case NW:
+                azimuth = Com.PI + a;
+                break;
+            case SE:
+                azimuth = a;
+                break;
+            case SW:
                 azimuth = Com.PI * 2.0 - a;
+                break;
         }
         return azimuth;
     }
@@ -195,46 +203,19 @@ public class Path extends Entity {
         // terminal in northern hemisphere
         relativePosition rel;
         rel = relativePosition.NE;      // Terminal is North East
-        if (s.getLatitude() > t.getLatitude()) {
-            // northern hemisphere
-            if (s.getLongitude() >= t.getLongitude()) {
-                // satellite is East of Terminal
-                if (s.getLongitude() > t.getLongitude()) {
-                    rel = relativePosition.NE;
-                } else {
-                    rel = relativePosition.NW;
-                }
-            } else {
-                if (s.getLongitude() >= t.getLongitude()) {
-                    // satellite is East of terminal
-                    rel = relativePosition.SE;
-                } else {
-                    rel = relativePosition.SW;
-                }
-            }
-        }
-        return rel;
-    }
 
-    // obsolete - not needed
-    public relativePosition findRelativePosTS() {
-        // return position of sub-satellite point with respect to P (of terminal)
-        // In ISO notation North is positive and East is positive
-        relativePosition rel;
-
-        // first latitude
-        if (s.getLatitude() > t.getLatitude()) {
-            // satellite is north of terminal, now check for longitude
+        // northern hemisphere for terminal
+        if (t.getLatitude() >= 0.0) {
+            // satellite is East of Terminal
             if (s.getLongitude() > t.getLongitude()) {
-                // satellite is East of Terminal
                 rel = relativePosition.NE;
             } else {
                 rel = relativePosition.NW;
             }
         } else {
-            // check for longitude now
-            if (s.getLongitude() > t.getLongitude()) {
-                // satellite is East of Terminal
+            // terminal in southern hemisphere
+            if (s.getLongitude() >= t.getLongitude()) {
+                // satellite is East of terminal
                 rel = relativePosition.SE;
             } else {
                 rel = relativePosition.SW;

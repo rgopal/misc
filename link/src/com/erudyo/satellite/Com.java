@@ -29,7 +29,7 @@ public class Com {
     public final static double PI = Math.PI;
     public final static double C = 2.99792458E8;
     public final static double RE=6378.1E3;     // mean equatorial radius
-
+    public final static String DEGREE  = "\u00b0";
 
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
@@ -143,8 +143,7 @@ public class Com {
     public static String toDegree(double r) {
         String dms;
       
-        double degree;
-        degree = Math.toDegrees(r);
+        double degree = Math.toDegrees(r);
         dms = String.valueOf (degree);
         return dms;
     }
@@ -192,8 +191,8 @@ public class Com {
 			dfMinute = 0;
 		}
 
-        dms = String.valueOf((int) dfDegree) + " " + 
-                String.valueOf((int) dfMinute) + " " + String.valueOf((int) dfSecond);
+        dms = String.valueOf((int) dfDegree) + DEGREE + 
+                String.valueOf((int) dfMinute) + "'" + String.valueOf((int) dfSecond) + "\"";
         return dms;
     }
     public static boolean sameValue (double one, double two) {

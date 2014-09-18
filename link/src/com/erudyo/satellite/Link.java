@@ -12,7 +12,7 @@ import com.codename1.components.WebBrowser;
 import java.io.IOException;
 
 public class Link {
-
+    private Form main;
     private Form current;
 
     public void init(Object context) {
@@ -43,6 +43,7 @@ public class Link {
         }
         Antenna antenna = new Antenna();
         
+        
         Form hi = new Form("Hi World");
         Object[][] m = new Object[5][3];
         m[0][0] = "Transmitter";
@@ -55,17 +56,25 @@ public class Link {
         hi.addComponent (table);
         antenna.setDiameter(1);
         antenna.setFrequency(12E9);
-        GeoSatellite g = new GeoSatellite(); g.setLongitude(-Com.PI/2.0); g.setLatitude(0.0);
-        Terminal t = new Terminal(); t.setLatitude(Com.PI/4.0); t.setLongitude(-Com.PI/4.0);
+        // Galaxy satellite
+        GeoSatellite g = new GeoSatellite(); g.setLongitude(-Com.PI*91.0/180.0); g.setLatitude(0.0);
+        // germantown location
+        Terminal t = new Terminal(); 
+        t.setLatitude(Com.PI*39.1793/180.0); 
+        t.setLongitude(-Com.PI*77.2469/180.0);
        
-        Path p = new Path(g,t); System.out.println (Com.toDMS(p.getAzimuth()));
+        Path p = new Path(g,t); 
+        System.out.println (Com.toDMS(p.getAzimuth()));
+        System.out.println (Com.toDMS(p.getElevation()));
         hi.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
         WebBrowser browser = new WebBrowser();
         
         hi.addComponent(browser);
-        browser.setURL("jar:///satellite.html");
+        browser.setURL("jar:///hometest.html");
+        
        
         hi.show();
+              
     }
 
     public void stop() {
