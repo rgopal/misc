@@ -1,6 +1,40 @@
 package com.erudyo.satellite;
 
-
+import com.codename1.components.InfiniteProgress;
+import com.codename1.io.ConnectionRequest;
+import com.codename1.io.JSONParser;
+import com.codename1.io.NetworkManager;
+import com.codename1.io.Util;
+import com.codename1.location.Location;
+import com.codename1.location.LocationManager;
+import com.codename1.maps.Coord;
+import com.codename1.maps.Coord;
+import com.codename1.maps.MapComponent;
+import com.codename1.maps.MapComponent;
+import com.codename1.maps.layers.ArrowLinesLayer;
+import com.codename1.maps.layers.LinesLayer;
+import com.codename1.maps.layers.PointLayer;
+import com.codename1.maps.layers.PointsLayer;
+import com.codename1.ui.Button;
+import com.codename1.ui.Command;
+import com.codename1.ui.Dialog;
+import com.codename1.ui.Form;
+import com.codename1.ui.Image;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.plaf.UIManager;
+import com.codename1.ui.util.Resources;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import com.codename1.ui.Display;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
@@ -12,39 +46,49 @@ import com.codename1.components.WebBrowser;
 import java.io.IOException;
 
 public class Link {
+
     private Form main;
     private Form current;
+    private Coord lastLocation;
 
     public void init(Object context) {
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         // Pro users - uncomment this code to get crash reports sent to you automatically
         /*Display.getInstance().addEdtErrorHandler(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                evt.consume();
-                Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));
-                Log.p("OS " + Display.getInstance().getPlatformName());
-                Log.p("Error " + evt.getSource());
-                Log.p("Current Form " + Display.getInstance().getCurrent().getName());
-                Log.e((Throwable)evt.getSource());
-                Log.sendLog();
-            }
-        });*/
+         public void actionPerformed(ActionEvent evt) {
+         evt.consume();
+         Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));
+         Log.p("OS " + Display.getInstance().getPlatformName());
+         Log.p("Error " + evt.getSource());
+         Log.p("Current Form " + Display.getInstance().getCurrent().getName());
+         Log.e((Throwable)evt.getSource());
+         Log.sendLog();
+         }
+         });*/
     }
-    
+
     public void start() {
-        if(current != null){
+        if (current != null) {
             current.show();
             return;
         }
         Antenna antenna = new Antenna();
+        main = new Form("Hi World");
+        main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
+        Button b = new Button("Where am I?");
+        main.addComponent(b);
+        b.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showMeOnMap();
+            }
+        });
         
-        
-        Form hi = new Form("Hi World");
         Object[][] m = new Object[5][3];
         m[0][0] = "Transmitter";
         m[1][0] = "Path";
@@ -53,34 +97,88 @@ public class Link {
         m[4][0] = "Receiver";
         String[] names = {"item", "value", "units"};
         Table table = new Table(new DefaultTableModel(names, m, true));
-        hi.addComponent (table);
+        main.addComponent(table);
         antenna.setDiameter(1);
         antenna.setFrequency(12E9);
         // Galaxy satellite
-        GeoSatellite g = new GeoSatellite(); g.setLongitude(-Com.PI*91.0/180.0); g.setLatitude(0.0);
+        GeoSatellite g = new GeoSatellite();
+        g.setLongitude(-Com.PI * 91.0 / 180.0);
+        g.setLatitude(0.0);
         // germantown location
-        Terminal t = new Terminal(); 
-        t.setLatitude(Com.PI*39.1793/180.0); 
-        t.setLongitude(-Com.PI*77.2469/180.0);
-       
-        Path p = new Path(g,t); 
-        System.out.println (Com.toDMS(p.getAzimuth()));
-        System.out.println (Com.toDMS(p.getElevation()));
-        hi.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
+        Terminal t = new Terminal();
+        t.setLatitude(Com.PI * 39.1793 / 180.0);
+        t.setLongitude(-Com.PI * 77.2469 / 180.0);
+
+        Path p = new Path(g, t);
+        System.out.println(Com.toDMS(p.getAzimuth()));
+        System.out.println(Com.toDMS(p.getElevation()));
+        main.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
         WebBrowser browser = new WebBrowser();
-        
-        hi.addComponent(browser);
+
+        main.addComponent(browser);
         browser.setURL("jar:///hometest.html");
-        
-       
-        hi.show();
-              
+
+        main.show();
+
+    }
+
+    private void putMeOnMap(MapComponent map) {
+        try {
+            Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            lastLocation = new Coord(loc.getLatitude(), loc.getLongtitude());
+            Image i = Image.createImage("/blue_pin.png");
+            PointsLayer pl = new PointsLayer();
+            pl.setPointIcon(i);
+            PointLayer p = new PointLayer(lastLocation, "You Are Here", i);
+            p.setDisplayName(true);
+            pl.addPoint(p);
+            pl.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent evt) {
+                    PointLayer p = (PointLayer) evt.getSource();
+                    System.out.println("pressed " + p);
+
+                    Dialog.show("Details", "You Are Here" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
+                }
+            });
+            map.addLayer(pl);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private void showMeOnMap() {
+        Form map = new Form("Map");
+        map.setLayout(new BorderLayout());
+        map.setScrollable(false);
+        final MapComponent mc = new MapComponent();
+
+        putMeOnMap(mc);
+        mc.zoomToLayers();
+
+        map.addComponent(BorderLayout.CENTER, mc);
+        map.addCommand(new Link.BackCommand());
+        map.setBackCommand(new Link.BackCommand());
+        map.show();
+Form hi = new Form("Hi World");
+    }
+
+    class BackCommand extends Command {
+
+        public BackCommand() {
+            super("Back");
+        }
+
+        public void actionPerformed(ActionEvent evt) {
+            main.showBack();
+        }
     }
 
     public void stop() {
         current = Display.getInstance().getCurrent();
     }
-    
+
     public void destroy() {
     }
 
