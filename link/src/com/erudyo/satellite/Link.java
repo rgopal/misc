@@ -15,6 +15,7 @@ import com.codename1.maps.layers.ArrowLinesLayer;
 import com.codename1.maps.layers.LinesLayer;
 import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
+import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.Button;
 import com.codename1.ui.Command;
 import com.codename1.ui.Dialog;
@@ -35,6 +36,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import com.codename1.io.CSVParser;
 import com.codename1.ui.Display;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
@@ -50,11 +52,20 @@ public class Link {
     private Form main;
     private Form current;
     private Coord lastLocation;
+    private Image blue_pin;
+    private Image red_pin;
+    private String[][] satellites;
+    
 
     public void init(Object context) {
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
+            
+            CSVParser parser = new CSVParser();
+            InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
+            satellites = parser.parse(new InputStreamReader(is));
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,7 +99,7 @@ public class Link {
                 showMeOnMap();
             }
         });
-        
+
         Object[][] m = new Object[5][3];
         m[0][0] = "Transmitter";
         m[1][0] = "Path";
@@ -126,10 +137,11 @@ public class Link {
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
             lastLocation = new Coord(loc.getLatitude(), loc.getLongtitude());
-            Image i = Image.createImage("/blue_pin.png");
+            blue_pin = Image.createImage("/blue_pin.png");
+            red_pin = Image.createImage("/red_pin.png");
             PointsLayer pl = new PointsLayer();
-            pl.setPointIcon(i);
-            PointLayer p = new PointLayer(lastLocation, "You Are Here", i);
+            pl.setPointIcon(blue_pin);
+            PointLayer p = new PointLayer(lastLocation, "Current Location", red_pin);
             p.setDisplayName(true);
             pl.addPoint(p);
             pl.addActionListener(new ActionListener() {
@@ -138,7 +150,7 @@ public class Link {
                     PointLayer p = (PointLayer) evt.getSource();
                     System.out.println("pressed " + p);
 
-                    Dialog.show("Details", "You Are Here" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
+                    Dialog.show("Current Position", "You Coordinates" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
                 }
             });
             map.addLayer(pl);
@@ -152,7 +164,20 @@ public class Link {
         Form map = new Form("Map");
         map.setLayout(new BorderLayout());
         map.setScrollable(false);
-        final MapComponent mc = new MapComponent();
+        // override pointerPressed to locate new positions 
+        final MapComponent mc = new MapComponent (
+                new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk")) {
+                    public void pointerPressed(int x, int y) {
+                        // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
+                        PointsLayer pl = new PointsLayer();
+                        pl.setPointIcon(blue_pin);
+                        PointLayer p = new PointLayer(getCoordFromPosition(x, y), "New Point", blue_pin);
+                        p.setDisplayName(true);
+                        pl.addPoint(p);
+                        addLayer(pl);
+                        // Google coordinatges are in degrees (no minutes, seconds)
+                    }
+                };
 
         putMeOnMap(mc);
         mc.zoomToLayers();
@@ -161,7 +186,7 @@ public class Link {
         map.addCommand(new Link.BackCommand());
         map.setBackCommand(new Link.BackCommand());
         map.show();
-Form hi = new Form("Hi World");
+        Form hi = new Form("Hi World");
     }
 
     class BackCommand extends Command {
