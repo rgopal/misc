@@ -36,6 +36,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+
 import com.codename1.io.CSVParser;
 import com.codename1.ui.Display;
 import com.codename1.ui.Form;
@@ -55,17 +57,16 @@ public class Link {
     private Image blue_pin;
     private Image red_pin;
     private String[][] satellites;
-    
 
     public void init(Object context) {
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
-            
+
             CSVParser parser = new CSVParser();
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,6 +150,7 @@ public class Link {
                 public void actionPerformed(ActionEvent evt) {
                     PointLayer p = (PointLayer) evt.getSource();
                     System.out.println("pressed " + p);
+                  
 
                     Dialog.show("Current Position", "You Coordinates" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
                 }
@@ -161,23 +163,31 @@ public class Link {
     }
 
     private void showMeOnMap() {
-        Form map = new Form("Map");
+        
+        // this would not work if longPointerPress was overriden in MapComponent
+        final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
+
+        Form map = new Form("Map") {
+            @Override
+            public void longPointerPress(int x, int y) {
+
+                // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
+                PointsLayer pl = new PointsLayer();
+                pl.setPointIcon(blue_pin);
+                String name;
+                Coord c = mc.getCoordFromPosition(x, y);
+                name = "T" + String.valueOf((int) c.getLongitude()) + 
+                           String.valueOf((int) c.getLatitude());
+                PointLayer p = new PointLayer(c,name, blue_pin);
+                p.setDisplayName(true);
+                pl.addPoint(p);
+                mc.addLayer(pl);
+                // Google coordinatges are in degrees (no minutes, seconds)
+            }
+        };
         map.setLayout(new BorderLayout());
         map.setScrollable(false);
         // override pointerPressed to locate new positions 
-        final MapComponent mc = new MapComponent (
-                new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk")) {
-                    public void pointerPressed(int x, int y) {
-                        // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
-                        PointsLayer pl = new PointsLayer();
-                        pl.setPointIcon(blue_pin);
-                        PointLayer p = new PointLayer(getCoordFromPosition(x, y), "New Point", blue_pin);
-                        p.setDisplayName(true);
-                        pl.addPoint(p);
-                        addLayer(pl);
-                        // Google coordinatges are in degrees (no minutes, seconds)
-                    }
-                };
 
         putMeOnMap(mc);
         mc.zoomToLayers();
