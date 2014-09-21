@@ -1,4 +1,5 @@
 package com.erudyo.satellite;
+// this is main
 
 import com.codename1.components.InfiniteProgress;
 import com.codename1.io.ConnectionRequest;
@@ -90,14 +91,16 @@ public class Link {
             return;
         }
         Antenna antenna = new Antenna();
-        main = new Form("Hi World");
+        main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        Button b = new Button("Where am I?");
+        
+        // manage the Map view 
+        Button b = new Button("Map");
         main.addComponent(b);
+        final MapView mv = new MapView();
         b.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent evt) {
-                showMeOnMap();
+                mv.createView();
             }
         });
 
@@ -134,70 +137,8 @@ public class Link {
 
     }
 
-    private void putMeOnMap(MapComponent map) {
-        try {
-            Location loc = LocationManager.getLocationManager().getCurrentLocation();
-            lastLocation = new Coord(loc.getLatitude(), loc.getLongtitude());
-            blue_pin = Image.createImage("/blue_pin.png");
-            red_pin = Image.createImage("/red_pin.png");
-            PointsLayer pl = new PointsLayer();
-            pl.setPointIcon(blue_pin);
-            PointLayer p = new PointLayer(lastLocation, "Current Location", red_pin);
-            p.setDisplayName(true);
-            pl.addPoint(p);
-            pl.addActionListener(new ActionListener() {
+   
 
-                public void actionPerformed(ActionEvent evt) {
-                    PointLayer p = (PointLayer) evt.getSource();
-                    System.out.println("pressed " + p);
-                  
-
-                    Dialog.show("Current Position", "You Coordinates" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
-                }
-            });
-            map.addLayer(pl);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    private void showMeOnMap() {
-        
-        // this would not work if longPointerPress was overriden in MapComponent
-        final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
-
-        Form map = new Form("Map") {
-            @Override
-            public void longPointerPress(int x, int y) {
-
-                // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
-                PointsLayer pl = new PointsLayer();
-                pl.setPointIcon(blue_pin);
-                String name;
-                Coord c = mc.getCoordFromPosition(x, y);
-                name = "T" + String.valueOf((int) c.getLongitude()) + 
-                           String.valueOf((int) c.getLatitude());
-                PointLayer p = new PointLayer(c,name, blue_pin);
-                p.setDisplayName(true);
-                pl.addPoint(p);
-                mc.addLayer(pl);
-                // Google coordinatges are in degrees (no minutes, seconds)
-            }
-        };
-        map.setLayout(new BorderLayout());
-        map.setScrollable(false);
-        // override pointerPressed to locate new positions 
-
-        putMeOnMap(mc);
-        mc.zoomToLayers();
-
-        map.addComponent(BorderLayout.CENTER, mc);
-        map.addCommand(new Link.BackCommand());
-        map.setBackCommand(new Link.BackCommand());
-        map.show();
-        Form hi = new Form("Hi World");
-    }
 
     class BackCommand extends Command {
 
