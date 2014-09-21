@@ -14,12 +14,20 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
+import java.io.IOException;
 
 public abstract class View {
 
     private Resources res;
     protected Image icon;
+    protected String name;
 
+    public String getName () {
+        return name;
+    }
+    public View(String name) {
+        this.name = name;
+    }
     public void init(Resources res) {
         this.res = res;
     }
@@ -30,8 +38,23 @@ public abstract class View {
 
     public abstract String getDisplayName();
 
-    public abstract Image getViewIcon();
+ 
+     public Image getViewIcon() {
+         Image icon = null;
+        if (icon == null) {
+            // change it to better icon in future
+            try {
+                icon = Image.createImage(this.name + ".png");
+                return icon;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            return icon;
+        }
+        return icon;
+    }
 
-    public abstract Form createView(Link.BackCommand bc);
+    public abstract Form createView();
     
 }

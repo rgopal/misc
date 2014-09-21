@@ -58,14 +58,18 @@ public class Link {
 
         TX, UL_PATH, SATELLITE, DL_PATH, RX
     };
-
+    private View[] views = new View[]{new MapView("MapView"),
+        new TxView("TxView"),
+        new PathView("DL_Path"),
+        new SatelliteView ("Satellite_View"),
+        new PathView ("UL_Path"),
+        new RxView ("RxView")};
     private String[][] satellites;
 
     public void init(Object context) {
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
-
             CSVParser parser = new CSVParser();
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
@@ -95,22 +99,18 @@ public class Link {
         Antenna antenna = new Antenna();
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        for (ITEMS item : ITEMS.values()) {
-            System.out.println(item);
-            // manage the Map view 
-            Button b = new Button(item.toString());
+        for (final View view : views) {
+            Button b = new Button(view.getName());
             main.addComponent(b);
-            switch (item) {
-                case TX:
-                    final MapView mv = new MapView();
-                    b.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            mv.createView(new BackCommand());
-                        }
-                    });
-                    break;
-            }
-
+            b.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    Form form = view.createView();
+                    BackCommand bc = new BackCommand();
+                    form.addCommand(bc);
+                    form.setBackCommand(bc);
+                    form.show();
+                }
+            });
         }
         Object[][] m = new Object[5][3];
         m[0][0] = "Transmitter";

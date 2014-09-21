@@ -34,28 +34,18 @@ public class MapView extends View {
     }
     Form map;
 
-    public Image getViewIcon() {
-        if (icon == null) {
-            // change it to better icon in future
-            try {
-                icon = Image.createImage("MapView.png");
-                return icon;
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            return icon;
-        }
-        return icon;
+    public MapView (String name) {
+        super(name);
     }
+   
 
-    public Form createView(Link.BackCommand bc) {
+    public Form createView() {
     
         
             // this would not work if longPointerPress was overriden in MapComponent
             final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
 
-            map = new Form("Map") {
+            map = new Form(getName()) {
                 @Override
                 public void longPointerPress(int x, int y) {
                     try {
@@ -91,10 +81,7 @@ public class MapView extends View {
 
             map.addComponent(BorderLayout.CENTER, mc);
 
-            map.show();
-            
-                map.addCommand(bc);
-        map.setBackCommand(bc);
+       
             return map;
         }
 
