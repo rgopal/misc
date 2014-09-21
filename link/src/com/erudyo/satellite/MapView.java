@@ -28,6 +28,7 @@ import java.io.IOException;
 public class MapView extends View {
 
     private Coord lastLocation;
+   
 
     public String getDisplayName() {
         return "MapView";
@@ -35,8 +36,18 @@ public class MapView extends View {
     Form map;
 
     public Image getViewIcon() {
-        // change it to better icon
-        return getResources().getImage("red_pin.png");
+        if (icon == null) {
+            // change it to better icon in future
+            try {
+                icon = Image.createImage("MapView.png");
+                return icon;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            return icon;
+        }
+        return icon;
     }
 
     public Form createView() {
@@ -55,7 +66,7 @@ public class MapView extends View {
                     pl.setPointIcon(blue_pin);
                     String name;
                     Coord c = mc.getCoordFromPosition(x, y);
-                    name = "T" + String.valueOf((int) c.getLongitude())
+                    name = "T" + java.lang.String.valueOf((int) c.getLongitude())
                             + String.valueOf((int) c.getLatitude());
                     PointLayer p = new PointLayer(c, name, blue_pin);
                     p.setDisplayName(true);

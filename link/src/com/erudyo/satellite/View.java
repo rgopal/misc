@@ -18,6 +18,7 @@ import com.codename1.ui.util.Resources;
 public abstract class View {
 
     private Resources res;
+    protected Image icon;
 
     public void init(Resources res) {
         this.res = res;

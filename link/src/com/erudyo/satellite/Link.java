@@ -54,9 +54,7 @@ public class Link {
 
     private Form main;
     private Form current;
-    private Coord lastLocation;
-    private Image blue_pin;
-    private Image red_pin;
+
     private String[][] satellites;
 
     public void init(Object context) {
