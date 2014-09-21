@@ -28,7 +28,6 @@ import java.io.IOException;
 public class MapView extends View {
 
     private Coord lastLocation;
-   
 
     public String getDisplayName() {
         return "MapView";
@@ -50,55 +49,58 @@ public class MapView extends View {
         return icon;
     }
 
-    public Form createView() {
+    public Form createView(Link.BackCommand bc) {
+    
+        
+            // this would not work if longPointerPress was overriden in MapComponent
+            final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
 
-        // this would not work if longPointerPress was overriden in MapComponent
-        final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
-
-        map = new Form("Map") {
-            @Override
-            public void longPointerPress(int x, int y) {
-                try {
-                    Image blue_pin = Image.createImage("/blue_pin.png");
-                    Image red_pin = Image.createImage("/red_pin.png");
-                    // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
-                    PointsLayer pl = new PointsLayer();
-                    pl.setPointIcon(blue_pin);
-                    String name;
-                    Coord c = mc.getCoordFromPosition(x, y);
-                    name = "T" + java.lang.String.valueOf((int) c.getLongitude())
-                            + String.valueOf((int) c.getLatitude());
-                    PointLayer p = new PointLayer(c, name, blue_pin);
-                    p.setDisplayName(true);
-                    pl.addPoint(p);
-                    mc.addLayer(pl);
-                    // Google coordinatges are in degrees (no minutes, seconds)
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            map = new Form("Map") {
+                @Override
+                public void longPointerPress(int x, int y) {
+                    try {
+                        Image blue_pin = Image.createImage("/blue_pin.png");
+                        Image red_pin = Image.createImage("/red_pin.png");
+                        // Dialog.show("Pointer Clicked", "Your Location" + "\n" + x + "|" + y, "Ok", null);
+                        PointsLayer pl = new PointsLayer();
+                        pl.setPointIcon(blue_pin);
+                        String name;
+                        Coord c = mc.getCoordFromPosition(x, y);
+                        name = "T" + java.lang.String.valueOf((int) c.getLongitude())
+                                + String.valueOf((int) c.getLatitude());
+                        PointLayer p = new PointLayer(c, name, blue_pin);
+                        p.setDisplayName(true);
+                        pl.addPoint(p);
+                        mc.addLayer(pl);
+                        // Google coordinatges are in degrees (no minutes, seconds)
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-            }
 
-        };
-        map.setLayout(
-                new BorderLayout());
-        map.setScrollable(
-                false);
-        // override pointerPressed to locate new positions 
+            };
+            map.setLayout(
+                    new BorderLayout());
+            map.setScrollable(
+                    false);
+            // override pointerPressed to locate new positions 
 
-        putMeOnMap(mc);
+            putMeOnMap(mc);
 
-        mc.zoomToLayers();
+            mc.zoomToLayers();
 
-        map.addComponent(BorderLayout.CENTER, mc);
+            map.addComponent(BorderLayout.CENTER, mc);
 
-        map.show();
-        return map;
-    }
-
-    public void addBackCommand(Link.BackCommand bc) {
-        map.addCommand(bc);
+            map.show();
+            
+                map.addCommand(bc);
         map.setBackCommand(bc);
-    }
+            return map;
+        }
+
+    
+
+    
 
     public void putMeOnMap(MapComponent map) {
 

@@ -28,12 +28,10 @@ public abstract class View {
         return res;
     }
 
-    public abstract void addBackCommand(Link.BackCommand bc);
-
     public abstract String getDisplayName();
 
     public abstract Image getViewIcon();
 
-    public abstract Form createView();
+    public abstract Form createView(Link.BackCommand bc);
     
 }

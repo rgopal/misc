@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-
 import com.codename1.io.CSVParser;
 import com.codename1.ui.Display;
 import com.codename1.ui.Form;
@@ -54,6 +53,11 @@ public class Link {
 
     private Form main;
     private Form current;
+
+    private enum ITEMS {
+
+        TX, UL_PATH, SATELLITE, DL_PATH, RX
+    };
 
     private String[][] satellites;
 
@@ -91,17 +95,23 @@ public class Link {
         Antenna antenna = new Antenna();
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        
-        // manage the Map view 
-        Button b = new Button("Map");
-        main.addComponent(b);
-        final MapView mv = new MapView();
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                mv.createView();
+        for (ITEMS item : ITEMS.values()) {
+            System.out.println(item);
+            // manage the Map view 
+            Button b = new Button(item.toString());
+            main.addComponent(b);
+            switch (item) {
+                case TX:
+                    final MapView mv = new MapView();
+                    b.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            mv.createView(new BackCommand());
+                        }
+                    });
+                    break;
             }
-        });
 
+        }
         Object[][] m = new Object[5][3];
         m[0][0] = "Transmitter";
         m[1][0] = "Path";
@@ -134,9 +144,6 @@ public class Link {
         main.show();
 
     }
-
-   
-
 
     class BackCommand extends Command {
 
