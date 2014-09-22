@@ -17,8 +17,15 @@ import com.codename1.ui.util.Resources;
 
 public class TxView extends View {
 
-    public TxView(String name) {
-        super(name);
+    Terminal terminal;
+    
+    public TxView() {
+
+    }
+
+    public TxView(Terminal terminal) {
+        this.terminal = terminal;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public String getDisplayName() {
@@ -26,13 +33,13 @@ public class TxView extends View {
     }
 
     public Form createView() {
-        Form tx = new Form(getName());
+        Form tx = new Form(this.terminal.getName());
 
+    
         tx.setScrollable(
                 false);
             // override pointerPressed to locate new positions 
 
-      
         return tx;
     }
 }

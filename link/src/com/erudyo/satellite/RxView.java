@@ -16,23 +16,23 @@ import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
 public class RxView extends View {
-
-    public RxView(String name) {
-        super(name);
-    }
-
+private Terminal terminal;
+    
     public String getDisplayName() {
         return name;
     }
 
+    public RxView (Terminal terminal) {
+       this.terminal = terminal;
+    }
+
     public Form createView() {
-        Form rx = new Form(getName());
+        Form rx = new Form(this.terminal.getName());
 
         rx.setScrollable(
                 false);
-            // override pointerPressed to locate new positions 
+           
 
-      
         return rx;
     }
 }

@@ -53,18 +53,19 @@ public class Link {
 
     private Form main;
     private Form current;
+    private Com.Band band = Com.Band.KA;
+    private Com.Band dLband = Com.Band.KA_DL;
+    private Com.Band uLband = Com.Band.KA_UL;
+    private Terminal rXterminal;
+    private Terminal tXterminal;
+    private Satellite satellite;
+    private Path uLpath;
+    private Path dLpath;
 
-    private enum ITEMS {
+    private View[] views;
 
-        TX, UL_PATH, SATELLITE, DL_PATH, RX
-    };
-    private View[] views = new View[]{new MapView("MapView"),
-        new TxView("TxView"),
-        new PathView("DL_Path"),
-        new SatelliteView ("Satellite_View"),
-        new PathView ("UL_Path"),
-        new RxView ("RxView")};
     private String[][] satellites;
+    private String[][] terminals;
 
     public void init(Object context) {
         try {
@@ -73,12 +74,38 @@ public class Link {
             CSVParser parser = new CSVParser();
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
+            // also read terminals and the current Tx and Rx terminal
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Pro users - uncomment this code to get crash reports sent to you automatically
-        /*Display.getInstance().addEdtErrorHandler(new ActionListener() {
+
+        views = new View[6];
+
+        views[0] = new MapView("MapView");
+
+        tXterminal = new Terminal();
+        tXterminal.setBand(band);
+        tXterminal.setName("TX Term");
+
+        views[1] = new TxView(tXterminal);
+       
+         uLpath = new Path();
+         uLpath.setName("UL_PATH");
+         views[2] = new PathView(dLpath);
+        
+         views[3] = new SatelliteView(satellite);
+         views[4] = new PathView(uLpath);
+
+         dLpath = new Path();
+         dLpath.setName("DL_PATH");
+         rXterminal = new Terminal();
+         rXterminal.setName("RX Terminal");
+         rXterminal.setBand(band);
+         views[5] = new RxView(rXterminal);
+
+         // Pro users - uncomment this code to get crash reports sent to you automatically
+         /*Display.getInstance().addEdtErrorHandler(new ActionListener() {
          public void actionPerformed(ActionEvent evt) {
          evt.consume();
          Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));

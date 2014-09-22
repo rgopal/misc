@@ -66,6 +66,7 @@ public class Com {
     public final static double KA2_UL_LO = 29.5E9;
     public final static double KA2_UL_HI = 30.0E9;   
 
+    
     public static Band findBand(double f) {
         Com.Band band = Band.C;
         if (f >= Com.C_DL_LO && f <= Com.C_DL_HI)

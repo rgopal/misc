@@ -32,6 +32,12 @@ public abstract class View {
         this.res = res;
     }
 
+    public View () {
+        
+    }
+    public View (Object obj) {
+        
+    }
     protected Resources getResources() {
         return res;
     }

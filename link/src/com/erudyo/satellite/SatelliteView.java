@@ -17,8 +17,11 @@ import com.codename1.ui.util.Resources;
 
 public class SatelliteView extends View {
 
-    public SatelliteView(String name) {
-        super(name);
+    public SatelliteView () {
+        
+    }
+    public SatelliteView(Satellite satellite) {
+        
     }
 
     public String getDisplayName() {

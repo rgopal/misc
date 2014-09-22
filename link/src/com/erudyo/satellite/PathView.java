@@ -16,9 +16,14 @@ import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
 public class PathView extends View {
-
-    public PathView(String name) {
-        super(name);
+static Path  path;
+    
+    public PathView () {
+        
+    }
+    public PathView(Path path) {
+      this.path = path;
+      
     }
 
     public String getDisplayName() {
@@ -26,7 +31,8 @@ public class PathView extends View {
     }
 
     public Form createView() {
-        Form path = new Form(getName());
+       
+        Form path = new Form(this.path.getName());
 
         path.setScrollable(
                 false);

@@ -13,6 +13,15 @@ package com.erudyo.satellite;
 public class Terminal extends Entity {
     private double longitude;     //longitude
     private double latitude;       //latitude
+    private Com.Band band;
+    
+    public void setBand (Com.Band band) {
+        this.band = band;
+    }
+    
+    public Com.Band getBand () {
+        return band;
+    }
             
     public Terminal () {
         
