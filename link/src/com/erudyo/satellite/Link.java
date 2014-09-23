@@ -17,6 +17,8 @@ import com.codename1.maps.layers.LinesLayer;
 import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
+import com.codename1.facebook.ui.LikeButton;
+import com.codename1.components.ShareButton;
 import com.codename1.ui.Button;
 import com.codename1.ui.Command;
 import com.codename1.ui.Container;
@@ -30,6 +32,7 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -176,6 +179,14 @@ public class Link {
                 form.show();
             }
         });
+
+        LikeButton like = new LikeButton();
+        main.addComponent(like);
+        ShareButton s = new ShareButton();
+        s.setText("Share");
+        s.setTextToShare("Try the satellite link analysis app");
+        main.addComponent(s);
+        like.setUIID("Button");
 
         main.show();
 
