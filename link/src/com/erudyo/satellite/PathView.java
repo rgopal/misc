@@ -23,6 +23,9 @@ static Path  path;
     }
     public PathView(Path path) {
       this.path = path;
+      this.name = path.getName();
+      this.value = "-200";
+      this.unit = "dB";
       
     }
 

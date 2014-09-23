@@ -16,14 +16,19 @@ import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
 public class SatelliteView extends View {
+    private Satellite satellite;
 
     public SatelliteView () {
         
     }
     public SatelliteView(Satellite satellite) {
-        
+        this.satellite = satellite;
+        this.name = satellite.getName();
+        this.value = "sat";
+        this.unit = "dB";
     }
 
+   
     public String getDisplayName() {
         return name;
     }

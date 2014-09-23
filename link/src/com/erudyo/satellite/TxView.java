@@ -23,8 +23,15 @@ public class TxView extends View {
 
     }
 
+
     public TxView(Terminal terminal) {
         this.terminal = terminal;
+        this.name = terminal.getName();
+        this.value = "23";
+        this.unit = "dB";
+       
+        
+        
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -37,7 +44,7 @@ public class TxView extends View {
 
     
         tx.setScrollable(
-                false);
+                true);
             // override pointerPressed to locate new positions 
 
         return tx;

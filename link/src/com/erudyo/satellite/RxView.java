@@ -16,14 +16,22 @@ import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
 public class RxView extends View {
-private Terminal terminal;
-    
+
+    private Terminal terminal;
+
+ 
+       
+ 
+
     public String getDisplayName() {
         return name;
     }
 
-    public RxView (Terminal terminal) {
-       this.terminal = terminal;
+    public RxView(Terminal terminal) {
+        this.terminal = terminal;
+        this.name = terminal.getName();
+         this.value = "ter";
+        this.unit = "dB";
     }
 
     public Form createView() {
@@ -31,7 +39,6 @@ private Terminal terminal;
 
         rx.setScrollable(
                 false);
-           
 
         return rx;
     }

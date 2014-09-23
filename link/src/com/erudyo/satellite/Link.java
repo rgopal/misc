@@ -19,6 +19,7 @@ import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.Button;
 import com.codename1.ui.Command;
+import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
@@ -26,6 +27,7 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import java.io.ByteArrayInputStream;
@@ -56,11 +58,9 @@ public class Link {
     private Com.Band band = Com.Band.KA;
     private Com.Band dLband = Com.Band.KA_DL;
     private Com.Band uLband = Com.Band.KA_UL;
-    private Terminal rXterminal;
-    private Terminal tXterminal;
-    private Satellite satellite;
-    private Path uLpath;
-    private Path dLpath;
+    private Com.Orbit orbit = Com.Orbit.GEO;
+
+    private Selection selection;
 
     private View[] views;
 
@@ -80,31 +80,9 @@ public class Link {
             e.printStackTrace();
         }
 
-        views = new View[6];
+        initSelection();
 
-        views[0] = new MapView("MapView");
-
-        tXterminal = new Terminal();
-        tXterminal.setBand(band);
-        tXterminal.setName("TX Term");
-
-        views[1] = new TxView(tXterminal);
-       
-         uLpath = new Path();
-         uLpath.setName("UL_PATH");
-         views[2] = new PathView(dLpath);
-        
-         views[3] = new SatelliteView(satellite);
-         views[4] = new PathView(uLpath);
-
-         dLpath = new Path();
-         dLpath.setName("DL_PATH");
-         rXterminal = new Terminal();
-         rXterminal.setName("RX Terminal");
-         rXterminal.setBand(band);
-         views[5] = new RxView(rXterminal);
-
-         // Pro users - uncomment this code to get crash reports sent to you automatically
+        // Pro users - uncomment this code to get crash reports sent to you automatically
          /*Display.getInstance().addEdtErrorHandler(new ActionListener() {
          public void actionPerformed(ActionEvent evt) {
          evt.consume();
@@ -118,18 +96,62 @@ public class Link {
          });*/
     }
 
+    private void initSelection() {
+        views = new View[5];
+
+        selection = new Selection();
+        selection.settXterminal(new Terminal());
+        selection.gettXterminal().setBand(band);
+        selection.gettXterminal().setName("TX");
+        views[0] = new TxView(selection.gettXterminal());
+
+        selection.setuLpath(new Path());
+        selection.getuLpath().setName("ULP");
+        views[1] = new PathView(selection.getuLpath());
+
+        selection.setSatellite(new Satellite());
+        selection.getSatellite().setName("Sat");
+        views[2] = new SatelliteView(selection.getSatellite());
+
+        selection.setdLpath(new Path());
+        selection.getdLpath().setName("DLP");
+        views[3] = new PathView(selection.getdLpath());
+
+        selection.setrXterminal(new Terminal());
+        selection.getrXterminal().setBand(band);
+        selection.getrXterminal().setName("RX");
+        views[4] = new RxView(selection.getrXterminal());
+
+        selection.setSatellites(satellites);
+        selection.setTerminals(terminals);
+    }
+
     public void start() {
         if (current != null) {
             current.show();
             return;
         }
-        Antenna antenna = new Antenna();
+
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
+
+        Container cnt = new Container(new BorderLayout());
+        main.addComponent(cnt);
+        cnt.setLayout(new TableLayout(5, 4));
+
         for (final View view : views) {
-            Button b = new Button(view.getName());
-            main.addComponent(b);
-            b.addActionListener(new ActionListener() {
+            // create name, value, unit, and command components for each view
+
+            Label n = new Label(view.getName());
+            Label v = new Label(view.getValue());
+            Label u = new Label(view.getUnit());
+            Button c = new Button(view.getName());
+            cnt.addComponent(n);
+            cnt.addComponent(v);
+            cnt.addComponent(u);
+            cnt.addComponent(c);
+
+            c.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     Form form = view.createView();
                     BackCommand bc = new BackCommand();
@@ -139,34 +161,21 @@ public class Link {
                 }
             });
         }
-        Object[][] m = new Object[5][3];
-        m[0][0] = "Transmitter";
-        m[1][0] = "Path";
-        m[2][0] = "Satellite";
-        m[3][0] = "Path";
-        m[4][0] = "Receiver";
-        String[] names = {"item", "value", "units"};
-        Table table = new Table(new DefaultTableModel(names, m, true));
-        main.addComponent(table);
-        antenna.setDiameter(1);
-        antenna.setFrequency(12E9);
-        // Galaxy satellite
-        GeoSatellite g = new GeoSatellite();
-        g.setLongitude(-Com.PI * 91.0 / 180.0);
-        g.setLatitude(0.0);
-        // germantown location
-        Terminal t = new Terminal();
-        t.setLatitude(Com.PI * 39.1793 / 180.0);
-        t.setLongitude(-Com.PI * 77.2469 / 180.0);
 
-        Path p = new Path(g, t);
-        System.out.println(Com.toDMS(p.getAzimuth()));
-        System.out.println(Com.toDMS(p.getElevation()));
-        main.addComponent(new Label(antenna.getBand().toString() + antenna.getThreeDBangle()));
-        WebBrowser browser = new WebBrowser();
+        Button b = new Button("Map");
 
-        main.addComponent(browser);
-        browser.setURL("jar:///hometest.html");
+        // get map form for selecting terminals and satellite
+        main.addComponent(b);
+        final MapView map = new MapView("Map");
+        b.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                Form form = map.createView();
+                BackCommand bc = new BackCommand();
+                form.addCommand(bc);
+                form.setBackCommand(bc);
+                form.show();
+            }
+        });
 
         main.show();
 

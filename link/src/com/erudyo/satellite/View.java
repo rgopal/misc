@@ -21,6 +21,8 @@ public abstract class View {
     private Resources res;
     protected Image icon;
     protected String name;
+    protected String value;
+    protected String unit;
 
     public String getName () {
         return name;
@@ -62,5 +64,33 @@ public abstract class View {
     }
 
     public abstract Form createView();
+
+    /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * @return the unit
+     */
+    public String getUnit() {
+        return unit;
+    }
+
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
     
 }
