@@ -23,7 +23,9 @@ public class SatelliteView extends View {
     }
     public SatelliteView(Satellite satellite) {
         this.satellite = satellite;
-        this.name = satellite.getName();
+        this.name = "Satellite";
+        this.summary = String.valueOf((int) satellite.getAntenna().getGain()) + "K " +
+                    String.valueOf((int) satellite.getEIRP()) + "dbM ";
         this.value = "sat";
         this.unit = "dB";
     }

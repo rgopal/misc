@@ -3,35 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.erudyo.satellite;
 
-/**
- * Copyright (c) 2014 R. Gopal. All Rights Reserved.
- *
- * @author rgopal
- */
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
-public class TxView extends View {
+public class HeadView extends View {
 
     Terminal terminal;
     
-    public TxView() {
+  
 
-    }
-
-
-    public TxView(Terminal terminal) {
-        this.terminal = terminal;
-        this.name = "Tx";
-        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter()) +
-                       "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
+    public HeadView() {
         
-        this.value = "23";
-        this.unit = "dB";
+        this.name = "";
+        this.summary = "";
+        
+        this.value = "";
+        this.unit = "Unit";
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

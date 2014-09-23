@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.erudyo.satellite;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
+ *
  * @author rgopal
  */
 public class Selection {
+
     private Terminal tXterminal;
     private Terminal rXterminal;
     private Satellite satellite;
@@ -18,7 +19,42 @@ public class Selection {
     private Path dLpath;
     private Satellite[] satellites;
     private Terminal[] terminals;
-  
+    private Com.Band band = Com.Band.KA;
+
+    public Selection() {
+
+        // transmit terminal at current location if not in persistent storage
+        tXterminal = new Terminal();
+        tXterminal.setBand(band);
+       
+
+        // default generic satellite (from satellite list)
+        satellite = new Satellite();
+   
+
+        uLpath = new Path(satellite, tXterminal);
+        uLpath.setBand(band);
+        // sharing common Path, here name needs to be set 
+        uLpath.setName("UpLink");
+        uLpath.setS(satellite);
+        uLpath.setT(tXterminal);
+        
+        // receive terminal near transmit if not in persistent storage
+        rXterminal = new Terminal();
+        rXterminal.setBand(band);
+
+
+        dLpath = new Path(satellite, tXterminal);
+        dLpath.setBand(band);
+        dLpath.setName("DownLink" );
+        dLpath.setS(satellite);
+        dLpath.setT(rXterminal);
+
+    }
+
+    public void setBand(Com.Band band) {
+        this.band = band;
+    }
 
     /**
      * @return the tXterminal
@@ -101,7 +137,7 @@ public class Selection {
      * @param satellites the satellites to set
      */
     public void setSatellites(String[][] satellites) {
-        
+
     }
 
     /**
@@ -115,7 +151,7 @@ public class Selection {
      * @param terminals the terminals to set
      */
     public void setTerminals(String[][] terminals) {
-        
+
     }
 
 }

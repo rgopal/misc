@@ -29,7 +29,9 @@ public class RxView extends View {
 
     public RxView(Terminal terminal) {
         this.terminal = terminal;
-        this.name = terminal.getName();
+        this.name = "Rx";
+        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter()) +
+                       "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
          this.value = "ter";
         this.unit = "dB";
     }

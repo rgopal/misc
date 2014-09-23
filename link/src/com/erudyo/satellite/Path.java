@@ -86,11 +86,26 @@ public class Path extends Entity {
         this.elevation = elevation;
     }
 
+    /**
+     * @return the band
+     */
+    public Com.Band getBand() {
+        return band;
+    }
+
+    /**
+     * @param band the band to set
+     */
+    public void setBand(Com.Band band) {
+        this.band = band;
+    }
+
     enum relativePosition {
 
         NE, SE, NW, SW, N, S, E, W
     };
     private Satellite s;
+    private Com.Band band;
     private Terminal t;
     private double azimuth;
     private double elevation;

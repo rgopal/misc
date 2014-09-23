@@ -15,6 +15,9 @@ import com.codename1.util.MathUtil;
  */
 public class Satellite extends Entity {
    
+   private Antenna antenna;
+   private Amplifier amplifier;
+  
     protected double latitude;     // latitude
     protected double longitude;  // longitude
     protected double r;       // distance from center of Earth
@@ -26,7 +29,16 @@ public class Satellite extends Entity {
   
   
     public Satellite () {
+        amplifier = new Amplifier();
+        antenna = new Antenna();
+        antenna.setDiameter(2.4);
+        amplifier.setPower(200);
         
+        
+    }
+    // eventually calculate this from Antenna and amplifier
+    public double getEIRP() {
+        return 55;
     }
     public Satellite (String n) {
         super(n);
@@ -136,6 +148,10 @@ public class Satellite extends Entity {
      */
     public void setR0(double R0) {
         this.R0 = R0;
+    }
+
+    public Antenna getAntenna() {
+        return antenna;
     }
    
     

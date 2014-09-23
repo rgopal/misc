@@ -21,6 +21,7 @@ public abstract class View {
     private Resources res;
     protected Image icon;
     protected String name;
+    protected String summary;
     protected String value;
     protected String unit;
 
@@ -91,6 +92,20 @@ public abstract class View {
      */
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    /**
+     * @return the summary
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    /**
+     * @param summary the summary to set
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
     
 }

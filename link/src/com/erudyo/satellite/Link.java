@@ -9,7 +9,6 @@ import com.codename1.io.Util;
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
 import com.codename1.maps.Coord;
-import com.codename1.maps.Coord;
 import com.codename1.maps.MapComponent;
 import com.codename1.maps.MapComponent;
 import com.codename1.maps.layers.ArrowLinesLayer;
@@ -20,6 +19,8 @@ import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.facebook.ui.LikeButton;
 import com.codename1.components.ShareButton;
 import com.codename1.ui.Button;
+import com.codename1.ui.list.ListModel;
+import com.codename1.ui.spinner.GenericSpinner;
 import com.codename1.ui.Command;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
@@ -100,33 +101,20 @@ public class Link {
     }
 
     private void initSelection() {
-        views = new View[5];
+        views = new View[6];
+        // selection contains current selection of atellite, terminals, band, etc.
+        // selections from previous session can be read from persistent storage
+        // else default values are used.
 
         selection = new Selection();
-        selection.settXterminal(new Terminal());
-        selection.gettXterminal().setBand(band);
-        selection.gettXterminal().setName("TX");
-        views[0] = new TxView(selection.gettXterminal());
 
-        selection.setuLpath(new Path());
-        selection.getuLpath().setName("ULP");
-        views[1] = new PathView(selection.getuLpath());
+        views[0] = new HeadView();
+        views[1] = new TxView(selection.gettXterminal());
+        views[2] = new PathView(selection.getuLpath());
+        views[3] = new SatelliteView(selection.getSatellite());
+        views[4] = new PathView(selection.getdLpath());
+        views[5] = new RxView(selection.getrXterminal());
 
-        selection.setSatellite(new Satellite());
-        selection.getSatellite().setName("Sat");
-        views[2] = new SatelliteView(selection.getSatellite());
-
-        selection.setdLpath(new Path());
-        selection.getdLpath().setName("DLP");
-        views[3] = new PathView(selection.getdLpath());
-
-        selection.setrXterminal(new Terminal());
-        selection.getrXterminal().setBand(band);
-        selection.getrXterminal().setName("RX");
-        views[4] = new RxView(selection.getrXterminal());
-
-        selection.setSatellites(satellites);
-        selection.setTerminals(terminals);
     }
 
     public void start() {
@@ -137,32 +125,48 @@ public class Link {
 
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
+        
+       
+        GenericSpinner spin = new GenericSpinner();
+     
+        main.addComponent(spin);
+      
 
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
-        cnt.setLayout(new TableLayout(5, 4));
+        cnt.setLayout(new TableLayout(6, 5));
+        
+        try {
+            Image cmdIcon = Image.createImage("/blue_pin.png");
 
-        for (final View view : views) {
-            // create name, value, unit, and command components for each view
+            for (final View view : views) {
+                // create name, value, unit, and command components for each view
 
-            Label n = new Label(view.getName());
-            Label v = new Label(view.getValue());
-            Label u = new Label(view.getUnit());
-            Button c = new Button(view.getName());
-            cnt.addComponent(n);
-            cnt.addComponent(v);
-            cnt.addComponent(u);
-            cnt.addComponent(c);
+                Label n = new Label(view.getName());
+                Label s = new Label (view.getSummary());
+                Label v = new Label(view.getValue());
+                Label u = new Label(view.getUnit());
+                Button c = new Button("->"); //view.getName());
+                cnt.addComponent(n);
+                   cnt.addComponent(s);
+                cnt.addComponent(v);
+                cnt.addComponent(u);
+                cnt.addComponent(c);
 
-            c.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    Form form = view.createView();
-                    BackCommand bc = new BackCommand();
-                    form.addCommand(bc);
-                    form.setBackCommand(bc);
-                    form.show();
-                }
-            });
+                c.setIcon(cmdIcon);
+
+                c.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        Form form = view.createView();
+                        BackCommand bc = new BackCommand();
+                        form.addCommand(bc);
+                        form.setBackCommand(bc);
+                        form.show();
+                    }
+                });
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         Button b = new Button("Map");
