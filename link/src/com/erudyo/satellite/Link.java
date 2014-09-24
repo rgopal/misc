@@ -219,8 +219,8 @@ public class Link {
           selection.setBand(Com.bands[index]);
           System.out.println(Com.bandParams[2].highFrequency);
           // note that only a String has substring functions
-             band.setText((String.valueOf(Com.bandParams[index].lowFrequency/1E9)).substring(0,5)
-                    + " - " + (String.valueOf(Com.bandParams[index].highFrequency/1E9)).substring(0,5)
+             band.setText((shortText(Com.bandParams[index].lowFrequency/1E9))
+                    + " - " + (shortText(Com.bandParams[index].highFrequency/1E9))
                         + " GHz");
           
         spin.setModel(model);
@@ -232,8 +232,8 @@ public class Link {
                 selection.setBand(Com.bands[index]);
                 System.out.println("this".substring(1));
                
-                band.setText((String.valueOf(Com.bandParams[index].lowFrequency/1E9)).substring(0,5)
-                    + " - " + (String.valueOf(Com.bandParams[index].highFrequency/1E9)).substring(0, 5)
+                band.setText(((Com.bandParams[index].lowFrequency/1E9))
+                    + " - " + (shortText(Com.bandParams[index].highFrequency/1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
             }
@@ -241,6 +241,15 @@ public class Link {
 
     }
 
+    String shortText (double num) {
+        String s = new String();
+        s = String.valueOf(num);
+        int len = s.length();
+        int min;
+        if (len > 4)
+            len = 4;
+        return s.substring(0, len);
+    }
     class BackCommand extends Command {
 
         public BackCommand() {
