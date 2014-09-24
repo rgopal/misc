@@ -26,6 +26,7 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
@@ -33,6 +34,8 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
+import com.codename1.ui.list.DefaultListModel;
+import com.codename1.ui.events.DataChangedListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -75,6 +78,8 @@ public class Link {
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
+              Display.getInstance().installNativeTheme();
+               // refreshTheme(parentForm);
             CSVParser parser = new CSVParser();
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
@@ -125,17 +130,13 @@ public class Link {
 
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        
-       
-        GenericSpinner spin = new GenericSpinner();
-     
-        main.addComponent(spin);
-      
+
+        initBands(main);
 
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
         cnt.setLayout(new TableLayout(6, 5));
-        
+
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
@@ -143,12 +144,12 @@ public class Link {
                 // create name, value, unit, and command components for each view
 
                 Label n = new Label(view.getName());
-                Label s = new Label (view.getSummary());
+                Label s = new Label(view.getSummary());
                 Label v = new Label(view.getValue());
                 Label u = new Label(view.getUnit());
                 Button c = new Button("->"); //view.getName());
                 cnt.addComponent(n);
-                   cnt.addComponent(s);
+                cnt.addComponent(s);
                 cnt.addComponent(v);
                 cnt.addComponent(u);
                 cnt.addComponent(c);
@@ -193,6 +194,38 @@ public class Link {
         like.setUIID("Button");
 
         main.show();
+
+    }
+
+    public void initBands(Form main) {
+        // band selection
+
+        Container topLine = new Container();
+        topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
+        main.addComponent(topLine);
+
+        final Com.Band[] bands = new Com.Band[3];
+        bands[0] = Com.Band.KA;
+        bands[1] = Com.Band.KU;
+        bands[2] = Com.Band.C;
+
+         final Label band = new Label("KA data");
+ final ComboBox spin = new ComboBox();
+        topLine.addComponent(spin);
+        topLine.addComponent(band);
+       
+        ListModel model = new DefaultListModel(bands);
+        spin.setModel(model);
+
+        spin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                 
+                selection.setBand(bands[spin.getSelectedIndex()]);
+                band.setText(bands[spin.getSelectedIndex()].toString());
+                System.out.println(spin.getSelectedItem());
+            }
+        });
+       
 
     }
 
