@@ -75,11 +75,12 @@ public class Link {
     private String[][] terminals;
 
     public void init(Object context) {
+
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
-              Display.getInstance().installNativeTheme();
-               // refreshTheme(parentForm);
+            Display.getInstance().installNativeTheme();
+            // refreshTheme(parentForm);
             CSVParser parser = new CSVParser();
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
@@ -133,6 +134,36 @@ public class Link {
 
         initBands(main);
 
+        initViews(main);
+
+        Button b = new Button("Map");
+
+        // get map form for selecting terminals and satellite
+        main.addComponent(b);
+        final MapView map = new MapView("Map");
+        b.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                Form form = map.createView();
+                BackCommand bc = new BackCommand();
+                form.addCommand(bc);
+                form.setBackCommand(bc);
+                form.show();
+            }
+        });
+
+        LikeButton like = new LikeButton();
+        main.addComponent(like);
+        ShareButton s = new ShareButton();
+        s.setText("Share");
+        s.setTextToShare("Try the satellite link analysis app");
+        main.addComponent(s);
+        like.setUIID("Button");
+
+        main.show();
+
+    }
+
+    public void initViews(Form main) {
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
         cnt.setLayout(new TableLayout(6, 5));
@@ -169,32 +200,6 @@ public class Link {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-        Button b = new Button("Map");
-
-        // get map form for selecting terminals and satellite
-        main.addComponent(b);
-        final MapView map = new MapView("Map");
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                Form form = map.createView();
-                BackCommand bc = new BackCommand();
-                form.addCommand(bc);
-                form.setBackCommand(bc);
-                form.show();
-            }
-        });
-
-        LikeButton like = new LikeButton();
-        main.addComponent(like);
-        ShareButton s = new ShareButton();
-        s.setText("Share");
-        s.setTextToShare("Try the satellite link analysis app");
-        main.addComponent(s);
-        like.setUIID("Button");
-
-        main.show();
-
     }
 
     public void initBands(Form main) {
@@ -204,28 +209,35 @@ public class Link {
         topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(topLine);
 
-        final Com.Band[] bands = new Com.Band[3];
-        bands[0] = Com.Band.KA;
-        bands[1] = Com.Band.KU;
-        bands[2] = Com.Band.C;
-
-         final Label band = new Label("KA data");
- final ComboBox spin = new ComboBox();
+        final Label band = new Label("KA data");
+        final ComboBox spin = new ComboBox();
         topLine.addComponent(spin);
         topLine.addComponent(band);
-       
-        ListModel model = new DefaultListModel(bands);
+
+        ListModel model = new DefaultListModel(Com.bands);
+          int index = spin.getSelectedIndex();
+          selection.setBand(Com.bands[index]);
+          System.out.println(Com.bandParams[2].highFrequency);
+          // note that only a String has substring functions
+             band.setText((String.valueOf(Com.bandParams[index].lowFrequency/1E9)).substring(0,5)
+                    + " - " + (String.valueOf(Com.bandParams[index].highFrequency/1E9)).substring(0,5)
+                        + " GHz");
+          
         spin.setModel(model);
 
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                 
-                selection.setBand(bands[spin.getSelectedIndex()]);
-                band.setText(bands[spin.getSelectedIndex()].toString());
+
+                int index = spin.getSelectedIndex();
+                selection.setBand(Com.bands[index]);
+                System.out.println("this".substring(1));
+               
+                band.setText((String.valueOf(Com.bandParams[index].lowFrequency/1E9)).substring(0,5)
+                    + " - " + (String.valueOf(Com.bandParams[index].highFrequency/1E9)).substring(0, 5)
+                        + " GHz");
                 System.out.println(spin.getSelectedItem());
             }
         });
-       
 
     }
 
