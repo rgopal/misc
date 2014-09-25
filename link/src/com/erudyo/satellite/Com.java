@@ -7,6 +7,7 @@ package com.erudyo.satellite;
 
 import java.text.Format;
 import java.lang.Math;
+import java.util.Hashtable;
 
 /**
  *
@@ -44,8 +45,9 @@ public class Com {
         BPSK, QPSK, PSK8, PSK16
     };
 
-    final public static Band[] bands;
-    final public static BandParams[] bandParams;
+    final public static Band[] bands;       // for user interface
+    final public static BandParams[] bandParams; // min, fax, center frequencies
+    public static Hashtable<String, Band> bandHash; // lookup with string as key
 
     public final static double PI = Math.PI;
     public final static double C = 2.99792458E8;
@@ -87,18 +89,37 @@ public class Com {
     public final static double KA2_UL_LO = 29.5E9;
     public final static double KA2_UL_HI = 30.0E9;
 
+
     // static block will execute once when the class is created
+
     static {
-        bandParams = new BandParams[3];
+        bandParams = new BandParams[4];
+        bandHash = new Hashtable();
         // use the same sequence in both bands and bandParams
-        bands = new Band[]{Band.C, Band.KA, Band.KU};
+        bands = new Band[]{Band.C, Band.X, Band.KU, Band.KA};
 
         // bandParams had to be an external class otherwise "this" cannot
         // be used from a static class
         bandParams[0] = new BandParams(C_LO, C_HI);
-        bandParams[1] = new BandParams(KA_LO, KA_HI);
+        bandParams[1] = new BandParams(X_LO, X_HI);
         bandParams[2] = new BandParams(KU_LO, KU_HI);
+        bandParams[3] = new BandParams(KA_LO, KA_HI);
 
+        bandHash.put("C", Band.C);
+        bandHash.put("X", Band.X);
+        bandHash.put("KU", Band.KU);
+        bandHash.put("KA", Band.KA);
+
+    }
+
+    // print 4 characters of a double number (format does not work)
+    static String shortText(double num) {
+        String s = String.valueOf(num);
+        int len = s.length();
+        if (len > 4) {
+            len = 4;
+        }
+        return s.substring(0, len);
     }
 
     public static Band findBand(double f) {

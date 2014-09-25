@@ -19,6 +19,8 @@ import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.facebook.ui.LikeButton;
 import com.codename1.components.ShareButton;
 import com.codename1.ui.Button;
+import java.util.Hashtable;
+import java.util.Vector;
 import com.codename1.ui.list.ListModel;
 import com.codename1.ui.spinner.GenericSpinner;
 import com.codename1.ui.Command;
@@ -82,8 +84,14 @@ public class Link {
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
             CSVParser parser = new CSVParser();
+            // first line is heading
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
+            is = Display.getInstance().getResourceAsStream(null, "/terminals.txt");
+
+            // terminals in format name, latitude, longitude, antenna size, amplifier
+            // first line is heading
+            terminals = parser.parse(new InputStreamReader(is));
             // also read terminals and the current Tx and Rx terminal
 
         } catch (IOException e) {
@@ -133,6 +141,7 @@ public class Link {
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         initBands(main);
+        initSatellites(main);
 
         initViews(main);
 
@@ -215,14 +224,14 @@ public class Link {
         topLine.addComponent(band);
 
         ListModel model = new DefaultListModel(Com.bands);
-          int index = spin.getSelectedIndex();
-          selection.setBand(Com.bands[index]);
-          System.out.println(Com.bandParams[2].highFrequency);
-          // note that only a String has substring functions
-             band.setText((shortText(Com.bandParams[index].lowFrequency/1E9))
-                    + " - " + (shortText(Com.bandParams[index].highFrequency/1E9))
-                        + " GHz");
-          
+        int index = spin.getSelectedIndex();
+        selection.setBand(Com.bands[index]);
+        System.out.println(Com.bandParams[2].highFrequency);
+        // note that only a String has substring functions
+        band.setText((Com.shortText(Com.bandParams[index].lowFrequency / 1E9))
+                + " - " + (Com.shortText(Com.bandParams[index].highFrequency / 1E9))
+                + " GHz");
+
         spin.setModel(model);
 
         spin.addActionListener(new ActionListener() {
@@ -231,9 +240,9 @@ public class Link {
                 int index = spin.getSelectedIndex();
                 selection.setBand(Com.bands[index]);
                 System.out.println("this".substring(1));
-               
-                band.setText(((Com.bandParams[index].lowFrequency/1E9))
-                    + " - " + (shortText(Com.bandParams[index].highFrequency/1E9))
+
+                band.setText(Com.shortText((Com.bandParams[index].lowFrequency / 1E9))
+                        + " - " + (Com.shortText(Com.bandParams[index].highFrequency / 1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
             }
@@ -241,15 +250,54 @@ public class Link {
 
     }
 
-    String shortText (double num) {
-        String s = new String();
-        s = String.valueOf(num);
-        int len = s.length();
-        int min;
-        if (len > 4)
-            len = 4;
-        return s.substring(0, len);
+    public void initSatellites(Form main) {
+
+        // satellites contains values from the file.  Allow selection of an
+        // vector of Satellite objects with band as the key in a hashtable
+        Hashtable<Com.Band, Vector<Satellite>> bandSatellite = new Hashtable<Com.Band, Vector<Satellite>>();
+
+        // go through all bands
+        for (Com.Band band : Com.bands) {
+
+            // start at 1 since first line is heading (name, long, lat, eirp, gain, band
+            for (int i = 1; i < satellites.length; i++) {
+
+                // check the band from file and create entry in hash table
+                if (satellites[i][5].equalsIgnoreCase(String.valueOf(band))
+                        || satellites[i][5].equalsIgnoreCase("*")) {
+
+                    // get band using its string version as key (* matches all)
+                    Com.Band textBand = Com.bandHash.get(satellites[i][5]);
+                    if (bandSatellite.get(textBand) == null) {
+                        bandSatellite.put(textBand, new Vector());
+                        satelliteFields(satellites[i], bandSatellite.get(textBand));
+
+                    } else {
+                        satelliteFields(satellites[i], bandSatellite.get(textBand));
+                    }
+                    bandSatellite.get(textBand).add(new Satellite(satellites[i][0]));
+
+                }
+                System.out.println(satellites[i][0]);
+            }
+        }
     }
+
+    public void satelliteFields(String[] fields, Vector<Satellite> vector) {
+        // vector has already been created for a band, just add entries
+        Satellite satellite = new Satellite();
+        
+         // fields are name, long, lat, eirp, gain, band
+        satellite.setName(fields[0]);
+        satellite.setLatitude(Double.parseDouble(fields[1]));
+        satellite.setLongitude(Double.parseDouble(fields[2]));
+        satellite.setEIRP(Double.parseDouble(fields[3]));
+        satellite.setGain(Double.parseDouble(fields[4]));
+
+        vector.add(satellite);
+
+    }
+
     class BackCommand extends Command {
 
         public BackCommand() {

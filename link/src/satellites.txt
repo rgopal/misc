@@ -1,2 +1,3 @@
-Galaxy 15, 91, 0, 53, 30, KU
-AMC-15, 102, 0, 45, 35, KA
+name, latitude, longitude, EIRP, gain, band
+Galaxy-15,0,91,53,30,KU
+AMC-15,0,102,45,35,KA

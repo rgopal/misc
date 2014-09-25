@@ -18,6 +18,8 @@ public class Satellite extends Entity {
    private Antenna antenna;
    private Amplifier amplifier;
   
+   private double EIRP;       // they should be calculated
+   private double gain;       // they should be calculated
     protected double latitude;     // latitude
     protected double longitude;  // longitude
     protected double r;       // distance from center of Earth
@@ -31,10 +33,12 @@ public class Satellite extends Entity {
     public Satellite () {
         amplifier = new Amplifier();
         antenna = new Antenna();
+        // gain should be calculated when diameter changed
         antenna.setDiameter(2.4);
-        amplifier.setPower(200);
-        
-        
+        EIRP = 43;
+        gain = 50;
+     
+        amplifier.setPower(200);     
     }
     // eventually calculate this from Antenna and amplifier
     public double getEIRP() {
@@ -152,6 +156,48 @@ public class Satellite extends Entity {
 
     public Antenna getAntenna() {
         return antenna;
+    }
+
+    /**
+     * @return the amplifier
+     */
+    public Amplifier getAmplifier() {
+        return amplifier;
+    }
+
+    /**
+     * @param amplifier the amplifier to set
+     */
+    public void setAmplifier(Amplifier amplifier) {
+        this.amplifier = amplifier;
+    }
+
+    /**
+     * @param antenna the antenna to set
+     */
+    public void setAntenna(Antenna antenna) {
+        this.antenna = antenna;
+    }
+
+    /**
+     * @param EIRP the EIRP to set
+     */
+    public void setEIRP(double EIRP) {
+        this.EIRP = EIRP;
+    }
+
+    /**
+     * @return the gain
+     */
+    public double getGain() {
+        return gain;
+    }
+
+    /**
+     * @param gain the gain to set
+     */
+    public void setGain(double gain) {
+        this.gain = gain;
     }
    
     

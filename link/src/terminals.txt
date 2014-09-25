@@ -1,0 +1,3 @@
+name, latitude, longitude, antennaSize, amplifierPower
+Germantown, 39.1833, 77.2667, 4, 200
+Potomac, 39.0167, -77.2167, 1, 4
