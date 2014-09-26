@@ -87,11 +87,14 @@ public class Link {
             // first line is heading
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
+                Satellite.initSatellites(satellites);
             is = Display.getInstance().getResourceAsStream(null, "/terminals.txt");
 
             // terminals in format name, latitude, longitude, antenna size, amplifier
             // first line is heading
             terminals = parser.parse(new InputStreamReader(is));
+            Terminal.initTerminals(terminals);
+            
             // also read terminals and the current Tx and Rx terminal
 
         } catch (IOException e) {
@@ -141,7 +144,7 @@ public class Link {
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         initBands(main);
-        initSatellites(main);
+    
 
         initViews(main);
 
@@ -250,53 +253,6 @@ public class Link {
 
     }
 
-    public void initSatellites(Form main) {
-
-        // satellites contains values from the file.  Allow selection of an
-        // vector of Satellite objects with band as the key in a hashtable
-        Hashtable<Com.Band, Vector<Satellite>> bandSatellite = new Hashtable<Com.Band, Vector<Satellite>>();
-
-        // go through all bands
-        for (Com.Band band : Com.bands) {
-
-            // start at 1 since first line is heading (name, long, lat, eirp, gain, band
-            for (int i = 1; i < satellites.length; i++) {
-
-                // check the band from file and create entry in hash table
-                if (satellites[i][5].equalsIgnoreCase(String.valueOf(band))
-                        || satellites[i][5].equalsIgnoreCase("*")) {
-
-                    // get band using its string version as key (* matches all)
-                    Com.Band textBand = Com.bandHash.get(satellites[i][5]);
-                    if (bandSatellite.get(textBand) == null) {
-                        bandSatellite.put(textBand, new Vector());
-                        satelliteFields(satellites[i], bandSatellite.get(textBand));
-
-                    } else {
-                        satelliteFields(satellites[i], bandSatellite.get(textBand));
-                    }
-                    bandSatellite.get(textBand).add(new Satellite(satellites[i][0]));
-
-                }
-                System.out.println(satellites[i][0]);
-            }
-        }
-    }
-
-    public void satelliteFields(String[] fields, Vector<Satellite> vector) {
-        // vector has already been created for a band, just add entries
-        Satellite satellite = new Satellite();
-        
-         // fields are name, long, lat, eirp, gain, band
-        satellite.setName(fields[0]);
-        satellite.setLatitude(Double.parseDouble(fields[1]));
-        satellite.setLongitude(Double.parseDouble(fields[2]));
-        satellite.setEIRP(Double.parseDouble(fields[3]));
-        satellite.setGain(Double.parseDouble(fields[4]));
-
-        vector.add(satellite);
-
-    }
 
     class BackCommand extends Command {
 

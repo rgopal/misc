@@ -9,6 +9,8 @@ import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
 import com.codename1.maps.Coord;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -22,11 +24,61 @@ public class Terminal extends Entity {
     private Com.Band band;
     private Antenna antenna;
     private Amplifier amplifier;
+    // eventually calculate these things
+    private double EIRP;
+    private double gain;
 
     public void setBand(Com.Band band) {
         this.band = band;
     }
 
+            public static void initTerminals(String[][] terminals) {
+
+        // terminals contains values from the file.  Allow selection of an
+        // vector of Satellite objects with band as the key in a hashtable
+        Hashtable<Com.Band, Vector<Terminal>> bandTerminal = new Hashtable<Com.Band, Vector<Terminal>>();
+
+        // go through all bands
+        for (Com.Band band : Com.bands) {
+
+            // start at 1 since first line is heading (name, long, lat, eirp, gain, band
+            for (int i = 1; i < terminals.length; i++) {
+
+                // check the band from file and create entry in hash table
+                if (terminals[i][5].equalsIgnoreCase(String.valueOf(band))
+                        || terminals[i][5].equalsIgnoreCase("*")) {
+
+                    // get band using its string version as key (* matches all)
+                    Com.Band textBand = Com.bandHash.get(terminals[i][5]);
+                    if (bandTerminal.get(textBand) == null) {
+                        bandTerminal.put(textBand, new Vector());
+                        terminalFields(terminals[i], bandTerminal.get(textBand));
+
+                    } else {
+                        terminalFields(terminals[i], bandTerminal.get(textBand));
+                    }
+                    bandTerminal.get(textBand).add(new Terminal(terminals[i][0]));
+
+                }
+                System.out.println(terminals[i][0]);
+            }
+        }
+    }
+  
+    public static void terminalFields(String[] fields, Vector<Terminal> vector) {
+        // vector has already been created for a band, just add entries
+        Terminal terminal = new Terminal();
+        
+     // terminals in format name, latitude, longitude, antenna size, amplifier
+        terminal.setName(fields[0]);
+        terminal.setLatitude(Double.parseDouble(fields[1]));
+        terminal.setLongitude(Double.parseDouble(fields[2]));
+        terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
+        terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
+
+        vector.add(terminal);
+
+    }
     public Com.Band getBand() {
         return band;
     }
@@ -108,5 +160,33 @@ public class Terminal extends Entity {
 
     public Amplifier getAmplifier() {
       return amplifier;
+    }
+
+    /**
+     * @return the EIRP
+     */
+    public double getEIRP() {
+        return EIRP;
+    }
+
+    /**
+     * @param EIRP the EIRP to set
+     */
+    public void setEIRP(double EIRP) {
+        this.EIRP = EIRP;
+    }
+
+    /**
+     * @return the gain
+     */
+    public double getGain() {
+        return gain;
+    }
+
+    /**
+     * @param gain the gain to set
+     */
+    public void setGain(double gain) {
+        this.gain = gain;
     }
 }

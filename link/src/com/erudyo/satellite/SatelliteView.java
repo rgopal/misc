@@ -14,6 +14,8 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class SatelliteView extends View {
     private Satellite satellite;
@@ -34,6 +36,7 @@ public class SatelliteView extends View {
     public String getDisplayName() {
         return name;
     }
+ 
 
     public Form createView() {
         Form sat = new Form(getName());
