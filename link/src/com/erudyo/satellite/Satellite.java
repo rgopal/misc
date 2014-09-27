@@ -29,6 +29,15 @@ public class Satellite extends Entity {
     protected double v;       // velocity
     protected double R0;      // altitude
     protected Com.Orbit orbit;
+    protected Com.Band band; //
+
+    public void setBand(Com.Band band) {
+        this.band = band;
+    }
+
+    public Com.Band getBand() {
+        return band;
+    }
 
     public Satellite() {
         amplifier = new Amplifier();
@@ -41,37 +50,35 @@ public class Satellite extends Entity {
         amplifier.setPower(200);
     }
 
-    public static void initSatellites(String[][] satellites) {
+    public static Hashtable<Com.Band, Vector<Satellite>> getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in a hashtable
-        Hashtable<Com.Band, Vector<Satellite>> bandSatellite = new Hashtable<Com.Band, Vector<Satellite>>();
+        Hashtable<Com.Band, Vector<Satellite>> bandSatellite
+                = new Hashtable<Com.Band, Vector<Satellite>>();
 
         // go through all bands
-        for (Com.Band band : Com.bands) {
+        for (int i = 1; i < satellites.length; i++) {
+            // get the band first
+            Com.Band band = Com.bandHash.get(satellites[i][5]);
 
-            // start at 1 since first line is heading (name, long, lat, eirp, gain, band
-            for (int i = 1; i < satellites.length; i++) {
+            // need to key on a correct band
+            if (band == null) {
+                System.out.println("Bad Data: " + satellites[i].toString());
+            } else {
+                // extract the band of the terminal
+                if (bandSatellite.get(band) == null) {
+                    bandSatellite.put(band, new Vector<Satellite>());
+                }
+
+                // get band using its string version as key (* matches all)
+                satelliteFields(satellites[i], bandSatellite.get(band));
 
                 // check the band from file and create entry in hash table
-                if (satellites[i][5].equalsIgnoreCase(String.valueOf(band))
-                        || satellites[i][5].equalsIgnoreCase("*")) {
-
-                    // get band using its string version as key (* matches all)
-                    Com.Band textBand = Com.bandHash.get(satellites[i][5]);
-                    if (bandSatellite.get(textBand) == null) {
-                        bandSatellite.put(textBand, new Vector());
-                        satelliteFields(satellites[i], bandSatellite.get(textBand));
-
-                    } else {
-                        satelliteFields(satellites[i], bandSatellite.get(textBand));
-                    }
-                    bandSatellite.get(textBand).add(new Satellite(satellites[i][0]));
-
-                }
-                System.out.println(satellites[i][0]);
+                System.out.println("Processed: " + satellites[i][0]);
             }
         }
+        return bandSatellite;
     }
 
     public static void satelliteFields(String[] fields, Vector<Satellite> vector) {
@@ -80,16 +87,17 @@ public class Satellite extends Entity {
 
         // fields are name, long, lat, eirp, gain, band
         satellite.setName(fields[0]);
-        satellite.setLatitude(Double.parseDouble(fields[1]));
-        satellite.setLongitude(Double.parseDouble(fields[2]));
+        satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
+        satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
         satellite.setEIRP(Double.parseDouble(fields[3]));
         satellite.setGain(Double.parseDouble(fields[4]));
+        if (!fields[5].equalsIgnoreCase("*")) {
+            satellite.setBand(Com.bandHash.get(fields[5]));
+            vector.add(satellite);
 
-        vector.add(satellite);
-
+        }
+        // eventually calculate this from Antenna and amplifier
     }
-
-    // eventually calculate this from Antenna and amplifier
 
     public double getEIRP() {
         return 55;

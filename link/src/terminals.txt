@@ -1,3 +1,4 @@
-name, latitude, longitude, antennaSize, amplifierPower
-Germantown, 39.1833, 77.2667, 4, 200
-Potomac, 39.0167, -77.2167, 1, 4
+name, latitude (degree), longitude (degree), antennaSize, amplifierPower,band
+Germantown,39.1833,-77.2667,4,200,KA
+Potomac,39.0167,-77.2167,1,4,KU
+NY,41.0167,-75.2167,1,4,C

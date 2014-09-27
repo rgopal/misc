@@ -32,53 +32,59 @@ public class Terminal extends Entity {
         this.band = band;
     }
 
-            public static void initTerminals(String[][] terminals) {
+    // read the terminals.txt file and return all data as a Hashtable, one Vector
+    // of terminals for each band.
+    public static Hashtable<Com.Band, Vector<Terminal>> getFromFile(String[][] terminals) {
 
         // terminals contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in a hashtable
-        Hashtable<Com.Band, Vector<Terminal>> bandTerminal = new Hashtable<Com.Band, Vector<Terminal>>();
+        Hashtable<Com.Band, Vector<Terminal>> bandTerminal
+                = new Hashtable<Com.Band, Vector<Terminal>>();
 
-        // go through all bands
-        for (Com.Band band : Com.bands) {
+        // start at 1 since first line is heading (name, long, lat, eirp, gain, band
+        for (int i = 1; i < terminals.length; i++) {
+            // get the band first
+            Com.Band band = Com.bandHash.get(terminals[i][5]);
 
-            // start at 1 since first line is heading (name, long, lat, eirp, gain, band
-            for (int i = 1; i < terminals.length; i++) {
+            // need to key on a correct band
+            if (band == null) {
+                System.out.println("Bad band: " + terminals[i].toString());
+
+            } else {
+                // extract the band of the terminal
+                if (bandTerminal.get(band) == null) {
+                    bandTerminal.put(band, new Vector<Terminal>());
+                }
+
+                // get band using its string version as key (* matches all)
+                terminalFields(terminals[i], bandTerminal.get(band));
 
                 // check the band from file and create entry in hash table
-                if (terminals[i][5].equalsIgnoreCase(String.valueOf(band))
-                        || terminals[i][5].equalsIgnoreCase("*")) {
-
-                    // get band using its string version as key (* matches all)
-                    Com.Band textBand = Com.bandHash.get(terminals[i][5]);
-                    if (bandTerminal.get(textBand) == null) {
-                        bandTerminal.put(textBand, new Vector());
-                        terminalFields(terminals[i], bandTerminal.get(textBand));
-
-                    } else {
-                        terminalFields(terminals[i], bandTerminal.get(textBand));
-                    }
-                    bandTerminal.get(textBand).add(new Terminal(terminals[i][0]));
-
-                }
-                System.out.println(terminals[i][0]);
+                System.out.println("Processed " + terminals[i][0]);
             }
         }
+
+        return bandTerminal;
     }
-  
+
     public static void terminalFields(String[] fields, Vector<Terminal> vector) {
         // vector has already been created for a band, just add entries
         Terminal terminal = new Terminal();
-        
-     // terminals in format name, latitude, longitude, antenna size, amplifier
+
+        // terminals in format name, latitude, longitude, antenna size, amplifier
+        // gain, and band
         terminal.setName(fields[0]);
-        terminal.setLatitude(Double.parseDouble(fields[1]));
-        terminal.setLongitude(Double.parseDouble(fields[2]));
+        terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
+        terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
+
+        terminal.setBand(Com.bandHash.get(fields[5]));
 
         vector.add(terminal);
 
     }
+
     public Com.Band getBand() {
         return band;
     }
@@ -91,15 +97,15 @@ public class Terminal extends Entity {
         // get current location
 
         try {
-        Location loc = LocationManager.getLocationManager().getCurrentLocation();
-        latitude = loc.getLatitude();
-        longitude = loc.getLongitude();
+            Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            latitude = loc.getLatitude();
+            longitude = loc.getLongitude();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-  
+
     }
- 
+
     public Terminal(String n) {
         super(n);
     }
@@ -159,7 +165,7 @@ public class Terminal extends Entity {
     }
 
     public Amplifier getAmplifier() {
-      return amplifier;
+        return amplifier;
     }
 
     /**

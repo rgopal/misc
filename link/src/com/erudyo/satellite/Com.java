@@ -47,7 +47,7 @@ public class Com {
 
     final public static Band[] bands;       // for user interface
     final public static BandParams[] bandParams; // min, fax, center frequencies
-    public static Hashtable<String, Band> bandHash; // lookup with string as key
+    final public static Hashtable<String, Band> bandHash; // lookup with string as key
 
     public final static double PI = Math.PI;
     public final static double C = 2.99792458E8;

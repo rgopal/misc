@@ -71,32 +71,34 @@ public class Link {
 
     private Selection selection;
 
-    private View[] views;
+    // Each band has a vector of terminals and satellites read from files
+    private Hashtable<Com.Band, Vector<Satellite>> bandSatellite;
+    private Hashtable<Com.Band, Vector<Terminal>> bandTerminal;
 
-    private String[][] satellites;
-    private String[][] terminals;
+    private View[] views;
 
     public void init(Object context) {
 
+        String[][] satellites;
+        String[][] terminals;
+
+        selection = new Selection();
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
             CSVParser parser = new CSVParser();
-            // first line is heading
+
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
-                Satellite.initSatellites(satellites);
+            bandSatellite = Satellite.getFromFile(satellites);
             is = Display.getInstance().getResourceAsStream(null, "/terminals.txt");
 
-            // terminals in format name, latitude, longitude, antenna size, amplifier
-            // first line is heading
             terminals = parser.parse(new InputStreamReader(is));
-            Terminal.initTerminals(terminals);
-            
-            // also read terminals and the current Tx and Rx terminal
+            bandTerminal = Terminal.getFromFile(terminals);
 
+            // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,8 +125,6 @@ public class Link {
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
-        selection = new Selection();
-
         views[0] = new HeadView();
         views[1] = new TxView(selection.gettXterminal());
         views[2] = new PathView(selection.getuLpath());
@@ -144,10 +144,10 @@ public class Link {
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         initBands(main);
-    
 
-        initViews(main);
-
+        for (final View view : views) {
+            initViews(main, view);
+        }
         Button b = new Button("Map");
 
         // get map form for selecting terminals and satellite
@@ -175,44 +175,46 @@ public class Link {
 
     }
 
-    public void initViews(Form main) {
+    public void initViews(Form main, final View view) {
+        
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
-        cnt.setLayout(new TableLayout(6, 5));
+        cnt.setLayout(new TableLayout(1, 5));
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
-            for (final View view : views) {
-                // create name, value, unit, and command components for each view
+            // create name, value, unit, and command components for each view
+            
+            // use fixed length for each column
+            Label n = new Label(view.getName().);
+            Label s = new Label(view.getSummary());
+            Label v = new Label(view.getValue());
+            Label u = new Label(view.getUnit());
+            Button c = new Button("->"); //view.getName());
+            cnt.addComponent(n);
+            cnt.addComponent(s);
+            cnt.addComponent(v);
+            cnt.addComponent(u);
+            cnt.addComponent(c);
 
-                Label n = new Label(view.getName());
-                Label s = new Label(view.getSummary());
-                Label v = new Label(view.getValue());
-                Label u = new Label(view.getUnit());
-                Button c = new Button("->"); //view.getName());
-                cnt.addComponent(n);
-                cnt.addComponent(s);
-                cnt.addComponent(v);
-                cnt.addComponent(u);
-                cnt.addComponent(c);
+            c.setIcon(cmdIcon);
 
-                c.setIcon(cmdIcon);
-
-                c.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        Form form = view.createView();
-                        BackCommand bc = new BackCommand();
-                        form.addCommand(bc);
-                        form.setBackCommand(bc);
-                        form.show();
-                    }
-                });
-            }
+            c.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    Form form = view.createView();
+                    BackCommand bc = new BackCommand();
+                    form.addCommand(bc);
+                    form.setBackCommand(bc);
+                    form.show();
+                }
+            });
         } catch (IOException ex) {
             ex.printStackTrace();
+
         }
-    }
+
+    } 
 
     public void initBands(Form main) {
         // band selection
@@ -252,7 +254,6 @@ public class Link {
         });
 
     }
-
 
     class BackCommand extends Command {
 
