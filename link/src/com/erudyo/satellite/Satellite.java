@@ -8,6 +8,7 @@ package com.erudyo.satellite;
 import com.codename1.util.MathUtil;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Random;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -18,6 +19,10 @@ public class Satellite extends Entity {
 
     private Antenna antenna;
     private Amplifier amplifier;
+
+    // all satellites stored in a Class level hash
+    static Hashtable<String, Satellite> satellites
+            = new Hashtable<String, Satellite>();
 
     private double EIRP;       // they should be calculated
     private double gain;       // they should be calculated
@@ -48,7 +53,18 @@ public class Satellite extends Entity {
         gain = 50;
 
         amplifier.setPower(200);
-    }
+
+        if (getName() == null) {
+            Random randomGenerator = new Random();
+
+            setName("S" + String.valueOf(randomGenerator.nextInt(10000)));
+        }
+   
+            // add the new Satellite instance to the Hashtable at the class level
+            Satellite.satellites.put(getName(), this);
+        }
+
+    
 
     public static Hashtable<Com.Band, Vector<Satellite>> getFromFile(String[][] satellites) {
 

@@ -5,6 +5,9 @@
  */
 package com.erudyo.satellite;
 
+import java.util.Hashtable;
+import java.util.Vector;
+
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
  *
@@ -20,6 +23,10 @@ public class Selection {
     private Satellite[] satellites;
     private Terminal[] terminals;
     private Com.Band band = Com.Band.KA;
+    
+        public static Hashtable<Com.Band, Vector<Satellite>> bandSatellite;
+    public static Hashtable<Com.Band, Vector<Terminal>> bandTerminal;
+   
 
     public Selection() {
 

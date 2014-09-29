@@ -10,6 +10,7 @@ import com.codename1.location.LocationManager;
 import com.codename1.maps.Coord;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -27,6 +28,10 @@ public class Terminal extends Entity {
     // eventually calculate these things
     private double EIRP;
     private double gain;
+
+    // all terminals stored in a Class level hash
+    static Hashtable<String, Terminal> terminals
+            = new Hashtable<String, Terminal>();
 
     public void setBand(Com.Band band) {
         this.band = band;
@@ -104,6 +109,14 @@ public class Terminal extends Entity {
             ex.printStackTrace();
         }
 
+        if (getName() == null) {
+            Random randomGenerator = new Random();
+
+            setName("T" + String.valueOf(randomGenerator.nextInt(10000)));
+        }
+
+        // add the new Satellite instance to the Hashtable at the class level
+        Terminal.terminals.put(getName(), this);
     }
 
     public Terminal(String n) {

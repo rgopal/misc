@@ -66,8 +66,7 @@ public class Link {
     private Selection selection;
 
     // Each band has a vector of terminals and satellites read from files
-    private Hashtable<Com.Band, Vector<Satellite>> bandSatellite;
-    private Hashtable<Com.Band, Vector<Terminal>> bandTerminal;
+
 
     private View[] views;
 
@@ -86,11 +85,11 @@ public class Link {
 
             InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
             satellites = parser.parse(new InputStreamReader(is));
-            bandSatellite = Satellite.getFromFile(satellites);
+            Selection.bandSatellite = Satellite.getFromFile(satellites);
             is = Display.getInstance().getResourceAsStream(null, "/terminals.txt");
 
             terminals = parser.parse(new InputStreamReader(is));
-            bandTerminal = Terminal.getFromFile(terminals);
+            Selection.bandTerminal = Terminal.getFromFile(terminals);
 
             // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
