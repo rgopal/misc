@@ -11,7 +11,9 @@ package com.erudyo.satellite;
  * @author rgopal
  */
 import com.codename1.ui.Container;
+import com.codename1.ui.Component;
 import com.codename1.ui.Form;
+import com.codename1.ui.Label;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 import java.io.IOException;
@@ -28,6 +30,12 @@ public abstract class View {
     public String getName () {
         return name;
     }
+    // some could have 
+    public  Component getWidget() {
+        return (new Label (getName()));
+    }
+    
+     
     public View(String name) {
         this.name = name;
     }
@@ -38,6 +46,10 @@ public abstract class View {
     public View () {
         
     }
+    
+    // this will mostly get selection and then respective views will select
+    // the appropriate components (satellite, rx, or tx etc.
+    
     public View (Object obj) {
         
     }

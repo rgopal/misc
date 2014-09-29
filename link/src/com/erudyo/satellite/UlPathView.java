@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.erudyo.satellite;
 
 /**
@@ -15,14 +10,14 @@ import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 
-public class PathView extends View {
+public class UlPathView extends View {
 static Path  path;
     
-    public PathView () {
+    public UlPathView () {
         
     }
-    public PathView(Path path) {
-      this.path = path;
+    public UlPathView(Selection selection) {
+      this.path = selection.getuLpath();
       this.name = path.getName();
       this.value = "-200";
       this.unit = "dB";

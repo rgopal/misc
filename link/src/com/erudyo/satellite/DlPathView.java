@@ -14,38 +14,33 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
-import java.util.Hashtable;
-import java.util.Vector;
 
-public class SatelliteView extends View {
-    private Satellite satellite;
-
-    public SatelliteView () {
+public class DlPathView extends View {
+static Path  path;
+    
+    public DlPathView () {
         
     }
-    public SatelliteView(Selection selection) {
-        this.satellite = selection.getSatellite();
-        this.name = "Satellite";
-        this.summary = String.valueOf((int) satellite.getAntenna().getGain()) + "K " +
-                    String.valueOf((int) satellite.getEIRP()) + "dbM ";
-        this.value = "sat";
-        this.unit = "dB";
+    public DlPathView(Selection selection) {
+      this.path = selection.getuLpath();
+      this.name = path.getName();
+      this.value = "-200";
+      this.unit = "dB";
+      
     }
 
-   
     public String getDisplayName() {
         return name;
     }
- 
 
     public Form createView() {
-        Form sat = new Form(getName());
+       
+        Form path = new Form(this.path.getName());
 
-        sat.setScrollable(
+        path.setScrollable(
                 false);
             // override pointerPressed to locate new positions 
 
-      
-        return sat;
+        return path;
     }
 }

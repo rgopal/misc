@@ -24,8 +24,8 @@ public class TxView extends View {
     }
 
 
-    public TxView(Terminal terminal) {
-        this.terminal = terminal;
+    public TxView(Selection selection) {
+        this.terminal = selection.gettXterminal();
         this.name = "Tx";
         this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter()) +
                        "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";

@@ -2,6 +2,10 @@ package com.erudyo.satellite;
 // this is main
 
 import com.codename1.components.InfiniteProgress;
+import com.codename1.components.ShareButton;
+import com.codename1.components.WebBrowser;
+import com.codename1.facebook.ui.LikeButton;
+import com.codename1.io.CSVParser;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkManager;
@@ -16,28 +20,29 @@ import com.codename1.maps.layers.LinesLayer;
 import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
-import com.codename1.facebook.ui.LikeButton;
-import com.codename1.components.ShareButton;
 import com.codename1.ui.Button;
-import java.util.Hashtable;
-import java.util.Vector;
-import com.codename1.ui.list.ListModel;
-import com.codename1.ui.spinner.GenericSpinner;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Command;
+import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Display;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
-import com.codename1.ui.ComboBox;
+import com.codename1.ui.Label;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.events.DataChangedListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
-import com.codename1.ui.table.TableLayout;
-import com.codename1.ui.plaf.UIManager;
-import com.codename1.ui.util.Resources;
 import com.codename1.ui.list.DefaultListModel;
-import com.codename1.ui.events.DataChangedListener;
+import com.codename1.ui.list.ListModel;
+import com.codename1.ui.plaf.UIManager;
+import com.codename1.ui.spinner.GenericSpinner;
+import com.codename1.ui.table.DefaultTableModel;
+import com.codename1.ui.table.Table;
+import com.codename1.ui.table.TableLayout;
+import com.codename1.ui.util.Resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,17 +53,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
-import com.codename1.io.CSVParser;
-import com.codename1.ui.Display;
-import com.codename1.ui.Form;
-import com.codename1.ui.Label;
-import com.codename1.ui.plaf.UIManager;
-import com.codename1.ui.util.Resources;
-import com.codename1.ui.table.Table;
-import com.codename1.ui.table.DefaultTableModel;
-import com.codename1.components.WebBrowser;
-import java.io.IOException;
 
 public class Link {
 
@@ -126,11 +120,11 @@ public class Link {
         // else default values are used.
 
         views[0] = new HeadView();
-        views[1] = new TxView(selection.gettXterminal());
-        views[2] = new PathView(selection.getuLpath());
-        views[3] = new SatelliteView(selection.getSatellite());
-        views[4] = new PathView(selection.getdLpath());
-        views[5] = new RxView(selection.getrXterminal());
+        views[1] = new TxView(selection);
+        views[2] = new DlPathView(selection);
+        views[3] = new SatelliteView(selection);
+        views[4] = new UlPathView(selection);
+        views[5] = new RxView(selection);
 
     }
 
@@ -143,10 +137,16 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
-        initBands(main);
-
+        initBands(main); 
+        
+        Container cnt = new Container(new BorderLayout());
+        main.addComponent(cnt);
+        
+        // there are six items in Views.  Hardcoded table.
+        cnt.setLayout(new TableLayout(6, 5));
+        
         for (final View view : views) {
-            initViews(main, view);
+            initViews(view, cnt);
         }
         Button b = new Button("Map");
 
@@ -175,11 +175,8 @@ public class Link {
 
     }
 
-    public void initViews(Form main, final View view) {
-        
-        Container cnt = new Container(new BorderLayout());
-        main.addComponent(cnt);
-        cnt.setLayout(new TableLayout(1, 5));
+    public void initViews(final View view, Container cnt) {
+       
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
@@ -187,10 +184,12 @@ public class Link {
             // create name, value, unit, and command components for each view
             
             // use fixed length for each column
-            Label n = new Label(view.getName().);
+            Component n = view.getWidget();
             Label s = new Label(view.getSummary());
             Label v = new Label(view.getValue());
             Label u = new Label(view.getUnit());
+            
+            
             Button c = new Button("->"); //view.getName());
             cnt.addComponent(n);
             cnt.addComponent(s);
@@ -223,7 +222,7 @@ public class Link {
         topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(topLine);
 
-        final Label band = new Label("KA data");
+        final Label band = new Label();
         final ComboBox spin = new ComboBox();
         topLine.addComponent(spin);
         topLine.addComponent(band);
