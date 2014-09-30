@@ -143,6 +143,7 @@ public class Link {
         cnt.setLayout(new TableLayout(6, 5));
 
         for (final View view : views) {
+           
             initViews(view, cnt, selection);
         }
         Button b = new Button("Map");
@@ -182,8 +183,11 @@ public class Link {
             Component n = view.getWidget(selection);
             Component s = view.getSubWidget(selection);
 
-            Label v = new Label(view.getValue());
-            Label u = new Label(view.getUnit());
+            // all these widgets have to be remembered by respective views 
+            
+            Component v = view.getLabel(selection);
+            Component u = view.getSubLabel(selection);
+           
 
             Button c = new Button("->"); //view.getName());
             cnt.addComponent(n);
@@ -280,7 +284,7 @@ public class Link {
             System.out.println("Link: Can't create DefaultListModel for satellite band "
                     + selection.getBand());
         } else {
-            selection.getSatelliteView().setModel(model);
+            selection.getSatelliteView().spin.setModel(model);
         }
 
      
@@ -310,7 +314,7 @@ public class Link {
             System.out.println("Link: Can't create DefaultListModel for Rx terminal band "
                     + selection.getBand());
         } else {
-            selection.getRxView().setModel(model);
+            selection.getRxView().spin.setModel(model);
         }
 
      
@@ -340,7 +344,7 @@ public class Link {
             System.out.println("Link: Can't create DefaultListModel for Tx terminal band "
                     + selection.getBand());
         } else {
-            selection.getTxView().setModel(model);
+            selection.getTxView().spin.setModel(model);
         }
 
      

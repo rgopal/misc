@@ -25,14 +25,18 @@ import com.codename1.ui.util.Resources;
 public class RxView extends View {
 
     private Terminal terminal;
+    public ComboBox spin;
 
+    public RxView() {
+
+    }
     public Component getWidget(final Selection selection) {
         Label l = new Label(getName());
 
         // get selected band
         RfBand.Band band = selection.getBand();
 
-        final ComboBox spin = new ComboBox();
+        final ComboBox combo = new ComboBox();
 
         // bandTerminal has all terminals, so get the band specific list
         if (Selection.bandTerminal.get(band) == null) {
@@ -44,17 +48,17 @@ public class RxView extends View {
         ListModel model = new DefaultListModel(Selection.bandTerminal.get(band));
 
         // show the selected terminal
-        int index = spin.getSelectedIndex();
+        int index = combo.getSelectedIndex();
 
-        spin.setModel(model);
+        combo.setModel(model);
 
         // Band combobox should be able to change this
-        selection.setRxView(spin);
+        selection.getRxView().spin = combo;
 
-        spin.addActionListener(new ActionListener() {
+        combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = spin.getSelectedIndex();
+                int index = combo.getSelectedIndex();
 
                 // get terminal instance from index and set the selection
                 selection.setRx(Terminal.indexTerminal.toArray(new Terminal[0])[index]);
@@ -64,7 +68,7 @@ public class RxView extends View {
         });
 
         // combo box created so return it
-        return spin;
+        return combo;
     }
 
     public String getDisplayName() {

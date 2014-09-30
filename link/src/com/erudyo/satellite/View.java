@@ -26,6 +26,7 @@ public abstract class View {
     protected String summary;
     protected String value;
     protected String unit;
+    
 
     public String getName () {
         return name;
@@ -38,6 +39,15 @@ public abstract class View {
     // some could have no second widget so just summary
     public Component getSubWidget(Selection selection) {
         return (new Label (getSummary()));
+    }
+    
+     public  Component getLabel(Selection selection) {
+        return (new Label (getValue()));
+    }
+    
+    // some could have no second widget so just summary
+    public Component getSubLabel(Selection selection) {
+        return (new Label (getUnit()));
     }
      
     public View(String name) {

@@ -27,6 +27,9 @@ import java.util.Vector;
 
 public class SatelliteView extends View {
     private Satellite satellite;
+    public ComboBox spin;
+    private Label label;
+    private Label subLabel;
 
     public SatelliteView () {
         
@@ -42,19 +45,15 @@ public class SatelliteView extends View {
         this.unit = "dB";
     }
     
-    // overload getWidget to create a Combobox driven by selected band
-    
-
+    // override getWidget to create a Combobox driven by selected band
     public Component getWidget(final Selection selection) {
          Label l = new Label(getName());
          
          // get selected band
          RfBand.Band band = selection.getBand();
         
-       
-
-        final ComboBox spin = new ComboBox();
-       
+ 
+        final ComboBox combo = new ComboBox();      
 
         // indexSatellite has all satellites, so get the band specific list
         
@@ -68,30 +67,42 @@ public class SatelliteView extends View {
                 (Selection.bandSatellite.get(band));
         
         // show the selected satellite
-        int index = spin.getSelectedIndex();
+        int index = combo.getSelectedIndex();
         
-        spin.setModel(model);
+        combo.setModel(model);
         
         // Band combobox should be able to change this
-        
-        selection.setSatelliteView (spin);
+        this.spin = combo;
+       
+        // selection.setSatelliteView (spin);
 
-        spin.addActionListener(new ActionListener() {
+        combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = spin.getSelectedIndex();
+                int index = combo.getSelectedIndex();
                 
                 // get satellite instance from index and set the selection
                 selection.setSatellite(Satellite.indexSatellite.toArray(new 
                         Satellite[0])[index]);
                
             
-                System.out.println(spin.getSelectedItem());
+                System.out.println(combo.getSelectedItem());
             }
         });
 
+        // update other fields which are displayed, based on current selection
+        updateValues(selection);
+      
+        
         // combo box created so return it
         return spin;
+    }
+    
+    // update from the current selection of the Satellite
+    public void updateValues(Selection selection) {
+          this.summary = Com.shortText(selection.getSatellite().getLongitude());
+        this.value = Com.shortText(selection.getSatellite().getEIRP());
+        this.unit = Com.shortText(selection.getSatellite().getGain());
     }
    
     public String getDisplayName() {

@@ -25,6 +25,7 @@ import com.codename1.ui.util.Resources;
 public class TxView extends View {
 
     Terminal terminal;
+    public ComboBox spin;
     
     public TxView() {
 
@@ -50,7 +51,7 @@ public class TxView extends View {
         
        
 
-        final ComboBox spin = new ComboBox();
+        final ComboBox combo = new ComboBox();
        
 
         // indexSatellite has all satellites, so get the band specific list
@@ -65,18 +66,18 @@ public class TxView extends View {
                 (Selection.bandTerminal.get(band));
         
         // show the selected terminal
-        int index = spin.getSelectedIndex();
+        int index = combo.getSelectedIndex();
         
-        spin.setModel(model);
+        combo.setModel(model);
         
         // Band combobox should be able to change this
         
-        selection.setTxView (spin);
+        selection.getTxView().spin = combo;
 
-        spin.addActionListener(new ActionListener() {
+        combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = spin.getSelectedIndex();
+                int index = combo.getSelectedIndex();
                 
                 // get terminal instance from index and set the selection
                 selection.setTx(Terminal.indexTerminal.toArray(new 
@@ -88,7 +89,7 @@ public class TxView extends View {
         });
 
         // combo box created so return it
-        return spin;
+        return combo;
     }
     public String getDisplayName() {
         return name;
