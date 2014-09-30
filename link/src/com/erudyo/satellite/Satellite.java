@@ -43,6 +43,20 @@ public class Satellite extends Entity {
     protected double R0;      // altitude
     protected Com.Orbit orbit;
     protected RfBand.Band band; //
+    
+    private static int items = 0;
+    private int index;
+    
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public void setBand(RfBand.Band band) {
         this.band = band;
@@ -75,8 +89,9 @@ public class Satellite extends Entity {
         // Add new object instance to the array list (all satellites)
         indexSatellite.add(this);
         
-        // increment index
-        this.setIndex(this.getIndex() + 1);
+        index = items;
+        items++;        // increment number of instances
+     
     }
 
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {

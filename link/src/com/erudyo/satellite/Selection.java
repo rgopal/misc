@@ -8,6 +8,7 @@ package com.erudyo.satellite;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.ArrayList;
+import com.codename1.ui.ComboBox;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -23,6 +24,8 @@ public class Selection {
     private Path dLpath;
     private Satellite[] satellites;
     private Terminal[] terminals;
+    private ComboBox satelliteView;
+    
     private RfBand.Band band = RfBand.Band.KA;
 
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
@@ -54,6 +57,14 @@ public class Selection {
         dLpath.setS(satellite);
         dLpath.setT(rXterminal);
 
+    }
+    
+    public ComboBox getSatelliteView() {
+        return satelliteView;
+    }
+    
+    public void setSatelliteView (ComboBox c) {
+        this.satelliteView = c;
     }
 
     public RfBand.Band getBand () {

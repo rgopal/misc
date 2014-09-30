@@ -70,9 +70,11 @@ public class SatelliteView extends View {
         // show the selected satellite
         int index = spin.getSelectedIndex();
         
-
-
         spin.setModel(model);
+        
+        // Band combobox should be able to change this
+        
+        selection.setSatelliteView (spin);
 
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

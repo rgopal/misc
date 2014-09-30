@@ -14,7 +14,9 @@ public class Entity {
     protected String name;
     protected String description;
     protected String summary;
-    private int index = 0;
+    
+    // static variables are shared by all sub-classes so have individual copies
+    // protected static int index = 0;
 
     /**
      * @return the name
@@ -72,14 +74,5 @@ public class Entity {
     /**
      * @return the index
      */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * @param index the index to set
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
+    
 }

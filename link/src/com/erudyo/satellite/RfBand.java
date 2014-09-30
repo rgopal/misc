@@ -24,13 +24,33 @@ public class RfBand extends Entity {
     public double highFrequency;
     public double centerFrequency;
     public Band band;
+    
+    // items is the number of objects in the class
+    private static int items = 0;
+    
+    // index stores the location of instance in array indexRfBand
+    private int index;
+    
+    
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
 
     // lookup by String name with class level table
     final public static Hashtable<String, RfBand> rFbandHash
             = new Hashtable<String, RfBand>();
-    
+
     // lookup by index with class level vector
-    final public static ArrayList<RfBand> indexRfBand = new ArrayList<RfBand>();
+    final public static ArrayList<RfBand> indexRfBand 
+            = new ArrayList<RfBand>();
 
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
@@ -75,7 +95,7 @@ public class RfBand extends Entity {
         r = new RfBand(Band.C, "C", C_LO, C_HI);
         r = new RfBand(Band.X, "X", X_LO, X_HI);
         r = new RfBand(Band.KU, "KU", KU_LO, KU_HI);
-        r = new RfBand(Band.KA,"KA", KA_LO, KA_HI);
+        r = new RfBand(Band.KA, "KA", KA_LO, KA_HI);
     }
 
     public RfBand(Band band, String name, double lo, double hi) {
@@ -89,18 +109,21 @@ public class RfBand extends Entity {
         // add the new Satellite instance to the Hashtable at the class level
         RfBand.rFbandHash.put(getName(), this);
 
-        // Add new object instance to the array list
+        // Add new object instance to the current slot in array list of bands
         indexRfBand.add(this);
         
+        this.index = items;
+
         // increment index
-        this.setIndex(this.getIndex() + 1);
+        items = items + 1;
 
     }
 
-
-    public String toString () {
+   
+    public String toString() {
         return name;
     }
+
     public static Band findBand(double f) {
         Band band = Band.C;
         if (f >= C_DL_LO && f <= C_DL_HI) {
@@ -181,7 +204,8 @@ public class RfBand extends Entity {
     public RfBand() {
 
     }
-    public Band getBand () {
+
+    public Band getBand() {
         return band;
     }
 }

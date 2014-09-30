@@ -134,7 +134,7 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
-        initBands(main);
+        initBands(main, selection);
 
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
@@ -181,7 +181,7 @@ public class Link {
             // use fixed length for each column
             Component n = view.getWidget(selection);
             Component s = view.getSubWidget(selection);
-            
+
             Label v = new Label(view.getValue());
             Label u = new Label(view.getUnit());
 
@@ -210,7 +210,7 @@ public class Link {
 
     }
 
-    public void initBands(Form main) {
+    public void initBands(Form main, final Selection selection) {
         // band selection
 
         Container topLine = new Container();
@@ -224,13 +224,13 @@ public class Link {
 
         ListModel model = new DefaultListModel(RfBand.indexRfBand);
         int index = spin.getSelectedIndex();
-        
+
         // make sure to add new RfBand[] so that JVM knows to downcast Object
         selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
-      
+
         // note that only a String has substring functions
-        band.setText((Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency /1E9))
-                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency /1E9))
+        band.setText((Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
+                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
                 + " GHz");
 
         spin.setModel(model);
@@ -239,10 +239,41 @@ public class Link {
             public void actionPerformed(ActionEvent evt) {
 
                 int index = spin.getSelectedIndex();
-                selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
-         
-                // fire an event to change the satellite selection
+                selection.setBand(RfBand.indexRfBand.toArray(
+                        new RfBand[0])[index].getBand());
+
+                // use global variable to change ListModel of satellite combo
+                if (Selection.bandSatellite.get(selection.getBand()) == null) {
+
+                    System.out.println("link: Can't get bandSatellite for band "
+                            + selection.getBand());
+                    // Force it to KA which hopefully works
+                    selection.setBand(RfBand.Band.KA);
+
+                    // get index of KA
+                    int i;
+                    
                 
+                    
+                    i = RfBand.rFbandHash.get("KA").getIndex();
+
+                       
+                    index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+                       
+
+                    // change the current Combobox entry
+                    spin.setSelectedIndex(index);
+                }
+                DefaultListModel model = new DefaultListModel(
+                        (Selection.bandSatellite.get(selection.getBand()).toArray(new Satellite[0])));
+
+                if (model == null) {
+                    System.out.println("Link: Can't create DefaultListModel for band "
+                            + selection.getBand());
+                } else {
+                    selection.getSatelliteView().setModel(model);
+                }
+
                 band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
                         + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
                         + " GHz");

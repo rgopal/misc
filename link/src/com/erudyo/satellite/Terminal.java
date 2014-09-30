@@ -28,10 +28,29 @@ public class Terminal extends Entity {
     // eventually calculate these things
     private double EIRP;
     private double gain;
+    
+    private static int items = 0;
+    private int index;
+    
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     // all terminals stored in a Class level hash
-    static Hashtable<String, Terminal> terminals
+    static Hashtable<String, Terminal> terminalHash
             = new Hashtable<String, Terminal>();
+    
+    
+    // lookup by index with class level vector
+    final public static ArrayList<Terminal> indexTerminal
+            = new ArrayList<Terminal>();
 
     public void setBand(RfBand.Band band) {
         this.band = band;
@@ -115,8 +134,18 @@ public class Terminal extends Entity {
             setName("T" + String.valueOf(randomGenerator.nextInt(10000)));
         }
 
-        // add the new Satellite instance to the Hashtable at the class level
-        Terminal.terminals.put(getName(), this);
+        
+         // add the new Terminal instance to the Hashtable at the class level
+        Terminal.terminalHash.put(getName(), this);
+        
+
+        // Add new object instance to the array list (all satellites)
+        indexTerminal.add(this);
+        
+        index = items;
+        items++;        // increment number of instances
+     
+        
     }
 
     public Terminal(String n) {
