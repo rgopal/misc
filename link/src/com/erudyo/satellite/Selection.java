@@ -25,6 +25,8 @@ public class Selection {
     private Satellite[] satellites;
     private Terminal[] terminals;
     private ComboBox satelliteView;
+    private ComboBox tXview;
+    private ComboBox rXview;
     
     private RfBand.Band band = RfBand.Band.KA;
 
@@ -65,6 +67,23 @@ public class Selection {
     
     public void setSatelliteView (ComboBox c) {
         this.satelliteView = c;
+    }
+    
+     
+      public ComboBox getRxView() {
+        return rXview;
+    }
+    
+    public void setRxView (ComboBox c) {
+        this.rXview = c;
+    }
+
+      public ComboBox getTxView() {
+        return tXview;
+    }
+    
+    public void setTxView (ComboBox c) {
+        this.tXview = c;
     }
 
     public RfBand.Band getBand () {
@@ -115,7 +134,27 @@ public class Selection {
     public void setSatellite(Satellite satellite) {
         this.satellite = satellite;
     }
+     public Terminal getTx() {
+        return tXterminal;
+    }
 
+    /**
+     * @param satellite the satellite to set
+     */
+    public void setTx(Terminal terminal) {
+        this.tXterminal = terminal;
+    }
+
+      public Terminal getRx() {
+        return rXterminal;
+    }
+
+    /**
+     * @param satellite the satellite to set
+     */
+    public void setRx(Terminal terminal) {
+        this.rXterminal = terminal;
+    }
     /**
      * @return the uLpath
      */

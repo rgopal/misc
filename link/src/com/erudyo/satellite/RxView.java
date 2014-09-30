@@ -10,18 +10,62 @@ package com.erudyo.satellite;
  *
  * @author rgopal
  */
+import com.codename1.ui.ComboBox;
+import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
+import com.codename1.ui.Label;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.list.DefaultListModel;
+import com.codename1.ui.list.ListModel;
 import com.codename1.ui.util.Resources;
 
 public class RxView extends View {
 
     private Terminal terminal;
 
- 
-       
- 
+    public Component getWidget(final Selection selection) {
+        Label l = new Label(getName());
+
+        // get selected band
+        RfBand.Band band = selection.getBand();
+
+        final ComboBox spin = new ComboBox();
+
+        // bandTerminal has all terminals, so get the band specific list
+        if (Selection.bandTerminal.get(band) == null) {
+            System.out.println("Can't find terminals for band " + band);
+            return l;
+        }
+
+        // create model for all terminals of selected band
+        ListModel model = new DefaultListModel(Selection.bandTerminal.get(band));
+
+        // show the selected terminal
+        int index = spin.getSelectedIndex();
+
+        spin.setModel(model);
+
+        // Band combobox should be able to change this
+        selection.setRxView(spin);
+
+        spin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+
+                int index = spin.getSelectedIndex();
+
+                // get terminal instance from index and set the selection
+                selection.setRx(Terminal.indexTerminal.toArray(new Terminal[0])[index]);
+
+                // System.out.println(spin.getSelectedItem());
+            }
+        });
+
+        // combo box created so return it
+        return spin;
+    }
 
     public String getDisplayName() {
         return name;
@@ -30,9 +74,9 @@ public class RxView extends View {
     public RxView(Selection selection) {
         this.terminal = selection.getrXterminal();
         this.name = "Rx";
-        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter()) +
-                       "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
-         this.value = "ter";
+        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter())
+                + "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
+        this.value = "ter";
         this.unit = "dB";
     }
 

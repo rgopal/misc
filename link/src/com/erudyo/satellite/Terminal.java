@@ -35,6 +35,10 @@ public class Terminal extends Entity {
     public int getIndex() {
         return index;
     }
+    
+    public String toString() {
+        return name;
+    }
 
     /**
      * @param index the index to set

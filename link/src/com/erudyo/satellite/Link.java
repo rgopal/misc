@@ -241,46 +241,109 @@ public class Link {
                 int index = spin.getSelectedIndex();
                 selection.setBand(RfBand.indexRfBand.toArray(
                         new RfBand[0])[index].getBand());
-
-                // use global variable to change ListModel of satellite combo
-                if (Selection.bandSatellite.get(selection.getBand()) == null) {
-
-                    System.out.println("link: Can't get bandSatellite for band "
-                            + selection.getBand());
-                    // Force it to KA which hopefully works
-                    selection.setBand(RfBand.Band.KA);
-
-                    // get index of KA
-                    int i;
-                    
-                
-                    
-                    i = RfBand.rFbandHash.get("KA").getIndex();
-
-                       
-                    index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
-                       
-
-                    // change the current Combobox entry
-                    spin.setSelectedIndex(index);
-                }
-                DefaultListModel model = new DefaultListModel(
-                        (Selection.bandSatellite.get(selection.getBand()).toArray(new Satellite[0])));
-
-                if (model == null) {
-                    System.out.println("Link: Can't create DefaultListModel for band "
-                            + selection.getBand());
-                } else {
-                    selection.getSatelliteView().setModel(model);
-                }
-
-                band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
-                        + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
-                        + " GHz");
-                System.out.println(spin.getSelectedItem());
+   band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
+                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
+                + " GHz");
+        System.out.println(spin.getSelectedItem());
+                comboSatellite(selection, spin);
+                comboTx(selection, spin);
+                comboRx(selection, spin);
             }
         });
 
+    }
+
+    public void comboSatellite(final Selection selection, ComboBox spin) {
+        // use global variable to change ListModel of satellite combo
+        if (Selection.bandSatellite.get(selection.getBand()) == null) {
+
+            System.out.println("link: Can't get bandSatellite for band "
+                    + selection.getBand());
+            // Force it to KA which hopefully works
+            selection.setBand(RfBand.Band.KA);
+
+            // get index of KA
+            int i;
+
+            i = RfBand.rFbandHash.get("KA").getIndex();
+
+            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+
+            // change the current Combobox entry
+            spin.setSelectedIndex(index);
+        }
+        DefaultListModel model = new DefaultListModel(
+                (Selection.bandSatellite.get(selection.getBand()).toArray(
+                        new Satellite[0])));
+
+        if (model == null) {
+            System.out.println("Link: Can't create DefaultListModel for satellite band "
+                    + selection.getBand());
+        } else {
+            selection.getSatelliteView().setModel(model);
+        }
+
+     
+    }
+    public void comboRx(final Selection selection, ComboBox spin) {
+        // use global variable to change ListModel of satellite combo
+        if (Selection.bandTerminal.get(selection.getBand()) == null) {
+
+            // Force it to KA which hopefully works
+            selection.setBand(RfBand.Band.KA);
+
+            // get index of KA
+            int i;
+
+            i = RfBand.rFbandHash.get("KA").getIndex();
+
+            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+
+            // change the current Combobox entry
+            spin.setSelectedIndex(index);
+        }
+        DefaultListModel model = new DefaultListModel(
+                (Selection.bandTerminal.get(selection.getBand()).toArray(
+                        new Terminal[0])));
+
+        if (model == null) {
+            System.out.println("Link: Can't create DefaultListModel for Rx terminal band "
+                    + selection.getBand());
+        } else {
+            selection.getRxView().setModel(model);
+        }
+
+     
+    }
+    public void comboTx(final Selection selection, ComboBox spin) {
+        // use global variable to change ListModel of satellite combo
+        if (Selection.bandTerminal.get(selection.getBand()) == null) {
+
+            // Force it to KA which hopefully works
+            selection.setBand(RfBand.Band.KA);
+
+            // get index of KA
+            int i;
+
+            i = RfBand.rFbandHash.get("KA").getIndex();
+
+            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+
+            // change the current Combobox entry
+            spin.setSelectedIndex(index);
+        }
+        DefaultListModel model = new DefaultListModel(
+                (Selection.bandTerminal.get(selection.getBand()).toArray(
+                        new Terminal[0])));
+
+        if (model == null) {
+            System.out.println("Link: Can't create DefaultListModel for Tx terminal band "
+                    + selection.getBand());
+        } else {
+            selection.getTxView().setModel(model);
+        }
+
+     
     }
 
     class BackCommand extends Command {
