@@ -89,14 +89,14 @@ public class Path extends Entity {
     /**
      * @return the band
      */
-    public Com.Band getBand() {
+    public RfBand.Band getBand() {
         return band;
     }
 
     /**
      * @param band the band to set
      */
-    public void setBand(Com.Band band) {
+    public void setBand(RfBand.Band band) {
         this.band = band;
     }
 
@@ -105,7 +105,7 @@ public class Path extends Entity {
         NE, SE, NW, SW, N, S, E, W
     };
     private Satellite s;
-    private Com.Band band;
+    private RfBand.Band band;
     private Terminal t;
     private double azimuth;
     private double elevation;

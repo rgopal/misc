@@ -11,7 +11,7 @@ import com.codename1.maps.Coord;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Random;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -22,7 +22,7 @@ public class Terminal extends Entity {
 
     private double longitude;     //longitude
     private double latitude;       //latitude
-    private Com.Band band;
+    private RfBand.Band band;
     private Antenna antenna;
     private Amplifier amplifier;
     // eventually calculate these things
@@ -33,23 +33,23 @@ public class Terminal extends Entity {
     static Hashtable<String, Terminal> terminals
             = new Hashtable<String, Terminal>();
 
-    public void setBand(Com.Band band) {
+    public void setBand(RfBand.Band band) {
         this.band = band;
     }
 
-    // read the terminals.txt file and return all data as a Hashtable, one Vector
+    // read the terminals.txt file and return all data as a Hashtable, one ArrayList
     // of terminals for each band.
-    public static Hashtable<Com.Band, Vector<Terminal>> getFromFile(String[][] terminals) {
+    public static Hashtable<RfBand.Band, ArrayList<Terminal>> getFromFile(String[][] terminals) {
 
         // terminals contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in a hashtable
-        Hashtable<Com.Band, Vector<Terminal>> bandTerminal
-                = new Hashtable<Com.Band, Vector<Terminal>>();
+        Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal
+                = new Hashtable<RfBand.Band, ArrayList<Terminal>>();
 
         // start at 1 since first line is heading (name, long, lat, eirp, gain, band
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
-            Com.Band band = Com.bandHash.get(terminals[i][5]);
+            RfBand.Band band = RfBand.rFbandHash.get(terminals[i][5]).getBand();
 
             // need to key on a correct band
             if (band == null) {
@@ -58,7 +58,7 @@ public class Terminal extends Entity {
             } else {
                 // extract the band of the terminal
                 if (bandTerminal.get(band) == null) {
-                    bandTerminal.put(band, new Vector<Terminal>());
+                    bandTerminal.put(band, new ArrayList<Terminal>());
                 }
 
                 // get band using its string version as key (* matches all)
@@ -72,7 +72,7 @@ public class Terminal extends Entity {
         return bandTerminal;
     }
 
-    public static void terminalFields(String[] fields, Vector<Terminal> vector) {
+    public static void terminalFields(String[] fields, ArrayList<Terminal> vector) {
         // vector has already been created for a band, just add entries
         Terminal terminal = new Terminal();
 
@@ -84,13 +84,13 @@ public class Terminal extends Entity {
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
 
-        terminal.setBand(Com.bandHash.get(fields[5]));
+        terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
 
         vector.add(terminal);
 
     }
 
-    public Com.Band getBand() {
+    public RfBand.Band getBand() {
         return band;
     }
 

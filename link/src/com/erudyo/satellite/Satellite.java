@@ -7,6 +7,7 @@ package com.erudyo.satellite;
 
 import com.codename1.util.MathUtil;
 import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Random;
 
@@ -34,13 +35,13 @@ public class Satellite extends Entity {
     protected double v;       // velocity
     protected double R0;      // altitude
     protected Com.Orbit orbit;
-    protected Com.Band band; //
+    protected RfBand.Band band; //
 
-    public void setBand(Com.Band band) {
+    public void setBand(RfBand.Band band) {
         this.band = band;
     }
 
-    public Com.Band getBand() {
+    public RfBand.Band getBand() {
         return band;
     }
 
@@ -66,17 +67,17 @@ public class Satellite extends Entity {
 
     
 
-    public static Hashtable<Com.Band, Vector<Satellite>> getFromFile(String[][] satellites) {
+    public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in a hashtable
-        Hashtable<Com.Band, Vector<Satellite>> bandSatellite
-                = new Hashtable<Com.Band, Vector<Satellite>>();
+        Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite
+                = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
         // go through all bands
         for (int i = 1; i < satellites.length; i++) {
             // get the band first
-            Com.Band band = Com.bandHash.get(satellites[i][5]);
+            RfBand.Band band = RfBand.rFbandHash.get(satellites[i][5]).getBand();
 
             // need to key on a correct band
             if (band == null) {
@@ -84,7 +85,7 @@ public class Satellite extends Entity {
             } else {
                 // extract the band of the terminal
                 if (bandSatellite.get(band) == null) {
-                    bandSatellite.put(band, new Vector<Satellite>());
+                    bandSatellite.put(band, new ArrayList<Satellite>());
                 }
 
                 // get band using its string version as key (* matches all)
@@ -97,7 +98,7 @@ public class Satellite extends Entity {
         return bandSatellite;
     }
 
-    public static void satelliteFields(String[] fields, Vector<Satellite> vector) {
+    public static void satelliteFields(String[] fields, ArrayList<Satellite> vector) {
         // vector has already been created for a band, just add entries
         Satellite satellite = new Satellite();
 
@@ -108,7 +109,7 @@ public class Satellite extends Entity {
         satellite.setEIRP(Double.parseDouble(fields[3]));
         satellite.setGain(Double.parseDouble(fields[4]));
         if (!fields[5].equalsIgnoreCase("*")) {
-            satellite.setBand(Com.bandHash.get(fields[5]));
+            satellite.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
             vector.add(satellite);
 
         }

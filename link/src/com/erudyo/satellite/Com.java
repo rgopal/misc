@@ -25,11 +25,6 @@ import java.util.Hashtable;
  */
 public class Com {
 
-    public enum Band {
-
-        C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL
-    };
-
     public enum Orbit {
 
         LEO, MEO, GEO
@@ -45,72 +40,10 @@ public class Com {
         BPSK, QPSK, PSK8, PSK16
     };
 
-    final public static Band[] bands;       // for user interface
-    final public static BandParams[] bandParams; // min, fax, center frequencies
-    final public static Hashtable<String, Band> bandHash; // lookup with string as key
-
     public final static double PI = Math.PI;
     public final static double C = 2.99792458E8;
     public final static double RE = 6378.1E3;     // mean equatorial radius
     public final static String DEGREE = "\u00b0";
-
-    public final static double C_LO = 3.7E9;
-    public final static double C_HI = 6.425E9;
-    public final static double C_DL_LO = 3.7E9;
-    public final static double C_DL_HI = 4.2E9;
-    public final static double C_UL_LO = 5.925E9;
-    public final static double C_UL_HI = 6.425E9;
-
-    public final static double X_LO = 7.25E9;
-    public final static double X_HI = 8.4E9;
-    public final static double X_DL_LO = 7.25E9;
-    public final static double X_DL_HI = 7.75E9;
-    public final static double X_UL_LO = 7.9E9;
-    public final static double X_UL_HI = 8.4E9;
-
-    public final static double KU_LO = 11.7E9;
-    public final static double KU_HI = 14.5E9;
-    public final static double KU_DL_LO = 11.7E9;
-    public final static double KU_DL_HI = 12.2E9;
-    public final static double KU_UL_LO = 14.0E9;
-    public final static double KU_UL_HI = 14.5E9;
-
-    public final static double KA_LO = 18.3E9;
-    public final static double KA_HI = 28.0E9;
-    public final static double KA_DL_LO = 18.3E9;
-    public final static double KA_DL_HI = 18.8E9;
-    public final static double KA_UL_LO = 27.5E9;
-    public final static double KA_UL_HI = 28.0E9;
-
-    public final static double KA2_LO = 19.7E9;
-    public final static double KA2_HI = 30.0E9;
-    public final static double KA2_DL_LO = 19.7E9;
-    public final static double KA2_DL_HI = 20.2E9;
-    public final static double KA2_UL_LO = 29.5E9;
-    public final static double KA2_UL_HI = 30.0E9;
-
-
-    // static block will execute once when the class is created
-
-    static {
-        bandParams = new BandParams[4];
-        bandHash = new Hashtable();
-        // use the same sequence in both bands and bandParams
-        bands = new Band[]{Band.C, Band.X, Band.KU, Band.KA};
-
-        // bandParams had to be an external class otherwise "this" cannot
-        // be used from a static class
-        bandParams[0] = new BandParams(C_LO, C_HI);
-        bandParams[1] = new BandParams(X_LO, X_HI);
-        bandParams[2] = new BandParams(KU_LO, KU_HI);
-        bandParams[3] = new BandParams(KA_LO, KA_HI);
-
-        bandHash.put("C", Band.C);
-        bandHash.put("X", Band.X);
-        bandHash.put("KU", Band.KU);
-        bandHash.put("KA", Band.KA);
-
-    }
 
     // print 4 characters of a double number (format does not work)
     static String shortText(double num) {
@@ -120,77 +53,6 @@ public class Com {
             len = 4;
         }
         return s.substring(0, len);
-    }
-
-    public static Band findBand(double f) {
-        Com.Band band = Band.C;
-        if (f >= Com.C_DL_LO && f <= Com.C_DL_HI) {
-            band = (Com.Band.C_DL);
-        } else if (f >= Com.C_UL_LO && f <= Com.C_UL_HI) {
-            band = (Com.Band.C_UL);
-        } else if (f >= Com.X_DL_LO && f <= Com.X_DL_HI) {
-            band = (Com.Band.X_DL);
-        } else if (f >= Com.X_UL_LO && f <= Com.X_UL_HI) {
-            band = (Com.Band.X_UL);
-        } else if (f >= Com.KU_DL_LO && f <= Com.KU_DL_HI) {
-            band = (Com.Band.KU_DL);
-        } else if (f >= Com.KU_UL_LO && f <= Com.KU_UL_HI) {
-            band = (Com.Band.KU_UL);
-        } else if (f >= Com.KA_DL_LO && f <= Com.KA_DL_HI) {
-            band = (Com.Band.KA_DL);
-        } else if (f >= Com.KA_UL_LO && f <= Com.KA_UL_HI) {
-            band = (Com.Band.KA_UL);
-        } else if (f >= Com.KA_DL_LO && f <= Com.KA_DL_HI) {
-            band = (Com.Band.KA_DL);
-        } else if (f >= Com.KA2_UL_LO && f <= Com.KA2_UL_HI) {
-            band = (Com.Band.KA2_UL);
-        }
-        return band;
-    }
-
-    public static double centerFrequency(Band band) {
-        double f;
-        switch (band) {
-            case X_DL:
-                f = (Com.X_DL_HI + Com.X_DL_LO) / 2.0;
-                break;
-            case X_UL:
-                f = (Com.X_UL_HI + Com.X_UL_LO) / 2.0;
-                break;
-            case C_DL:
-                f = (Com.C_DL_HI + Com.C_DL_LO) / 2.0;
-                break;
-            case C_UL:
-                f = (Com.C_UL_HI + Com.C_UL_LO) / 2.0;
-                break;
-            case KA_DL:
-                f = (Com.KA_DL_HI + Com.KA_DL_LO) / 2.0;
-                break;
-            case KA_UL:
-                f = (Com.KA_UL_HI + Com.KA_UL_LO) / 2.0;
-                break;
-            case KA2_DL:
-                f = (Com.KA2_DL_HI + Com.KA2_DL_LO) / 2.0;
-                break;
-            case KA2_UL:
-                f = (Com.KA2_UL_HI + Com.KA2_UL_LO) / 2.0;
-                break;
-            case KU_DL:
-                f = (Com.KU_DL_HI + Com.KU_DL_LO) / 2.0;
-                break;
-            case KU_UL:
-                f = (Com.KU_UL_HI + Com.KU_UL_LO) / 2.0;
-                break;
-            case KA:
-                f = (Com.KA_HI + Com.KA_LO) / 2.0;
-                break;
-            case KU:
-                f = (Com.KU_HI + Com.KU_LO) / 2.0;
-                break;
-            default:
-                f = 0;
-        }
-        return f;
     }
 
     // convert degree, minute, second to radian.  Note it does not know about

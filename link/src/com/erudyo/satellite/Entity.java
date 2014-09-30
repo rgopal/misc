@@ -14,6 +14,7 @@ public class Entity {
     protected String name;
     protected String description;
     protected String summary;
+    private int index = 0;
 
     /**
      * @return the name
@@ -66,5 +67,19 @@ public class Entity {
      */
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

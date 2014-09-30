@@ -7,6 +7,7 @@ package com.erudyo.satellite;
 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -22,22 +23,19 @@ public class Selection {
     private Path dLpath;
     private Satellite[] satellites;
     private Terminal[] terminals;
-    private Com.Band band = Com.Band.KA;
-    
-        public static Hashtable<Com.Band, Vector<Satellite>> bandSatellite;
-    public static Hashtable<Com.Band, Vector<Terminal>> bandTerminal;
-   
+    private RfBand.Band band = RfBand.Band.KA;
+
+    public static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
+    public static Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal;
 
     public Selection() {
 
         // transmit terminal at current location if not in persistent storage
         tXterminal = new Terminal();
         tXterminal.setBand(band);
-       
 
         // default generic satellite (from satellite list)
         satellite = new Satellite();
-   
 
         uLpath = new Path(satellite, tXterminal);
         uLpath.setBand(band);
@@ -45,21 +43,20 @@ public class Selection {
         uLpath.setName("UpLink");
         uLpath.setS(satellite);
         uLpath.setT(tXterminal);
-        
+
         // receive terminal near transmit if not in persistent storage
         rXterminal = new Terminal();
         rXterminal.setBand(band);
 
-
         dLpath = new Path(satellite, tXterminal);
         dLpath.setBand(band);
-        dLpath.setName("DownLink" );
+        dLpath.setName("DownLink");
         dLpath.setS(satellite);
         dLpath.setT(rXterminal);
 
     }
 
-    public void setBand(Com.Band band) {
+    public void setBand(RfBand.Band band) {
         this.band = band;
     }
 

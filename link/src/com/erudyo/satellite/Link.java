@@ -58,16 +58,14 @@ public class Link {
 
     private Form main;
     private Form current;
-    private Com.Band band = Com.Band.KA;
-    private Com.Band dLband = Com.Band.KA_DL;
-    private Com.Band uLband = Com.Band.KA_UL;
+    private RfBand.Band band = RfBand.Band.KA;
+    private RfBand.Band dLband = RfBand.Band.KA_DL;
+    private RfBand.Band uLband = RfBand.Band.KA_UL;
     private Com.Orbit orbit = Com.Orbit.GEO;
 
     private Selection selection;
 
     // Each band has a vector of terminals and satellites read from files
-
-
     private View[] views;
 
     public void init(Object context) {
@@ -136,14 +134,14 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
-        initBands(main); 
-        
+        initBands(main);
+
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
-        
+
         // there are six items in Views.  Hardcoded table.
         cnt.setLayout(new TableLayout(6, 5));
-        
+
         for (final View view : views) {
             initViews(view, cnt);
         }
@@ -175,20 +173,17 @@ public class Link {
     }
 
     public void initViews(final View view, Container cnt) {
-       
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
             // create name, value, unit, and command components for each view
-            
             // use fixed length for each column
             Component n = view.getWidget();
             Label s = new Label(view.getSummary());
             Label v = new Label(view.getValue());
             Label u = new Label(view.getUnit());
-            
-            
+
             Button c = new Button("->"); //view.getName());
             cnt.addComponent(n);
             cnt.addComponent(s);
@@ -212,7 +207,7 @@ public class Link {
 
         }
 
-    } 
+    }
 
     public void initBands(Form main) {
         // band selection
@@ -226,13 +221,15 @@ public class Link {
         topLine.addComponent(spin);
         topLine.addComponent(band);
 
-        ListModel model = new DefaultListModel(Com.bands);
+        ListModel model = new DefaultListModel(RfBand.indexRfBand);
         int index = spin.getSelectedIndex();
-        selection.setBand(Com.bands[index]);
-        System.out.println(Com.bandParams[2].highFrequency);
+        
+        // make sure to add new RfBand[] so that JVM knows to downcast Object
+        selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
+      
         // note that only a String has substring functions
-        band.setText((Com.shortText(Com.bandParams[index].lowFrequency / 1E9))
-                + " - " + (Com.shortText(Com.bandParams[index].highFrequency / 1E9))
+        band.setText((Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency /1E9))
+                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency /1E9))
                 + " GHz");
 
         spin.setModel(model);
@@ -241,11 +238,11 @@ public class Link {
             public void actionPerformed(ActionEvent evt) {
 
                 int index = spin.getSelectedIndex();
-                selection.setBand(Com.bands[index]);
+                selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
                 System.out.println("this".substring(1));
 
-                band.setText(Com.shortText((Com.bandParams[index].lowFrequency / 1E9))
-                        + " - " + (Com.shortText(Com.bandParams[index].highFrequency / 1E9))
+                band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
+                        + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
             }

@@ -7,8 +7,7 @@
 package com.erudyo.satellite;
 
 import com.codename1.util.MathUtil;
-import static com.erudyo.satellite.Com.centerFrequency;
-import static com.erudyo.satellite.Com.findBand;
+
 
 
 /**
@@ -23,7 +22,7 @@ public class Antenna extends Entity {
     
     private double depointingLoss;
     private double threeDBangle;
-    private Com.Band band = Com.Band.KA;
+    private RfBand.Band band = RfBand.Band.KA;
     private double gain;
     private double frequency;
     private double maxGain;
@@ -188,17 +187,17 @@ public class Antenna extends Entity {
     /**
      * @return the band
      */
-    public Com.Band getBand() {
+    public RfBand.Band getBand() {
         return band;
     }
 
     /**
      * @param band the band to set
      */
-    public void setBand(Com.Band band) {
+    public void setBand(RfBand.Band band) {
         double f = 1E9;
         this.band = band;
-        f = centerFrequency(band);
+        f = RfBand.centerFrequency(band);
         
         this.frequency = f;
         this.gain = calcGain (diameter, frequency, efficiency);
@@ -236,12 +235,12 @@ public class Antenna extends Entity {
         this.frequency = f;
         this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = 70*Com.C/(frequency*diameter);
-        band = Com.findBand(f);
+        band = RfBand.findBand(f);
         
     }
 
     public boolean validateFrequency(double f) {
-        if (f < Com.C_DL_LO || f > Com.KA2_UL_HI)
+        if (f < RfBand.C_DL_LO || f > RfBand.KA2_UL_HI)
             return false;
         else
             return true;
