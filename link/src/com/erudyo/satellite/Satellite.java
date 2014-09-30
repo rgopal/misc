@@ -22,9 +22,16 @@ public class Satellite extends Entity {
     private Amplifier amplifier;
 
     // all satellites stored in a Class level hash
-    static Hashtable<String, Satellite> satellites
+    static Hashtable<String, Satellite> satelliteHash
             = new Hashtable<String, Satellite>();
 
+    // lookup by index with class level vector
+    final public static ArrayList<Satellite> indexSatellite
+            = new ArrayList<Satellite>();
+
+    public String toString() {
+        return getName();
+    }
     private double EIRP;       // they should be calculated
     private double gain;       // they should be calculated
     protected double latitude;     // latitude
@@ -60,12 +67,17 @@ public class Satellite extends Entity {
 
             setName("S" + String.valueOf(randomGenerator.nextInt(10000)));
         }
-   
-            // add the new Satellite instance to the Hashtable at the class level
-            Satellite.satellites.put(getName(), this);
-        }
 
-    
+        // add the new Satellite instance to the Hashtable at the class level
+        Satellite.satelliteHash.put(getName(), this);
+        
+
+        // Add new object instance to the array list (all satellites)
+        indexSatellite.add(this);
+        
+        // increment index
+        this.setIndex(this.getIndex() + 1);
+    }
 
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
 

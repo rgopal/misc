@@ -56,6 +56,9 @@ public class Selection {
 
     }
 
+    public RfBand.Band getBand () {
+        return band;
+    }
     public void setBand(RfBand.Band band) {
         this.band = band;
     }

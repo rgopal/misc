@@ -143,7 +143,7 @@ public class Link {
         cnt.setLayout(new TableLayout(6, 5));
 
         for (final View view : views) {
-            initViews(view, cnt);
+            initViews(view, cnt, selection);
         }
         Button b = new Button("Map");
 
@@ -172,15 +172,16 @@ public class Link {
 
     }
 
-    public void initViews(final View view, Container cnt) {
+    public void initViews(final View view, Container cnt, Selection selection) {
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
             // create name, value, unit, and command components for each view
             // use fixed length for each column
-            Component n = view.getWidget();
-            Label s = new Label(view.getSummary());
+            Component n = view.getWidget(selection);
+            Component s = view.getSubWidget(selection);
+            
             Label v = new Label(view.getValue());
             Label u = new Label(view.getUnit());
 
@@ -239,8 +240,9 @@ public class Link {
 
                 int index = spin.getSelectedIndex();
                 selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
-                System.out.println("this".substring(1));
-
+         
+                // fire an event to change the satellite selection
+                
                 band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
                         + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
                         + " GHz");

@@ -30,11 +30,15 @@ public abstract class View {
     public String getName () {
         return name;
     }
-    // some could have 
-    public  Component getWidget() {
+    // some could have no widget so just the name
+    public  Component getWidget(Selection selection) {
         return (new Label (getName()));
     }
     
+    // some could have no second widget so just summary
+    public Component getSubWidget(Selection selection) {
+        return (new Label (getSummary()));
+    }
      
     public View(String name) {
         this.name = name;
