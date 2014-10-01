@@ -48,8 +48,7 @@ public class TxView extends View {
          
          // get selected band
          RfBand.Band band = selection.getBand();
-        
-       
+  
 
         final ComboBox combo = new ComboBox();
        
@@ -64,9 +63,7 @@ public class TxView extends View {
         // create model for all terminals of selected band
         ListModel model = new DefaultListModel
                 (Selection.bandTerminal.get(band));
-        
-        // show the selected terminal
-        int index = combo.getSelectedIndex();
+   
         
         combo.setModel(model);
         

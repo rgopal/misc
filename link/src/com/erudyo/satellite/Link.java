@@ -143,7 +143,7 @@ public class Link {
         cnt.setLayout(new TableLayout(6, 5));
 
         for (final View view : views) {
-           
+
             initViews(view, cnt, selection);
         }
         Button b = new Button("Map");
@@ -184,10 +184,8 @@ public class Link {
             Component s = view.getSubWidget(selection);
 
             // all these widgets have to be remembered by respective views 
-            
             Component v = view.getLabel(selection);
             Component u = view.getSubLabel(selection);
-           
 
             Button c = new Button("->"); //view.getName());
             cnt.addComponent(n);
@@ -245,10 +243,10 @@ public class Link {
                 int index = spin.getSelectedIndex();
                 selection.setBand(RfBand.indexRfBand.toArray(
                         new RfBand[0])[index].getBand());
-   band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
-                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
-                + " GHz");
-        System.out.println(spin.getSelectedItem());
+                band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
+                        + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
+                        + " GHz");
+                System.out.println(spin.getSelectedItem());
                 comboSatellite(selection, spin);
                 comboTx(selection, spin);
                 comboRx(selection, spin);
@@ -257,7 +255,7 @@ public class Link {
 
     }
 
-    public void comboSatellite(final Selection selection, ComboBox spin) {
+    public void comboSatellite(final Selection selection, final ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (Selection.bandSatellite.get(selection.getBand()) == null) {
 
@@ -287,8 +285,8 @@ public class Link {
             selection.getSatelliteView().spin.setModel(model);
         }
 
-     
     }
+
     public void comboRx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (Selection.bandTerminal.get(selection.getBand()) == null) {
@@ -317,8 +315,8 @@ public class Link {
             selection.getRxView().spin.setModel(model);
         }
 
-     
     }
+
     public void comboTx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (Selection.bandTerminal.get(selection.getBand()) == null) {
@@ -347,7 +345,6 @@ public class Link {
             selection.getTxView().spin.setModel(model);
         }
 
-     
     }
 
     class BackCommand extends Command {

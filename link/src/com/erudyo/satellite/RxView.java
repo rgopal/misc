@@ -47,9 +47,6 @@ public class RxView extends View {
         // create model for all terminals of selected band
         ListModel model = new DefaultListModel(Selection.bandTerminal.get(band));
 
-        // show the selected terminal
-        int index = combo.getSelectedIndex();
-
         combo.setModel(model);
 
         // Band combobox should be able to change this

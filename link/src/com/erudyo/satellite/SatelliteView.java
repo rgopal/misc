@@ -28,8 +28,8 @@ import java.util.Vector;
 public class SatelliteView extends View {
     private Satellite satellite;
     public ComboBox spin;
-    private Label label;
-    private Label subLabel;
+    //private Label label;
+    //private Label subLabel;
 
     public SatelliteView () {
         
@@ -71,8 +71,9 @@ public class SatelliteView extends View {
         
         combo.setModel(model);
         
-        // Band combobox should be able to change this
-        this.spin = combo;
+        // set the satellite view present in the selection (and not this.spin)
+       
+        selection.getSatelliteView().spin = combo;
        
         // selection.setSatelliteView (spin);
 
@@ -92,10 +93,9 @@ public class SatelliteView extends View {
 
         // update other fields which are displayed, based on current selection
         updateValues(selection);
-      
-        
+     
         // combo box created so return it
-        return spin;
+        return combo;
     }
     
     // update from the current selection of the Satellite
