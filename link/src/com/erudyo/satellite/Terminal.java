@@ -30,7 +30,10 @@ public class Terminal extends Entity {
     private double gain;
     
     private int index;
-    
+
+    public Terminal () {
+        
+    }
     public int getIndex() {
         return index;
     }
@@ -96,11 +99,11 @@ public class Terminal extends Entity {
 
     public static void terminalFields(String[] fields, ArrayList<Terminal> vector) {
         // vector has already been created for a band, just add entries
-        Terminal terminal = new Terminal();
+        Terminal terminal = new Terminal(fields[0]);
 
         // terminals in format name, latitude, longitude, antenna size, amplifier
         // gain, and band
-        terminal.setName(fields[0]);
+        
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
@@ -116,12 +119,14 @@ public class Terminal extends Entity {
         return band;
     }
 
-    public Terminal() {
+    public Terminal(String name) {
         antenna = new Antenna();
         antenna.setDiameter(1);
         amplifier = new Amplifier();
         amplifier.setPower(10);
         // get current location
+        
+        this.name = name;
 
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
@@ -151,13 +156,8 @@ public class Terminal extends Entity {
         
     }
 
-    public Terminal(String n) {
-        super(n);
-    }
+ 
 
-    public Terminal(String n, String d, String s) {
-        super(n, d, s);
-    }
 
     /**
      * @return the longitude

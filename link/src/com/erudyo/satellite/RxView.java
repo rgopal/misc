@@ -26,6 +26,7 @@ public class RxView extends View {
 
     private Terminal terminal;
     public ComboBox spin;
+    public Label label;
 
     public RxView() {
 
@@ -55,17 +56,42 @@ public class RxView extends View {
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = combo.getSelectedIndex();
-
-                // get terminal instance from index and set the selection
-                selection.setRx(Terminal.indexTerminal.toArray(new Terminal[0])[index]);
-
-                // System.out.println(spin.getSelectedItem());
+                
+                 // find the name of the satellite
+                String name = (String) combo.getSelectedItem();
+              
+                Terminal ter = Terminal.terminalHash.get(name);
+                
+                selection.setrXterminal(ter);
+                
+                // update other values dependent on this satellite
+                // updateValues(selection);
+               
+                // change the subwidget, label, and sublabel etc.
+                selection.getRxView().label.setText(ter.getName());
+            
+                // System.out.println(combo.getSelectedItem());
             }
         });
 
         // combo box created so return it
         return combo;
+    }
+    
+     public Component getLabel(final Selection selection) {
+         Label l = new Label(getValue());
+         
+         // get selected band
+         RfBand.Band band = selection.getBand();
+        
+        final Label label = new Label(selection.getrXterminal().getName());      
+
+                
+        // set the Rx view present in the selection
+               selection.getRxView().label = label;
+     
+        // combo box created so return it
+        return label;
     }
 
     public String getDisplayName() {
@@ -74,11 +100,7 @@ public class RxView extends View {
 
     public RxView(Selection selection) {
         this.terminal = selection.getrXterminal();
-        this.name = "Rx";
-        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter())
-                + "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
-        this.value = "ter";
-        this.unit = "dB";
+      
     }
 
     public Form createView() {

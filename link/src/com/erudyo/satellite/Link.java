@@ -265,7 +265,10 @@ public class Link {
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
-                comboSatellite(selection, spin);
+               
+                // update combos and labels
+                comboSatellite(selection, spin);  
+
                 comboTx(selection, spin);
                 comboRx(selection, spin);
             }
@@ -296,7 +299,15 @@ public class Link {
             System.out.println("Link: Can't create DefaultListModel for satellite band "
                     + selection.getBand());
         } else {
+            // use the list of satellites for select band 
             selection.getSatelliteView().spin.setModel(model);
+            String name = (String) selection.getSatelliteView().spin.getSelectedItem();
+            
+            // update selected satellite
+            selection.setSatellite(Satellite.satelliteHash.get(name));
+            // update label TODO
+             selection.getSatelliteView().label.setText(
+                selection.getSatellite().getName());
         }
 
     }
@@ -323,6 +334,16 @@ public class Link {
                     + selection.getBand());
         } else {
             selection.getRxView().spin.setModel(model);
+            // update label TODO
+         
+            String name = (String) selection.getRxView().spin.getSelectedItem();
+            
+            // update selected satellite
+            selection.setrXterminal(Terminal.terminalHash.get(name));
+            // update label TODO
+             selection.getRxView().label.setText(
+                selection.getrXterminal().getName());
+           
         }
 
     }
@@ -349,6 +370,16 @@ public class Link {
                     + selection.getBand());
         } else {
             selection.getTxView().spin.setModel(model);
+            // update label TODO
+          
+         
+            String name = (String) selection.getTxView().spin.getSelectedItem();
+            
+            // update selected satellite
+            selection.settXterminal(Terminal.terminalHash.get(name));
+            // update label TODO
+             selection.getTxView().label.setText(
+                selection.gettXterminal().getName());
         }
 
     }

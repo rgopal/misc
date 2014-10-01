@@ -30,6 +30,8 @@ public class Satellite extends Entity {
     final public static ArrayList<Satellite> indexSatellite
             = new ArrayList<Satellite>();
 
+    public Satellite () {
+    }
     public String toString() {
         return getName();
     }
@@ -67,13 +69,14 @@ public class Satellite extends Entity {
         return band;
     }
 
-    public Satellite() {
+    public Satellite(String name) {
         amplifier = new Amplifier();
         antenna = new Antenna();
         // gain should be calculated when diameter changed
         antenna.setDiameter(2.4);
         EIRP = 43;
         gain = 50;
+        this.name = name;       // should be unique
 
         amplifier.setPower(200);
 
@@ -128,10 +131,10 @@ public class Satellite extends Entity {
 
     public static void satelliteFields(String[] fields, ArrayList<Satellite> vector) {
         // vector has already been created for a band, just add entries
-        Satellite satellite = new Satellite();
+        Satellite satellite = new Satellite(fields[0]);
 
         // fields are name, long, lat, eirp, gain, band
-        satellite.setName(fields[0]);
+       
         satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
         satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
         satellite.setEIRP(Double.parseDouble(fields[3]));
@@ -146,14 +149,6 @@ public class Satellite extends Entity {
 
     public double getEIRP() {
         return 55;
-    }
-
-    public Satellite(String n) {
-        super(n);
-    }
-
-    public Satellite(String n, String d, String s) {
-        super(n, d, s);
     }
 
     public double maxCoverage() {

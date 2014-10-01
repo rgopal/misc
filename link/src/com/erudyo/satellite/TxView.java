@@ -26,6 +26,8 @@ public class TxView extends View {
 
     Terminal terminal;
     public ComboBox spin;
+    public Label label;
+    
     
     public TxView() {
 
@@ -34,13 +36,7 @@ public class TxView extends View {
 
     public TxView(Selection selection) {
         this.terminal = selection.gettXterminal();
-        this.name = "Tx";
-        this.summary = "" + String.valueOf(terminal.getAntenna().getDiameter()) +
-                       "m " + String.valueOf(terminal.getAmplifier().getPower()) + "W ";
-        
-        this.value = "23";
-        this.unit = "dB";
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      
     }
 
     public Component getWidget(final Selection selection) {
@@ -74,20 +70,43 @@ public class TxView extends View {
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = combo.getSelectedIndex();
+                 // find the name of the satellite
+                String name = (String) combo.getSelectedItem();
+              
+                Terminal ter = Terminal.terminalHash.get(name);
                 
-                // get terminal instance from index and set the selection
-                selection.setTx(Terminal.indexTerminal.toArray(new 
-                        Terminal[0])[index]);
+                selection.settXterminal(ter);
+                
+                // update other values dependent on this satellite
+                // updateValues(selection);
                
+                // change the subwidget, label, and sublabel etc.
+                selection.getTxView().label.setText(ter.getName());
             
-                // System.out.println(spin.getSelectedItem());
+                // System.out.println(combo.getSelectedItem());
             }
         });
 
         // combo box created so return it
         return combo;
     }
+    
+    public Component getLabel(final Selection selection) {
+         Label l = new Label(getValue());
+         
+         // get selected band
+         RfBand.Band band = selection.getBand();
+        
+        final Label label = new Label(selection.gettXterminal().getName());      
+
+                
+        // set the tx view present in the selection
+               selection.getTxView().label = label;
+     
+        // combo box created so return it
+        return label;
+    }
+    
     public String getDisplayName() {
         return name;
     }

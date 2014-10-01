@@ -28,21 +28,16 @@ import java.util.Vector;
 public class SatelliteView extends View {
     private Satellite satellite;
     public ComboBox spin;
-    //private Label label;
-    //private Label subLabel;
+    public Label label;
+    public Label subLabel;
 
     public SatelliteView () {
         
     }
     public SatelliteView(Selection selection) {
         this.satellite = selection.getSatellite();
-        
-        this.name = "Satellite";
-       
-        this.summary = String.valueOf((int) satellite.getAntenna().getGain()) + "K " +
-                    String.valueOf((int) satellite.getEIRP()) + "dbM ";
-        this.value = "sat";
-        this.unit = "dB";
+      
+        // don't call update_values since SatelliteView is still being built
     }
     
     // override getWidget to create a Combobox driven by selected band
@@ -77,32 +72,52 @@ public class SatelliteView extends View {
        
         // selection.setSatelliteView (spin);
 
+        // fires when the list is changed (by user)
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = combo.getSelectedIndex();
+                // find the name of the satellite
+                String name = (String) combo.getSelectedItem();
+              
+                Satellite sat = Satellite.satelliteHash.get(name);
                 
-                // get satellite instance from index and set the selection
-                selection.setSatellite(Satellite.indexSatellite.toArray(new 
-                        Satellite[0])[index]);
+                selection.setSatellite(sat);
+                
+                // update other values dependent on this satellite
+                updateValues(selection);
                
+                // change the subwidget, label, and sublabel etc.
+                selection.getSatelliteView().label.setText(sat.getName());
             
-                System.out.println(combo.getSelectedItem());
+                // System.out.println(combo.getSelectedItem());
             }
         });
 
-        // update other fields which are displayed, based on current selection
-        updateValues(selection);
      
         // combo box created so return it
         return combo;
     }
+    public Component getLabel(final Selection selection) {
+         Label l = new Label(getValue());
+         
+         // get selected band
+         RfBand.Band band = selection.getBand();
+        
+        final Label label = new Label(selection.getSatellite().getName());      
+
+                
+        // set the satellite view present in the selection
+               selection.getSatelliteView().label = label;
+     
+        // combo box created so return it
+        return label;
+    }
     
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
-          this.summary = Com.shortText(selection.getSatellite().getLongitude());
-        this.value = Com.shortText(selection.getSatellite().getEIRP());
-        this.unit = Com.shortText(selection.getSatellite().getGain());
+        selection.getSatelliteView().summary = Com.shortText(selection.getSatellite().getLongitude());
+                selection.getSatelliteView().value = Com.shortText(selection.getSatellite().getEIRP());
+        selection.getSatelliteView().unit = Com.shortText(selection.getSatellite().getGain());
     }
    
     public String getDisplayName() {

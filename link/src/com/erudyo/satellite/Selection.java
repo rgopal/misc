@@ -20,11 +20,10 @@ public class Selection {
     private Satellite satellite;
     private Path uLpath;
     private Path dLpath;
-    private Satellite[] satellites;
-    private Terminal[] terminals;
-    private SatelliteView satelliteView = new SatelliteView();
-    private TxView tXview = new TxView();
-    private RxView rXview = new RxView();
+  
+    private SatelliteView satelliteView;
+    private TxView tXview;
+    private RxView rXview;
 
     private RfBand.Band band = RfBand.Band.KA;
 
@@ -112,6 +111,11 @@ public class Selection {
         dLpath.setS(satellite);
         dLpath.setT(rXterminal);
 
+        // use constructor with Selection instance as input
+        satelliteView = new SatelliteView(this);
+        tXview = new TxView(this);
+        rXview = new RxView(this);
+
     }
 
     public SatelliteView getSatelliteView() {
@@ -188,27 +192,7 @@ public class Selection {
         this.satellite = satellite;
     }
 
-    public Terminal getTx() {
-        return tXterminal;
-    }
 
-    /**
-     * @param satellite the satellite to set
-     */
-    public void setTx(Terminal terminal) {
-        this.tXterminal = terminal;
-    }
-
-    public Terminal getRx() {
-        return rXterminal;
-    }
-
-    /**
-     * @param satellite the satellite to set
-     */
-    public void setRx(Terminal terminal) {
-        this.rXterminal = terminal;
-    }
 
     /**
      * @return the uLpath
@@ -238,30 +222,12 @@ public class Selection {
         this.dLpath = dLpath;
     }
 
-    /**
-     * @return the satellites
-     */
-    public Satellite[] getSatellites() {
-        return satellites;
-    }
-
-    /**
-     * @param satellites the satellites to set
-     */
-    public void setSatellites(String[][] satellites) {
-
-    }
-
-    /**
-     * @return the terminals
-     */
-    public Terminal[] getTerminals() {
-        return terminals;
-    }
+  
 
     // selection of satellites relevant for this instance of Selection
     // In future, it could be a filtered version (based on location, e.g.)
-    public void setBandSatellite(Hashtable<RfBand.Band, ArrayList<Satellite>> s) {
+    public void setBandSatellite(Hashtable<RfBand.Band, 
+            ArrayList<Satellite>> s) {
 
         // go over all bands
         for (RfBand band : RfBand.indexRfBand) {
@@ -299,6 +265,14 @@ public class Selection {
 
     public Hashtable<RfBand.Band, ArrayList<String>> getBandSatellite() {
         return this.bandSatellite;
+    }
+
+    public Hashtable<RfBand.Band, Hashtable<String, Integer>> getBandTerminalHash() {
+        return bandTerminalHash;
+    }
+
+    public Hashtable<RfBand.Band, Hashtable<String, Integer>> getBandSatelliteHash() {
+        return bandSatelliteHash;
     }
 
     public void setBandTerminal(Hashtable<RfBand.Band, ArrayList<Terminal>> t) {
