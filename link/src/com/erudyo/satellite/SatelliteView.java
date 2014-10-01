@@ -57,14 +57,14 @@ public class SatelliteView extends View {
 
         // indexSatellite has all satellites, so get the band specific list
         
-        if (Selection.bandSatellite.get(band) == null) {
+        if (selection.getBandSatellite().get(band) == null) {
             System.out.println("Can't find satellites for band " + band);
             return l;
         } 
         
         // create model for all satellites of selected band
         ListModel model = new DefaultListModel
-                (Selection.bandSatellite.get(band));
+                (selection.getBandSatellite().get(band));
         
         // show the selected satellite
         int index = combo.getSelectedIndex();

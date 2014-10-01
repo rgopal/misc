@@ -24,10 +24,8 @@ public class RfBand extends Entity {
     public double highFrequency;
     public double centerFrequency;
     public Band band;
-    
-    // items is the number of objects in the class
-    private static int items = 0;
-    
+ 
+   
     // index stores the location of instance in array indexRfBand
     private int index;
     
@@ -112,10 +110,8 @@ public class RfBand extends Entity {
         // Add new object instance to the current slot in array list of bands
         indexRfBand.add(this);
         
-        this.index = items;
+        this.index = indexRfBand.size()-1;
 
-        // increment index
-        items = items + 1;
 
     }
 

@@ -29,7 +29,6 @@ public class Terminal extends Entity {
     private double EIRP;
     private double gain;
     
-    private static int items = 0;
     private int index;
     
     public int getIndex() {
@@ -146,8 +145,8 @@ public class Terminal extends Entity {
         // Add new object instance to the array list (all satellites)
         indexTerminal.add(this);
         
-        index = items;
-        items++;        // increment number of instances
+        index = indexTerminal.size()-1;
+     
      
         
     }

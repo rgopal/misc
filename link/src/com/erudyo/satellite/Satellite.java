@@ -21,7 +21,8 @@ public class Satellite extends Entity {
     private Antenna antenna;
     private Amplifier amplifier;
 
-    // all satellites stored in a Class level hash
+    // all satellites stored in a Class level hash.  For future, since
+    // selection has its own at instance level
     static Hashtable<String, Satellite> satelliteHash
             = new Hashtable<String, Satellite>();
 
@@ -43,8 +44,8 @@ public class Satellite extends Entity {
     protected double R0;      // altitude
     protected Com.Orbit orbit;
     protected RfBand.Band band; //
-    
-    private static int items = 0;
+   
+
     private int index;
     
     public int getIndex() {
@@ -89,8 +90,8 @@ public class Satellite extends Entity {
         // Add new object instance to the array list (all satellites)
         indexSatellite.add(this);
         
-        index = items;
-        items++;        // increment number of instances
+        index = indexSatellite.size()-1;
+   
      
     }
 

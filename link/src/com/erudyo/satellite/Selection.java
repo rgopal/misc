@@ -30,8 +30,8 @@ public class Selection {
     
     private RfBand.Band band = RfBand.Band.KA;
 
-    public static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
-    public static Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal;
+    private  Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
+    private  Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal;
 
     public Selection() {
 
@@ -204,7 +204,23 @@ public class Selection {
         return terminals;
     }
 
-    /**
+    // selection of satellites relevant for this instance of Selection
+    // In future, it could be a filtered version (based on location, e.g.)
+    public void setBandSatellite(Hashtable<RfBand.Band, ArrayList<Satellite>> s) {
+        bandSatellite = s;
+    }
+    
+    public Hashtable<RfBand.Band, ArrayList<Terminal>> getBandTerminal() {
+        return bandTerminal;
+    }
+     public Hashtable<RfBand.Band, ArrayList<Satellite>> getBandSatellite() {
+        return bandSatellite;
+    }
+    
+    public void setBandTerminal(Hashtable<RfBand.Band, ArrayList<Terminal>> t) {
+        bandTerminal = t;
+    }
+    /*
      * @param terminals the terminals to set
      */
     public void setTerminals(String[][] terminals) {

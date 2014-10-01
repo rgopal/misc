@@ -55,14 +55,14 @@ public class TxView extends View {
 
         // indexSatellite has all satellites, so get the band specific list
         
-        if (Selection.bandTerminal.get(band) == null) {
+        if (selection.getBandTerminal().get(band) == null) {
             System.out.println("Can't find terminals for band " + band);
             return l;
         } 
         
-        // create model for all terminals of selected band
+        // create mtodel for all terminals of selected band
         ListModel model = new DefaultListModel
-                (Selection.bandTerminal.get(band));
+                (selection.getBandTerminal().get(band));
    
         
         combo.setModel(model);

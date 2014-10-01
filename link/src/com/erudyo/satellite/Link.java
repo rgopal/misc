@@ -70,24 +70,30 @@ public class Link {
 
     public void init(Object context) {
 
-        String[][] satellites;
-        String[][] terminals;
-
+        // create a new instance to keep track of all other objects for UI
         selection = new Selection();
         try {
             Resources theme = Resources.openLayered("/theme");
-            UIManager.getInstance().setThemeProps(theme.getTheme(theme.getThemeResourceNames()[0]));
+            UIManager.getInstance().setThemeProps(theme.getTheme(
+                    theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
             CSVParser parser = new CSVParser();
 
-            InputStream is = Display.getInstance().getResourceAsStream(null, "/satellites.txt");
-            satellites = parser.parse(new InputStreamReader(is));
-            Selection.bandSatellite = Satellite.getFromFile(satellites);
-            is = Display.getInstance().getResourceAsStream(null, "/terminals.txt");
+            InputStream is = Display.getInstance().
+                    getResourceAsStream(null, "/satellites.txt");
 
-            terminals = parser.parse(new InputStreamReader(is));
-            Selection.bandTerminal = Terminal.getFromFile(terminals);
+            // Satellite has to read all the records from file.  Selection
+            // could include only a subset per instance (e.g., satellites
+            // visible from a location
+            selection.setBandSatellite (Satellite.getFromFile(
+                    parser.parse(new InputStreamReader(is))));
+
+            is = Display.getInstance().
+                    getResourceAsStream(null, "/terminals.txt");
+
+            selection.setBandTerminal (Terminal.getFromFile(
+                    parser.parse(new InputStreamReader(is))));
 
             // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
@@ -257,7 +263,7 @@ public class Link {
 
     public void comboSatellite(final Selection selection, final ComboBox spin) {
         // use global variable to change ListModel of satellite combo
-        if (Selection.bandSatellite.get(selection.getBand()) == null) {
+        if (selection.getBandSatellite().get(selection.getBand()) == null) {
 
             System.out.println("link: Can't get bandSatellite for band "
                     + selection.getBand());
@@ -275,7 +281,7 @@ public class Link {
             spin.setSelectedIndex(index);
         }
         DefaultListModel model = new DefaultListModel(
-                (Selection.bandSatellite.get(selection.getBand()).toArray(
+                (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new Satellite[0])));
 
         if (model == null) {
@@ -289,7 +295,7 @@ public class Link {
 
     public void comboRx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
-        if (Selection.bandTerminal.get(selection.getBand()) == null) {
+        if (selection.getBandTerminal().get(selection.getBand()) == null) {
 
             // Force it to KA which hopefully works
             selection.setBand(RfBand.Band.KA);
@@ -305,7 +311,7 @@ public class Link {
             spin.setSelectedIndex(index);
         }
         DefaultListModel model = new DefaultListModel(
-                (Selection.bandTerminal.get(selection.getBand()).toArray(
+                (selection.getBandTerminal().get(selection.getBand()).toArray(
                         new Terminal[0])));
 
         if (model == null) {
@@ -319,7 +325,7 @@ public class Link {
 
     public void comboTx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
-        if (Selection.bandTerminal.get(selection.getBand()) == null) {
+        if (selection.getBandTerminal().get(selection.getBand()) == null) {
 
             // Force it to KA which hopefully works
             selection.setBand(RfBand.Band.KA);
@@ -335,7 +341,7 @@ public class Link {
             spin.setSelectedIndex(index);
         }
         DefaultListModel model = new DefaultListModel(
-                (Selection.bandTerminal.get(selection.getBand()).toArray(
+                (selection.getBandTerminal().get(selection.getBand()).toArray(
                         new Terminal[0])));
 
         if (model == null) {
