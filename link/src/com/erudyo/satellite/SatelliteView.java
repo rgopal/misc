@@ -69,6 +69,12 @@ public class SatelliteView extends View {
         // set the satellite view present in the selection (and not this.spin)
        
         selection.getSatelliteView().spin = combo;
+        
+         String name = (String) combo.getSelectedItem();
+              
+         //label does not exist yet, so this does not work
+         //       Satellite sat = Satellite.satelliteHash.get(name);
+         // selection.getSatelliteView().label.setText(sat.getName());
        
         // selection.setSatelliteView (spin);
 
@@ -103,7 +109,12 @@ public class SatelliteView extends View {
          // get selected band
          RfBand.Band band = selection.getBand();
         
-        final Label label = new Label(selection.getSatellite().getName());      
+         // satellite may be empty right now
+        final Label label = new Label(
+                (String) selection.getSatelliteView().spin.getSelectedItem());
+        
+        //selection.getSatellite().getName()); since satellite is empty
+     
 
                 
         // set the satellite view present in the selection

@@ -97,7 +97,9 @@ public class TxView extends View {
          // get selected band
          RfBand.Band band = selection.getBand();
         
-        final Label label = new Label(selection.gettXterminal().getName());      
+        final Label label = new Label((String) 
+                selection.getTxView().spin.getSelectedItem());
+ // terminal is not set yet               selection.gettXterminal().getName());      
 
                 
         // set the tx view present in the selection
