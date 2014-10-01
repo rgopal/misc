@@ -32,7 +32,33 @@ public class Selection {
 
     private  Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
     private  Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal;
+    
+     // lookup bands (could be customiazed for each Selection instance)
+     private  Hashtable<String, RfBand> rFbandHash
+            = new Hashtable<String, RfBand>();
 
+    // lookup by index with class level vector
+     private  ArrayList<RfBand> indexRfBand 
+            = new ArrayList<RfBand>();
+
+     
+     public void setRfBandHash(Hashtable<String, RfBand> h) {
+         this.rFbandHash = h;
+      
+     }
+     
+     public Hashtable<String, RfBand> getRfBandHash() {
+         return this.rFbandHash;
+     }
+     
+     public void setIndexRfBand(ArrayList<RfBand> h) {
+         this.indexRfBand = h;
+         
+     }
+     
+     public ArrayList<RfBand> getIndexRfBand() {
+         return this.indexRfBand;
+     }
     public Selection() {
 
         // transmit terminal at current location if not in persistent storage

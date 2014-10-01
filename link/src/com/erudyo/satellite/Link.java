@@ -72,6 +72,13 @@ public class Link {
 
         // create a new instance to keep track of all other objects for UI
         selection = new Selection();
+        
+        // get the bands into selection.  In future a Selection instance
+        // could have customized list based on user interface preferences
+        
+        selection.setRfBandHash(RfBand.rFbandHash);
+        selection.setIndexRfBand(RfBand.indexRfBand);
+        
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(
@@ -140,6 +147,7 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
+        
         initBands(main, selection);
 
         Container cnt = new Container(new BorderLayout());
@@ -225,20 +233,23 @@ public class Link {
         topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(topLine);
 
-        final Label band = new Label();
+        final Label bandLabel = new Label();
         final ComboBox spin = new ComboBox();
         topLine.addComponent(spin);
-        topLine.addComponent(band);
+        topLine.addComponent(bandLabel);
 
-        ListModel model = new DefaultListModel(RfBand.indexRfBand);
+        ListModel model = new DefaultListModel(selection.getIndexRfBand());
         int index = spin.getSelectedIndex();
 
         // make sure to add new RfBand[] so that JVM knows to downcast Object
-        selection.setBand(RfBand.indexRfBand.toArray(new RfBand[0])[index].getBand());
+        
+        RfBand rFband = selection.getIndexRfBand().toArray(
+                new RfBand[0])[index];
+        selection.setBand(rFband.getBand());
 
         // note that only a String has substring functions
-        band.setText((Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
-                + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
+        bandLabel.setText((Com.shortText(rFband.lowFrequency / 1E9))
+                + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
 
         spin.setModel(model);
@@ -247,10 +258,12 @@ public class Link {
             public void actionPerformed(ActionEvent evt) {
 
                 int index = spin.getSelectedIndex();
-                selection.setBand(RfBand.indexRfBand.toArray(
-                        new RfBand[0])[index].getBand());
-                band.setText(Com.shortText((RfBand.indexRfBand.toArray(new RfBand[0])[index].lowFrequency / 1E9))
-                        + " - " + (Com.shortText(RfBand.indexRfBand.toArray(new RfBand[0])[index].highFrequency / 1E9))
+                 RfBand rFband = selection.getIndexRfBand().toArray(
+                        new RfBand[0])[index];
+                selection.setBand(rFband.getBand());
+                
+                bandLabel.setText(Com.shortText((rFband.lowFrequency / 1E9))
+                        + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
                 comboSatellite(selection, spin);
@@ -273,9 +286,9 @@ public class Link {
             // get index of KA
             int i;
 
-            i = RfBand.rFbandHash.get("KA").getIndex();
+            i = selection.getRfBandHash().get("KA").getIndex();
 
-            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+            int index = selection.getIndexRfBand().toArray(new RfBand[0])[i].getIndex();
 
             // change the current Combobox entry
             spin.setSelectedIndex(index);
@@ -303,9 +316,9 @@ public class Link {
             // get index of KA
             int i;
 
-            i = RfBand.rFbandHash.get("KA").getIndex();
+            i = selection.getRfBandHash().get("KA").getIndex();
 
-            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+            int index = selection.getIndexRfBand().toArray(new RfBand[0])[i].getIndex();
 
             // change the current Combobox entry
             spin.setSelectedIndex(index);
