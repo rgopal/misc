@@ -30,34 +30,56 @@ public class Selection {
     
     private RfBand.Band band = RfBand.Band.KA;
 
+    // all the UI oriented lists are to support ComboBox selection
+    // they use names of satellites, terminals, and bands.
+    // Actual object can be then found from respective Hashtables
+    // and indexes.   Originally they had real objects which should
+    // not have indexes shared across multiple UI/selections
+    
     private  Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
     private  Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal;
     
      // lookup bands (could be customiazed for each Selection instance)
-     private  Hashtable<String, RfBand> rFbandHash
-            = new Hashtable<String, RfBand>();
+     // provides the position if name is known
+     private  Hashtable<String, Integer> rFbandHash
+            = new Hashtable<String, Integer>();
 
-    // lookup by index with class level vector
-     private  ArrayList<RfBand> indexRfBand 
-            = new ArrayList<RfBand>();
+    // lookup by index with instance name vector 
+     private  ArrayList<String> rfBands 
+            = new ArrayList<String>();
 
      
+     // Create a custom UI oriented Combo model from RfBand Hash
+     // Can add filtering in future.   Light since only name is
+     // used and not the object instances
      public void setRfBandHash(Hashtable<String, RfBand> h) {
-         this.rFbandHash = h;
+         
+         int index = 0;
+         // go through the hash to create positions and indexRfBand entries
+         for (String key: h.keySet()) {
+             // add the position and increment for next item
+             rFbandHash.put(key, index++);
+             
+             // create a simple array with object name (key)
+             rfBands.add(key);
+         }
       
      }
      
-     public Hashtable<String, RfBand> getRfBandHash() {
+     public Hashtable<String, Integer> getRfBandHash() {
          return this.rFbandHash;
      }
      
-     public void setIndexRfBand(ArrayList<RfBand> h) {
+     // this is created by setHashRfBand()
+     
+    /* public void setIndexRfBand(ArrayList<RfBand> h) {
          this.indexRfBand = h;
          
      }
+     */
      
-     public ArrayList<RfBand> getIndexRfBand() {
-         return this.indexRfBand;
+     public ArrayList<String> getRfBands() {
+         return this.rfBands;
      }
     public Selection() {
 

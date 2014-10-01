@@ -43,10 +43,12 @@ public class RfBand extends Entity {
     
 
     // lookup by String name with class level table
+    // could be used to get an object by name
     final public static Hashtable<String, RfBand> rFbandHash
             = new Hashtable<String, RfBand>();
 
-    // lookup by index with class level vector
+    // lookup by index with class level vector to get
+    // object by index (may be ID or some sort of sorting)
     final public static ArrayList<RfBand> indexRfBand 
             = new ArrayList<RfBand>();
 

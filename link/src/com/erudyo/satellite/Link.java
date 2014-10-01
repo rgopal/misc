@@ -72,13 +72,13 @@ public class Link {
 
         // create a new instance to keep track of all other objects for UI
         selection = new Selection();
-        
+
         // get the bands into selection.  In future a Selection instance
         // could have customized list based on user interface preferences
-        
+        // indexRfBand is built by setRfBandHash
         selection.setRfBandHash(RfBand.rFbandHash);
-        selection.setIndexRfBand(RfBand.indexRfBand);
-        
+        // selection.setIndexRfBand(RfBand.indexRfBand);
+
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(
@@ -93,13 +93,13 @@ public class Link {
             // Satellite has to read all the records from file.  Selection
             // could include only a subset per instance (e.g., satellites
             // visible from a location
-            selection.setBandSatellite (Satellite.getFromFile(
+            selection.setBandSatellite(Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is))));
 
             is = Display.getInstance().
                     getResourceAsStream(null, "/terminals.txt");
 
-            selection.setBandTerminal (Terminal.getFromFile(
+            selection.setBandTerminal(Terminal.getFromFile(
                     parser.parse(new InputStreamReader(is))));
 
             // also read terminals and the current Tx and Rx terminal
@@ -147,7 +147,6 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
-        
         initBands(main, selection);
 
         Container cnt = new Container(new BorderLayout());
@@ -238,13 +237,13 @@ public class Link {
         topLine.addComponent(spin);
         topLine.addComponent(bandLabel);
 
-        ListModel model = new DefaultListModel(selection.getIndexRfBand());
-        int index = spin.getSelectedIndex();
-
-        // make sure to add new RfBand[] so that JVM knows to downcast Object
+        ListModel model = new DefaultListModel(selection.getRfBands());
+         spin.setModel(model);
         
-        RfBand rFband = selection.getIndexRfBand().toArray(
-                new RfBand[0])[index];
+        String item = (String) spin.getSelectedItem();
+
+        RfBand rFband = RfBand.rFbandHash.get(item);
+
         selection.setBand(rFband.getBand());
 
         // note that only a String has substring functions
@@ -252,16 +251,16 @@ public class Link {
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
 
-        spin.setModel(model);
+       
 
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                int index = spin.getSelectedIndex();
-                 RfBand rFband = selection.getIndexRfBand().toArray(
-                        new RfBand[0])[index];
+                String item = (String) spin.getSelectedItem();
+                RfBand rFband = RfBand.rFbandHash.get(item);
+
                 selection.setBand(rFband.getBand());
-                
+
                 bandLabel.setText(Com.shortText((rFband.lowFrequency / 1E9))
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
@@ -284,14 +283,10 @@ public class Link {
             selection.setBand(RfBand.Band.KA);
 
             // get index of KA
-            int i;
-
-            i = selection.getRfBandHash().get("KA").getIndex();
-
-            int index = selection.getIndexRfBand().toArray(new RfBand[0])[i].getIndex();
+            int i = selection.getRfBandHash().get("KA");
 
             // change the current Combobox entry
-            spin.setSelectedIndex(index);
+            spin.setSelectedIndex(i);
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
@@ -314,14 +309,10 @@ public class Link {
             selection.setBand(RfBand.Band.KA);
 
             // get index of KA
-            int i;
-
-            i = selection.getRfBandHash().get("KA").getIndex();
-
-            int index = selection.getIndexRfBand().toArray(new RfBand[0])[i].getIndex();
+            int i = selection.getRfBandHash().get("KA");
 
             // change the current Combobox entry
-            spin.setSelectedIndex(index);
+            spin.setSelectedIndex(i);
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
@@ -344,14 +335,10 @@ public class Link {
             selection.setBand(RfBand.Band.KA);
 
             // get index of KA
-            int i;
-
-            i = RfBand.rFbandHash.get("KA").getIndex();
-
-            int index = RfBand.indexRfBand.toArray(new RfBand[0])[i].getIndex();
+            int i = selection.getRfBandHash().get("KA");
 
             // change the current Combobox entry
-            spin.setSelectedIndex(index);
+            spin.setSelectedIndex(i);
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
