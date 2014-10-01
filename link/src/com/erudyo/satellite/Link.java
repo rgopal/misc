@@ -290,7 +290,7 @@ public class Link {
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
-                        new Satellite[0])));
+                        new String[0])));
 
         if (model == null) {
             System.out.println("Link: Can't create DefaultListModel for satellite band "
@@ -316,7 +316,7 @@ public class Link {
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
-                        new Terminal[0])));
+                        new String[0])));
 
         if (model == null) {
             System.out.println("Link: Can't create DefaultListModel for Rx terminal band "
@@ -342,7 +342,7 @@ public class Link {
         }
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
-                        new Terminal[0])));
+                        new String[0])));
 
         if (model == null) {
             System.out.println("Link: Can't create DefaultListModel for Tx terminal band "
