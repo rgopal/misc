@@ -2,6 +2,7 @@ package com.erudyo.satellite;
 // this is main
 
 import com.codename1.components.InfiniteProgress;
+import com.codename1.ui.Slider;
 import com.codename1.components.ShareButton;
 import com.codename1.components.WebBrowser;
 import com.codename1.facebook.ui.LikeButton;
@@ -176,12 +177,17 @@ public class Link {
         });
 
         LikeButton like = new LikeButton();
+    
         main.addComponent(like);
+        
+          
         ShareButton s = new ShareButton();
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
         like.setUIID("Button");
+        
+    
 
         main.show();
 

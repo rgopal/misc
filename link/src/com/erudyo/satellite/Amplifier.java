@@ -3,27 +3,43 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.erudyo.satellite;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
+ *
  * @author rgopal
  */
 public class Amplifier extends Entity {
+
     private double power = 1;       // in watts for Tx
     private double gain = 10;    // in dB for Rx
     private double Te = 290;   // in degree K, effective temperature
-    
+
     // all gains and loss will be in dB addition/subtraction 
-    private double LFTX =  0.5;     // loss between amplifier and antenna  in DB
-    
-    
-    public void setPower (double power) {
-        this.power = power;
-        updateAffected();
+    private double LFTX = 0.5;     // loss between amplifier and antenna  in DB
+
+    public final static double POWER_LO = 1.0;
+    public final static double POWER_HI = 50.0;
+
+    public void setPower(double power) {
+        if (validatePower(power)== true) {
+            this.power = power;
+        
+            updateAffected();
+        } else
+            System.out.println("Amplifier: power out of range " + 
+                    String.valueOf(power));
     }
-    public double getPower () {
+
+     public boolean validatePower(double p) {
+        if (p < POWER_LO || p > POWER_HI) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    public double getPower() {
         return power;
     }
 

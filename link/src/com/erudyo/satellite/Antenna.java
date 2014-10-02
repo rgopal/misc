@@ -25,12 +25,12 @@ public class Antenna extends Entity {
     private double gain;
     private double area;
 
-    private double GAIN_LO = 100;
-    private double GAIN_HI = - 10;
-    private final double DIAMETER_LO = 0.01;
-    private final double DIAMETER_HI = 33;
-    private final double EFFICIENCY_LO = 0.01;
-    private final double EFFICIENCY_HI = 1.0;
+    private static double GAIN_LO = 100;
+    private static double GAIN_HI = - 10;
+    public static final double DIAMETER_LO = .10;  // in m
+    public static final double DIAMETER_HI = 12;
+    private static final double EFFICIENCY_LO = 0.01;
+    private static final double EFFICIENCY_HI = 1.0;
 
     // calcGain (returns gain in dBi) is called whenever diameter, frequency, or efficiency is changed.
     // calcArea changes when diameter is changed.

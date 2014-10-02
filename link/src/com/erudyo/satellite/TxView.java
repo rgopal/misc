@@ -15,6 +15,7 @@ import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
+import com.codename1.ui.Slider;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextField;
@@ -26,6 +27,7 @@ import com.codename1.ui.list.ListModel;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.ui.events.DataChangedListener;
+import com.codename1.util.MathUtil;
 
 public class TxView extends View {
 
@@ -120,59 +122,78 @@ public class TxView extends View {
         // now go sequentially through the Tx terminal fields
         final Terminal ter = selection.gettXterminal();
 
-        Label L01 = new Label("Center Frequency");
+        Label L01 = new Label("Cent Freq");
         Label L02 = new Label(Com.shortText(ter.getAntenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + ter.getBand());
         cnt.addComponent(L01);
         cnt.addComponent(L02);
         cnt.addComponent(L03);
 
-        Label L11 = new Label("Amplifier Power");
-        final TextField L12 = new TextField(String.valueOf(ter.getAmplifier().getPower()));
-        L12.setColumns(2);
+        Label L11 = new Label("Amp Power");
+     
+        final Slider L12 = new Slider();
+           L12.setMinValue((int) MathUtil.round(Amplifier.POWER_LO*10)); // x10
+        L12.setMaxValue((int) MathUtil.round(Amplifier.POWER_HI*10));
+        L12.setEditable(true);
+        L12.setPreferredW(8);
+        L12.setIncrements(5); //
+        L12.setProgress((int) MathUtil.round(ter.getAmplifier().getPower()*10));
+        L12.setRenderValueOnTop(true);
+    
 
-        Label L13 = new Label("W");
+        Label L13 = new Label("W x10");
         cnt.addComponent(L11);
         cnt.addComponent(L12);
         cnt.addComponent(L13);
 
-        Label L21 = new Label("Antenna Diameter");
-        final TextField L22 = new TextField(Com.shortText(ter.getAntenna().getDiameter()));
-        L22.setColumns(2);
-        Label L23 = new Label("m");
+        Label L21 = new Label("Anten Dia");
+        //final TextField L22 = new TextField(Com.shortText(ter.getAntenna().getDiameter()));
+        
+        
+          final Slider L22 = new Slider();
+       
+        L22.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO*10)); // x10
+        L22.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI*10));
+        L22.setEditable(true);
+        L22.setPreferredW(8);
+        L22.setIncrements(5); //
+        L22.setProgress((int) MathUtil.round(ter.getAntenna().getDiameter()*10));
+    
+        L22.setRenderValueOnTop(true);
+        Label L23 = new Label("m x10");
         cnt.addComponent(L21);
         cnt.addComponent(L22);
         cnt.addComponent(L23);
 
-        Label L2A1 = new Label("   Efficiency");
+        Label L2A1 = new Label(" Efficiency");
         Label L2A2 = new Label(Com.shortText(ter.getAntenna().getEfficiency()));
         Label L2A3 = new Label(" ");
         cnt.addComponent(L2A1);
         cnt.addComponent(L2A2);
         cnt.addComponent(L2A3);
 
-        Label L31 = new Label("   Gain");
+        Label L31 = new Label(" Gain");
         Label L32 = new Label(Com.shortText(ter.getAntenna().getGain()));
         Label L33 = new Label("dB");
         cnt.addComponent(L31);
         cnt.addComponent(L32);
         cnt.addComponent(L33);
 
-        Label L41 = new Label("   3dB Angle");
+        Label L41 = new Label(" 3dB Angle");
         Label L42 = new Label(Com.toDMS(ter.getAntenna().getThreeDBangle()));
         Label L43 = new Label("degrees");
         cnt.addComponent(L41);
         cnt.addComponent(L42);
         cnt.addComponent(L43);
 
-        Label L4A1 = new Label("   Pointing Loss");
+        Label L4A1 = new Label(" Point Loss");
         Label L4A2 = new Label(Com.shortText(ter.getAntenna().getDepointingLoss()));
         Label L4A3 = new Label(" ");
         cnt.addComponent(L4A1);
         cnt.addComponent(L4A2);
         cnt.addComponent(L4A3);
 
-        Label L51 = new Label("Terminal EIRP");
+        Label L51 = new Label("Term EIRP");
         final Label L52 = new Label(Com.shortText(ter.getEIRP()));
         Label L53 = new Label("dBW");
         cnt.addComponent(L51);
@@ -181,12 +202,12 @@ public class TxView extends View {
         sub.setScrollable(true);
 
         // all actions at the end to update other fields
-        L12.addDataChangeListener(new DataChangedListener() {
+        L12.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
                 // System.out.println(L12.getText());
                 try {
                     selection.gettXterminal().getAmplifier().
-                            setPower(Double.parseDouble(L12.getText()));
+                            setPower(Double.parseDouble(L12.getText())/10.0);
                     // update EIRP
                     L52.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
@@ -195,14 +216,15 @@ public class TxView extends View {
             }
         });
 
-        // antenna diameter
-        
-        L22.addDataChangeListener(new DataChangedListener() {
+     
+        L22.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
                 System.out.println(L22.getText());
                 try {
+                    
+                    // convert from cm to m first
                     selection.gettXterminal().getAntenna().
-                            setDiameter(Double.parseDouble(L22.getText()));
+                            setDiameter(Double.parseDouble(L22.getText())/10.0);
                     // update EIRP
                     L52.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
@@ -212,6 +234,8 @@ public class TxView extends View {
 
             }
         });
+        
+       
 
         // have a multi-row table layout and dump the transmit terminal values
         return sub;
