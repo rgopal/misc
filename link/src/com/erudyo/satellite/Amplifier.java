@@ -10,7 +10,7 @@ package com.erudyo.satellite;
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
  * @author rgopal
  */
-public class Amplifier {
+public class Amplifier extends Entity {
     private double power = 1;       // in watts for Tx
     private double gain = 10;    // in dB for Rx
     private double Te = 290;   // in degree K, effective temperature
@@ -38,6 +38,7 @@ public class Amplifier {
      */
     public void setLFTX(double LFTX) {
         this.LFTX = LFTX;
+        updateAffected();
     }
 
     /**
@@ -52,6 +53,7 @@ public class Amplifier {
      */
     public void setGain(double gain) {
         this.gain = gain;
+        updateAffected();
     }
 
     /**
@@ -66,6 +68,7 @@ public class Amplifier {
      */
     public void setTe(double Te) {
         this.Te = Te;
+        updateAffected();
     }
 
 }

@@ -108,7 +108,7 @@ public class RxView extends View {
     }
 
     public Form createView(Selection selection) {
-        Form rx = new Form(this.terminal.getName());
+        Form rx = new Form("Rx " + selection.getrXterminal().getName());
 
         rx.setScrollable(
                 false);

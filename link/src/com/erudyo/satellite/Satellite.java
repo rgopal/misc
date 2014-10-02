@@ -144,7 +144,7 @@ public class Satellite extends Entity {
             vector.add(satellite);
 
         }
-        // eventually calculate this from Antenna and amplifier
+        // all these satellites are getting created and nothing selected so far
     }
 
     public double getEIRP() {

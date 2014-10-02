@@ -39,7 +39,7 @@ public class Antenna extends Entity {
     // setFrequency and setEfficiency changes gain
     // setGain changes diameter and area (in future other things)
     public Antenna() {
-        init();
+        
     }
 
     public Antenna(String n) {
@@ -93,6 +93,7 @@ public class Antenna extends Entity {
             this.area = calcArea(this.diameter);
             this.gain = calcGain(this.diameter, this.frequency, this.efficiency);
             this.threeDBangle = calcThreeDB(this.diameter, this.frequency);
+            updateAffected();
         } else {
             System.out.println("Antenna: setDiameter: out of range diameter "
                     + String.valueOf(diameter));
@@ -103,6 +104,7 @@ public class Antenna extends Entity {
     public void setEfficiency(double e) {
         this.efficiency = e;
         this.gain = calcGain(this.diameter, this.frequency, e);
+        updateAffected();
     }
 
     public boolean validateDiameter(double d) {
@@ -130,6 +132,7 @@ public class Antenna extends Entity {
         this.diameter = d;
         this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
+        updateAffected();
 
     }
 
@@ -165,6 +168,7 @@ public class Antenna extends Entity {
      */
     public void setTemperature(double temperature) {
         this.temperature = temperature;
+            updateAffected();
     }
 
     /**
@@ -172,6 +176,7 @@ public class Antenna extends Entity {
      */
     public double getDepointingLoss() {
         return depointingLoss;
+    
     }
 
     /**
@@ -179,6 +184,7 @@ public class Antenna extends Entity {
      */
     public void setDepointingLoss(double depointingLoss) {
         this.depointingLoss = depointingLoss;
+            updateAffected();
     }
 
     /**
@@ -192,7 +198,9 @@ public class Antenna extends Entity {
      * @param threeDBangle the threeDBangle to set
      */
     public void setThreeDBangle(double threeDBangle) {
+        // TODO change diameter
         this.threeDBangle = threeDBangle;
+            updateAffected();
     }
 
     /**
@@ -213,6 +221,7 @@ public class Antenna extends Entity {
         this.frequency = f;
         this.gain = calcGain(diameter, f, efficiency);
         this.threeDBangle = calcThreeDB(diameter, f);
+        updateAffected();
     }
 
     /**
@@ -230,6 +239,7 @@ public class Antenna extends Entity {
         this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10)) / 
                 efficiency, 0.5) * Com.C / (Com.PI * frequency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
+            updateAffected();
     }
 
     /**
@@ -248,6 +258,7 @@ public class Antenna extends Entity {
         this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, f);
         this.band = RfBand.findBand(f);
+            updateAffected();
         }
         else
             System.out.println("Antenna: setFrequency out of range " +

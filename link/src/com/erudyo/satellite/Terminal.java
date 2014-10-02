@@ -29,16 +29,17 @@ public class Terminal extends Entity {
     // eventually calculate these things
     private double EIRP;        // somewhere this has to be updated
     private double gain;
-    
+
     private int index;
 
-    public Terminal () {
-        
+    public Terminal() {
+
     }
+
     public int getIndex() {
         return index;
     }
-    
+
     public String toString() {
         return name;
     }
@@ -53,8 +54,7 @@ public class Terminal extends Entity {
     // all terminals stored in a Class level hash
     static Hashtable<String, Terminal> terminalHash
             = new Hashtable<String, Terminal>();
-    
-    
+
     // lookup by index with class level vector
     final public static ArrayList<Terminal> indexTerminal
             = new ArrayList<Terminal>();
@@ -104,26 +104,20 @@ public class Terminal extends Entity {
 
         // terminals in format name, longitude, latitude, antenna size, amplifier
         // gain, and band
-        
         // get the band first
-         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
-         
-         // update band and frequency for antenna
-         
-         // get the uplink version of the terminal band
-         terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
-         
+        terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
+
+        // update band and frequency for antenna
+        // get the uplink version of the terminal band
+        terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
+
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
-        
+
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
 
-        // where do we update terminal EIRP.  Power is in Watts
-        terminal.setEIRP(10*MathUtil.log10(terminal.getAntenna().getGain()
-                            * terminal.getAmplifier().getPower()));
-       
-
+        // where do we update terminal EIRP.  Now automatic with "update"
         vector.add(terminal);
 
     }
@@ -132,14 +126,24 @@ public class Terminal extends Entity {
         return band;
     }
 
+    // unless the constructor finishes this is not available
+    public void init() {
+        
+    }
     public Terminal(String name) {
+        this.name = name;
+        
         antenna = new Antenna();
+        antenna.addAffected(this);
+        System.out.println(this.name);
         antenna.setDiameter(1);
+
         amplifier = new Amplifier();
+        amplifier.addAffected(this);
         amplifier.setPower(10);
         // get current location
+
         
-        this.name = name;
 
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
@@ -155,22 +159,15 @@ public class Terminal extends Entity {
             setName("T" + String.valueOf(randomGenerator.nextInt(10000)));
         }
 
-        
-         // add the new Terminal instance to the Hashtable at the class level
+        // add the new Terminal instance to the Hashtable at the class level
         Terminal.terminalHash.put(getName(), this);
-        
 
         // Add new object instance to the array list (all satellites)
         indexTerminal.add(this);
-        
-        index = indexTerminal.size()-1;
-     
-     
-        
+
+        index = indexTerminal.size() - 1;
+
     }
-
- 
-
 
     /**
      * @return the longitude
@@ -236,21 +233,45 @@ public class Terminal extends Entity {
     /**
      * @param EIRP the EIRP to set
      */
-    public void setEIRP(double EIRP) {
-        this.EIRP = EIRP;
+    public boolean setEIRP(double EIRP) {
+        // TODO, change simple setting to actually distributing change
+        // to Antenna and Amplifier.   Call their set methods and let update
+        // come back and change the EIRP
+        
+        // Each set can do the max it can and let the caller know if it failed
+        // or passed
+        
+        return true;
     }
 
     /**
      * @return the gain
      */
     public double getGain() {
+        
         return gain;
     }
 
     /**
      * @param gain the gain to set
      */
-    public void setGain(double gain) {
-        this.gain = gain;
+    public boolean setGain(double gain) {
+        // Gain also would depend on multiple components so use set methods
+        
+        return true;
+    }
+
+    // this function called by children and sibling "e" of this when they change
+    public void update(Entity e) {
+        // update everything that could be affected.  Ideally pass the object
+
+        // EIRP depends on antenna and amplifier, but both need to exist 
+        
+        if (this.getAmplifier() != null && this.getAntenna()!= null) {
+        this.EIRP = (10 * MathUtil.log10(this.getAntenna().getGain()
+                * this.getAmplifier().getPower()));
+        }
+        
+        // avoid using set since that should be used to send updates down
     }
 }

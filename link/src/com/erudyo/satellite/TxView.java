@@ -107,7 +107,7 @@ public class TxView extends View {
     }
 
     public Form createView(Selection selection) {
-        Form sub = new Form(this.name);
+        Form sub = new Form("Tx " + selection.gettXterminal().getName() );
 
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
