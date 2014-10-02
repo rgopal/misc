@@ -47,10 +47,14 @@ public class RxView extends View {
         }
 
         // create model for all terminals of selected band
-        ListModel model = new DefaultListModel(selection.getBandTerminal().get(band));
+        ListModel model = new DefaultListModel(
+                selection.getBandTerminal().get(band));
 
         combo.setModel(model);
-        
+
+        // set the Rx Terminal during initialization
+        selection.setrXterminal(Terminal.terminalHash.get(
+                (String) combo.getSelectedItem()));
 
         // Band combobox should be able to change this
         selection.getRxView().spin = combo;
@@ -58,17 +62,16 @@ public class RxView extends View {
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                // find the name of the satellite
-                String name = (String) combo.getSelectedItem();
-
-                Terminal ter = Terminal.terminalHash.get(name);
-
-                selection.setrXterminal(ter);
+                // change the the selected  rX satellite
+                selection.setrXterminal(Terminal.terminalHash.get(
+                        (String) combo.getSelectedItem()));
 
                 // update other values dependent on this satellite
                 // updateValues(selection);
                 // change the subwidget, label, and sublabel etc.
-                selection.getRxView().label.setText(ter.getName());
+                selection.getRxView().label.setText(
+                        Terminal.terminalHash.get(
+                                (String) combo.getSelectedItem()).getName());
 
                 // System.out.println(combo.getSelectedItem());
             }
@@ -85,7 +88,6 @@ public class RxView extends View {
         RfBand.Band band = selection.getBand();
 
         // does not work final Label label = new Label(selection.getrXterminal().getName()); 
-        
         final Label label = new Label((String) selection.getRxView().spin.getSelectedItem());
         // terminal is not set yet selection.gettXterminal().getName());      
 

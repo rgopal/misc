@@ -57,23 +57,26 @@ public class TxView extends View {
 
         combo.setModel(model);
 
+        // set the selected Tx terminal during initialization
+        selection.settXterminal(Terminal.terminalHash.get(
+                (String) combo.getSelectedItem()));
+
         // Band combobox should be able to change this
         selection.getTxView().spin = combo;
 
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                // find the name of the satellite
-                String name = (String) combo.getSelectedItem();
-
-                Terminal ter = Terminal.terminalHash.get(name);
-
-                selection.settXterminal(ter);
+                // set the selected Tx terminal
+                selection.settXterminal(Terminal.terminalHash.get(
+                        (String) combo.getSelectedItem()));
 
                 // update other values dependent on this satellite
                 // updateValues(selection);
                 // change the subwidget, label, and sublabel etc.
-                selection.getTxView().label.setText(ter.getName());
+                selection.getTxView().label.setText(
+                        Terminal.terminalHash.get(
+                                (String) combo.getSelectedItem()).getName());
 
                 // System.out.println(combo.getSelectedItem());
             }
@@ -134,7 +137,7 @@ public class TxView extends View {
         cnt.addComponent(L21);
         cnt.addComponent(L22);
         cnt.addComponent(L23);
-        
+
         Label L2A1 = new Label("   Efficiency");
         Label L2A2 = new Label(Com.shortText(ter.getAntenna().getEfficiency()));
         Label L2A3 = new Label(" ");
@@ -156,7 +159,6 @@ public class TxView extends View {
         cnt.addComponent(L42);
         cnt.addComponent(L43);
 
-        
         Label L4A1 = new Label("   Pointing Loss");
         Label L4A2 = new Label(Com.shortText(ter.getAntenna().getDepointingLoss()));
         Label L4A3 = new Label(" ");
@@ -164,9 +166,8 @@ public class TxView extends View {
         cnt.addComponent(L4A2);
         cnt.addComponent(L4A3);
 
-        
         Label L51 = new Label("Terminal EIRP");
-        Label L52 = new Label(Com.shortText(ter.getEIRP()));    
+        Label L52 = new Label(Com.shortText(ter.getEIRP()));
         Label L53 = new Label("dBW");
         cnt.addComponent(L51);
         cnt.addComponent(L52);
