@@ -24,12 +24,10 @@ public class RfBand extends Entity {
     public double highFrequency;
     public double centerFrequency;
     public Band band;
- 
-   
+
     // index stores the location of instance in array indexRfBand
     private int index;
-    
-    
+
     public int getIndex() {
         return index;
     }
@@ -41,7 +39,49 @@ public class RfBand extends Entity {
         this.index = index;
     }
     
+      public static Band findDl(Band band) {
+        Band u;
+        switch (band) {
+            case KA:
+                u = Band.KA_DL;
+                break;
+            case KU:
+                u = Band.KU_DL;
+                break;
+            case C:
+                u = Band.C_DL;
+                break;
+            case X:
+                u = Band.X_DL;
+                break;
 
+            default:
+                u = Band.KA_DL;
+        }
+        return u;
+    }
+
+    public static Band findUl(Band band) {
+        Band u;
+        switch (band) {
+            case KA:
+                u = Band.KA_UL;
+                break;
+            case KU:
+                u = Band.KU_UL;
+                break;
+            case C:
+                u = Band.C_UL;
+                break;
+            case X:
+                u = Band.X_UL;
+                break;
+
+            default:
+                u = Band.KA_UL;
+        }
+        return u;
+    }
     // lookup by String name with class level table
     // could be used to get an object by name
     final public static Hashtable<String, RfBand> rFbandHash
@@ -49,7 +89,7 @@ public class RfBand extends Entity {
 
     // lookup by index with class level vector to get
     // object by index (may be ID or some sort of sorting)
-    final public static ArrayList<RfBand> indexRfBand 
+    final public static ArrayList<RfBand> indexRfBand
             = new ArrayList<RfBand>();
 
     public final static double C_LO = 3.7E9;
@@ -111,13 +151,11 @@ public class RfBand extends Entity {
 
         // Add new object instance to the current slot in array list of bands
         indexRfBand.add(this);
-        
-        this.index = indexRfBand.size()-1;
 
+        this.index = indexRfBand.size() - 1;
 
     }
-  
-   
+
     public String toString() {
         return name;
     }

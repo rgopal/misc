@@ -90,7 +90,7 @@ public abstract class View {
         return icon;
     }
 
-    public abstract Form createView();
+    public abstract Form createView(Selection selection);
 
     /**
      * @return the value

@@ -7,6 +7,7 @@ package com.erudyo.satellite;
 
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
+import com.codename1.util.MathUtil;
 import com.codename1.maps.Coord;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -26,7 +27,7 @@ public class Terminal extends Entity {
     private Antenna antenna;
     private Amplifier amplifier;
     // eventually calculate these things
-    private double EIRP;
+    private double EIRP;        // somewhere this has to be updated
     private double gain;
     
     private int index;
@@ -101,15 +102,27 @@ public class Terminal extends Entity {
         // vector has already been created for a band, just add entries
         Terminal terminal = new Terminal(fields[0]);
 
-        // terminals in format name, latitude, longitude, antenna size, amplifier
+        // terminals in format name, longitude, latitude, antenna size, amplifier
         // gain, and band
         
-        terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
-        terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
+        // get the band first
+         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
+         
+         // update band and frequency for antenna
+         
+         // get the uplink version of the terminal band
+         terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
+         
+        terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
+        terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
+        
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
 
-        terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
+        // where do we update terminal EIRP.  Power is in Watts
+        terminal.setEIRP(10*MathUtil.log10(terminal.getAntenna().getGain()
+                            * terminal.getAmplifier().getPower()));
+       
 
         vector.add(terminal);
 

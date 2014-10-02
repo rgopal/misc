@@ -11,12 +11,61 @@ package com.erudyo.satellite;
  * @author rgopal
  */
 public class Amplifier {
-    private double power = 1;   // in watts
+    private double power = 1;       // in watts for Tx
+    private double gain = 10;    // in dB for Rx
+    private double Te = 290;   // in degree K, effective temperature
+    
+    // all gains and loss will be in dB addition/subtraction 
+    private double LFTX =  0.5;     // loss between amplifier and antenna  in DB
+    
+    
     public void setPower (double power) {
         this.power = power;
     }
     public double getPower () {
         return power;
+    }
+
+    /**
+     * @return the LFTX
+     */
+    public double getLFTX() {
+        return LFTX;
+    }
+
+    /**
+     * @param LFTX the LFTX to set
+     */
+    public void setLFTX(double LFTX) {
+        this.LFTX = LFTX;
+    }
+
+    /**
+     * @return the gain
+     */
+    public double getGain() {
+        return gain;
+    }
+
+    /**
+     * @param gain the gain to set
+     */
+    public void setGain(double gain) {
+        this.gain = gain;
+    }
+
+    /**
+     * @return the Te
+     */
+    public double getTe() {
+        return Te;
+    }
+
+    /**
+     * @param Te the Te to set
+     */
+    public void setTe(double Te) {
+        this.Te = Te;
     }
 
 }

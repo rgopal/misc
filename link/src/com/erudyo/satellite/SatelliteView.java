@@ -136,7 +136,7 @@ public class SatelliteView extends View {
     }
  
 
-    public Form createView() {
+    public Form createView(Selection selection) {
         Form sat = new Form(getName());
 
         sat.setScrollable(

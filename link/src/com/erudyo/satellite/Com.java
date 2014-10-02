@@ -41,6 +41,9 @@ public class Com {
     };
 
     public final static double PI = Math.PI;
+    public final static double K = 1.379E-23;       // Boltzmann constant, W/HzK
+    public final static double KdB = -228.6;        // dBW/HzK
+
     public final static double C = 2.99792458E8;
     public final static double RE = 6378.1E3;     // mean equatorial radius
     public final static String DEGREE = "\u00b0";

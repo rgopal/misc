@@ -186,7 +186,7 @@ public class Link {
 
     }
 
-    public void initViews(final View view, Container cnt, Selection selection) {
+    public void initViews(final View view, Container cnt, final Selection selection) {
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
@@ -211,7 +211,7 @@ public class Link {
 
             c.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    Form form = view.createView();
+                    Form form = view.createView(selection);
                     BackCommand bc = new BackCommand();
                     form.addCommand(bc);
                     form.setBackCommand(bc);

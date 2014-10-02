@@ -1,83 +1,78 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * STATUS:  20141001 All code in including functions in both directions
+ * TODO:    Testing
  */
-
 package com.erudyo.satellite;
 
 import com.codename1.util.MathUtil;
-
-
 
 /**
  *
  * @author rgopal
  */
 public class Antenna extends Entity {
-    private double diameter;
-    private double area;
-    private double efficiency;
-    private double temperature;
-    
-    private double depointingLoss;
-    private double threeDBangle;
+
+       private double diameter = 1;
+    private double efficiency = 0.6;
     private RfBand.Band band = RfBand.Band.KA;
-    private double gain;
-    private double frequency;
-    private double maxGain;
-    private double minGain;
+    private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
+
+    private double depointingLoss = 0.5;
+    private double temperature = 290;         
     
+    // the following are calculated, but can be set individually
+    private double threeDBangle;
+    private double gain;        
+    private double area;
+
+    private double GAIN_LO = 100;
+    private double GAIN_HI = - 10;
     private final double DIAMETER_LO = 0.01;
     private final double DIAMETER_HI = 33;
     private final double EFFICIENCY_LO = 0.01;
     private final double EFFICIENCY_HI = 1.0;
-    
+
+  
     // calcGain (returns gain in dBi) is called whenever diameter, frequency, or efficiency is changed.
     // calcArea changes when diameter is changed.
     // setArea changes diameter and then gain
     // setFrequency and setEfficiency changes gain
-    
     // setGain changes diameter and area (in future other things)
-    
-    public Antenna () {
+    public Antenna() {
         init();
     }
-    
-    public Antenna (String n) {
+
+    public Antenna(String n) {
         super(n);
-        init();
-     
+        init();     // all derived values from basic dia, freq, eff
     }
-     public Antenna (String n, String d, String s) {
-        super(n,d,s);
-         init();
-    }
+
     private void init() {
-    
-        diameter = 4;
+
         area = calcArea(diameter);
-        efficiency=0.6;
-        frequency = 1.4E+10;
-        // all gain values calculated in dB
-        gain = calcGain (diameter, frequency, efficiency);
-        maxGain = 100;
-        minGain = -10;  
+
+        threeDBangle = calcThreeDB(diameter, frequency);
+
+        gain = calcGain(diameter, frequency, efficiency);
     }
-    private double calcArea (double diameter) {
+
+    private double calcArea(double diameter) {
         double area;
-        area = Com.PI*MathUtil.pow(diameter/2.0,2.0);
+        area = Com.PI * MathUtil.pow(diameter / 2.0, 2.0);
         return area;
     }
+
     private double calcThreeDB(double d, double f) {
-          return 70*Com.C/(f*d);
+        return Math.toRadians(70 * Com.C / (f * d));    // Radians
     }
+
     // calculate gain from diameter, frequency, and efficiency
-    private double calcGain (double d, double f, double e) {
+    private double calcGain(double d, double f, double e) {
         double gain;
-        gain = e*MathUtil.pow((Com.PI*d*f/Com.C),2.0);
-        return (10*MathUtil.log10(gain));
+        gain = e * MathUtil.pow((Com.PI * d * f / Com.C), 2.0);
+        return (10 * MathUtil.log10(gain));     // in dB
     }
+
     /**
      * @return the diameter
      */
@@ -88,19 +83,36 @@ public class Antenna extends Entity {
     /**
      * @param diameter the diameter to set
      */
-    public void setDiameter(double diameter) {
-        this.diameter = diameter;
-        this.area = calcArea(diameter);
-        this.gain = calcGain(diameter, frequency, efficiency);
-        this.threeDBangle = calcThreeDB(diameter, frequency);
+    public void setDiameter(double d) {
+        if (validateDiameter(diameter)) {
+            // only if valid diameter
+
+            this.diameter = d;
+
+            // calculate everything that depends on diameter
+            this.area = calcArea(this.diameter);
+            this.gain = calcGain(this.diameter, this.frequency, this.efficiency);
+            this.threeDBangle = calcThreeDB(this.diameter, this.frequency);
+        } else {
+            System.out.println("Antenna: setDiameter: out of range diameter "
+                    + String.valueOf(diameter));
+        }
+
+    }
+
+    public void setEfficiency(double e) {
+        this.efficiency = e;
+        this.gain = calcGain(this.diameter, this.frequency, e);
     }
 
     public boolean validateDiameter(double d) {
-        if (d < DIAMETER_LO || d > DIAMETER_HI)
+        if (d < DIAMETER_LO || d > DIAMETER_HI) {
             return false;
-        else
+        } else {
             return true;
+        }
     }
+
     /**
      * @return the area
      */
@@ -114,11 +126,11 @@ public class Antenna extends Entity {
     public void setArea(double area) {
         double d;
         this.area = area;
-        d = MathUtil.pow(4.0*area/Com.PI,0.5);
+        d = MathUtil.pow(4.0 * area / Com.PI, 0.5);
         this.diameter = d;
-        this.gain = calcGain (diameter, frequency, efficiency);
+        this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
-        
+
     }
 
     /**
@@ -131,17 +143,16 @@ public class Antenna extends Entity {
     /**
      * @param efficiency the efficiency to set
      */
-    public void setEfficiency(double efficiency) {
-        this.efficiency = efficiency;
-        gain = calcGain(diameter, frequency, efficiency);
-    }
+  
 
     public boolean validateEfficiency(double e) {
-        if (e < EFFICIENCY_LO || e > EFFICIENCY_HI)
+        if (e < EFFICIENCY_LO || e > EFFICIENCY_HI) {
             return false;
-        else
-            return true; 
+        } else {
+            return true;
+        }
     }
+
     /**
      * @return the temperature
      */
@@ -195,13 +206,13 @@ public class Antenna extends Entity {
      * @param band the band to set
      */
     public void setBand(RfBand.Band band) {
-        double f = 1E9;
+    
         this.band = band;
-        f = RfBand.centerFrequency(band);
-        
+        double f = RfBand.centerFrequency(band);
+
         this.frequency = f;
-        this.gain = calcGain (diameter, frequency, efficiency);
-        this.threeDBangle = calcThreeDB(diameter, frequency);
+        this.gain = calcGain(diameter, f, efficiency);
+        this.threeDBangle = calcThreeDB(diameter, f);
     }
 
     /**
@@ -212,13 +223,13 @@ public class Antenna extends Entity {
     }
 
     /**
-     * @param gain the gain to set.  Changes diameter to be consistent with gain
+     * @param gain the gain to set. Changes diameter to be consistent with gain
      */
     public void setGain(double g) {
         this.gain = g;
-        this.diameter = MathUtil.pow(MathUtil.pow(10.0,(gain/10))/efficiency,0.5)*Com.C/(Com.PI*frequency);
+        this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10)) / 
+                efficiency, 0.5) * Com.C / (Com.PI * frequency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
-        
     }
 
     /**
@@ -232,34 +243,24 @@ public class Antenna extends Entity {
      * @param frequency the frequency to set
      */
     public void setFrequency(double f) {
+        if (validateFrequency(f)) {
         this.frequency = f;
         this.gain = calcGain(diameter, frequency, efficiency);
-        this.threeDBangle = 70*Com.C/(frequency*diameter);
-        band = RfBand.findBand(f);
-        
+        this.threeDBangle = calcThreeDB(diameter, f);
+        this.band = RfBand.findBand(f);
+        }
+        else
+            System.out.println("Antenna: setFrequency out of range " +
+                    String.valueOf(f));
     }
 
     public boolean validateFrequency(double f) {
-        if (f < RfBand.C_DL_LO || f > RfBand.KA2_UL_HI)
+        if (f < RfBand.C_DL_LO || f > RfBand.KA2_UL_HI) {
             return false;
-        else
+        } else {
             return true;
-    }
-    /**
-     * @return the maxGain
-     */
-    public double getMaxGain() {
-        return maxGain;
+        }
     }
 
-    /**
-     * @param maxGain the maxGain to set
-     */
-    public void setMaxGain(double maxGain) {
-        this.maxGain = maxGain;
-    }
 
-   
-    
-    
 }
