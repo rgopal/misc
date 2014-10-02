@@ -131,6 +131,8 @@ public class Terminal extends Entity {
         
     }
     public Terminal(String name) {
+        
+        // race condintion?   Had to move this before passing this in addAffected
         this.name = name;
         
         antenna = new Antenna();
@@ -263,7 +265,8 @@ public class Terminal extends Entity {
 
     // this function called by children and sibling "e" of this when they change
     public void update(Entity e) {
-        // update everything that could be affected.  Ideally pass the object
+        
+        // update everything that could be affected
 
         // EIRP depends on antenna and amplifier, but both need to exist 
         

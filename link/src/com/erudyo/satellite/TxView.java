@@ -17,6 +17,7 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
+import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
@@ -24,6 +25,7 @@ import com.codename1.ui.list.DefaultListModel;
 import com.codename1.ui.list.ListModel;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
+import com.codename1.ui.events.DataChangedListener;
 
 public class TxView extends View {
 
@@ -106,8 +108,8 @@ public class TxView extends View {
         return name;
     }
 
-    public Form createView(Selection selection) {
-        Form sub = new Form("Tx " + selection.gettXterminal().getName() );
+    public Form createView(final Selection selection) {
+        Form sub = new Form("Tx " + selection.gettXterminal().getName());
 
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
@@ -116,7 +118,8 @@ public class TxView extends View {
         cnt.setLayout(new TableLayout(9, 3));
 
         // now go sequentially through the Tx terminal fields
-        Terminal ter = selection.gettXterminal();
+        final Terminal ter = selection.gettXterminal();
+
         Label L01 = new Label("Center Frequency");
         Label L02 = new Label(Com.shortText(ter.getAntenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + ter.getBand());
@@ -125,14 +128,17 @@ public class TxView extends View {
         cnt.addComponent(L03);
 
         Label L11 = new Label("Amplifier Power");
-        Label L12 = new Label(String.valueOf(ter.getAmplifier().getPower()));
+        final TextField L12 = new TextField(String.valueOf(ter.getAmplifier().getPower()));
+        L12.setColumns(2);
+
         Label L13 = new Label("W");
         cnt.addComponent(L11);
         cnt.addComponent(L12);
         cnt.addComponent(L13);
 
         Label L21 = new Label("Antenna Diameter");
-        Label L22 = new Label(Com.shortText(ter.getAntenna().getDiameter()));
+        final TextField L22 = new TextField(Com.shortText(ter.getAntenna().getDiameter()));
+        L22.setColumns(2);
         Label L23 = new Label("m");
         cnt.addComponent(L21);
         cnt.addComponent(L22);
@@ -167,12 +173,45 @@ public class TxView extends View {
         cnt.addComponent(L4A3);
 
         Label L51 = new Label("Terminal EIRP");
-        Label L52 = new Label(Com.shortText(ter.getEIRP()));
+        final Label L52 = new Label(Com.shortText(ter.getEIRP()));
         Label L53 = new Label("dBW");
         cnt.addComponent(L51);
         cnt.addComponent(L52);
         cnt.addComponent(L53);
         sub.setScrollable(true);
+
+        // all actions at the end to update other fields
+        L12.addDataChangeListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                // System.out.println(L12.getText());
+                try {
+                    selection.gettXterminal().getAmplifier().
+                            setPower(Double.parseDouble(L12.getText()));
+                    // update EIRP
+                    L52.setText(Com.shortText(ter.getEIRP()));
+                } catch (java.lang.NumberFormatException e) {
+                    System.out.println("TxView: bad number " + L12.getText());
+                }
+            }
+        });
+
+        // antenna diameter
+        
+        L22.addDataChangeListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                System.out.println(L22.getText());
+                try {
+                    selection.gettXterminal().getAntenna().
+                            setDiameter(Double.parseDouble(L22.getText()));
+                    // update EIRP
+                    L52.setText(Com.shortText(ter.getEIRP()));
+                } catch (java.lang.NumberFormatException e) {
+                    System.out.println("TxView: bad number " + L22.getText());
+
+                }
+
+            }
+        });
 
         // have a multi-row table layout and dump the transmit terminal values
         return sub;

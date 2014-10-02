@@ -21,6 +21,7 @@ public class Amplifier extends Entity {
     
     public void setPower (double power) {
         this.power = power;
+        updateAffected();
     }
     public double getPower () {
         return power;

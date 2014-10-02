@@ -12,17 +12,17 @@ import com.codename1.util.MathUtil;
  */
 public class Antenna extends Entity {
 
-       private double diameter = 1;
+    private double diameter = 1;
     private double efficiency = 0.6;
     private RfBand.Band band = RfBand.Band.KA;
     private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
 
     private double depointingLoss = 0.5;
-    private double temperature = 290;         
-    
+    private double temperature = 290;
+
     // the following are calculated, but can be set individually
     private double threeDBangle;
-    private double gain;        
+    private double gain;
     private double area;
 
     private double GAIN_LO = 100;
@@ -32,14 +32,13 @@ public class Antenna extends Entity {
     private final double EFFICIENCY_LO = 0.01;
     private final double EFFICIENCY_HI = 1.0;
 
-  
     // calcGain (returns gain in dBi) is called whenever diameter, frequency, or efficiency is changed.
     // calcArea changes when diameter is changed.
     // setArea changes diameter and then gain
     // setFrequency and setEfficiency changes gain
     // setGain changes diameter and area (in future other things)
     public Antenna() {
-        
+
     }
 
     public Antenna(String n) {
@@ -84,7 +83,7 @@ public class Antenna extends Entity {
      * @param diameter the diameter to set
      */
     public void setDiameter(double d) {
-        if (validateDiameter(diameter)) {
+        if (validateDiameter(d)) {
             // only if valid diameter
 
             this.diameter = d;
@@ -146,8 +145,6 @@ public class Antenna extends Entity {
     /**
      * @param efficiency the efficiency to set
      */
-  
-
     public boolean validateEfficiency(double e) {
         if (e < EFFICIENCY_LO || e > EFFICIENCY_HI) {
             return false;
@@ -168,7 +165,7 @@ public class Antenna extends Entity {
      */
     public void setTemperature(double temperature) {
         this.temperature = temperature;
-            updateAffected();
+        updateAffected();
     }
 
     /**
@@ -176,7 +173,7 @@ public class Antenna extends Entity {
      */
     public double getDepointingLoss() {
         return depointingLoss;
-    
+
     }
 
     /**
@@ -184,7 +181,7 @@ public class Antenna extends Entity {
      */
     public void setDepointingLoss(double depointingLoss) {
         this.depointingLoss = depointingLoss;
-            updateAffected();
+        updateAffected();
     }
 
     /**
@@ -200,7 +197,7 @@ public class Antenna extends Entity {
     public void setThreeDBangle(double threeDBangle) {
         // TODO change diameter
         this.threeDBangle = threeDBangle;
-            updateAffected();
+        updateAffected();
     }
 
     /**
@@ -214,7 +211,7 @@ public class Antenna extends Entity {
      * @param band the band to set
      */
     public void setBand(RfBand.Band band) {
-    
+
         this.band = band;
         double f = RfBand.centerFrequency(band);
 
@@ -236,10 +233,10 @@ public class Antenna extends Entity {
      */
     public void setGain(double g) {
         this.gain = g;
-        this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10)) / 
-                efficiency, 0.5) * Com.C / (Com.PI * frequency);
+        this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10))
+                / efficiency, 0.5) * Com.C / (Com.PI * frequency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
-            updateAffected();
+        updateAffected();
     }
 
     /**
@@ -254,15 +251,15 @@ public class Antenna extends Entity {
      */
     public void setFrequency(double f) {
         if (validateFrequency(f)) {
-        this.frequency = f;
-        this.gain = calcGain(diameter, frequency, efficiency);
-        this.threeDBangle = calcThreeDB(diameter, f);
-        this.band = RfBand.findBand(f);
+            this.frequency = f;
+            this.gain = calcGain(diameter, frequency, efficiency);
+            this.threeDBangle = calcThreeDB(diameter, f);
+            this.band = RfBand.findBand(f);
             updateAffected();
+        } else {
+            System.out.println("Antenna: setFrequency out of range "
+                    + String.valueOf(f));
         }
-        else
-            System.out.println("Antenna: setFrequency out of range " +
-                    String.valueOf(f));
     }
 
     public boolean validateFrequency(double f) {
@@ -272,6 +269,5 @@ public class Antenna extends Entity {
             return true;
         }
     }
-
 
 }
