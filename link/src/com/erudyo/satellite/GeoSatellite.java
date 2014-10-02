@@ -29,8 +29,5 @@ public class GeoSatellite extends Satellite {
         super(n);
         init();
     }
-    public GeoSatellite (String n, String d, String s) {
-        super(n,d,s);
-        init();
-    }
+   
 }

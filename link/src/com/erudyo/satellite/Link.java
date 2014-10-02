@@ -147,6 +147,7 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
+        // set the current Band and then satellite, terminal
         initBands(main, selection);
 
         Container cnt = new Container(new BorderLayout());
@@ -166,7 +167,7 @@ public class Link {
         final MapView map = new MapView("Map");
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                Form form = map.createView();
+                Form form = map.createView(selection);
                 BackCommand bc = new BackCommand();
                 form.addCommand(bc);
                 form.setBackCommand(bc);

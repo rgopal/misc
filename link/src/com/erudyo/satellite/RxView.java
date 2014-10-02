@@ -31,6 +31,7 @@ public class RxView extends View {
     public RxView() {
 
     }
+
     public Component getWidget(final Selection selection) {
         Label l = new Label(getName());
 
@@ -49,6 +50,7 @@ public class RxView extends View {
         ListModel model = new DefaultListModel(selection.getBandTerminal().get(band));
 
         combo.setModel(model);
+        
 
         // Band combobox should be able to change this
         selection.getRxView().spin = combo;
@@ -56,20 +58,18 @@ public class RxView extends View {
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                
-                 // find the name of the satellite
+                // find the name of the satellite
                 String name = (String) combo.getSelectedItem();
-              
+
                 Terminal ter = Terminal.terminalHash.get(name);
-                
+
                 selection.setrXterminal(ter);
-                
+
                 // update other values dependent on this satellite
                 // updateValues(selection);
-               
                 // change the subwidget, label, and sublabel etc.
                 selection.getRxView().label.setText(ter.getName());
-            
+
                 // System.out.println(combo.getSelectedItem());
             }
         });
@@ -77,19 +77,21 @@ public class RxView extends View {
         // combo box created so return it
         return combo;
     }
-    
-     public Component getLabel(final Selection selection) {
-         Label l = new Label(getValue());
-         
-         // get selected band
-         RfBand.Band band = selection.getBand();
-        
-        final Label label = new Label(selection.getrXterminal().getName());      
 
-                
+    public Component getLabel(final Selection selection) {
+        Label l = new Label(getValue());
+
+        // get selected band
+        RfBand.Band band = selection.getBand();
+
+        // does not work final Label label = new Label(selection.getrXterminal().getName()); 
+        
+        final Label label = new Label((String) selection.getRxView().spin.getSelectedItem());
+        // terminal is not set yet selection.gettXterminal().getName());      
+
         // set the Rx view present in the selection
-               selection.getRxView().label = label;
-     
+        selection.getRxView().label = label;
+
         // combo box created so return it
         return label;
     }
@@ -100,7 +102,7 @@ public class RxView extends View {
 
     public RxView(Selection selection) {
         this.terminal = selection.getrXterminal();
-      
+
     }
 
     public Form createView(Selection selection) {

@@ -85,7 +85,7 @@ public class Selection {
         return this.rfBands;
     }
 
-    public Selection() {
+  /* 
 
         // transmit terminal at current location if not in persistent storage
         tXterminal = new Terminal();
@@ -110,7 +110,8 @@ public class Selection {
         dLpath.setName("DownLink");
         dLpath.setS(satellite);
         dLpath.setT(rXterminal);
-
+*/
+         public Selection() {
         // use constructor with Selection instance as input
         satelliteView = new SatelliteView(this);
         tXview = new TxView(this);

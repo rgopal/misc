@@ -22,10 +22,7 @@ static Path  path;
         
     }
     public DlPathView(Selection selection) {
-      this.path = selection.getuLpath();
-      this.name = path.getName();
-      this.value = "-200";
-      this.unit = "dB";
+      
       
     }
 
@@ -33,7 +30,7 @@ static Path  path;
         return name;
     }
 
-    public Form createView() {
+    public Form createView(Selection selection) {
        
         Form path = new Form(this.path.getName());
 

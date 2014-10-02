@@ -31,7 +31,7 @@ public class HeadView extends View {
         return name;
     }
 
-    public Form createView() {
+    public Form createView(Selection selection) {
         Form tx = new Form(this.name);
 
     

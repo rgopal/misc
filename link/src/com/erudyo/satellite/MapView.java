@@ -41,7 +41,7 @@ public class MapView extends View {
     }
    
 
-    public Form createView() {
+    public Form createView(Selection selection) {
     
         
             // this would not work if longPointerPress was overriden in MapComponent
