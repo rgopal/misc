@@ -8,6 +8,7 @@ package com.erudyo.satellite;
 import java.text.Format;
 import java.lang.Math;
 import java.util.Hashtable;
+import com.codename1.util.MathUtil;
 
 /**
  *
@@ -32,7 +33,7 @@ public class Com {
 
     public enum Code {
 
-        FEC_1_2, FEC_2_3, FEC_4_5, FEC_8_9
+        FEC_1_9, FEC_1_4, FEC_1_3, FEC_1_2, FEC_2_3, FEC_4_5, FEC_7_8, FEC_8_9
     };
 
     public enum Modulation {
@@ -62,6 +63,30 @@ public class Com {
     // North or South etc.   
     public static double toRadian(double d, double m, double s) {
         return Math.toRadians(d + m / 60.0 + s / 3600.0);
+    }
+
+    // from picmath site
+    public static double erf(double x) {
+        // constants
+        final double a1 = 0.254829592;
+        final double a2 = -0.284496736;
+        final double a3 = 1.421413741;
+        final double a4 = -1.453152027;
+        final double a5 = 1.061405429;
+        final double p = 0.3275911;
+
+        // Save the sign of x
+        double sign = 1;
+        if (x < 0) {
+            sign = -1;
+        }
+        x = Math.abs(x);
+
+        // A&S formula 7.1.26
+        double t = 1.0 / (1.0 + p * x);
+        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * MathUtil.exp(-x * x);
+
+        return sign * y;
     }
 
     public static String toDegree(double r) {

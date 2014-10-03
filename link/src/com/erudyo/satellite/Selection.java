@@ -15,7 +15,8 @@ import java.util.ArrayList;
  */
 public class Selection {
 
-    private Terminal tXterminal;
+    private Comms comms;                // basic comms parameters
+    private Terminal tXterminal;        // created in tXview (getWidget)
     private Terminal rXterminal;
     private Satellite satellite;
     private Path uLpath;
@@ -24,6 +25,7 @@ public class Selection {
     private SatelliteView satelliteView;
     private TxView tXview;
     private RxView rXview;
+     private CommsView commsView;
 
     private RfBand.Band band = RfBand.Band.KA;
 
@@ -53,28 +55,76 @@ public class Selection {
     // lookup by index with instance name vector 
     private ArrayList<String> rfBands
             = new ArrayList<String>();
+    
+     private Hashtable<String, Integer> modulationHash
+            = new Hashtable<String, Integer>();
 
-    // Create a custom UI oriented Combo model from RfBand Hash
+    // lookup by index with instance name vector 
+    private ArrayList<String> modulations
+            = new ArrayList<String>();
+    
+     private Hashtable<String, Integer> codeHash
+            = new Hashtable<String, Integer>();
+
+    // lookup by index with instance name vector 
+    private ArrayList<String> codes
+            = new ArrayList<String>();
+
+    // Create a custom UI oriented Combo model from RfBand Arraylist
     // Can add filtering in future.   Light since only name is
-    // used and not the object instances
-    public void setRfBandHash(Hashtable<String, RfBand> h) {
+    // used and not the object instances.  Preserve order (instead of Hash)
+    public void initRfBandHash() {
 
         int index = 0;
         // go through the hash to create positions and indexRfBand entries
-        for (String key : h.keySet()) {
+        for (RfBand key : RfBand.indexRfBand) {
             // add the position and increment for next item
-            rFbandHash.put(key, index++);
+            rFbandHash.put(key.toString(), index++);
 
             // create a simple array with object name (key)
-            rfBands.add(key);
+            rfBands.add(key.toString());
         }
 
     }
 
+    public void initModulationHash() {
+
+        
+        int index = 0;
+        // go through the hash to create positions and indexRfBand entries
+        for (Com.Modulation key : Comms.indexModulation) {
+            // add the position and increment for next item
+            modulationHash.put(key.toString(), index++);
+
+            // create a simple array with object name (key)
+            modulations.add(key.toString());
+        }
+
+    }
+    // this could be done in Static
+    public void initCodeHash() {
+
+        int index = 0;
+        // go through the hash to create positions and indexRfBand entries
+        for (Com.Code key : Comms.indexCode) {
+            // add the position and increment for next item
+            codeHash.put(key.toString(), index++);
+
+            // create a simple array with object name (key)
+            codes.add(key.toString());
+        }
+
+    }
     public Hashtable<String, Integer> getRfBandHash() {
         return this.rFbandHash;
     }
 
+     public Hashtable<String, Integer> getModulationHash() {
+        return this.rFbandHash;
+    }
+      public Hashtable<String, Integer> getCodeHash() {
+        return this.rFbandHash;
+    }
     // this is created by setHashRfBand()
     /* public void setIndexRfBand(ArrayList<RfBand> h) {
      this.indexRfBand = h;
@@ -85,6 +135,13 @@ public class Selection {
         return this.rfBands;
     }
 
+    public ArrayList<String> getModulations() {
+        return this.modulations;
+    }
+    
+     public ArrayList<String> getCodes() {
+        return this.codes;
+    }
   /* 
 
         // transmit terminal at current location if not in persistent storage
@@ -116,7 +173,12 @@ public class Selection {
         satelliteView = new SatelliteView(this);
         tXview = new TxView(this);
         rXview = new RxView(this);
-
+        commsView = new CommsView(this);
+        
+initRfBandHash();
+initModulationHash();
+initCodeHash();
+        
     }
 
     public SatelliteView getSatelliteView() {
@@ -312,6 +374,34 @@ public class Selection {
 
     public void setTerminals(String[][] terminals) {
 
+    }
+
+    /**
+     * @return the comms
+     */
+    public Comms getComms() {
+        return comms;
+    }
+
+    /**
+     * @param comms the comms to set
+     */
+    public void setComms(Comms comms) {
+        this.comms = comms;
+    }
+
+    /**
+     * @return the commsView
+     */
+    public CommsView getCommsView() {
+        return commsView;
+    }
+
+    /**
+     * @param commsView the commsView to set
+     */
+    public void setCommsView(CommsView commsView) {
+        this.commsView = commsView;
     }
 
 }

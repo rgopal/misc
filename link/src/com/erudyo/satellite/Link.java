@@ -77,7 +77,8 @@ public class Link {
         // get the bands into selection.  In future a Selection instance
         // could have customized list based on user interface preferences
         // indexRfBand is built by setRfBandHash
-        selection.setRfBandHash(RfBand.rFbandHash);
+        
+        
         // selection.setIndexRfBand(RfBand.indexRfBand);
 
         try {
@@ -130,7 +131,7 @@ public class Link {
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
-        views[0] = new HeadView();
+        views[0] = new CommsView();
         views[1] = new TxView(selection);
         views[2] = new DlPathView(selection);
         views[3] = new SatelliteView(selection);
