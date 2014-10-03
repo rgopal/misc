@@ -174,9 +174,17 @@ public class CommsView extends View {
         sub.addComponent(cnt);
 
         // Hardcoded table. Name, value, unit
+        layout = new TableLayout(2, 2);
+        cnt.setLayout(layout);
+      
+
+        Label l1 = new Label ("Modulation");
+        Label l2 = new Label ("FEC Codes");
+        cnt.addComponent(l1);
+        cnt.addComponent(l2);
        
-         cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-         sub.addComponent(cnt);
+        Container cnt0 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+         cnt.addComponent(cnt0);
         
         ButtonGroup bg = new ButtonGroup();
         RadioButton[] mods = new RadioButton[Comms.modulationHash.size()];
@@ -193,11 +201,11 @@ public class CommsView extends View {
             //add to button group
             bg.add(mods[i]);
             //add to container
-            cnt.addComponent(mods[i]);
+            cnt0.addComponent(mods[i]);
         }
         
-          cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-         sub.addComponent(cnt);
+         Container cnt1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+         cnt.addComponent(cnt1);
         
         bg = new ButtonGroup();
         RadioButton[] codes = new RadioButton[Comms.codeHash.size()];
@@ -214,7 +222,7 @@ public class CommsView extends View {
             //add to button group
             bg.add(codes[i]);
             //add to container
-            cnt.addComponent(codes[i]);
+            cnt1.addComponent(codes[i]);
         }
     
     

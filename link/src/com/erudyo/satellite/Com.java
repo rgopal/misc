@@ -33,12 +33,35 @@ public class Com {
 
     public enum Code {
 
-        FEC_1_9, FEC_1_4, FEC_1_3, FEC_1_2, FEC_2_3, FEC_4_5, FEC_7_8, FEC_8_9
+        FEC_1_9 ("1/9"), 
+        FEC_1_4 ("1/4"), 
+        FEC_1_3 ("1/3"),
+        FEC_1_2 ("1/3"),
+        FEC_2_3 ("2/3"), 
+        FEC_4_5 ("4/5"), 
+        FEC_7_8 ("7/8"), 
+        FEC_8_9 ("8/9");
+        
+        private final String value;
+
+
+        public String getValue() {
+            return value;
+        }
+
+        private Code(final String text) {
+            this.value = text;
+        }
+
+        public String toString() {
+            return value;
+        }
     };
 
     public enum Modulation {
 
         BPSK, QPSK, PSK8, PSK16
+        
     };
 
     public final static double PI = Math.PI;
