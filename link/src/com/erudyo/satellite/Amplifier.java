@@ -20,7 +20,7 @@ public class Amplifier extends Entity {
     private double LFTX = 0.5;     // loss between amplifier and antenna  in DB
 
     public final static double POWER_LO = 1.0;
-    public final static double POWER_HI = 50.0;
+    public final static double POWER_HI = 100.0;
 
     public void setPower(double power) {
         if (validatePower(power)== true) {

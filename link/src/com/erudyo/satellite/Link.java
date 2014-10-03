@@ -155,11 +155,13 @@ public class Link {
         main.addComponent(cnt);
 
         // there are six items in Views.  Hardcoded table.
-        cnt.setLayout(new TableLayout(6, 5));
+        // no sub-label
+        TableLayout layout = new TableLayout(6, 4);
+        cnt.setLayout(layout);
 
         for (final View view : views) {
 
-            initViews(view, cnt, selection);
+            initViews(view, cnt, selection, layout);
         }
         Button b = new Button("Map");
 
@@ -177,23 +179,20 @@ public class Link {
         });
 
         LikeButton like = new LikeButton();
-    
+
         main.addComponent(like);
-        
-          
+
         ShareButton s = new ShareButton();
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
         like.setUIID("Button");
-        
-    
 
         main.show();
 
     }
 
-    public void initViews(final View view, Container cnt, final Selection selection) {
+    public void initViews(final View view, Container cnt, final Selection selection, TableLayout layout) {
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
@@ -208,10 +207,19 @@ public class Link {
             Component u = view.getSubLabel(selection);
 
             Button c = new Button("->"); //view.getName());
-            cnt.addComponent(n);
-            cnt.addComponent(s);
+
+            TableLayout.Constraint constraint = layout.createConstraint();
+            // constraint.setVerticalSpan(2);
+            constraint.setWidthPercentage(40);      // half of width
+
+            cnt.addComponent(constraint, n);
+
+            constraint = layout.createConstraint(); // 30% of width
+            constraint.setWidthPercentage(25);
+
+            cnt.addComponent(constraint, s);
             cnt.addComponent(v);
-            cnt.addComponent(u);
+            // cnt.addComponent(u);  NO Sublabel
             cnt.addComponent(c);
 
             c.setIcon(cmdIcon);
@@ -245,8 +253,8 @@ public class Link {
         topLine.addComponent(bandLabel);
 
         ListModel model = new DefaultListModel(selection.getRfBands());
-         spin.setModel(model);
-        
+        spin.setModel(model);
+
         String item = (String) spin.getSelectedItem();
 
         RfBand rFband = RfBand.rFbandHash.get(item);
@@ -257,8 +265,6 @@ public class Link {
         bandLabel.setText((Com.shortText(rFband.lowFrequency / 1E9))
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
-
-       
 
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -272,9 +278,9 @@ public class Link {
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
                 System.out.println(spin.getSelectedItem());
-               
+
                 // update combos and labels
-                comboSatellite(selection, spin);  
+                comboSatellite(selection, spin);
 
                 comboTx(selection, spin);
                 comboRx(selection, spin);
@@ -309,12 +315,12 @@ public class Link {
             // use the list of satellites for select band 
             selection.getSatelliteView().spin.setModel(model);
             String name = (String) selection.getSatelliteView().spin.getSelectedItem();
-            
+
             // update selected satellite
             selection.setSatellite(Satellite.satelliteHash.get(name));
             // update label TODO
-             selection.getSatelliteView().label.setText(
-                selection.getSatellite().getName());
+            selection.getSatelliteView().label.setText(
+                    selection.getSatellite().getName());
         }
 
     }
@@ -342,15 +348,15 @@ public class Link {
         } else {
             selection.getRxView().spin.setModel(model);
             // update label TODO
-         
+
             String name = (String) selection.getRxView().spin.getSelectedItem();
-            
+
             // update selected satellite
             selection.setrXterminal(Terminal.terminalHash.get(name));
             // update label TODO
-             selection.getRxView().label.setText(
-                selection.getrXterminal().getName());
-           
+            selection.getRxView().label.setText(
+                    selection.getrXterminal().getName());
+
         }
 
     }
@@ -378,15 +384,14 @@ public class Link {
         } else {
             selection.getTxView().spin.setModel(model);
             // update label TODO
-          
-         
+
             String name = (String) selection.getTxView().spin.getSelectedItem();
-            
+
             // update selected satellite
             selection.settXterminal(Terminal.terminalHash.get(name));
             // update label TODO
-             selection.getTxView().label.setText(
-                selection.gettXterminal().getName());
+            selection.getTxView().label.setText(
+                    selection.gettXterminal().getName());
         }
 
     }

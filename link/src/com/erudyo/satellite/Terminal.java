@@ -271,8 +271,10 @@ public class Terminal extends Entity {
         // EIRP depends on antenna and amplifier, but both need to exist 
         
         if (this.getAmplifier() != null && this.getAntenna()!= null) {
-        this.EIRP = (10 * MathUtil.log10(this.getAntenna().getGain()
-                * this.getAmplifier().getPower()));
+        this.EIRP = (10 * MathUtil.log10(
+                this.getAmplifier().getPower())) +      // was in W
+                this.getAntenna().getGain() +           // in dB
+                this.getAntenna().getDepointingLoss();  // in dB
         }
         
         // avoid using set since that should be used to send updates down
