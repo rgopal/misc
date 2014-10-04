@@ -45,6 +45,13 @@ public class CommsView extends View {
     // lookup by index with instance name vector 
     private ArrayList<String> codes
             = new ArrayList<String>();
+    
+        private Hashtable<String, Integer> codeRateHash
+            = new Hashtable<String, Integer>();
+
+    // lookup by index with instance name vector 
+    private ArrayList<String> codeRates
+            = new ArrayList<String>();
 
     public void initModulationHash() {
 
@@ -65,12 +72,26 @@ public class CommsView extends View {
 
         int index = 0;
         // go through the hash to create positions and indexRfBand entries
-        for (Comms.Code key : Comms.indexCode) {
+        for (Comms.Code key : Comms.getIndexCode()) {
             // add the position and increment for next item
             codeHash.put(key.toString(), index++);
 
             // create a simple array with object name (key)
             codes.add(key.toString());
+        }
+
+    }
+    
+        public void initCodeRateHash() {
+
+        int index = 0;
+        // go through the hash to create positions and indexRfBand entries
+        for (Comms.CodeRate key : Comms.indexCodeRate) {
+            // add the position and increment for next item
+            codeRateHash.put(key.toString(), index++);
+
+            // create a simple array with object name (key)
+            codeRates.add(key.toString());
         }
 
     }
@@ -90,6 +111,10 @@ public class CommsView extends View {
     public ArrayList<String> getCodes() {
         return this.codes;
     }
+    
+     public ArrayList<String> getCodeRates() {
+        return this.codeRates;
+    }
 
     public CommsView(Selection selection) {
         super.name = "Comms";
@@ -99,6 +124,7 @@ public class CommsView extends View {
     public void init() {
         initModulationHash();
         initCodeHash();
+        initCodeRateHash();
 
     }
 
@@ -243,77 +269,112 @@ public class CommsView extends View {
         sub.addComponent(cnt);
 
         // Hardcoded table. Name, value, unit
-        layout = new TableLayout(2, 2);
+        layout = new TableLayout(2, 3);
         cnt.setLayout(layout);
 
         Label l1 = new Label("Modulation");
-        Label l2 = new Label("FEC Codes");
+        Label l2 = new Label("Rate");
+          Label l3 = new Label("Code");
         cnt.addComponent(l1);
         cnt.addComponent(l2);
+         cnt.addComponent(l3);
 
-        Container cnt0 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cnt.addComponent(cnt0);
+        Container cntMod = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        cnt.addComponent(cntMod);
 
-        final ButtonGroup bg = new ButtonGroup();
+        final ButtonGroup bgMod = new ButtonGroup();
         // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
 
         /**
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
-        int i = 0;
-        for (i = 0; i < Comms.modulationHash.size(); i++) {
+   
+        for (int i = 0; i < Comms.modulationHash.size(); i++) {
             final RadioButton mod = new RadioButton();
             mod.setName(selection.getCommsView().getModulations().get(i));
             mod.setText(selection.getCommsView().getModulations().get(i));
 
             //add to button group
-            bg.add(mod);
+            bgMod.add(mod);
             mod.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    // System.out.println(bg.getSelectedIndex());
+                    // System.out.println(bgMod.getSelectedIndex());
                   
                     selection.getComms().setModulation (
                             Comms.indexModulation.toArray(new 
-                                    Comms.Modulation[0])[bg.getSelectedIndex()]);
+                                    Comms.Modulation[0])[bgMod.getSelectedIndex()]);
             
                 }
             });
-            cnt0.addComponent(mod);
+            cntMod.addComponent(mod);
         }
 
-        Container cnt1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cnt.addComponent(cnt1);
+        Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        cnt.addComponent(cntRate);
 
-        final ButtonGroup cbg = new ButtonGroup();
-        RadioButton code = new RadioButton();
+        final ButtonGroup bgRate = new ButtonGroup();
+        RadioButton codeRate = new RadioButton();
 
         /**
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
-        for (i = 0; i < Comms.codeHash.size(); i++) {
-            code = new RadioButton();
-            code.setName(selection.getCommsView().getCodes().get(i));
-            code.setText(selection.getCommsView().getCodes().get(i));
+        for (int i = 0; i < Comms.codeRateHash.size(); i++) {
+            codeRate = new RadioButton();
+            codeRate.setName(selection.getCommsView().getCodeRates().get(i));
+            codeRate.setText(selection.getCommsView().getCodeRates().get(i));
             //add to button group
-            cbg.add(code);
-              code.addActionListener(new ActionListener() {
+            bgRate.add(codeRate);
+              codeRate.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                   // System.out.println(cbg.getSelectedIndex());
+                   // System.out.println(bgCode.getSelectedIndex());
                   
-                    selection.getComms().setCode (
-                            Comms.indexCode.toArray(new 
-                                    Comms.Code[0])[bg.getSelectedIndex()]);
+                    selection.getComms().setCodeRate (
+                            Comms.indexCodeRate.toArray(new 
+                                    Comms.CodeRate[0])[bgRate.getSelectedIndex()]);
             
                 }
             });
             //add to container
-            cnt1.addComponent(code);
+            cntRate.addComponent(codeRate);
         }
 
+        // now the codeRate
+        Container cntCode = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        cnt.addComponent(cntCode);
+
+        final ButtonGroup bgCode = new ButtonGroup();
+        // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
+
+        /**
+         * this method should be used to initialize variables instead of the
+         * constructor/class scope to avoid race conditions
+         */
+ 
+        for (int i = 0; i < Comms.codeHash.size(); i++) {
+            final RadioButton mod = new RadioButton();
+            mod.setName(selection.getCommsView().getCodes().get(i));
+            mod.setText(selection.getCommsView().getCodes().get(i));
+
+            //add to button group
+            bgCode.add(mod);
+            mod.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+
+                    // System.out.println(bgMod.getSelectedIndex());
+                  
+                    selection.getComms().setCode (
+                            Comms.indexCode.toArray(new 
+                                    Comms.Code[0])[bgCode.getSelectedIndex()]);
+            
+                }
+            });
+            cntCode.addComponent(mod);
+        }
+        
         L12.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
                 System.out.println(L12.getText());

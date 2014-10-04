@@ -17,7 +17,14 @@ import com.codename1.util.MathUtil;
  * @author ubuntu
  */
 public class Comms extends Entity {
-    public enum Code {
+
+    /**
+     * @return the indexCode
+     */
+    public static ArrayList<Code> getIndexCode() {
+        return indexCode;
+    }
+    public enum CodeRate {
 
         FEC_1_9 ("1/9"), 
         FEC_1_4 ("1/4"), 
@@ -35,7 +42,7 @@ public class Comms extends Entity {
             return value;
         }
 
-        private Code(final String text) {
+        private CodeRate(final String text) {
             this.value = text;
         }
 
@@ -44,6 +51,15 @@ public class Comms extends Entity {
         }
     };
 
+    public enum Code {
+
+        RS,
+        BCH,
+        LDPC,
+        CONV,           // convolutional
+        BHLC        // concatenated in DVB-S2
+    };
+    
     public enum Modulation {
 
         BPSK, QPSK, PSK8, PSK16
@@ -52,6 +68,7 @@ public class Comms extends Entity {
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
     private double bw = 5;      // MHz
+    private CodeRate codeRate;
     private Code code;
     private Modulation modulation;
     
@@ -98,13 +115,24 @@ public class Comms extends Entity {
     
       // lookup by String name with class level table
     // could be used to get an object by name
+    final public static Hashtable<String, CodeRate> codeRateHash
+            = new Hashtable<String, CodeRate>();
+
+    // lookup by index wifth class level vector to get
+    // object by index (may be ID or some sort of sorting)
+    final public static ArrayList<CodeRate> indexCodeRate
+            = new ArrayList<CodeRate>();
+    
+         // lookup by String name with class level table
+    // could be used to get an object by name
     final public static Hashtable<String, Code> codeHash
             = new Hashtable<String, Code>();
 
     // lookup by index with class level vector to get
     // object by index (may be ID or some sort of sorting)
-    final public static ArrayList<Code> indexCode
+    final public static  ArrayList<Code> indexCode
             = new ArrayList<Code>();
+    
     
     // create global hash and array of modulations and codes
     static {
@@ -113,6 +141,11 @@ public class Comms extends Entity {
             modulationHash.put(m.toString(),m);
             indexModulation.add(m);
                     }
+        
+        for (CodeRate c : CodeRate.values()) {
+            codeRateHash.put(c.toString(), c);
+            indexCodeRate.add(c);
+        }
         
         for (Code c : Code.values()) {
             codeHash.put(c.toString(), c);
@@ -134,7 +167,7 @@ public class Comms extends Entity {
         this.dataRate = d;
     }
 
-    // BER for each modulation
+    // BER for each modulation, ebno is in dB
     public static double getBEP(Modulation m, Double ebno) {
         double ber;
         switch(m) {
@@ -168,10 +201,13 @@ public class Comms extends Entity {
     /**
      * @return the code
      */
-    public Code getCode() {
-        return code;
+    public CodeRate getCode() {
+        return codeRate;
     }
 
+    public void setCodeRate(CodeRate c) {
+        this.codeRate = c;
+    }
     /**
      * @param code the code to set
      */
