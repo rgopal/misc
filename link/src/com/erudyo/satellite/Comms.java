@@ -9,6 +9,8 @@ package com.erudyo.satellite;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import com.codename1.util.StringUtil;
+import java.util.Vector;
 
 import com.codename1.util.MathUtil;
 
@@ -24,23 +26,19 @@ public class Comms extends Entity {
     public static ArrayList<Code> getIndexCode() {
         return indexCode;
     }
+
     public enum CodeRate {
 
-        FEC_1_9 ("1/9"), 
-        FEC_1_4 ("1/4"), 
-        FEC_1_3 ("1/3"),
-        FEC_1_2 ("1/3"),
-        FEC_2_3 ("2/3"), 
-        FEC_4_5 ("4/5"), 
-        FEC_7_8 ("7/8"), 
-        FEC_8_9 ("8/9");
-        
+        FEC_1_9("1/9"),
+        FEC_1_4("1/4"),
+        FEC_1_3("1/3"),
+        FEC_1_2("1/3"),
+        FEC_2_3("2/3"),
+        FEC_4_5("4/5"),
+        FEC_7_8("7/8"),
+        FEC_8_9("8/9");
+
         private final String value;
-
-
-        public String getValue() {
-            return value;
-        }
 
         private CodeRate(final String text) {
             this.value = text;
@@ -49,6 +47,8 @@ public class Comms extends Entity {
         public String toString() {
             return value;
         }
+        // this is not working
+
     };
 
     public enum Code {
@@ -56,14 +56,14 @@ public class Comms extends Entity {
         RS,
         BCH,
         LDPC,
-        CONV,           // convolutional
+        CONV, // convolutional
         BHLC        // concatenated in DVB-S2
     };
-    
+
     public enum Modulation {
 
         BPSK, QPSK, PSK8, PSK16
-        
+
     };
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
@@ -71,38 +71,36 @@ public class Comms extends Entity {
     private CodeRate codeRate;
     private Code code;
     private Modulation modulation;
-    
-    final public static double  DATA_RATE_LO = .1;
-    final public static double DATA_RATE_HI = 100; 
+
+    final public static double DATA_RATE_LO = .1;
+    final public static double DATA_RATE_HI = 100;
     final public static double ROLL_OFF_LO = 0.05;
     final public static double ROLL_OFF_HI = 0.45;
- 
-      final public static double BW_LO = .05;
+
+    final public static double BW_LO = .05;
     final public static double BW_HI = 100.0;
-   
+
     public int getMaryFactor(Modulation m) {
-       
-       switch (m) {
-           case BPSK:
-               return 1;
-           case QPSK:
-               return 2;
-           case PSK8:
-               return 3;
-           case PSK16:
-               return 4;
-           default:
-               return 1;
-       }
-    }   
-    
-    
-    public double spectralEfficiency(Modulation m) {
-        return getMaryFactor(m)/(1.0+getRollOff());
+
+        switch (m) {
+            case BPSK:
+                return 1;
+            case QPSK:
+                return 2;
+            case PSK8:
+                return 3;
+            case PSK16:
+                return 4;
+            default:
+                return 1;
+        }
     }
-    
-    
-       // lookup by String name with class level table
+
+    public double spectralEfficiency(Modulation m) {
+        return getMaryFactor(m) / (1.0 + getRollOff());
+    }
+
+    // lookup by String name with class level table
     // could be used to get an object by name
     final public static Hashtable<String, Modulation> modulationHash
             = new Hashtable<String, Modulation>();
@@ -111,9 +109,8 @@ public class Comms extends Entity {
     // object by index (may be ID or some sort of sorting)
     final public static ArrayList<Modulation> indexModulation
             = new ArrayList<Modulation>();
-    
-    
-      // lookup by String name with class level table
+
+    // lookup by String name with class level table
     // could be used to get an object by name
     final public static Hashtable<String, CodeRate> codeRateHash
             = new Hashtable<String, CodeRate>();
@@ -122,47 +119,50 @@ public class Comms extends Entity {
     // object by index (may be ID or some sort of sorting)
     final public static ArrayList<CodeRate> indexCodeRate
             = new ArrayList<CodeRate>();
-    
-         // lookup by String name with class level table
+
+    // lookup by String name with class level table
     // could be used to get an object by name
     final public static Hashtable<String, Code> codeHash
             = new Hashtable<String, Code>();
 
     // lookup by index with class level vector to get
     // object by index (may be ID or some sort of sorting)
-    final public static  ArrayList<Code> indexCode
+    final public static ArrayList<Code> indexCode
             = new ArrayList<Code>();
-    
-    
+
     // create global hash and array of modulations and codes
     static {
-        
-        for (Modulation m: Modulation.values()) {
-            modulationHash.put(m.toString(),m);
+
+        for (Modulation m : Modulation.values()) {
+            modulationHash.put(m.toString(), m);
             indexModulation.add(m);
-                    }
-        
+
+        }
+
         for (CodeRate c : CodeRate.values()) {
             codeRateHash.put(c.toString(), c);
             indexCodeRate.add(c);
         }
-        
+
         for (Code c : Code.values()) {
             codeHash.put(c.toString(), c);
             indexCode.add(c);
         }
-    
+
     }
-    public Comms()
-    {
-        
+
+    public Comms() {
+
     }
-    public Comms (String s) {
+
+    public Comms(String s) {
         this.name = s;
     }
+
     public double getDataRate() {
         return dataRate;
     }
+
     public void setDataRate(double d) {
         this.dataRate = d;
     }
@@ -170,23 +170,51 @@ public class Comms extends Entity {
     // BER for each modulation, ebno is in dB
     public static double getBEP(Modulation m, Double ebno) {
         double ber;
-        switch(m) {
+        switch (m) {
             case BPSK:
             case QPSK:
                 //
-                ber = (1-Com.erf(MathUtil.pow(ebno,0.5)))/2.0;
+                ber = (1 - Com.erf(MathUtil.pow(
+                        MathUtil.pow(10.0, ebno / 10.0), 0.5)))
+                        / 2.0;
                 break;
-            
+
             default:
-                ber = (1-Com.erf(MathUtil.pow(ebno,0.5)));
+                ber = (1 - Com.erf(MathUtil.pow(
+                        MathUtil.pow(10.0, ebno / 10.0), 0.5)
+                ));
+
                 break;
-                
+
         }
         return ber;
     }
+
     /**
      * @return the modulation
      */
+    public double calcCodeRate(CodeRate c) {
+        double value = 0;
+        // get the numerator and denominator from text string n/(n+r)
+        String text = c.name().toString();
+        Vector<String> parts = (Vector) StringUtil.tokenize(text, "/");
+        try {
+            value = (Double.parseDouble(parts.get(0))
+                    / Double.parseDouble(parts.get(1)));
+        } catch (java.lang.NumberFormatException e) {
+            System.out.println("Comms: bad number " + c.toString());
+
+        }
+        return value;
+    }
+
+    public double calcCodedBitRate(CodeRate c, double dataRate) {
+        return dataRate / calcCodeRate(c);
+    }
+
+    // power reduction is same as decoding gain for variable bandwidth
+    // power reduction is extra -10 log (codeRate) for fixed bandwidth
+    // since the bit rate goes lower
     public Modulation getModulation() {
         return modulation;
     }
@@ -208,6 +236,7 @@ public class Comms extends Entity {
     public void setCodeRate(CodeRate c) {
         this.codeRate = c;
     }
+
     /**
      * @param code the code to set
      */

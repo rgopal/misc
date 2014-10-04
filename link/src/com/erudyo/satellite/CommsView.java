@@ -275,7 +275,7 @@ public class CommsView extends View {
         Label l1 = new Label("Modulation");
         Label l2 = new Label("Rate");
           Label l3 = new Label("Code");
-        cnt.addComponent(l1);
+        cnt.addComponent(l1); 
         cnt.addComponent(l2);
          cnt.addComponent(l3);
 
@@ -292,8 +292,14 @@ public class CommsView extends View {
    
         for (int i = 0; i < Comms.modulationHash.size(); i++) {
             final RadioButton mod = new RadioButton();
-            mod.setName(selection.getCommsView().getModulations().get(i));
-            mod.setText(selection.getCommsView().getModulations().get(i));
+            
+            // trying to set hint.  Name also does not work
+            mod.setUIID(Comms.indexModulation.toArray(new 
+                                    Comms.Modulation[0])[i].name());
+            mod.setText(Comms.indexModulation.toArray(new 
+                                    Comms.Modulation[0])[i].name());
+        //(selection.getCommsView().getModulations().get(i));
+      
 
             //add to button group
             bgMod.add(mod);
