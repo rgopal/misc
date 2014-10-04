@@ -1,13 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW:
+ * represents common communications stuff across terminals for transponded
+ * satellites.  In future, this could evolve into modem which could be different
+ * for each terminal and a regenerative satellite.
+ * TODO: Add full coding/modulation processing
  */
 package com.erudyo.satellite;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import com.erudyo.satellite.Com.Modulation;
+
 import com.codename1.util.MathUtil;
 
 /**
@@ -15,11 +17,43 @@ import com.codename1.util.MathUtil;
  * @author ubuntu
  */
 public class Comms extends Entity {
+    public enum Code {
+
+        FEC_1_9 ("1/9"), 
+        FEC_1_4 ("1/4"), 
+        FEC_1_3 ("1/3"),
+        FEC_1_2 ("1/3"),
+        FEC_2_3 ("2/3"), 
+        FEC_4_5 ("4/5"), 
+        FEC_7_8 ("7/8"), 
+        FEC_8_9 ("8/9");
+        
+        private final String value;
+
+
+        public String getValue() {
+            return value;
+        }
+
+        private Code(final String text) {
+            this.value = text;
+        }
+
+        public String toString() {
+            return value;
+        }
+    };
+
+    public enum Modulation {
+
+        BPSK, QPSK, PSK8, PSK16
+        
+    };
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
     private double bw = 5;      // MHz
-    private Com.Code code;
-    private Com.Modulation modulation;
+    private Code code;
+    private Modulation modulation;
     
     final public static double  DATA_RATE_LO = .1;
     final public static double DATA_RATE_HI = 100; 
@@ -53,34 +87,34 @@ public class Comms extends Entity {
     
        // lookup by String name with class level table
     // could be used to get an object by name
-    final public static Hashtable<String, Com.Modulation> modulationHash
-            = new Hashtable<String, Com.Modulation>();
+    final public static Hashtable<String, Modulation> modulationHash
+            = new Hashtable<String, Modulation>();
 
     // lookup by index with class level vector to get
     // object by index (may be ID or some sort of sorting)
-    final public static ArrayList<Com.Modulation> indexModulation
-            = new ArrayList<Com.Modulation>();
+    final public static ArrayList<Modulation> indexModulation
+            = new ArrayList<Modulation>();
     
     
       // lookup by String name with class level table
     // could be used to get an object by name
-    final public static Hashtable<String, Com.Code> codeHash
-            = new Hashtable<String, Com.Code>();
+    final public static Hashtable<String, Code> codeHash
+            = new Hashtable<String, Code>();
 
     // lookup by index with class level vector to get
     // object by index (may be ID or some sort of sorting)
-    final public static ArrayList<Com.Code> indexCode
-            = new ArrayList<Com.Code>();
+    final public static ArrayList<Code> indexCode
+            = new ArrayList<Code>();
     
     // create global hash and array of modulations and codes
     static {
         
-        for (Com.Modulation m: Com.Modulation.values()) {
+        for (Modulation m: Modulation.values()) {
             modulationHash.put(m.toString(),m);
             indexModulation.add(m);
                     }
         
-        for (Com.Code c : Com.Code.values()) {
+        for (Code c : Code.values()) {
             codeHash.put(c.toString(), c);
             indexCode.add(c);
         }
@@ -101,12 +135,12 @@ public class Comms extends Entity {
     }
 
     // BER for each modulation
-    public static double getBEP(Com.Modulation m, Double ebno) {
+    public static double getBEP(Modulation m, Double ebno) {
         double ber;
         switch(m) {
             case BPSK:
             case QPSK:
-                // does not match satellite book (excel erfc.precise wrong too?)
+                //
                 ber = (1-Com.erf(MathUtil.pow(ebno,0.5)))/2.0;
                 break;
             
@@ -120,28 +154,28 @@ public class Comms extends Entity {
     /**
      * @return the modulation
      */
-    public Com.Modulation getModulation() {
+    public Modulation getModulation() {
         return modulation;
     }
 
     /**
      * @param modulation the modulation to set
      */
-    public void setModulation(Com.Modulation modulation) {
+    public void setModulation(Modulation modulation) {
         this.modulation = modulation;
     }
 
     /**
      * @return the code
      */
-    public Com.Code getCode() {
+    public Code getCode() {
         return code;
     }
 
     /**
      * @param code the code to set
      */
-    public void setCode(Com.Code code) {
+    public void setCode(Code code) {
         this.code = code;
     }
 

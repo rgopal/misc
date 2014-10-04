@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW
+ * Holds all high level objects from models and views so that they can be
+ * persistenly stored and used in what-if analysis.   Defitely creates all 
+ * views.  Terminals and Satellites are created when the respective text
+ * files are read.  Persistence can be used to update the values from text
+ * files with changes made by the user in previous sessions.
+ *
+ * Respective views create objects not read from the txt files (includes Comms,
+ * Band).  This happens in the getWidget method which needs the respective model
+ * to get data from.
+ *
+ * Satellite view selects an existing Satellite instance (model) which was created
+ * from the text file (and updated if Selection is persistent).
  */
 package com.erudyo.satellite;
 
@@ -21,11 +31,11 @@ public class Selection {
     private Satellite satellite;
     private Path uLpath;
     private Path dLpath;
-  
+
     private SatelliteView satelliteView;
     private TxView tXview;
     private RxView rXview;
-     private CommsView commsView;
+    private CommsView commsView;
 
     private RfBand.Band band = RfBand.Band.KA;
 
@@ -55,20 +65,8 @@ public class Selection {
     // lookup by index with instance name vector 
     private ArrayList<String> rfBands
             = new ArrayList<String>();
-    
-     private Hashtable<String, Integer> modulationHash
-            = new Hashtable<String, Integer>();
 
-    // lookup by index with instance name vector 
-    private ArrayList<String> modulations
-            = new ArrayList<String>();
-    
-     private Hashtable<String, Integer> codeHash
-            = new Hashtable<String, Integer>();
 
-    // lookup by index with instance name vector 
-    private ArrayList<String> codes
-            = new ArrayList<String>();
 
     // Create a custom UI oriented Combo model from RfBand Arraylist
     // Can add filtering in future.   Light since only name is
@@ -87,98 +85,36 @@ public class Selection {
 
     }
 
-    public void initModulationHash() {
+   
 
-        
-        int index = 0;
-        // go through the hash to create positions and indexRfBand entries
-        for (Com.Modulation key : Comms.indexModulation) {
-            // add the position and increment for next item
-            modulationHash.put(key.toString(), index++);
-
-            // create a simple array with object name (key)
-            modulations.add(key.toString());
-        }
-
-    }
-    // this could be done in Static
-    public void initCodeHash() {
-
-        int index = 0;
-        // go through the hash to create positions and indexRfBand entries
-        for (Com.Code key : Comms.indexCode) {
-            // add the position and increment for next item
-            codeHash.put(key.toString(), index++);
-
-            // create a simple array with object name (key)
-            codes.add(key.toString());
-        }
-
-    }
     public Hashtable<String, Integer> getRfBandHash() {
         return this.rFbandHash;
     }
 
-     public Hashtable<String, Integer> getModulationHash() {
-        return this.rFbandHash;
-    }
-      public Hashtable<String, Integer> getCodeHash() {
-        return this.rFbandHash;
-    }
+
     // this is created by setHashRfBand()
     /* public void setIndexRfBand(ArrayList<RfBand> h) {
      this.indexRfBand = h;
          
      }
      */
+
     public ArrayList<String> getRfBands() {
         return this.rfBands;
     }
 
-    public ArrayList<String> getModulations() {
-        return this.modulations;
-    }
-    
-     public ArrayList<String> getCodes() {
-        return this.codes;
-    }
-  /* 
+ 
 
-        // transmit terminal at current location if not in persistent storage
-        tXterminal = new Terminal();
-        tXterminal.setBand(band);
-
-        // default generic satellite (from satellite list)
-        satellite = new Satellite();
-
-        uLpath = new Path(satellite, tXterminal);
-        uLpath.setBand(band);
-        // sharing common Path, here name needs to be set 
-        uLpath.setName("UpLink");
-        uLpath.setS(satellite);
-        uLpath.setT(tXterminal);
-
-        // receive terminal near transmit if not in persistent storage
-        rXterminal = new Terminal();
-        rXterminal.setBand(band);
-
-        dLpath = new Path(satellite, tXterminal);
-        dLpath.setBand(band);
-        dLpath.setName("DownLink");
-        dLpath.setS(satellite);
-        dLpath.setT(rXterminal);
-*/
-         public Selection() {
+    public Selection() {
         // use constructor with Selection instance as input
         satelliteView = new SatelliteView(this);
         tXview = new TxView(this);
         rXview = new RxView(this);
         commsView = new CommsView(this);
-        
-initRfBandHash();
-initModulationHash();
-initCodeHash();
-        
+
+        initRfBandHash();
+      
+
     }
 
     public SatelliteView getSatelliteView() {
@@ -255,8 +191,6 @@ initCodeHash();
         this.satellite = satellite;
     }
 
-
-
     /**
      * @return the uLpath
      */
@@ -285,12 +219,9 @@ initCodeHash();
         this.dLpath = dLpath;
     }
 
-  
-
     // selection of satellites relevant for this instance of Selection
     // In future, it could be a filtered version (based on location, e.g.)
-    public void setBandSatellite(Hashtable<RfBand.Band, 
-            ArrayList<Satellite>> s) {
+    public void setBandSatellite(Hashtable<RfBand.Band, ArrayList<Satellite>> s) {
 
         // go over all bands
         for (RfBand band : RfBand.indexRfBand) {

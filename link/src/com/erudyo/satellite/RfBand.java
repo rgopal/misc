@@ -138,6 +138,7 @@ public class RfBand extends Entity {
         r = new RfBand(Band.KA, "KA", KA_LO, KA_HI);
     }
 
+    
     public RfBand(Band band, String name, double lo, double hi) {
 
         this.centerRfBand(lo, hi);
