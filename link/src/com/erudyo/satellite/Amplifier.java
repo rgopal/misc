@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+import com.codename1.io.Log;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -28,8 +29,8 @@ public class Amplifier extends Entity {
         
             updateAffected();
         } else
-            System.out.println("Amplifier: power out of range " + 
-                    String.valueOf(power));
+            Log.p("Amplifier: power out of range " + 
+                    String.valueOf(power), Log.INFO);
     }
 
      public boolean validatePower(double p) {

@@ -85,6 +85,8 @@ public class Link {
     public void init(Object context) {
 
         // create a new instance to keep track of all other objects for UI
+        Log.setLevel(Log.INFO);
+        
         selection = new Selection();
 
         // get the bands into selection.  In future a Selection instance
@@ -142,7 +144,7 @@ public class Link {
     private void initSelection() {
         
         Log.p("Started application");
-        Log.setLevel(Log.INFO);
+       
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage

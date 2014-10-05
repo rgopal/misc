@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+import java.util.Arrays;
 
+import com.codename1.io.Log;
 import com.codename1.util.MathUtil;
 import java.util.Hashtable;
 import java.util.ArrayList;
@@ -112,7 +114,7 @@ public class Satellite extends Entity {
 
             // need to key on a correct band
             if (band == null) {
-                System.out.println("Bad Data: " + satellites[i].toString());
+                Log.p("Satellite: bad data " + Arrays.toString(satellites), Log.WARNING);
             } else {
                 // extract the band of the terminal
                 if (bandSatellite.get(band) == null) {
@@ -123,7 +125,7 @@ public class Satellite extends Entity {
                 satelliteFields(satellites[i], bandSatellite.get(band));
 
                 // check the band from file and create entry in hash table
-                System.out.println("Processed: " + satellites[i][0]);
+                Log.p("Satellite: processed satellite " + Arrays.toString(satellites[i]), Log.INFO);
             }
         }
         return bandSatellite;

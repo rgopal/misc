@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+import com.codename1.io.Log;
 
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -79,7 +81,7 @@ public class Terminal extends Entity {
 
             // need to key on a correct band
             if (band == null) {
-                System.out.println("Bad band: " + terminals[i].toString());
+                Log.p("Terminal: Bad band " + terminals[i].toString(),  Log.WARNING);
 
             } else {
                 // extract the band of the terminal
@@ -91,7 +93,8 @@ public class Terminal extends Entity {
                 terminalFields(terminals[i], bandTerminal.get(band));
 
                 // check the band from file and create entry in hash table
-                System.out.println("Processed " + terminals[i][0]);
+                Log.p("Terminal: Processed terminal " + 
+                        Arrays.toString(terminals[i]),  Log.INFO);
             }
         }
 
@@ -137,7 +140,7 @@ public class Terminal extends Entity {
         
         antenna = new Antenna();
         antenna.addAffected(this);
-        System.out.println(this.name);
+        // System.out.println(this.name);
         antenna.setDiameter(1);
 
         amplifier = new Amplifier();
