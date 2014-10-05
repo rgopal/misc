@@ -139,7 +139,8 @@ public class Com {
     }
 
     public static boolean sameValue(double one, double two) {
-        if (Math.abs(one - two) < .000001) {
+        // difference is within .001 percent of first
+        if (Math.abs(one - two) < .00001*Math.abs(one)) {
             return true;
         } else {
             return false;

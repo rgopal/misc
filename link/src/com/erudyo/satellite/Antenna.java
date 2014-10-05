@@ -3,6 +3,7 @@
  * TODO:    Testing
  */
 package com.erudyo.satellite;
+import com.codename1.io.Log;
 
 import com.codename1.util.MathUtil;
 
@@ -94,8 +95,8 @@ public class Antenna extends Entity {
             this.threeDBangle = calcThreeDB(this.diameter, this.frequency);
             updateAffected();
         } else {
-            System.out.println("Antenna: setDiameter: out of range diameter "
-                    + String.valueOf(diameter));
+            Log.p("Antenna: setDiameter: out of range diameter "
+                    + String.valueOf(diameter), Log.DEBUG);
         }
 
     }
@@ -257,8 +258,8 @@ public class Antenna extends Entity {
             this.band = RfBand.findBand(f);
             updateAffected();
         } else {
-            System.out.println("Antenna: setFrequency out of range "
-                    + String.valueOf(f));
+            Log.p("Antenna: setFrequency out of range "
+                    + String.valueOf(f), Log.DEBUG);
         }
     }
 

@@ -3,6 +3,7 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.Log;
 import com.codename1.ui.Button;
 import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
@@ -283,26 +284,27 @@ public class CommsView extends View {
         cntAllThree.addComponent(cntMod);
 
         final ButtonGroup bgMod = new ButtonGroup();
-        // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
+        // RadioButton bCode = new RadioButton(); // [Comms.modulationHash.size()];
 
         /**
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
         for (int i = 0; i < Comms.modulationHash.size(); i++) {
-            final RadioButton mod = new RadioButton();
+            final RadioButton bModulation = new RadioButton();
 
             // trying to set hint.  Name also does not work
-            mod.setUIID(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
-            mod.setText(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
+            bModulation.setUIID(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
+            bModulation.setText(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
         //(selection.getCommsView().getModulations().get(i));
 
             //add to button group
-            bgMod.add(mod);
-            mod.addActionListener(new ActionListener() {
+            bgMod.add(bModulation);
+            bModulation.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    // System.out.println(bgMod.getSelectedIndex());
+                    Log.p("CommsView: selected Modulatoin " + 
+                            bgMod.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setModulation(
                             Comms.indexModulation.toArray(new 
                                     Comms.Modulation[0])
@@ -310,18 +312,19 @@ public class CommsView extends View {
 
                 }
             });
-            cntMod.addComponent(mod);
+            cntMod.addComponent(bModulation);
         }
         // set default to the first one
         bgMod.setSelected((int) modulationHash.get(
                 Comms.Modulation.BPSK.toString()));
 
+        // now bCode rate
         Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         cntAllThree.addComponent(cntRate);
 
         final ButtonGroup bgRate = new ButtonGroup();
 
-        RadioButton codeRate = new RadioButton();
+        RadioButton bCodeRate = new RadioButton();
         final ButtonGroup bgCode = new ButtonGroup();
 
         /**
@@ -329,15 +332,16 @@ public class CommsView extends View {
          * constructor/class scope to avoid race conditions
          */
         for (int i = 0; i < Comms.codeRateHash.size(); i++) {
-            codeRate = new RadioButton();
-            codeRate.setName(selection.getCommsView().getCodeRates().get(i));
-            codeRate.setText(selection.getCommsView().getCodeRates().get(i));
+            bCodeRate = new RadioButton();
+            bCodeRate.setName(selection.getCommsView().getCodeRates().get(i));
+            bCodeRate.setText(selection.getCommsView().getCodeRates().get(i));
             //add to button group
-            bgRate.add(codeRate);
-            codeRate.addActionListener(new ActionListener() {
+            bgRate.add(bCodeRate);
+            bCodeRate.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    // System.out.println(bgCode.getSelectedIndex());
+                    Log.p("CommsView: selected Code Rate " + 
+                            bgRate.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCodeRate(
                             Comms.indexCodeRate.toArray(new 
                                     Comms.CodeRate[0])
@@ -345,7 +349,7 @@ public class CommsView extends View {
                     if (selection.getComms().getCodeRate()
                             == Comms.CodeRate.FEC_1_1) {
                         selection.getComms().setCode(Comms.Code.NONE);
-                        // set the right code rate in button group
+                        // set the right bCode rate in button group
                         bgCode.setSelected((int) codeHash.get(
                                 Comms.Code.NONE.toString()));
                     }
@@ -353,39 +357,39 @@ public class CommsView extends View {
                 }
             });
             //add to container
-            cntRate.addComponent(codeRate);
+            cntRate.addComponent(bCodeRate);
         }
-
           // set default to the first one
         bgRate.setSelected((int) codeRateHash.get(
                 Comms.CodeRate.FEC_7_8.toString()));
         
-        // now the codeRate
+        // now the bCode
         Container cntCode = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         cntAllThree.addComponent(cntCode);
 
-        // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
+        // RadioButton bCode = new RadioButton(); // [Comms.modulationHash.size()];
         /**
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
         for (int i = 0; i < Comms.codeHash.size(); i++) {
-            final RadioButton mod = new RadioButton();
-            mod.setName(selection.getCommsView().getCodes().get(i));
-            mod.setText(selection.getCommsView().getCodes().get(i));
+            final RadioButton bCode = new RadioButton();
+            bCode.setName(selection.getCommsView().getCodes().get(i));
+            bCode.setText(selection.getCommsView().getCodes().get(i));
 
             //add to button group
-            bgCode.add(mod);
-            mod.addActionListener(new ActionListener() {
+            bgCode.add(bCode);
+            bCode.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    // System.out.println(bgMod.getSelectedIndex());
+                   Log.p("CommsView: selected Code " + 
+                           bgCode.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCode(
                             Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
-                    // if no code then rate is 1/1
+                    // if no bCode then rate is 1/1
                     if (selection.getComms().getCode()
                             == Comms.Code.NONE) {
                         selection.getComms().setCodeRate(Comms.CodeRate.FEC_1_1);
-                        // set the right code rate in button group
+                        // set the right bCode rate in button group
                         bgRate.setSelected((int) codeRateHash.get(
                                 Comms.CodeRate.FEC_1_1.toString()));
 
@@ -393,7 +397,7 @@ public class CommsView extends View {
                 }
 
             });
-            cntCode.addComponent(mod);
+            cntCode.addComponent(bCode);
         }
 
           // set default to 
@@ -402,14 +406,15 @@ public class CommsView extends View {
         
         sldrDataRate.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                System.out.println(sldrDataRate.getText());
+                Log.p("CommsView: selected Data Rate " + 
+                        sldrDataRate.getText(), Log.DEBUG);
                 try {
 
                     selection.getComms().setDataRate(Double.parseDouble(sldrDataRate.getText()) / 10.0);
                     lDataRateValue.setText(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
 
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + sldrDataRate.getText());
+                    Log.p("TxView: bad number for Data Rate " + sldrDataRate.getText());
 
                 }
 
@@ -418,7 +423,7 @@ public class CommsView extends View {
 
         sldrBW.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                System.out.println(sldrBW.getText());
+                Log.p("CommsView: selected BW " + sldrBW.getText(), Log.DEBUG);
                 try {
 
                     selection.getComms().setBW(Double.parseDouble(sldrBW.getText()) / 10.0);
@@ -426,7 +431,7 @@ public class CommsView extends View {
                     
 
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + sldrBW.getText());
+                    Log.p("TxView: bad number for BW " + sldrBW.getText(), Log.DEBUG);
 
                 }
 

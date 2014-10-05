@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import com.codename1.util.StringUtil;
 import java.util.Vector;
+import com.codename1.io.Log;
 
 import com.codename1.util.MathUtil;
 
@@ -64,10 +65,25 @@ public class Comms extends Entity {
      */
     public void seteBno(double eBno) {
         this.eBno = eBno;
-           
-        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
         updateAffected();
+    }
+
+    /**
+     * @return the codingGain
+     */
+    public double getCodingGain() {
+        return codingGain;
+    }
+
+    /**
+     * @param codingGain the codingGain to set
+     */
+    public void setCodingGain(double codingGain) {
+        this.codingGain = codingGain;
+        // do optimation to find a good collection
     }
 
     public enum CodeRate {
@@ -112,8 +128,9 @@ public class Comms extends Entity {
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
     private double bw = 5;      // MHz
-    private double BEP = 1E-6;  
+    private double BEP = 1E-6;
     private double eBno = 10;           // in dB
+    private double codingGain = 0;      // in dB
     private CodeRate codeRate;
     private Code code;
     private Modulation modulation;
@@ -208,7 +225,7 @@ public class Comms extends Entity {
     public double getDataRate() {
         return dataRate;
     }
-    
+
     public CodeRate getCodeRate() {
         return this.codeRate;
     }
@@ -216,9 +233,9 @@ public class Comms extends Entity {
     public void setDataRate(double d) {
         this.dataRate = d;
     }
-    
-     // BER for each modulation, ebno is in dB, and this is stateless
-    public static double calcBEPmodCode(Modulation m, Code code, 
+
+    // BER for each modulation, ebno is in dB, and this is stateless
+    public static double calcBEPmodCode(Modulation m, Code code,
             CodeRate rate, Double ebno) {
         double ber;
         switch (m) {
@@ -264,10 +281,44 @@ public class Comms extends Entity {
         return ber;
     }
 
+    public static double calcCodingGain(Modulation m, Code c, CodeRate r,
+            Double BEP) {
+        Double gain = 0.0;
+        // right now hardcoded for BEP 1E-6
+
+        Double rate = calcCodeRate(r);
+        
+        if (m != Modulation.BPSK)
+            Log.p ("Comms: calcDecodingGain modulation not " +
+                        m, Log.DEBUG);
+        if (!Com.sameValue(BEP, 1E-6))
+               Log.p ("Comms: calcDecodingGain BEP not " +
+                        String.valueOf(BEP), Log.DEBUG);
+        
+            if (c != Code.CONV)
+               Log.p ("Comms: calcDecodingGain code not " +
+                        c, Log.DEBUG);
+            
+        // table 4.7 for BEP 1E-6 typical VITERBI CONV and perhaps BPSK (4.6)
+        if (rate < 1 / 2) {
+            gain = 6.0;
+        } else if (rate > 1 / 2 && rate < 2 / 3) {
+            gain = 5.0;
+        } else if (rate > 2 / 3 && rate < 3 / 4) {
+            gain = 4.6;
+        } else if (rate > 3 / 4 && rate < 7 / 8) {
+            gain = 3.6;
+        } else if (rate < 1) {
+            gain = 0.0;
+        }
+        return gain;
+
+    }
+
     /**
      * @return the modulation
      */
-    public double calcCodeRate(CodeRate c) {
+    public static double calcCodeRate(CodeRate c) {
         double value = 0;
         // get the numerator and denominator from text string n/(n+r)
         String text = c.name().toString();
@@ -276,7 +327,7 @@ public class Comms extends Entity {
             value = (Double.parseDouble(parts.get(0))
                     / Double.parseDouble(parts.get(1)));
         } catch (java.lang.NumberFormatException e) {
-            System.out.println("Comms: bad number " + c.toString());
+           Log.p("Comms: bad number " + c.toString(), Log.WARNING);
 
         }
         return value;
@@ -298,9 +349,11 @@ public class Comms extends Entity {
      */
     public void setModulation(Modulation modulation) {
         this.modulation = modulation;
-         
-        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
+            this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+                 this.codeRate, this.BEP));
         updateAffected();
     }
 
@@ -313,9 +366,11 @@ public class Comms extends Entity {
 
     public void setCodeRate(CodeRate c) {
         this.codeRate = c;
-           
-        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
+            this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+                 this.codeRate, this.BEP));
         updateAffected();
     }
 
@@ -324,9 +379,12 @@ public class Comms extends Entity {
      */
     public void setCode(Code code) {
         this.code = code;
+
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.eBno);
         
-        this.BEP = calcBEPmodCode(this.modulation, this.code, 
-                this.codeRate, this.geteBno());
+        this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+                 this.codeRate, this.BEP));
         updateAffected();
     }
 

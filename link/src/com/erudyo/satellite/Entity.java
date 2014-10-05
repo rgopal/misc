@@ -5,6 +5,7 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.Log;
 import java.util.ArrayList;
 
 /**
@@ -35,6 +36,7 @@ public class Entity {
             for (Entity a : affected) {
                 //  call update function of each object affected by it
                 a.update(this);
+                Log.p("Updating Object " + a + " because of " + this, Log.DEBUG);
             }
         }
 
@@ -51,6 +53,8 @@ public class Entity {
             affected = new ArrayList<Entity>();
         }
         affected.add(e);
+        Log.p("Added Object " + e + " to Affected list of " + this, Log.DEBUG);
+ 
 
     }
 

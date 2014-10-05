@@ -56,6 +56,7 @@ import com.codename1.ui.table.DefaultTableModel;
 import com.codename1.ui.table.Table;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
+import com.codename1.io.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -91,6 +92,7 @@ public class Link {
         // indexRfBand is built by setRfBandHash
         
         
+        
         // selection.setIndexRfBand(RfBand.indexRfBand);
 
         try {
@@ -124,7 +126,7 @@ public class Link {
         initSelection();
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
-         /*Display.getInstance().addEdtErrorHandler(new ActionListener() {
+         Display.getInstance().addEdtErrorHandler(new ActionListener() {
          public void actionPerformed(ActionEvent evt) {
          evt.consume();
          Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));
@@ -132,12 +134,15 @@ public class Link {
          Log.p("Error " + evt.getSource());
          Log.p("Current Form " + Display.getInstance().getCurrent().getName());
          Log.e((Throwable)evt.getSource());
-         Log.sendLog();
+         // Log.sendLog(); only for pro
          }
-         });*/
+         });
     }
 
     private void initSelection() {
+        
+        Log.p("Started application");
+        Log.setLevel(Log.INFO);
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage
@@ -290,7 +295,7 @@ public class Link {
                 bandLabel.setText(Com.shortText((rFband.lowFrequency / 1E9))
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
-                System.out.println(spin.getSelectedItem());
+                Log.p("Link: band selection " + spin.getSelectedItem().toString(), Log.DEBUG);
 
                 // update combos and labels
                 comboSatellite(selection, spin);
@@ -306,8 +311,8 @@ public class Link {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandSatellite().get(selection.getBand()) == null) {
 
-            System.out.println("link: Can't get bandSatellite for band "
-                    + selection.getBand());
+           Log.p("link: Can't get bandSatellite for band "
+                    + selection.getBand(), Log.DEBUG);
             // Force it to KA which hopefully works
             selection.setBand(RfBand.Band.KA);
 
@@ -322,8 +327,8 @@ public class Link {
                         new String[0])));
 
         if (model == null) {
-            System.out.println("Link: Can't create DefaultListModel for satellite band "
-                    + selection.getBand());
+            Log.p("Link: Can't create DefaultListModel for satellite band "
+                    + selection.getBand(), Log.DEBUG);
         } else {
             // use the list of satellites for select band 
             selection.getSatelliteView().spin.setModel(model);
@@ -356,8 +361,8 @@ public class Link {
                         new String[0])));
 
         if (model == null) {
-            System.out.println("Link: Can't create DefaultListModel for Rx terminal band "
-                    + selection.getBand());
+            Log.p("Link: Can't create DefaultListModel for Rx terminal band "
+                    + selection.getBand(), Log.DEBUG);
         } else {
             selection.getRxView().spin.setModel(model);
             // update label TODO

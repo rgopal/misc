@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+import com.codename1.io.Log;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -52,7 +53,7 @@ public class TxView extends View {
 
         // indexSatellite has all satellites, so get the band specific list
         if (selection.getBandTerminal().get(band) == null) {
-            System.out.println("Can't find terminals for band " + band);
+            Log.p("TxView: Can't find terminals for band " + band, Log.DEBUG);
             return l;
         }
 
@@ -82,7 +83,8 @@ public class TxView extends View {
                         Terminal.terminalHash.get(
                                 (String) combo.getSelectedItem()).getName());
 
-                // System.out.println(combo.getSelectedItem());
+                Log.p("TxView: Terminal selection " + 
+                        combo.getSelectedItem(), Log.DEBUG);
             }
         });
 
@@ -232,7 +234,7 @@ public class TxView extends View {
         // all actions at the end to update other fields
         L12.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                // System.out.println(L12.getText());
+                Log.p("TxView: selected power " + L12.getText(), Log.DEBUG);
                 try {
                     selection.gettXterminal().getAmplifier().
                             setPower(Double.parseDouble(L12.getText()) / 10.0);
@@ -241,14 +243,14 @@ public class TxView extends View {
                             getPower()) + "W");
                     L52.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + L12.getText());
+                    Log.p("TxView: bad number for power " + L12.getText(), Log.DEBUG);
                 }
             }
         });
 
         L22.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                System.out.println(L22.getText());
+                Log.p("TxView: selected diameter " + L22.getText(), Log.DEBUG);
                 try {
 
                     // convert from cm to m first
@@ -260,7 +262,7 @@ public class TxView extends View {
                     L32.setText(Com.shortText(ter.getAntenna().getGain()));
                     L52.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + L22.getText());
+                    Log.p("TxView: bad number for diameter " + L22.getText(), Log.DEBUG);
 
                 }
 
