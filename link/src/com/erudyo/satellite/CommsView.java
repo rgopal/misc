@@ -1,5 +1,5 @@
 /*
- * STATUS: Primary items for COMMS.   FEC, Modulation, Data Rate, BW
+ * 
  */
 package com.erudyo.satellite;
 
@@ -45,8 +45,8 @@ public class CommsView extends View {
     // lookup by index with instance name vector 
     private ArrayList<String> codes
             = new ArrayList<String>();
-    
-        private Hashtable<String, Integer> codeRateHash
+
+    private Hashtable<String, Integer> codeRateHash
             = new Hashtable<String, Integer>();
 
     // lookup by index with instance name vector 
@@ -81,8 +81,8 @@ public class CommsView extends View {
         }
 
     }
-    
-        public void initCodeRateHash() {
+
+    public void initCodeRateHash() {
 
         int index = 0;
         // go through the hash to create positions and indexRfBand entries
@@ -111,8 +111,8 @@ public class CommsView extends View {
     public ArrayList<String> getCodes() {
         return this.codes;
     }
-    
-     public ArrayList<String> getCodeRates() {
+
+    public ArrayList<String> getCodeRates() {
         return this.codeRates;
     }
 
@@ -146,40 +146,40 @@ public class CommsView extends View {
         // create a Comms object to hold specifics
         selection.setComms(new Comms());
 
-        final Slider L12 = new Slider();
-        L12.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
-        L12.setMaxValue((int) MathUtil.round(Comms.DATA_RATE_HI * 10));
-        L12.setEditable(true);
+        final Slider sldrDataRate = new Slider();
+        sldrDataRate.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
+        sldrDataRate.setMaxValue((int) MathUtil.round(Comms.DATA_RATE_HI * 10));
+        sldrDataRate.setEditable(true);
 
-        L12.setIncrements(5); //
+        sldrDataRate.setIncrements(5); //
 
-        L12.setText(String.valueOf(MathUtil.round(selection.getComms().getDataRate() * 10)));
-        L12.setProgress((int) MathUtil.round(selection.getComms().getDataRate() * 10));
-        label.setText(String.valueOf(Double.parseDouble(L12.getText()) / 10.0)
+        sldrDataRate.setText(String.valueOf(MathUtil.round(selection.getComms().getDataRate() * 10)));
+        sldrDataRate.setProgress((int) MathUtil.round(selection.getComms().getDataRate() * 10));
+        label.setText(String.valueOf(Double.parseDouble(sldrDataRate.getText()) / 10.0)
                 + "Mbps");
-        L12.setRenderValueOnTop(true);
+        sldrDataRate.setRenderValueOnTop(true);
 
-        selection.getCommsView().slider = L12;
+        selection.getCommsView().slider = sldrDataRate;
 
         // all actions at the end to update other fields
-        L12.addDataChangedListener(new DataChangedListener() {
+        sldrDataRate.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                // System.out.println(L12.getText());
+                // System.out.println(sldrDataRate.getText());
                 try {
                     selection.getComms().
-                            setDataRate(Double.parseDouble(L12.getText()) / 10.0);
+                            setDataRate(Double.parseDouble(sldrDataRate.getText()) / 10.0);
                     // update EIRP
-                    label.setText(String.valueOf(Double.parseDouble(L12.getText()) / 10.0)
+                    label.setText(String.valueOf(Double.parseDouble(sldrDataRate.getText()) / 10.0)
                             + "Mbps");
 
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + L12.getText());
+                    System.out.println("TxView: bad number " + sldrDataRate.getText());
                 }
             }
         });
 
         // combo box created so return it
-        return L12;
+        return sldrDataRate;
     }
 
     public Component getLabel(final Selection selection) {
@@ -207,12 +207,12 @@ public class CommsView extends View {
     public Form createView(final Selection selection) {
         Form sub = new Form("Common " + selection.getComms().getName());
 
-        Container cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
+        Container cntAllThree = new Container(new BorderLayout());
+        sub.addComponent(cntAllThree);
 
         // Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(2, 3);
-        cnt.setLayout(layout);
+        cntAllThree.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setVerticalSpan(2);
@@ -220,67 +220,67 @@ public class CommsView extends View {
 
         // now go sequentially through the Tx terminal fields
         // final Terminal ter = selection.gettXterminal();
-        Label L01 = new Label("Data Rate");
-        Label L02 = new Label(Com.shortText(selection.getComms().getDataRate()));
-        Label L03 = new Label("Mbps ");
-        cnt.addComponent(L01);
-        cnt.addComponent(constraint, L02);
-        cnt.addComponent(L03);
+        Label lDataRate01 = new Label("Data Rate");
+        Label lDataRate02 = new Label(Com.shortText(selection.getComms().getDataRate()));
+        Label lDataRate03 = new Label("Mbps ");
+        cntAllThree.addComponent(lDataRate01);
+        cntAllThree.addComponent(constraint, lDataRate02);
+        cntAllThree.addComponent(lDataRate03);
 
-        Label L11 = new Label("Data Rate");
-        final Slider L12 = new Slider();
+        Label lDataRate = new Label("Data Rate");
+        final Slider sldrDataRate = new Slider();
 
-        L12.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
-        L12.setMaxValue((int) MathUtil.round(Comms.DATA_RATE_HI * 10));
-        L12.setEditable(true);
+        sldrDataRate.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
+        sldrDataRate.setMaxValue((int) MathUtil.round(Comms.DATA_RATE_HI * 10));
+        sldrDataRate.setEditable(true);
 
-        L12.setIncrements(5); //
-        L12.setProgress((int) MathUtil.round(selection.getComms().getDataRate() * 10));
+        sldrDataRate.setIncrements(5); //
+        sldrDataRate.setProgress((int) MathUtil.round(selection.getComms().getDataRate() * 10));
 
-        L12.setRenderValueOnTop(true);
+        sldrDataRate.setRenderValueOnTop(true);
 
-        final Label L13 = new Label(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
-        cnt.addComponent(L11);
-        cnt.addComponent(L12);
-        cnt.addComponent(L13);
+        final Label lDataRateValue = new Label(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
+        cntAllThree.addComponent(lDataRate);
+        cntAllThree.addComponent(sldrDataRate);
+        cntAllThree.addComponent(lDataRateValue);
 
-        Label L21 = new Label("BW");
-        final Slider L22 = new Slider();
+        Label lBW = new Label("BW");
+        final Slider sldrBW = new Slider();
 
-        L22.setMinValue((int) MathUtil.round(Comms.BW_LO * 10)); // x10
-        L22.setMaxValue((int) MathUtil.round(Comms.BW_HI * 10));
-        L22.setEditable(true);
+        sldrBW.setMinValue((int) MathUtil.round(Comms.BW_LO * 10)); // x10
+        sldrBW.setMaxValue((int) MathUtil.round(Comms.BW_HI * 10));
+        sldrBW.setEditable(true);
 
-        L22.setIncrements(5); //
-        L22.setProgress((int) MathUtil.round(selection.getComms().getBW() * 10));
+        sldrBW.setIncrements(5); //
+        sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW() * 10));
 
-        L22.setRenderValueOnTop(true);
+        sldrBW.setRenderValueOnTop(true);
 
-        final Label L23 = new Label(Com.shortText(selection.getComms().getBW()) + "MHz");
-        cnt.addComponent(L21);
-        cnt.addComponent(L22);
-        cnt.addComponent(L23);
+        final Label lBWvalue = new Label(Com.shortText(selection.getComms().getBW()) + "MHz");
+        cntAllThree.addComponent(lBW);
+        cntAllThree.addComponent(sldrBW);
+        cntAllThree.addComponent(lBWvalue);
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
 
         // now vertical positioning
-        cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
+        cntAllThree = new Container(new BorderLayout());
+        sub.addComponent(cntAllThree);
 
         // Hardcoded table. Name, value, unit
         layout = new TableLayout(2, 3);
-        cnt.setLayout(layout);
+        cntAllThree.setLayout(layout);
 
         Label l1 = new Label("Modulation");
         Label l2 = new Label("Rate");
-          Label l3 = new Label("Code");
-        cnt.addComponent(l1); 
-        cnt.addComponent(l2);
-         cnt.addComponent(l3);
+        Label l3 = new Label("Code");
+        cntAllThree.addComponent(l1);
+        cntAllThree.addComponent(l2);
+        cntAllThree.addComponent(l3);
 
         Container cntMod = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cnt.addComponent(cntMod);
+        cntAllThree.addComponent(cntMod);
 
         final ButtonGroup bgMod = new ButtonGroup();
         // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
@@ -289,17 +289,13 @@ public class CommsView extends View {
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
-   
         for (int i = 0; i < Comms.modulationHash.size(); i++) {
             final RadioButton mod = new RadioButton();
-            
+
             // trying to set hint.  Name also does not work
-            mod.setUIID(Comms.indexModulation.toArray(new 
-                                    Comms.Modulation[0])[i].name());
-            mod.setText(Comms.indexModulation.toArray(new 
-                                    Comms.Modulation[0])[i].name());
+            mod.setUIID(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
+            mod.setText(Comms.indexModulation.toArray(new Comms.Modulation[0])[i].name());
         //(selection.getCommsView().getModulations().get(i));
-      
 
             //add to button group
             bgMod.add(mod);
@@ -307,21 +303,26 @@ public class CommsView extends View {
                 public void actionPerformed(ActionEvent evt) {
 
                     // System.out.println(bgMod.getSelectedIndex());
-                  
-                    selection.getComms().setModulation (
+                    selection.getComms().setModulation(
                             Comms.indexModulation.toArray(new 
-                                    Comms.Modulation[0])[bgMod.getSelectedIndex()]);
-            
+                                    Comms.Modulation[0])
+                                    [bgMod.getSelectedIndex()]);
+
                 }
             });
             cntMod.addComponent(mod);
         }
+        // set default to the first one
+        bgMod.setSelected((int) modulationHash.get(
+                Comms.Modulation.BPSK.toString()));
 
         Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cnt.addComponent(cntRate);
+        cntAllThree.addComponent(cntRate);
 
         final ButtonGroup bgRate = new ButtonGroup();
+
         RadioButton codeRate = new RadioButton();
+        final ButtonGroup bgCode = new ButtonGroup();
 
         /**
          * this method should be used to initialize variables instead of the
@@ -333,33 +334,41 @@ public class CommsView extends View {
             codeRate.setText(selection.getCommsView().getCodeRates().get(i));
             //add to button group
             bgRate.add(codeRate);
-              codeRate.addActionListener(new ActionListener() {
+            codeRate.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                   // System.out.println(bgCode.getSelectedIndex());
-                  
-                    selection.getComms().setCodeRate (
+                    // System.out.println(bgCode.getSelectedIndex());
+                    selection.getComms().setCodeRate(
                             Comms.indexCodeRate.toArray(new 
-                                    Comms.CodeRate[0])[bgRate.getSelectedIndex()]);
-            
+                                    Comms.CodeRate[0])
+                                    [bgRate.getSelectedIndex()]);
+                    if (selection.getComms().getCodeRate()
+                            == Comms.CodeRate.FEC_1_1) {
+                        selection.getComms().setCode(Comms.Code.NONE);
+                        // set the right code rate in button group
+                        bgCode.setSelected((int) codeHash.get(
+                                Comms.Code.NONE.toString()));
+                    }
+
                 }
             });
             //add to container
             cntRate.addComponent(codeRate);
         }
 
+          // set default to the first one
+        bgRate.setSelected((int) codeRateHash.get(
+                Comms.CodeRate.FEC_7_8.toString()));
+        
         // now the codeRate
         Container cntCode = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cnt.addComponent(cntCode);
+        cntAllThree.addComponent(cntCode);
 
-        final ButtonGroup bgCode = new ButtonGroup();
         // RadioButton mod = new RadioButton(); // [Comms.modulationHash.size()];
-
         /**
          * this method should be used to initialize variables instead of the
          * constructor/class scope to avoid race conditions
          */
- 
         for (int i = 0; i < Comms.codeHash.size(); i++) {
             final RadioButton mod = new RadioButton();
             mod.setName(selection.getCommsView().getCodes().get(i));
@@ -369,44 +378,55 @@ public class CommsView extends View {
             bgCode.add(mod);
             mod.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-
                     // System.out.println(bgMod.getSelectedIndex());
-                  
-                    selection.getComms().setCode (
-                            Comms.indexCode.toArray(new 
-                                    Comms.Code[0])[bgCode.getSelectedIndex()]);
-            
+                    selection.getComms().setCode(
+                            Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
+                    // if no code then rate is 1/1
+                    if (selection.getComms().getCode()
+                            == Comms.Code.NONE) {
+                        selection.getComms().setCodeRate(Comms.CodeRate.FEC_1_1);
+                        // set the right code rate in button group
+                        bgRate.setSelected((int) codeRateHash.get(
+                                Comms.CodeRate.FEC_1_1.toString()));
+
+                    }
                 }
+
             });
             cntCode.addComponent(mod);
         }
+
+          // set default to 
+        bgCode.setSelected((int) codeHash.get(
+                Comms.Code.BCH.toString()));
         
-        L12.addDataChangedListener(new DataChangedListener() {
+        sldrDataRate.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                System.out.println(L12.getText());
+                System.out.println(sldrDataRate.getText());
                 try {
 
-                    selection.getComms().setDataRate(Double.parseDouble(L12.getText()) / 10.0);
-                    L13.setText(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
+                    selection.getComms().setDataRate(Double.parseDouble(sldrDataRate.getText()) / 10.0);
+                    lDataRateValue.setText(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
 
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + L12.getText());
+                    System.out.println("TxView: bad number " + sldrDataRate.getText());
 
                 }
 
             }
         });
 
-        L22.addDataChangedListener(new DataChangedListener() {
+        sldrBW.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                System.out.println(L22.getText());
+                System.out.println(sldrBW.getText());
                 try {
 
-                    selection.getComms().setBW(Double.parseDouble(L22.getText()) / 10.0);
-                    L23.setText(Com.shortText(selection.getComms().getBW()) + "MHz");
+                    selection.getComms().setBW(Double.parseDouble(sldrBW.getText()) / 10.0);
+                    lBWvalue.setText(Com.shortText(selection.getComms().getBW()) + "MHz");
+                    
 
                 } catch (java.lang.NumberFormatException e) {
-                    System.out.println("TxView: bad number " + L22.getText());
+                    System.out.println("TxView: bad number " + sldrBW.getText());
 
                 }
 

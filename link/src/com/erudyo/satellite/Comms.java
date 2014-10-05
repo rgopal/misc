@@ -3,7 +3,18 @@
  * represents common communications stuff across terminals for transponded
  * satellites.  In future, this could evolve into modem which could be different
  * for each terminal and a regenerative satellite.
- * TODO: Add full coding/modulation processing
+ * 
+ * Manage primary items such as FEC, Modulation, Data Rate, BW.  If Code, Mod,
+ * or Code rate changes, then BEP will change.  If someones sets a speciic BEP
+ * then constraint based optimzation is done which would then change mod, cod
+ * directly using this (and not set which triggers other calculations, including
+ * BEP).
+ * BEP depends on mod, code, codeRate, and eBno
+ * EbNo depends on code rate and power (which is not present here).
+ *
+ * Comms itself does not depend on any child or siblint (so has no update()
+ * processing.
+ * TODO: 
  */
 package com.erudyo.satellite;
 
@@ -27,16 +38,48 @@ public class Comms extends Entity {
         return indexCode;
     }
 
+    /**
+     * @return the BEP
+     */
+    public double getBEP() {
+        return BEP;
+    }
+
+    /**
+     * @param BEP the BEP to set
+     */
+    public void setBEP(double BEP) {
+        this.BEP = BEP;
+    }
+
+    /**
+     * @return the eBno
+     */
+    public double geteBno() {
+        return eBno;
+    }
+
+    /**
+     * @param eBno the eBno to set
+     */
+    public void seteBno(double eBno) {
+        this.eBno = eBno;
+           
+        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+                this.codeRate, this.geteBno());
+        updateAffected();
+    }
+
     public enum CodeRate {
 
         FEC_1_9("1/9"),
         FEC_1_4("1/4"),
         FEC_1_3("1/3"),
-        FEC_1_2("1/3"),
         FEC_2_3("2/3"),
         FEC_4_5("4/5"),
         FEC_7_8("7/8"),
-        FEC_8_9("8/9");
+        FEC_8_9("8/9"),
+        FEC_1_1("1/1");
 
         private final String value;
 
@@ -53,6 +96,7 @@ public class Comms extends Entity {
 
     public enum Code {
 
+        NONE,
         RS,
         BCH,
         LDPC,
@@ -68,6 +112,8 @@ public class Comms extends Entity {
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
     private double bw = 5;      // MHz
+    private double BEP = 1E-6;  
+    private double eBno = 10;           // in dB
     private CodeRate codeRate;
     private Code code;
     private Modulation modulation;
@@ -162,13 +208,41 @@ public class Comms extends Entity {
     public double getDataRate() {
         return dataRate;
     }
+    
+    public CodeRate getCodeRate() {
+        return this.codeRate;
+    }
 
     public void setDataRate(double d) {
         this.dataRate = d;
     }
+    
+     // BER for each modulation, ebno is in dB, and this is stateless
+    public static double calcBEPmodCode(Modulation m, Code code, 
+            CodeRate rate, Double ebno) {
+        double ber;
+        switch (m) {
+            case BPSK:
+            case QPSK:
+                //
+                ber = (1 - Com.erf(MathUtil.pow(
+                        MathUtil.pow(10.0, ebno / 10.0), 0.5)))
+                        / 2.0;
+                break;
+
+            default:
+                ber = (1 - Com.erf(MathUtil.pow(
+                        MathUtil.pow(10.0, ebno / 10.0), 0.5)
+                ));
+
+                break;
+
+        }
+        return ber;
+    }
 
     // BER for each modulation, ebno is in dB
-    public static double getBEP(Modulation m, Double ebno) {
+    public static double calcBEPmod(Modulation m, Double ebno) {
         double ber;
         switch (m) {
             case BPSK:
@@ -224,17 +298,25 @@ public class Comms extends Entity {
      */
     public void setModulation(Modulation modulation) {
         this.modulation = modulation;
+         
+        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+                this.codeRate, this.geteBno());
+        updateAffected();
     }
 
     /**
      * @return the code
      */
-    public CodeRate getCode() {
-        return codeRate;
+    public Code getCode() {
+        return code;
     }
 
     public void setCodeRate(CodeRate c) {
         this.codeRate = c;
+           
+        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+                this.codeRate, this.geteBno());
+        updateAffected();
     }
 
     /**
@@ -242,6 +324,10 @@ public class Comms extends Entity {
      */
     public void setCode(Code code) {
         this.code = code;
+        
+        this.BEP = calcBEPmodCode(this.modulation, this.code, 
+                this.codeRate, this.geteBno());
+        updateAffected();
     }
 
     /**

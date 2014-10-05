@@ -1,3 +1,15 @@
+/*
+ * OVERVIEW:
+ * main driver for the application.  Uses models (such as Terminal) and views
+ * such as (TxView) to organize code.  Selection class can hold a specific collection
+ * of both views and models to provide multiple instances for user selections.
+ * 
+ * Typicall, a class has a calc* function which is stateless (defined as static)
+ * while the set* function would change instance level values.  Object instances
+ * could depend on each other and instance's update method is automatically called
+ * when any child or sibling changes.  An instance registers itself by calling
+ * the addAffected method of another object (such as its child).
+ */
 package com.erudyo.satellite;
 // this is main
 
