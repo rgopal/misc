@@ -1,61 +1,90 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW
+ * Manages an instance representing path between a satellite and a terminal, 
+ * including the distance, azimuth, and elevation angles (all stored in Radians).
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.Log;
 import com.codename1.util.MathUtil;
 import java.lang.Math;
 
 /**
- * Copyright (c) 2014 R. Gopal. All Rights Reserved.
+ * Copyright (c) 2014 distance. Gopal. All Rights Reserved.
  *
  * @author rgopal ISO Standard is Long and then LAT, North and East are
  * positive. Fine to use all decimal after degree.
  */
 public class Path extends Entity {
 
-    /**
-     * @return the s
-     */
-    public Satellite getS() {
-        return s;
+    private Satellite satellite;
+    private RfBand.Band band;
+    private Terminal terminal;
+    private double pathLoss = 200;        // in dB
+    private double attenuation = 0;         // in dB
+    private double azimuth;
+    private double elevation;
+    private double distance;     //distance of satellite from terminal
+
+    public Path() {
+
+    }
+
+    public Path(Satellite s, Terminal t) {
+        this.satellite = s;
+        this.terminal = t;
+
+        // include this Path in the Affected list of satellite and terminal
+        s.addAffected(this);
+        t.addAffected(this);
+
+        setAll();
     }
 
     /**
-     * @param s the s to set
+     * @return the satellite
      */
-    public void setS(Satellite s) {
-        this.s = s;
+    public Satellite getSatellite() {
+        return satellite;
     }
 
     /**
-     * @return the t
+     * @param s the satellite to set
      */
-    public Terminal getT() {
-        return t;
+    public void setSatellite(Satellite s) {
+        this.satellite = s;
+        setAll();
     }
 
     /**
-     * @param t the t to set
+     * @return the terminal
      */
-    public void setT(Terminal t) {
-        this.t = t;
+    public Terminal getTerminal() {
+        return terminal;
     }
 
     /**
-     * @return the R
+     * @param t the terminal to set
      */
-    public double getR() {
-        return R;
+    public void setTerminal(Terminal t) {
+        this.terminal = t;
+        setAll();
     }
 
     /**
-     * @param R the R to set
+     * @return the distance
      */
-    public void setR(double R) {
-        this.R = R;
+    public double getDistance() {
+        return distance;
+    }
+
+    /**
+     * @param R the distance to set. This will change angles. Can't think of why
+     * this will be called
+     */
+    private void setDistance(double R) {
+        this.distance = R;
+
     }
 
     /**
@@ -66,14 +95,15 @@ public class Path extends Entity {
     }
 
     /**
-     * @param azimuth the azimuth to set
+     * @param azimuth the azimuth to set. This could be called to reverse
+     * calculate the location (TODO)
      */
-    public void setAzimuth(double azimuth) {
+    private void setAzimuth(double azimuth) {
         this.azimuth = azimuth;
     }
 
     /**
-     * @return the elevation
+     * @return the elevation. TODO reverse calculate location
      */
     public double getElevation() {
         return elevation;
@@ -87,7 +117,7 @@ public class Path extends Entity {
     }
 
     /**
-     * @return the band
+     * @return the band. Would affect rain attenuation
      */
     public RfBand.Band getBand() {
         return band;
@@ -100,65 +130,104 @@ public class Path extends Entity {
         this.band = band;
     }
 
+    /**
+     * @return the pathLoss
+     */
+    public double getPathLoss() {
+        return pathLoss;
+    }
+
+    /**
+     * @param pathLoss the pathLoss to set
+     */
+    public void setPathLoss(double pathLoss) {
+        this.pathLoss = pathLoss;
+    }
+
+    /**
+     * @return the attenuation
+     */
+    public double getAttenuation() {
+        return attenuation;
+    }
+
+    /**
+     * @param attenuation the attenuation to set
+     */
+    public void setAttenuation(double attenuation) {
+        this.attenuation = attenuation;
+    }
+
     enum relativePosition {
 
         NE, SE, NW, SW, N, S, E, W
     };
-    private Satellite s;
-    private RfBand.Band band;
-    private Terminal t;
-    private double azimuth;
-    private double elevation;
-    private double R;     //distance of satellite from terminal
 
-    public Path() {
-
+    public void setAll() {
+        
+        // check if satellite is visible from terminal
+        double degree = Math.abs(satellite.getLongitude() - 
+                terminal.getLongitude())*180.0/Com.PI;
+        if (degree > 80.0 )
+            Log.p("Path: terminal and satellite are far apart " + degree, Log.WARNING);
+        
+        this.distance = calcDistance(satellite.getR0());
+        this.azimuth = calcAzimuth();
+        this.elevation = calcElevation();
+        
+        // get center frequency of band used by terminal
+        this.pathLoss = calcPathLoss(this.distance, 
+                RfBand.centerFrequency(terminal.getBand()));
     }
 
-    public Path(Satellite s, Terminal t) {
-        this.s = s;
-        this.t = t;
-        R = calcDistance();
-        azimuth = calcAzimuth();
-        elevation = calcElevation();
+    public double calcPathLoss(double distance, Double frequency) {
+
+        double p;
+        p = 10.0 * MathUtil.log10(
+                4.0 * Com.PI * distance
+                / (MathUtil.pow(Com.C / frequency, 2.0))
+        );
+
+        return p;
+    }
+    // called if there is any change in the child or sibling
+
+    public void updateAll() {
+        setAll();
     }
 
     public Path(String n) {
         super(n);
     }
 
-    public Path(String n, String d, String s) {
-        super(n, d, s);
-    }
-
-    public double calcRelativeLong() {
+    public double calcRelativeLongitude() {
 
         double relativeLong;
         // get relative longitdue between satellite and terminal
-        if (s.longitude > t.getLongitude()) {
-            relativeLong = s.getLongitude() - t.getLongitude();
+        if (satellite.longitude > terminal.getLongitude()) {
+            relativeLong = satellite.getLongitude() - terminal.getLongitude();
         } else {
-            relativeLong = t.getLongitude() - s.getLongitude();
+            relativeLong = terminal.getLongitude() - satellite.getLongitude();
         }
         // return absolute value of difference.  Above is not needed
         return Math.abs(relativeLong);
     }
 
     public double calcBigPhi() {
-        if (s == null || t == null) {
+        if (satellite == null || terminal == null) {
             return 0;
         }
         double Phi;
         double relativeLong;
-        relativeLong = calcRelativeLong();
+        relativeLong = calcRelativeLongitude();
         Phi = MathUtil.acos(Math.cos(relativeLong)
-                * Math.cos(Math.abs(t.getLatitude())));
+                * Math.cos(Math.abs(terminal.getLatitude())));
         return Phi;
     }
 
-    public double calcDistance() {
+    public double calcDistance(Double meanRad) {
         double d;
-        d = MathUtil.pow((1.0 + 0.42 * (1.0 - Math.cos(calcBigPhi()))), 0.5) * s.getR0();
+        d = MathUtil.pow((1.0 + 0.42 * (1.0 - Math.cos(calcBigPhi()))), 0.5) * meanRad;
         return d;
     }
 
@@ -172,8 +241,8 @@ public class Path extends Entity {
         if (Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI / 2.0);
         }
-        elev = MathUtil.atan( (Math.cos(bigPhi) - (Com.RE / (Com.RE + s.getR0())))
-                    / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
+        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / (Com.RE + satellite.getR0())))
+                / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
         return elev;
 
     }
@@ -183,7 +252,7 @@ public class Path extends Entity {
         double a;
         relativePosition rel;
         double relLong, bigPhi;
-        relLong = calcRelativeLong();
+        relLong = calcRelativeLongitude();
         bigPhi = calcBigPhi();
 
         // if terminal and satellite are on the same longitude
@@ -194,7 +263,7 @@ public class Path extends Entity {
             return (Com.PI);
         }
 
-        a = MathUtil.asin(Math.sin(relLong) * Math.cos(s.getLatitude())
+        a = MathUtil.asin(Math.sin(relLong) * Math.cos(satellite.getLatitude())
                 / Math.sin(bigPhi));
         rel = findRelativePosition();
         switch (rel) {
@@ -220,16 +289,16 @@ public class Path extends Entity {
         rel = relativePosition.NE;      // Terminal is North East
 
         // northern hemisphere for terminal
-        if (t.getLatitude() >= 0.0) {
+        if (terminal.getLatitude() >= 0.0) {
             // satellite is East of Terminal
-            if (s.getLongitude() > t.getLongitude()) {
+            if (satellite.getLongitude() > terminal.getLongitude()) {
                 rel = relativePosition.NE;
             } else {
                 rel = relativePosition.NW;
             }
         } else {
             // terminal in southern hemisphere
-            if (s.getLongitude() >= t.getLongitude()) {
+            if (satellite.getLongitude() >= terminal.getLongitude()) {
                 // satellite is East of terminal
                 rel = relativePosition.SE;
             } else {

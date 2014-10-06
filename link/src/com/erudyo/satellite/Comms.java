@@ -287,18 +287,21 @@ public class Comms extends Entity {
         // right now hardcoded for BEP 1E-6
 
         Double rate = calcCodeRate(r);
-        
-        if (m != Modulation.BPSK)
-            Log.p ("Comms: calcDecodingGain modulation not " +
-                        m, Log.DEBUG);
-        if (!Com.sameValue(BEP, 1E-6))
-               Log.p ("Comms: calcDecodingGain BEP not " +
-                        String.valueOf(BEP), Log.DEBUG);
-        
-            if (c != Code.CONV)
-               Log.p ("Comms: calcDecodingGain code not " +
-                        c, Log.DEBUG);
-            
+
+        if (m != Modulation.BPSK) {
+            Log.p("Comms: calcDecodingGain modulation not "
+                    + m, Log.DEBUG);
+        }
+        if (!Com.sameValue(BEP, 1E-6)) {
+            Log.p("Comms: calcDecodingGain BEP not "
+                    + String.valueOf(BEP), Log.DEBUG);
+        }
+
+        if (c != Code.CONV) {
+            Log.p("Comms: calcDecodingGain code not "
+                    + c, Log.DEBUG);
+        }
+
         // table 4.7 for BEP 1E-6 typical VITERBI CONV and perhaps BPSK (4.6)
         if (rate < 1 / 2) {
             gain = 6.0;
@@ -327,7 +330,7 @@ public class Comms extends Entity {
             value = (Double.parseDouble(parts.get(0))
                     / Double.parseDouble(parts.get(1)));
         } catch (java.lang.NumberFormatException e) {
-           Log.p("Comms: bad number " + c.toString(), Log.WARNING);
+            Log.p("Comms: bad number " + c.toString(), Log.WARNING);
 
         }
         return value;
@@ -352,8 +355,8 @@ public class Comms extends Entity {
 
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
-            this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
-                 this.codeRate, this.BEP));
+        this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.BEP));
         updateAffected();
     }
 
@@ -369,8 +372,8 @@ public class Comms extends Entity {
 
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
-            this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
-                 this.codeRate, this.BEP));
+        this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.BEP));
         updateAffected();
     }
 
@@ -382,9 +385,9 @@ public class Comms extends Entity {
 
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.eBno);
-        
+
         this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
-                 this.codeRate, this.BEP));
+                this.codeRate, this.BEP));
         updateAffected();
     }
 

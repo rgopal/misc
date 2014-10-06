@@ -1,6 +1,6 @@
-name, latitude, longitude, EIRP, gain, band
-Galaxy-15,0,91,53,30,KU
-AMC-13,0,102,45,35,KA
-AMC-14,0,103,45,35,C
-AMC-12,0,104,45,35,C
-WildRed,0,109,45,35,X
+name, , longitude, latitude, EIRP, gain, band
+Galaxy-15,-91,0,53,30,KU
+AMC-13,-102,0,45,35,KA
+AMC-14,-103,0,45,35,C
+AMC-12,-104,0,45,35,C
+WildRed,-109,0,45,35,X

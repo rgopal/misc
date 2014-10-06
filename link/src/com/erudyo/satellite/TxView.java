@@ -101,7 +101,7 @@ public class TxView extends View {
         final Label label = new Label((String) selection.getTxView().spin.getSelectedItem());
  // terminal is not set yet               selection.gettXterminal().getName());      
 
-        // set the tx view present in the selection
+        // set the tx view present in the selection. Don't use this
         selection.getTxView().label = label;
 
         // combo box created so return it

@@ -45,7 +45,7 @@ public abstract class View {
         return (new Label (getValue()));
     }
     
-    // some could have no second widget so just summary
+    // some could have no second widget so just summary (probably not used)
     public Component getSubLabel(Selection selection) {
         return (new Label (getUnit()));
     }

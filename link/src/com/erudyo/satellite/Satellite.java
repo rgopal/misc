@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+
 import java.util.Arrays;
 
 import com.codename1.io.Log;
@@ -32,8 +33,9 @@ public class Satellite extends Entity {
     final public static ArrayList<Satellite> indexSatellite
             = new ArrayList<Satellite>();
 
-    public Satellite () {
+    public Satellite() {
     }
+
     public String toString() {
         return getName();
     }
@@ -48,10 +50,9 @@ public class Satellite extends Entity {
     protected double R0;      // altitude
     protected Com.Orbit orbit;
     protected RfBand.Band band; //
-   
 
     private int index;
-    
+
     public int getIndex() {
         return index;
     }
@@ -76,9 +77,16 @@ public class Satellite extends Entity {
         antenna = new Antenna();
         // gain should be calculated when diameter changed
         antenna.setDiameter(2.4);
-        EIRP = 43;
+        EIRP = 43;           // TODO read this from txt file and beam
         gain = 50;
         this.name = name;       // should be unique
+
+        setA(42164.2E3);        //semi major axis of GEO orbit
+        setV(3075E3);        // GEO satellite velocity
+        setR0(35786E3);       // height of GEO satellite
+        setLatitude(0.0);         // latitude is zero
+
+        orbit = Com.Orbit.GEO;
 
         amplifier.setPower(200);
 
@@ -90,14 +98,12 @@ public class Satellite extends Entity {
 
         // add the new Satellite instance to the Hashtable at the class level
         Satellite.satelliteHash.put(getName(), this);
-        
 
         // Add new object instance to the array list (all satellites)
         indexSatellite.add(this);
-        
-        index = indexSatellite.size()-1;
-   
-     
+
+        index = indexSatellite.size() - 1;
+
     }
 
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
@@ -136,9 +142,9 @@ public class Satellite extends Entity {
         Satellite satellite = new Satellite(fields[0]);
 
         // fields are name, long, lat, eirp, gain, band
+         satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
+         satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
        
-        satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[1])));
-        satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[2])));
         satellite.setEIRP(Double.parseDouble(fields[3]));
         satellite.setGain(Double.parseDouble(fields[4]));
         if (!fields[5].equalsIgnoreCase("*")) {

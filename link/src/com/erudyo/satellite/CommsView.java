@@ -132,7 +132,7 @@ public class CommsView extends View {
     public CommsView() {
         // this could initialize the needed data structures
         init();
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   
     }
 
     // returns a slider to show and select specific data rate (in Comms)
@@ -303,20 +303,22 @@ public class CommsView extends View {
             bModulation.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    Log.p("CommsView: selected Modulatoin " + 
-                            bgMod.getSelectedIndex(), Log.DEBUG);
+                    Log.p("CommsView: selected Modulatoin "
+                            + bgMod.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setModulation(
-                            Comms.indexModulation.toArray(new 
-                                    Comms.Modulation[0])
-                                    [bgMod.getSelectedIndex()]);
+                            Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
 
                 }
             });
             cntMod.addComponent(bModulation);
         }
-        // set default to the first one
+        // set UI default to BPSK
         bgMod.setSelected((int) modulationHash.get(
                 Comms.Modulation.BPSK.toString()));
+        // set model defaul to the BPSK
+        selection.getComms().setModulation(
+                Comms.indexModulation.toArray(new Comms.Modulation[0])
+                        [bgMod.getSelectedIndex()]);
 
         // now bCode rate
         Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
@@ -340,11 +342,10 @@ public class CommsView extends View {
             bCodeRate.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    Log.p("CommsView: selected Code Rate " + 
-                            bgRate.getSelectedIndex(), Log.DEBUG);
+                    Log.p("CommsView: selected Code Rate "
+                            + bgRate.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCodeRate(
-                            Comms.indexCodeRate.toArray(new 
-                                    Comms.CodeRate[0])
+                            Comms.indexCodeRate.toArray(new Comms.CodeRate[0])
                                     [bgRate.getSelectedIndex()]);
                     if (selection.getComms().getCodeRate()
                             == Comms.CodeRate.FEC_1_1) {
@@ -359,10 +360,15 @@ public class CommsView extends View {
             //add to container
             cntRate.addComponent(bCodeRate);
         }
-          // set default to the first one
+        // set UI default to the 7/8
         bgRate.setSelected((int) codeRateHash.get(
                 Comms.CodeRate.FEC_7_8.toString()));
-        
+       
+        // model default to 7/8
+        selection.getComms().setCodeRate(
+                            Comms.indexCodeRate.toArray(new Comms.CodeRate[0])
+                                    [bgRate.getSelectedIndex()]);
+
         // now the bCode
         Container cntCode = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         cntAllThree.addComponent(cntCode);
@@ -381,10 +387,11 @@ public class CommsView extends View {
             bgCode.add(bCode);
             bCode.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                   Log.p("CommsView: selected Code " + 
-                           bgCode.getSelectedIndex(), Log.DEBUG);
+                    Log.p("CommsView: selected Code "
+                            + bgCode.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCode(
-                            Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
+                            Comms.indexCode.toArray(new Comms.Code[0])
+                                    [bgCode.getSelectedIndex()]);
                     // if no bCode then rate is 1/1
                     if (selection.getComms().getCode()
                             == Comms.Code.NONE) {
@@ -400,14 +407,18 @@ public class CommsView extends View {
             cntCode.addComponent(bCode);
         }
 
-          // set default to 
+        // set default to BCH
         bgCode.setSelected((int) codeHash.get(
                 Comms.Code.BCH.toString()));
-        
+        // model default to BCH
+        selection.getComms().setCode(
+                            Comms.indexCode.toArray(new Comms.Code[0])
+                                    [bgCode.getSelectedIndex()]);
+
         sldrDataRate.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("CommsView: selected Data Rate " + 
-                        sldrDataRate.getText(), Log.DEBUG);
+                Log.p("CommsView: selected Data Rate "
+                        + sldrDataRate.getText(), Log.DEBUG);
                 try {
 
                     selection.getComms().setDataRate(Double.parseDouble(sldrDataRate.getText()) / 10.0);
@@ -428,7 +439,6 @@ public class CommsView extends View {
 
                     selection.getComms().setBW(Double.parseDouble(sldrBW.getText()) / 10.0);
                     lBWvalue.setText(Com.shortText(selection.getComms().getBW()) + "MHz");
-                    
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for BW " + sldrBW.getText(), Log.DEBUG);

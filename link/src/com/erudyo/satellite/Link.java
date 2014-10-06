@@ -85,18 +85,14 @@ public class Link {
     public void init(Object context) {
 
         // create a new instance to keep track of all other objects for UI
-        Log.setLevel(Log.INFO);
-        
+        Log.setLevel(Log.DEBUG);
+
         selection = new Selection();
 
         // get the bands into selection.  In future a Selection instance
         // could have customized list based on user interface preferences
         // indexRfBand is built by setRfBandHash
-        
-        
-        
         // selection.setIndexRfBand(RfBand.indexRfBand);
-
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(
@@ -128,23 +124,23 @@ public class Link {
         initSelection();
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
-         Display.getInstance().addEdtErrorHandler(new ActionListener() {
-         public void actionPerformed(ActionEvent evt) {
-         evt.consume();
-         Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));
-         Log.p("OS " + Display.getInstance().getPlatformName());
-         Log.p("Error " + evt.getSource());
-         Log.p("Current Form " + Display.getInstance().getCurrent().getName());
-         Log.e((Throwable)evt.getSource());
-         // Log.sendLog(); only for pro
-         }
-         });
+        Display.getInstance().addEdtErrorHandler(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                evt.consume();
+                Log.p("Exception in AppName version " + Display.getInstance().getProperty("AppVersion", "Unknown"));
+                Log.p("OS " + Display.getInstance().getPlatformName());
+                Log.p("Error " + evt.getSource());
+                Log.p("Current Form " + Display.getInstance().getCurrent().getName());
+                Log.e((Throwable) evt.getSource());
+                // Log.sendLog(); only for pro
+            }
+        });
     }
 
     private void initSelection() {
-        
+
         Log.p("Started application");
-       
+
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage
@@ -152,9 +148,12 @@ public class Link {
 
         views[0] = new CommsView();
         views[1] = new TxView(selection);
-        views[2] = new DlPathView(selection);
-        views[3] = new SatelliteView(selection);
-        views[4] = new UlPathView(selection);
+        // process satellite first since it is needed by UlPath and DlPath
+          views[2] = new SatelliteView(selection);
+        views[3] = new UlPathView(selection);
+
+      
+        views[4] = new DlPathView(selection);
         views[5] = new RxView(selection);
 
     }
@@ -286,6 +285,9 @@ public class Link {
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
 
+        // change in band will change satellite and terminals which would
+        // change the paths UL and DL also.   Need to handle it here and
+        // then again in respective satellite and terminal change
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
@@ -304,6 +306,7 @@ public class Link {
 
                 comboTx(selection, spin);
                 comboRx(selection, spin);
+                comboUlPath(selection);
             }
         });
 
@@ -313,7 +316,7 @@ public class Link {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandSatellite().get(selection.getBand()) == null) {
 
-           Log.p("link: Can't get bandSatellite for band "
+            Log.p("link: Can't get bandSatellite for band "
                     + selection.getBand(), Log.DEBUG);
             // Force it to KA which hopefully works
             selection.setBand(RfBand.Band.KA);
@@ -338,13 +341,23 @@ public class Link {
 
             // update selected satellite
             selection.setSatellite(Satellite.satelliteHash.get(name));
-            // update label TODO
+            
+            // update the UL paths
+            comboUlPath(selection);
+            // update label of satellite
             selection.getSatelliteView().label.setText(
                     selection.getSatellite().getName());
         }
 
     }
 
+    public void comboUlPath(Selection selection) {
+        selection.getuLpath().setSatellite(selection.getSatellite());
+        selection.getuLpath().setTerminal(selection.gettXterminal());
+        selection.getuLpath().setAll();
+        
+        
+    }
     public void comboRx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandTerminal().get(selection.getBand()) == null) {
@@ -394,24 +407,36 @@ public class Link {
             // change the current Combobox entry
             spin.setSelectedIndex(i);
         }
+
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
                         new String[0])));
 
         if (model == null) {
-            System.out.println("Link: Can't create DefaultListModel for Tx terminal band "
-                    + selection.getBand());
+            Log.p("Link: Can't create DefaultListModel for Tx terminal band "
+                    + selection.getBand(), Log.ERROR);
         } else {
             selection.getTxView().spin.setModel(model);
             // update label TODO
 
             String name = (String) selection.getTxView().spin.getSelectedItem();
 
-            // update selected satellite
+            // update selected Tx terminal
             selection.settXterminal(Terminal.terminalHash.get(name));
-            // update label TODO
+            
+               // update the UL path
+            comboUlPath(selection);
+            
+            // update label of Tx terminal
             selection.getTxView().label.setText(
                     selection.gettXterminal().getName());
+            // update its lat/long (comes from UlPath)
+            selection.getuLpathView().label.setText(
+                    Com.toDMS(selection.gettXterminal().getLongitude()));
+               // update label of Tx terminal
+
+            selection.getuLpathView().subLabel.setText(
+                    Com.toDMS(selection.gettXterminal().getLatitude()));
         }
 
     }

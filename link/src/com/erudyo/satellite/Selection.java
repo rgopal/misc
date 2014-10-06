@@ -34,6 +34,7 @@ public class Selection {
 
     private SatelliteView satelliteView;
     private TxView tXview;
+    private UlPathView uLpathView;
     private RxView rXview;
     private CommsView commsView;
 
@@ -109,6 +110,7 @@ public class Selection {
         // use constructor with Selection instance as input
         satelliteView = new SatelliteView(this);
         tXview = new TxView(this);
+        uLpathView = new UlPathView(this);
         rXview = new RxView(this);
         commsView = new CommsView(this);
 
@@ -333,6 +335,20 @@ public class Selection {
      */
     public void setCommsView(CommsView commsView) {
         this.commsView = commsView;
+    }
+
+    /**
+     * @return the uLpathView
+     */
+    public UlPathView getuLpathView() {
+        return uLpathView;
+    }
+
+    /**
+     * @param uLpathView the uLpathView to set
+     */
+    public void setuLpathView(UlPathView uLpathView) {
+        this.uLpathView = uLpathView;
     }
 
 }
