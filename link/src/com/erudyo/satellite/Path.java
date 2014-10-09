@@ -1,6 +1,6 @@
 /*
  * OVERVIEW
- * Manages an instance representing path between a satellite and a terminal, 
+ * Manages an instance representing path between semiMajor satellite and semiMajor terminal, 
  * including the distance, azimuth, and elevation angles (all stored in Radians).
  */
 package com.erudyo.satellite;
@@ -164,30 +164,35 @@ public class Path extends Entity {
     };
 
     public void setAll() {
-        
+
         // check if satellite is visible from terminal
-        double degree = Math.abs(satellite.getLongitude() - 
-                terminal.getLongitude())*180.0/Com.PI;
-        if (degree > 80.0 )
+        double degree = Math.abs(satellite.getLongitude()
+                - terminal.getLongitude()) * 180.0 / Com.PI;
+        if (degree > 80.0) {
             Log.p("Path: terminal and satellite are far apart " + degree, Log.WARNING);
-        
-        this.distance = calcDistance(satellite.getR0());
+        }
+
+        this.distance = calcDistance(satellite.getAltitude());
         this.azimuth = calcAzimuth();
         this.elevation = calcElevation();
-        
+
         // get center frequency of band used by terminal
-        this.pathLoss = calcPathLoss(this.distance, 
-                RfBand.centerFrequency(terminal.getBand()));
+        this.pathLoss = calcPathLoss(this.distance,
+                RfBand.centerFrequency(terminal.getuLband()));
     }
 
     public double calcPathLoss(double distance, Double frequency) {
 
         double p;
-        p = 10.0 * MathUtil.log10(
-                4.0 * Com.PI * distance
-                / (MathUtil.pow(Com.C / frequency, 2.0))
-        );
-
+        if (Com.sameValue(frequency, 0.0)) {
+            Log.p("Path: frequency is zero in calcPathLoss", Log.ERROR);
+            return (200);
+        } else {
+            p = 10.0 * MathUtil.log10(
+                    MathUtil.pow(4.0 * Com.PI * distance
+                    / (Com.C / frequency), 2.0)
+            );
+        }
         return p;
     }
     // called if there is any change in the child or sibling
@@ -215,7 +220,8 @@ public class Path extends Entity {
 
     public double calcBigPhi() {
         if (satellite == null || terminal == null) {
-            return 0;
+            Log.p("Path: satellite or terminal is null " + satellite + terminal,
+                    Log.WARNING);
         }
         double Phi;
         double relativeLong;
@@ -225,9 +231,11 @@ public class Path extends Entity {
         return Phi;
     }
 
-    public double calcDistance(Double meanRad) {
+    public double calcDistance(Double altitude) {
         double d;
-        d = MathUtil.pow((1.0 + 0.42 * (1.0 - Math.cos(calcBigPhi()))), 0.5) * meanRad;
+        d = MathUtil.pow((1.0
+                + 0.42 * (1.0 - Math.cos(calcBigPhi()))), 0.5)
+                * altitude;
         return d;
     }
 
@@ -241,7 +249,7 @@ public class Path extends Entity {
         if (Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI / 2.0);
         }
-        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / (Com.RE + satellite.getR0())))
+        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / (Com.RE + satellite.getAltitude())))
                 / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
         return elev;
 

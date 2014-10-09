@@ -42,7 +42,7 @@ public class SatelliteView extends View {
         // don't call update_values since SatelliteView is still being built
     }
 
-    // override getWidget to create a Combobox driven by selected band
+    // override getWidget to create semiMajor Combobox driven by selected band
     public Component getWidget(final Selection selection) {
         Label l = new Label(getName());
 

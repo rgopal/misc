@@ -24,7 +24,7 @@ public class Satellite extends Entity {
     private Antenna antenna;
     private Amplifier amplifier;
 
-    // all satellites stored in a Class level hash.  For future, since
+    // all satellites stored in semiMajor Class level hash.  For future, since
     // selection has its own at instance level
     static Hashtable<String, Satellite> satelliteHash
             = new Hashtable<String, Satellite>();
@@ -43,11 +43,11 @@ public class Satellite extends Entity {
     private double gain;       // they should be calculated
     protected double latitude;     // latitude
     protected double longitude;  // longitude
-    protected double r;       // distance from center of Earth
+    protected double distanceEarthCenter;       // distance from center of Earth
     protected double h;       // altitude of satellite from sub-satellite point
-    protected double a;       // semi major axis
-    protected double v;       // velocity
-    protected double R0;      // altitude
+    private double semiMajor;       // semi major axis
+    protected double velocity;       // velocity
+    protected double altitude;      // altitude
     protected Com.Orbit orbit;
     protected RfBand.Band band; //
 
@@ -77,13 +77,12 @@ public class Satellite extends Entity {
         antenna = new Antenna();
         // gain should be calculated when diameter changed
         antenna.setDiameter(2.4);
-        EIRP = 43;           // TODO read this from txt file and beam
-        gain = 50;
+   
         this.name = name;       // should be unique
 
-        setA(42164.2E3);        //semi major axis of GEO orbit
-        setV(3075E3);        // GEO satellite velocity
-        setR0(35786E3);       // height of GEO satellite
+        setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
+        setVelocity(3075E3);        // GEO satellite velocity
+        setAltitude(35786.1E3);       // height of GEO satellite
         setLatitude(0.0);         // latitude is zero
 
         orbit = Com.Orbit.GEO;
@@ -109,7 +108,7 @@ public class Satellite extends Entity {
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
-        // vector of Satellite objects with band as the key in a hashtable
+        // vector of Satellite objects with band as the key in semiMajor hashtable
         Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
@@ -118,7 +117,7 @@ public class Satellite extends Entity {
             // get the band first
             RfBand.Band band = RfBand.rFbandHash.get(satellites[i][5]).getBand();
 
-            // need to key on a correct band
+            // need to key on semiMajor correct band
             if (band == null) {
                 Log.p("Satellite: bad data " + Arrays.toString(satellites), Log.WARNING);
             } else {
@@ -138,7 +137,7 @@ public class Satellite extends Entity {
     }
 
     public static void satelliteFields(String[] fields, ArrayList<Satellite> vector) {
-        // vector has already been created for a band, just add entries
+        // vector has already been created for semiMajor band, just add entries
         Satellite satellite = new Satellite(fields[0]);
 
         // fields are name, long, lat, eirp, gain, band
@@ -161,7 +160,7 @@ public class Satellite extends Entity {
 
     public double maxCoverage() {
         double angle;
-        angle = MathUtil.asin(Com.RE / (Com.RE + this.R0));
+        angle = MathUtil.asin(Com.RE / (Com.RE + this.altitude));
         return angle;
     }
 
@@ -180,17 +179,17 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @return the r
+     * @return the distanceEarthCenter
      */
-    public double getR() {
-        return r;
+    public double getDistanceEarthCenter() {
+        return distanceEarthCenter;
     }
 
     /**
-     * @param r the r to set
+     * @param r the distanceEarthCenter to set
      */
-    public void setR(double r) {
-        this.r = r;
+    public void setDistanceEarthCenter(double r) {
+        this.distanceEarthCenter = r;
     }
 
     /**
@@ -207,60 +206,43 @@ public class Satellite extends Entity {
         this.latitude = latitude;
     }
 
+  
+
     /**
-     * @return the h
+     * @return the semiMajor
      */
-    public double getH() {
-        return h;
+    public double getSemiMajor() {
+        return semiMajor;
+    }
+
+  
+
+    /**
+     * @return the velocity
+     */
+    public double getVelocity() {
+        return velocity;
     }
 
     /**
-     * @param h the h to set
+     * @param v the velocity to set
      */
-    public void setH(double h) {
-        this.h = h;
+    public void setVelocity(double v) {
+        this.velocity = v;
     }
 
     /**
-     * @return the a
+     * @return the altitude
      */
-    public double getA() {
-        return a;
+    public double getAltitude() {
+        return altitude;
     }
 
     /**
-     * @param a the a to set
+     * @param R0 the altitude to set
      */
-    public void setA(double a) {
-        this.a = a;
-    }
-
-    /**
-     * @return the v
-     */
-    public double getV() {
-        return v;
-    }
-
-    /**
-     * @param v the v to set
-     */
-    public void setV(double v) {
-        this.v = v;
-    }
-
-    /**
-     * @return the R0
-     */
-    public double getR0() {
-        return R0;
-    }
-
-    /**
-     * @param R0 the R0 to set
-     */
-    public void setR0(double R0) {
-        this.R0 = R0;
+    public void setAltitude(double R0) {
+        this.altitude = R0;
     }
 
     public Antenna getAntenna() {
@@ -307,6 +289,13 @@ public class Satellite extends Entity {
      */
     public void setGain(double gain) {
         this.gain = gain;
+    }
+
+    /**
+     * @param semiMajor the semiMajor to set
+     */
+    public void setSemiMajor(double semiMajor) {
+        this.semiMajor = semiMajor;
     }
 
 }

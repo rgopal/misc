@@ -1,5 +1,7 @@
 /*
  * OVERVIEW
+ * TODO:  when band, satellite, terminal changes, then Affected list also 
+ * needs to be udpated here and in other views.
  *
  */
 package com.erudyo.satellite;

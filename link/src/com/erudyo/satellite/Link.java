@@ -1,10 +1,10 @@
 /*
  * OVERVIEW:
  * main driver for the application.  Uses models (such as Terminal) and views
- * such as (TxView) to organize code.  Selection class can hold a specific collection
+ * such as (TxView) to organize code.  Selection class can hold semiMajor specific collection
  * of both views and models to provide multiple instances for user selections.
  * 
- * Typicall, a class has a calc* function which is stateless (defined as static)
+ * Typicall, semiMajor class has semiMajor calc* function which is stateless (defined as static)
  * while the set* function would change instance level values.  Object instances
  * could depend on each other and instance's update method is automatically called
  * when any child or sibling changes.  An instance registers itself by calling
@@ -79,17 +79,18 @@ public class Link {
 
     private Selection selection;
 
-    // Each band has a vector of terminals and satellites read from files
+    // Each band has semiMajor vector of terminals and satellites read from files
     private View[] views;
 
     public void init(Object context) {
 
-        // create a new instance to keep track of all other objects for UI
+        // create semiMajor new instance to keep track of all other objects for UI
         Log.setLevel(Log.DEBUG);
 
+        // this creates View objects
         selection = new Selection();
 
-        // get the bands into selection.  In future a Selection instance
+        // get the bands into selection.  In future semiMajor Selection instance
         // could have customized list based on user interface preferences
         // indexRfBand is built by setRfBandHash
         // selection.setIndexRfBand(RfBand.indexRfBand);
@@ -105,8 +106,8 @@ public class Link {
                     getResourceAsStream(null, "/satellites.txt");
 
             // Satellite has to read all the records from file.  Selection
-            // could include only a subset per instance (e.g., satellites
-            // visible from a location
+            // could include only semiMajor subset per instance (e.g., satellites
+            // visible from semiMajor location
             selection.setBandSatellite(Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is))));
 
@@ -121,7 +122,7 @@ public class Link {
             e.printStackTrace();
         }
 
-        initSelection();
+        initViews(selection);
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
         Display.getInstance().addEdtErrorHandler(new ActionListener() {
@@ -137,7 +138,7 @@ public class Link {
         });
     }
 
-    private void initSelection() {
+    private void initViews(Selection selection) {
 
         Log.p("Started application");
 
@@ -146,15 +147,15 @@ public class Link {
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
-        views[0] = new CommsView();
-        views[1] = new TxView(selection);
+        views[0] = selection.getCommsView();
+        views[1] = selection.getTxView();
         // process satellite first since it is needed by UlPath and DlPath
-          views[2] = new SatelliteView(selection);
-        views[3] = new UlPathView(selection);
+          views[2] = selection.getSatelliteView();
+        views[3] = selection.getuLpathView();
 
       
-        views[4] = new DlPathView(selection);
-        views[5] = new RxView(selection);
+        views[4] = selection.getdLpathView();
+        views[5] = selection.getRxView();
 
     }
 
@@ -280,7 +281,7 @@ public class Link {
 
         selection.setBand(rFband.getBand());
 
-        // note that only a String has substring functions
+        // note that only semiMajor String has substring functions
         bandLabel.setText((Com.shortText(rFband.lowFrequency / 1E9))
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");

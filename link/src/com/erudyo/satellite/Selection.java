@@ -37,6 +37,7 @@ public class Selection {
     private UlPathView uLpathView;
     private RxView rXview;
     private CommsView commsView;
+    private DlPathView dLpathView;
 
     private RfBand.Band band = RfBand.Band.KA;
 
@@ -113,6 +114,7 @@ public class Selection {
         uLpathView = new UlPathView(this);
         rXview = new RxView(this);
         commsView = new CommsView(this);
+        dLpathView = new DlPathView(this);
 
         initRfBandHash();
       
@@ -344,6 +346,12 @@ public class Selection {
         return uLpathView;
     }
 
+      /**
+     * @return the uLpathView
+     */
+    public DlPathView getdLpathView() {
+        return dLpathView;
+    }
     /**
      * @param uLpathView the uLpathView to set
      */

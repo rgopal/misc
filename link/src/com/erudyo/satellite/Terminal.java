@@ -26,6 +26,8 @@ public class Terminal extends Entity {
     private double longitude;     //longitude
     private double latitude;       //latitude
     private RfBand.Band band;
+    private RfBand.Band uLband;
+    private RfBand.Band dLband;
     private Antenna antenna;
     private Amplifier amplifier;
     // eventually calculate these things
@@ -109,6 +111,10 @@ public class Terminal extends Entity {
         // gain, and band
         // get the band first
         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
+        
+        // set uplin and downlink
+        terminal.setuLband(RfBand.findUl(terminal.getBand()));
+        terminal.setdLband(RfBand.findDl(terminal.getBand()));
 
         // update band and frequency for antenna
         // get the uplink version of the terminal band
@@ -119,6 +125,7 @@ public class Terminal extends Entity {
 
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
+        
 
         // where do we update terminal EIRP.  Now automatic with "update"
         vector.add(terminal);
@@ -281,5 +288,33 @@ public class Terminal extends Entity {
         }
         
         // avoid using set since that should be used to send updates down
+    }
+
+    /**
+     * @return the uLband
+     */
+    public RfBand.Band getuLband() {
+        return uLband;
+    }
+
+    /**
+     * @param uLband the uLband to set
+     */
+    public void setuLband(RfBand.Band uLband) {
+        this.uLband = uLband;
+    }
+
+    /**
+     * @return the dLband
+     */
+    public RfBand.Band getdLband() {
+        return dLband;
+    }
+
+    /**
+     * @param dLband the dLband to set
+     */
+    public void setdLband(RfBand.Band dLband) {
+        this.dLband = dLband;
     }
 }
