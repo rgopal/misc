@@ -50,6 +50,15 @@ public class Com {
         }
         return s.substring(0, len);
     }
+    
+    static String text(double num) {
+        String s = String.valueOf(num);
+        int len = s.length();
+        if (len > 8) {
+            len = 8;
+        }
+        return s.substring(0, len);
+    }
 
     // convert degree, minute, second to radian.  Note it does not know about
     // North or South etc.   

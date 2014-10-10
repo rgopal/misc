@@ -241,11 +241,15 @@ public class Path extends Entity {
         double relativeLong;
         relativeLong = calcRelativeLongitude();
         Phi = MathUtil.acos(Math.cos(relativeLong)
-                * Math.cos(Math.abs(terminal.getLatitude()))
-                * Math.cos(Math.abs(satellite.getLatitude()))
-                + Math.sin(Math.abs(satellite.getLatitude()))
-                * Math.sin(Math.abs(terminal.getLatitude()))
+                * Math.cos(terminal.getLatitude())
+                * Math.cos(satellite.getLatitude())
+                + Math.sin(satellite.getLatitude())
+                * Math.sin(terminal.getLatitude())
         );
+         if (Phi < 0 || Phi > Com.PI/2.0) {
+            Log.p("Path: Phi value out of range " + Com.toDMS(Phi),
+                    Log.WARNING);
+        }
         return Phi;
     }
 

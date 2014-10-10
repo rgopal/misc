@@ -138,17 +138,17 @@ public class UlPathView extends View {
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setVerticalSpan(2);
-        constraint.setWidthPercentage(33);
+        constraint.setWidthPercentage(25);
 
         // now go sequentially through the Uplink path fields
-        final Terminal ter = selection.gettXterminal();
+        final Terminal txTerm = selection.gettXterminal();
 
-        Label L01 = new Label("Cent Freq");
-        Label L02 = new Label(Com.shortText(ter.getAntenna().getFrequency() / 1E9));
-        Label L03 = new Label("GHz " + ter.getBand());
+        Label L01 = new Label("C Freq");
+        Label L02 = new Label(Com.shortText(txTerm.getAntenna().getFrequency() / 1E9));
+        Label L03 = new Label("GHz " + txTerm.getBand());
         cnt.addComponent(L01);
-        cnt.addComponent(constraint, L02);
-        cnt.addComponent(L03);
+        cnt.addComponent(L02);
+        cnt.addComponent(constraint,L03);
 
         Label L61 = new Label("s " + selection.getuLpath().
                 getSatellite());
@@ -160,7 +160,7 @@ public class UlPathView extends View {
         cnt.addComponent(L62);
         cnt.addComponent(L63);
         /*
-         Label L71 = new Label("Latitude");
+         Label L71 = new Label("Lat.");
          final Label L72 = new Label(Com.toDMS(ter.getLatitude()));
          Label L73 = new Label("deg");
 
@@ -169,7 +169,7 @@ public class UlPathView extends View {
          cnt.addComponent(L73);
          */
         // terminal latitude within 80 degree from south (-) to 80 North (+)
-        Label lLatitude = new Label("Latitude");
+        Label lLatitude = new Label("Lat.");
 
         final Slider sldrLatitude = new Slider();
         // can't take negative values, 81.3
@@ -180,16 +180,25 @@ public class UlPathView extends View {
         sldrLatitude.setIncrements(5); //
 
         // display the current latitude in degrees
-        sldrLatitude.setProgress((int) MathUtil.round(ter.getLatitude()
+        sldrLatitude.setProgress((int) MathUtil.round(txTerm.getLatitude()
                 * 180.0 * 10 / Com.PI) + 813);
         sldrLatitude.setRenderValueOnTop(true);
 
-        final Label valueLatitude = new Label(Com.toDMS(
-                MathUtil.round(ter.getLatitude())) + "");
+        final Label valueLatitude = new Label(Com.toDMS(txTerm.getLatitude()) + "");
         cnt.addComponent(lLatitude);
         cnt.addComponent(sldrLatitude);
         cnt.addComponent(valueLatitude);
 
+        
+        Label lDistance = new Label("Distance");
+        final Label valueDistance = new Label(Com.text(selection.
+                getuLpath().getDistance()/1E3));
+        Label unitDistance = new Label("km");
+        cnt.addComponent(lDistance);
+        cnt.addComponent(valueDistance);
+        cnt.addComponent(unitDistance);
+
+        
         Label lElevation = new Label("Elevation");
         final Label valueElevation = new Label(Com.toDMS(selection.getuLpath().getElevation()));
         Label unitElevation = new Label(" ");
@@ -204,7 +213,7 @@ public class UlPathView extends View {
         cnt.addComponent(valueAzimuth);
         cnt.addComponent(unitAzimuth);
 
-        Label lLongitude = new Label("Longitude");
+        Label lLongitude = new Label("Long.");
         final Slider sldrLongitude = new Slider();
 
         // longitude should be around the satellite longitude (still -81.3 to +81.3
@@ -213,13 +222,13 @@ public class UlPathView extends View {
         sldrLongitude.setEditable(true);
         //L22.setPreferredW(8);
         sldrLongitude.setIncrements(5); //
-        sldrLongitude.setProgress((int) (MathUtil.round(ter.getLongitude()
+        sldrLongitude.setProgress((int) (MathUtil.round(txTerm.getLongitude()
                 * 180.0 * 10 / Com.PI) - selection.getuLpath().
                 getSatellite().getLongitude() * 180.0 * 10.0 / Com.PI + 813.0));
 
         sldrLongitude.setRenderValueOnTop(true);
         final Label valueLongitude = new Label(Com.toDMS(
-                MathUtil.round(ter.getLongitude())) + "");
+                txTerm.getLongitude()) + "");
         cnt.addComponent(lLongitude);
         cnt.addComponent(sldrLongitude);
         cnt.addComponent(valueLongitude);
@@ -242,6 +251,8 @@ public class UlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
+                    valueDistance.setText(Com.text(selection.getuLpath().
+                            getDistance()/1E3));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("UlPathView: bad number for Latitude "
@@ -270,6 +281,8 @@ public class UlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
+                    valueDistance.setText(Com.text(selection.getuLpath().
+                            getDistance()/1E3));
 
                     //L32.setText(Com.shortText(ter.getAntenna().getGain()));
                     //L52.setText(Com.shortText(ter.getEIRP()));
