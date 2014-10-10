@@ -190,7 +190,7 @@ public class Path extends Entity {
         } else {
             p = 10.0 * MathUtil.log10(
                     MathUtil.pow(4.0 * Com.PI * distance
-                    / (Com.C / frequency), 2.0)
+                            / (Com.C / frequency), 2.0)
             );
         }
         return p;
@@ -201,6 +201,20 @@ public class Path extends Entity {
         setAll();
     }
 
+     public void update(Entity e) {
+        
+        // update everything that could be affected
+
+        // EIRP depends on antenna and amplifier, but both need to exist 
+        
+        if (this.getSatellite() != null && this.getTerminal()!= null) {
+            setAll();       // calculate everything
+        } else
+            Log.p("Path: satellite or terminal is null " + 
+                    satellite + terminal, Log.ERROR);
+        
+        // avoid using set since that should be used to send updates down
+    }
     public Path(String n) {
         super(n);
     }
@@ -227,7 +241,11 @@ public class Path extends Entity {
         double relativeLong;
         relativeLong = calcRelativeLongitude();
         Phi = MathUtil.acos(Math.cos(relativeLong)
-                * Math.cos(Math.abs(terminal.getLatitude())));
+                * Math.cos(Math.abs(terminal.getLatitude()))
+                * Math.cos(Math.abs(satellite.getLatitude()))
+                + Math.sin(Math.abs(satellite.getLatitude()))
+                * Math.sin(Math.abs(terminal.getLatitude()))
+        );
         return Phi;
     }
 

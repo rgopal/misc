@@ -193,6 +193,7 @@ public class Terminal extends Entity {
      */
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+        updateAffected();
     }
 
     public void setLongitude(double d, double m, double s) {
@@ -215,6 +216,7 @@ public class Terminal extends Entity {
      */
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+        updateAffected();
     }
 
     /**

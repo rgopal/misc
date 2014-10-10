@@ -100,7 +100,7 @@ public class UlPathView extends View {
 
                 Com.toDMS(selection.gettXterminal().getLatitude()));
 
-         // don't use this, have to find through selection 
+        // don't use this, have to find through selection 
         selection.getuLpathView().subLabel = lName;
         return lName;
     }
@@ -118,19 +118,214 @@ public class UlPathView extends View {
         // terminal name and location
         lNameGain.setText( // selection.getSatellite().getName()
                 Com.toDMS(selection.getSatellite().getLongitude()));
-              
-                        // + Com.toDMS(selection.getSatellite().getGain()) + " x");
 
+        // + Com.toDMS(selection.getSatellite().getGain()) + " x");
         return lNameGain;
     }
 
-    public Form createView(Selection selection) {
+    public Form createView(final Selection selection) {
 
         Form path = new Form(this.getName());
 
-        path.setScrollable(
-                false);
-        // override pointerPressed to locate new positions 
+        Form sub = new Form("Tx " + selection.gettXterminal().getName());
 
-        return path;
-    }}
+        Container cnt = new Container(new BorderLayout());
+        sub.addComponent(cnt);
+
+        // there are six items in Views.  Hardcoded table. Name, value, unit
+        TableLayout layout = new TableLayout(13, 3);
+        cnt.setLayout(layout);
+
+        TableLayout.Constraint constraint = layout.createConstraint();
+        // constraint.setVerticalSpan(2);
+        constraint.setWidthPercentage(33);
+
+        // now go sequentially through the Uplink path fields
+        final Terminal ter = selection.gettXterminal();
+
+        Label L01 = new Label("Cent Freq");
+        Label L02 = new Label(Com.shortText(ter.getAntenna().getFrequency() / 1E9));
+        Label L03 = new Label("GHz " + ter.getBand());
+        cnt.addComponent(L01);
+        cnt.addComponent(constraint, L02);
+        cnt.addComponent(L03);
+
+        Label L61 = new Label("s " + selection.getuLpath().
+                getSatellite());
+        final Label L62 = new Label(Com.toDMS(selection.getuLpath().
+                getSatellite().getLongitude()));
+        Label L63 = new Label("deg");
+
+        cnt.addComponent(L61);
+        cnt.addComponent(L62);
+        cnt.addComponent(L63);
+        /*
+         Label L71 = new Label("Latitude");
+         final Label L72 = new Label(Com.toDMS(ter.getLatitude()));
+         Label L73 = new Label("deg");
+
+         cnt.addComponent(L71);
+         cnt.addComponent(L72);
+         cnt.addComponent(L73);
+         */
+        // terminal latitude within 80 degree from south (-) to 80 North (+)
+        Label lLatitude = new Label("Latitude");
+
+        final Slider sldrLatitude = new Slider();
+        // can't take negative values, 81.3
+        sldrLatitude.setMinValue((int) MathUtil.round(0.0)); // x10
+        sldrLatitude.setMaxValue((int) MathUtil.round(1626.0));
+        sldrLatitude.setEditable(true);
+        // sldrLatitude.setPreferredW(8);
+        sldrLatitude.setIncrements(5); //
+
+        // display the current latitude in degrees
+        sldrLatitude.setProgress((int) MathUtil.round(ter.getLatitude()
+                * 180.0 * 10 / Com.PI) + 813);
+        sldrLatitude.setRenderValueOnTop(true);
+
+        final Label valueLatitude = new Label(Com.toDMS(
+                MathUtil.round(ter.getLatitude())) + "");
+        cnt.addComponent(lLatitude);
+        cnt.addComponent(sldrLatitude);
+        cnt.addComponent(valueLatitude);
+
+        Label lElevation = new Label("Elevation");
+        final Label valueElevation = new Label(Com.toDMS(selection.getuLpath().getElevation()));
+        Label unitElevation = new Label(" ");
+        cnt.addComponent(lElevation);
+        cnt.addComponent(valueElevation);
+        cnt.addComponent(unitElevation);
+
+        Label lAzimuth = new Label("Azimuth");
+        final Label valueAzimuth = new Label(Com.toDMS(selection.getuLpath().getAzimuth()));
+        Label unitAzimuth = new Label(" ");
+        cnt.addComponent(lAzimuth);
+        cnt.addComponent(valueAzimuth);
+        cnt.addComponent(unitAzimuth);
+
+        Label lLongitude = new Label("Longitude");
+        final Slider sldrLongitude = new Slider();
+
+        // longitude should be around the satellite longitude (still -81.3 to +81.3
+        sldrLongitude.setMinValue((int) MathUtil.round(0.0));
+        sldrLongitude.setMaxValue((int) MathUtil.round(1626.0));
+        sldrLongitude.setEditable(true);
+        //L22.setPreferredW(8);
+        sldrLongitude.setIncrements(5); //
+        sldrLongitude.setProgress((int) (MathUtil.round(ter.getLongitude()
+                * 180.0 * 10 / Com.PI) - selection.getuLpath().
+                getSatellite().getLongitude() * 180.0 * 10.0 / Com.PI + 813.0));
+
+        sldrLongitude.setRenderValueOnTop(true);
+        final Label valueLongitude = new Label(Com.toDMS(
+                MathUtil.round(ter.getLongitude())) + "");
+        cnt.addComponent(lLongitude);
+        cnt.addComponent(sldrLongitude);
+        cnt.addComponent(valueLongitude);
+
+        // all actions at the end to update other fields
+        sldrLatitude.addDataChangedListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                Log.p("UlPathView: selected latitude " + sldrLatitude.getText(), Log.DEBUG);
+                try {
+                    // Slider can only show positive values
+                    selection.gettXterminal().
+                            setLatitude((Double.parseDouble(sldrLatitude.getText()) - 813.0)
+                                    * Com.PI / (180.0 * 10.0));
+                    // update EIRP
+                    valueLatitude.setText(Com.toDMS(selection.gettXterminal().
+                            getLatitude()));
+
+                    valueElevation.setText(Com.toDMS(selection.getuLpath().
+                            getElevation()));
+
+                    valueAzimuth.setText(Com.toDMS(selection.getuLpath().
+                            getAzimuth()));
+
+                } catch (java.lang.NumberFormatException e) {
+                    Log.p("UlPathView: bad number for Latitude "
+                            + sldrLatitude.getText(), Log.DEBUG);
+                }
+            }
+        });
+
+        sldrLongitude.addDataChangedListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                Log.p("UlPathView: selected longitude " + sldrLongitude.getText(), Log.DEBUG);
+                try {
+
+                    // Slider can only show positive values, so correct with respect
+                    // to satellite latitude (which was the center with +/- 80 degree
+                    selection.gettXterminal().
+                            setLongitude((Double.parseDouble(sldrLongitude.getText()) - 813.0
+                                    + selection.getuLpath().getSatellite().getLongitude())
+                                    * Com.PI / (180.0 * 10.0));
+                    // update EIRP
+                    valueLongitude.setText(Com.toDMS(selection.gettXterminal().
+                            getLongitude()));
+
+                    valueElevation.setText(Com.toDMS(selection.getuLpath().
+                            getElevation()));
+
+                    valueAzimuth.setText(Com.toDMS(selection.getuLpath().
+                            getAzimuth()));
+
+                    //L32.setText(Com.shortText(ter.getAntenna().getGain()));
+                    //L52.setText(Com.shortText(ter.getEIRP()));
+                } catch (java.lang.NumberFormatException e) {
+                    Log.p("TxView: bad number for diameter " + sldrLongitude.getText(), Log.DEBUG);
+
+                }
+
+            }
+        });
+
+        /*
+
+         Label L31 = new Label(" Gain");
+         final Label L32 = new Label(Com.shortText(ter.getAntenna().getGain()));
+         Label L33 = new Label("dBi");
+         cnt.addComponent(L31);
+         cnt.addComponent(L32);
+         cnt.addComponent(L33);
+
+         Label L41 = new Label(" 3dB Angle");
+         final Label L42 = new Label(Com.toDMS(ter.getAntenna().getThreeDBangle()));
+         Label L43 = new Label("deg");
+         cnt.addComponent(L41);
+         cnt.addComponent(L42);
+         cnt.addComponent(L43);
+
+         Label L4A1 = new Label(" Point Loss");
+         final Label L4A2 = new Label(Com.shortText(ter.getAntenna().getDepointingLoss()));
+         Label L4A3 = new Label("dB");
+         cnt.addComponent(L4A1);
+         cnt.addComponent(L4A2);
+         cnt.addComponent(L4A3);
+
+         constraint = layout.createConstraint();
+         constraint.setHorizontalSpan(3);        // whole row
+
+         Label L0A1 = new Label("Terminal");
+         L0A1.setAlignment(Component.CENTER);
+         cnt.addComponent(constraint, L0A1);
+
+         Label L51 = new Label("Term EIRP");
+         final Label L52 = new Label(Com.shortText(ter.getEIRP()));
+         Label L53 = new Label("dBW");
+         cnt.addComponent(L51);
+         cnt.addComponent(L52);
+         cnt.addComponent(L53);
+
+         sub.setScrollable(true);
+
+    
+
+       
+
+         */
+        // have a multi-row table layout and dump the transmit terminal values
+        return sub;
+    }
+}
