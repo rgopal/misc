@@ -148,7 +148,7 @@ public class UlPathView extends View {
         Label L03 = new Label("GHz " + txTerm.getBand());
         cnt.addComponent(L01);
         cnt.addComponent(L02);
-        cnt.addComponent(constraint,L03);
+        cnt.addComponent(constraint, L03);
 
         Label L61 = new Label("s " + selection.getuLpath().
                 getSatellite());
@@ -188,26 +188,34 @@ public class UlPathView extends View {
         cnt.addComponent(lLatitude);
         cnt.addComponent(sldrLatitude);
         cnt.addComponent(valueLatitude);
-
         
+           Label lPathLoss = new Label("PathLoss");
+        final Label valuePathLoss = new Label(Com.shortText(selection.
+                getuLpath().getPathLoss() ));
+        Label unitPathLoss = new Label("dB");
+        cnt.addComponent(lPathLoss);
+        cnt.addComponent(valuePathLoss);
+        cnt.addComponent(unitPathLoss);
+
         Label lDistance = new Label("Distance");
         final Label valueDistance = new Label(Com.text(selection.
-                getuLpath().getDistance()/1E3));
+                getuLpath().getDistance() / 1E3));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
         cnt.addComponent(unitDistance);
 
-        
         Label lElevation = new Label("Elevation");
-        final Label valueElevation = new Label(Com.toDMS(selection.getuLpath().getElevation()));
+        final Label valueElevation = new Label(Com.toDMS(
+                selection.getuLpath().getElevation()));
         Label unitElevation = new Label(" ");
         cnt.addComponent(lElevation);
         cnt.addComponent(valueElevation);
         cnt.addComponent(unitElevation);
 
         Label lAzimuth = new Label("Azimuth");
-        final Label valueAzimuth = new Label(Com.toDMS(selection.getuLpath().getAzimuth()));
+        final Label valueAzimuth = new Label(Com.toDMS(
+                selection.getuLpath().getAzimuth()));
         Label unitAzimuth = new Label(" ");
         cnt.addComponent(lAzimuth);
         cnt.addComponent(valueAzimuth);
@@ -222,9 +230,12 @@ public class UlPathView extends View {
         sldrLongitude.setEditable(true);
         //L22.setPreferredW(8);
         sldrLongitude.setIncrements(5); //
+        // center of slider is the position of the satellite.  First
+        // become relative to satellite which is (terminal - satellite). 
+        // then make the 0 the middle point (by adding 813).
         sldrLongitude.setProgress((int) (MathUtil.round(txTerm.getLongitude()
                 * 180.0 * 10 / Com.PI) - selection.getuLpath().
-                getSatellite().getLongitude() * 180.0 * 10.0 / Com.PI + 813.0));
+                getSatellite().getLongitude() * 180.0 * 10.0 / Com.PI) + 813);
 
         sldrLongitude.setRenderValueOnTop(true);
         final Label valueLongitude = new Label(Com.toDMS(
@@ -242,7 +253,7 @@ public class UlPathView extends View {
                     selection.gettXterminal().
                             setLatitude((Double.parseDouble(sldrLatitude.getText()) - 813.0)
                                     * Com.PI / (180.0 * 10.0));
-                    // update EIRP
+                    // update all labels
                     valueLatitude.setText(Com.toDMS(selection.gettXterminal().
                             getLatitude()));
 
@@ -252,7 +263,10 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.text(selection.getuLpath().
-                            getDistance()/1E3));
+                            getDistance() / 1E3));
+                    
+                    valuePathLoss.setText(Com.shortText(selection.getuLpath().
+                            getPathLoss()));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("UlPathView: bad number for Latitude "
@@ -268,12 +282,14 @@ public class UlPathView extends View {
 
                     // Slider can only show positive values, so correct with respect
                     // to satellite latitude (which was the center with +/- 80 degree
+                    // first subtract 813 and then add satellite's position 
                     selection.gettXterminal().
-                            setLongitude((Double.parseDouble(sldrLongitude.getText()) - 813.0
-                                    + selection.getuLpath().getSatellite().getLongitude())
-                                    * Com.PI / (180.0 * 10.0));
-                    // update EIRP
-                    valueLongitude.setText(Com.toDMS(selection.gettXterminal().
+                            setLongitude((Double.parseDouble(sldrLongitude.getText())
+                                    - 813.0)* Com.PI / (180.0 * 10.0)
+                                    + selection.getuLpath().getSatellite().getLongitude()
+                            );
+                    // update all labels
+                      valueLongitude.setText(Com.toDMS(selection.gettXterminal().
                             getLongitude()));
 
                     valueElevation.setText(Com.toDMS(selection.getuLpath().
@@ -282,7 +298,10 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.text(selection.getuLpath().
-                            getDistance()/1E3));
+                            getDistance() / 1E3));      // convert to km
+                    
+                    valuePathLoss.setText(Com.shortText(selection.getuLpath().
+                            getPathLoss()));            // already in dB
 
                     //L32.setText(Com.shortText(ter.getAntenna().getGain()));
                     //L52.setText(Com.shortText(ter.getEIRP()));
