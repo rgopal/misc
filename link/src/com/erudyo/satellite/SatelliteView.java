@@ -123,7 +123,7 @@ public class SatelliteView extends View {
     public void updateValues(Selection selection) {
         selection.getSatelliteView().summary = Com.shortText(selection.getSatellite().getLongitude());
         selection.getSatelliteView().value = Com.shortText(selection.getSatellite().getEIRP());
-        selection.getSatelliteView().unit = Com.shortText(selection.getSatellite().getGain());
+        selection.getSatelliteView().unit = Com.shortText(selection.getSatellite().getGainTemp());
     }
 
     public String getDisplayName() {

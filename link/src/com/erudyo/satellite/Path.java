@@ -2,6 +2,11 @@
  * OVERVIEW
  * Manages an instance representing path between semiMajor satellite and semiMajor terminal, 
  * including the distance, azimuth, and elevation angles (all stored in Radians).
+ * Affected by satellite and terminal.
+ * Currently does not affect anything else.  
+ * TODO:  check if it will affect the final Data Rate or Link Marging 
+ * (may be in selection)
+ * Expand attenuation as a function of frequency
  */
 package com.erudyo.satellite;
 
@@ -21,7 +26,7 @@ public class Path extends Entity {
     private RfBand.Band band;
     private Terminal terminal;
     private double pathLoss = 200;        // in dB
-    private double attenuation = 0;         // in dB
+    private double attenuation = 0.3;         // in dB (varies on frequency)
     private double azimuth;
     private double elevation;
     private double distance;     //distance of satellite from terminal
@@ -154,7 +159,8 @@ public class Path extends Entity {
     /**
      * @param attenuation the attenuation to set
      */
-    public void setAttenuation(double attenuation) {
+    public void setAttenuation(double attenuation, RfBand.Band band) {
+        // this should be a function of frequency
         this.attenuation = attenuation;
     }
 
@@ -203,9 +209,7 @@ public class Path extends Entity {
 
      public void update(Entity e) {
         
-        // update everything that could be affected
-
-        // EIRP depends on antenna and amplifier, but both need to exist 
+                // EIRP depends on antenna and amplifier, but both need to exist 
         
         if (this.getSatellite() != null && this.getTerminal()!= null) {
             setAll();       // calculate everything
@@ -296,6 +300,7 @@ public class Path extends Entity {
         a = MathUtil.asin(Math.sin(relLong) * Math.cos(satellite.getLatitude())
                 / Math.sin(bigPhi));
         rel = findRelativePosition();
+        // Here NE means Northern Hemishpere and Satellite East of Terminal
         switch (rel) {
             case NE:
                 azimuth = Com.PI - a;
@@ -316,8 +321,7 @@ public class Path extends Entity {
     public relativePosition findRelativePosition() {
         // terminal in northern hemisphere
         relativePosition rel;
-        rel = relativePosition.NE;      // Terminal is North East
-
+        rel = relativePosition.NE;     
         // northern hemisphere for terminal
         if (terminal.getLatitude() >= 0.0) {
             // satellite is East of Terminal

@@ -40,7 +40,7 @@ public class Satellite extends Entity {
         return getName();
     }
     private double EIRP;       // they should be calculated
-    private double gain;       // they should be calculated
+    private double gainTemp;       // they should be calculated dB 1/K
     protected double latitude;     // latitude
     protected double longitude;  // longitude
     protected double distanceEarthCenter;       // distance from center of Earth
@@ -75,7 +75,7 @@ public class Satellite extends Entity {
     public Satellite(String name) {
         amplifier = new Amplifier();
         antenna = new Antenna();
-        // gain should be calculated when diameter changed
+        // gainTemp should be calculated when diameter changed
         antenna.setDiameter(2.4);
    
         this.name = name;       // should be unique
@@ -140,12 +140,12 @@ public class Satellite extends Entity {
         // vector has already been created for semiMajor band, just add entries
         Satellite satellite = new Satellite(fields[0]);
 
-        // fields are name, long, lat, eirp, gain, band
+        // fields are name, long, lat, eirp, gainTemp, band
          satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
          satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
        
         satellite.setEIRP(Double.parseDouble(fields[3]));
-        satellite.setGain(Double.parseDouble(fields[4]));
+        satellite.setGainTemp(Double.parseDouble(fields[4]));
         if (!fields[5].equalsIgnoreCase("*")) {
             satellite.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
             vector.add(satellite);
@@ -261,6 +261,7 @@ public class Satellite extends Entity {
      */
     public void setAmplifier(Amplifier amplifier) {
         this.amplifier = amplifier;
+        updateAffected();
     }
 
     /**
@@ -268,6 +269,7 @@ public class Satellite extends Entity {
      */
     public void setAntenna(Antenna antenna) {
         this.antenna = antenna;
+        updateAffected();
     }
 
     /**
@@ -275,20 +277,22 @@ public class Satellite extends Entity {
      */
     public void setEIRP(double EIRP) {
         this.EIRP = EIRP;
+        updateAffected();
     }
 
     /**
-     * @return the gain
+     * @return the gainTemp
      */
-    public double getGain() {
-        return gain;
+    public double getGainTemp() {
+        return gainTemp;
     }
 
     /**
-     * @param gain the gain to set
+     * @param gain the gainTemp to set
      */
-    public void setGain(double gain) {
-        this.gain = gain;
+    public void setGainTemp(double gain) {
+        this.gainTemp = gain;
+        updateAffected();
     }
 
     /**

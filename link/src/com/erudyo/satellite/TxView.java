@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+
 import com.codename1.io.Log;
 
 /**
@@ -58,7 +59,8 @@ public class TxView extends View {
         }
 
         // create mtodel for all terminals of selected band
-        ListModel model = new DefaultListModel(selection.getBandTerminal().get(band));
+        ListModel model = new DefaultListModel(
+                selection.getBandTerminal().get(band));
 
         combo.setModel(model);
 
@@ -83,8 +85,8 @@ public class TxView extends View {
                         Terminal.terminalHash.get(
                                 (String) combo.getSelectedItem()).getName());
 
-                Log.p("TxView: Terminal selection " + 
-                        combo.getSelectedItem(), Log.DEBUG);
+                Log.p("TxView: Terminal selection "
+                        + combo.getSelectedItem(), Log.DEBUG);
             }
         });
 
@@ -169,16 +171,15 @@ public class TxView extends View {
         cnt.addComponent(L12);
         cnt.addComponent(L13);
 
-        
         Label L2A1 = new Label("Antenna Eff");
         Label L2A2 = new Label(Com.shortText(ter.getAntenna().getEfficiency()));
         Label L2A3 = new Label(" ");
         cnt.addComponent(L2A1);
         cnt.addComponent(L2A2);
         cnt.addComponent(L2A3);
-        
+
         Label L21 = new Label("  Diameter");
-            final Slider L22 = new Slider();
+        final Slider L22 = new Slider();
 
         L22.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
         L22.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
@@ -192,7 +193,6 @@ public class TxView extends View {
         cnt.addComponent(L21);
         cnt.addComponent(L22);
         cnt.addComponent(L23);
-
 
         Label L31 = new Label(" Gain");
         final Label L32 = new Label(Com.shortText(ter.getAntenna().getGain()));
@@ -208,12 +208,23 @@ public class TxView extends View {
         cnt.addComponent(L42);
         cnt.addComponent(L43);
 
-        Label L4A1 = new Label(" Point Loss");
-        final Label L4A2 = new Label(Com.shortText(ter.getAntenna().getDepointingLoss()));
-        Label L4A3 = new Label("dB");
-        cnt.addComponent(L4A1);
-        cnt.addComponent(L4A2);
-        cnt.addComponent(L4A3);
+        // does change so not in combo/sliders
+        Label lPointLoss = new Label(" Point Loss");
+        final Label valuePointLoss = new Label(Com.shortText(
+                ter.getAntenna().getDepointingLoss()));
+        Label unitPointLoss = new Label("dB");
+        cnt.addComponent(lPointLoss);
+        cnt.addComponent(valuePointLoss);
+        cnt.addComponent(unitPointLoss);
+
+        // does not change so not in combo/sliders
+        Label lImpLoss = new Label(" Imp Loss");
+        final Label valueImpLoss = new Label(Com.shortText(
+                ter.getAmplifier().getLFTX()));
+        Label unitImpLoss = new Label("dB");
+        cnt.addComponent(lImpLoss);
+        cnt.addComponent(valueImpLoss);
+        cnt.addComponent(unitImpLoss);
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);        // whole row
@@ -222,12 +233,12 @@ public class TxView extends View {
         L0A1.setAlignment(Component.CENTER);
         cnt.addComponent(constraint, L0A1);
 
-        Label L51 = new Label("Term EIRP");
-        final Label L52 = new Label(Com.shortText(ter.getEIRP()));
-        Label L53 = new Label("dBW");
-        cnt.addComponent(L51);
-        cnt.addComponent(L52);
-        cnt.addComponent(L53);
+        Label lEIRP = new Label("Term EIRP");
+        final Label valueEIRP = new Label(Com.shortText(ter.getEIRP()));
+        Label unitEIRP = new Label("dBW");
+        cnt.addComponent(lEIRP);
+        cnt.addComponent(valueEIRP);
+        cnt.addComponent(unitEIRP);
 
         sub.setScrollable(true);
 
@@ -241,7 +252,9 @@ public class TxView extends View {
                     // update EIRP
                     L13.setText(Com.shortText(ter.getAmplifier().
                             getPower()) + "W");
-                    L52.setText(Com.shortText(ter.getEIRP()));
+                    valueEIRP.setText(Com.shortText(ter.getEIRP()));
+                    // does not change depointing
+
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for power " + L12.getText(), Log.DEBUG);
                 }
@@ -260,7 +273,9 @@ public class TxView extends View {
                     L23.setText(Com.shortText(ter.getAntenna().getDiameter()) + "m");
                     L42.setText(Com.toDMS(ter.getAntenna().getThreeDBangle()));
                     L32.setText(Com.shortText(ter.getAntenna().getGain()));
-                    L52.setText(Com.shortText(ter.getEIRP()));
+                    valuePointLoss.setText(Com.shortText(
+                            ter.getAntenna().getDepointingLoss()));
+                    valueEIRP.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + L22.getText(), Log.DEBUG);
 

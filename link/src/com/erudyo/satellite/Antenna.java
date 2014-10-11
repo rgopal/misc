@@ -3,6 +3,7 @@
  * TODO:    Testing
  */
 package com.erudyo.satellite;
+
 import com.codename1.io.Log;
 
 import com.codename1.util.MathUtil;
@@ -19,6 +20,7 @@ public class Antenna extends Entity {
     private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
 
     private double depointingLoss = 0.5;
+    private double depointingError = 0.1 * Com.PI / 180.0;      // in Radian
     private double temperature = 290;
 
     // the following are calculated, but can be set individually
@@ -93,6 +95,7 @@ public class Antenna extends Entity {
             this.area = calcArea(this.diameter);
             this.gain = calcGain(this.diameter, this.frequency, this.efficiency);
             this.threeDBangle = calcThreeDB(this.diameter, this.frequency);
+            this.depointingLoss = calcDepointingLoss();
             updateAffected();
         } else {
             Log.p("Antenna: setDiameter: out of range diameter "
@@ -132,6 +135,7 @@ public class Antenna extends Entity {
         this.diameter = d;
         this.gain = calcGain(diameter, frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, frequency);
+        this.depointingLoss = calcDepointingLoss();
         updateAffected();
 
     }
@@ -178,10 +182,17 @@ public class Antenna extends Entity {
     }
 
     /**
-     * @param depointingLoss the depointingLoss to set
+     * @param depointingLoss depends on depointing error 12(theta/3dBangl)^2
      */
+    private double calcDepointingLoss() {
+        double l;
+        // This formula is already in dB
+        l = 12.0 * MathUtil.pow(depointingError / threeDBangle, 2.0);
+        return l;
+    }
+
     public void setDepointingLoss(double depointingLoss) {
-        this.depointingLoss = depointingLoss;
+        this.depointingLoss = calcDepointingLoss();
         updateAffected();
     }
 

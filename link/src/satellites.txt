@@ -1,5 +1,5 @@
 name, , longitude, latitude, EIRP, gain, band
-Galaxy-15,-91,0,53,30,KU
+Galaxy-15,-91,0,53,6.6,KU
 AMC-13,-102,0,45,35,KA
 AMC-14,-103,0,45,35,C
 AMC-12,-104,0,45,35,C

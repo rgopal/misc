@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.erudyo.satellite;
+
 import com.codename1.io.Log;
 
 import com.codename1.location.Location;
@@ -83,7 +84,7 @@ public class Terminal extends Entity {
 
             // need to key on a correct band
             if (band == null) {
-                Log.p("Terminal: Bad band " + terminals[i].toString(),  Log.WARNING);
+                Log.p("Terminal: Bad band " + terminals[i].toString(), Log.WARNING);
 
             } else {
                 // extract the band of the terminal
@@ -95,8 +96,8 @@ public class Terminal extends Entity {
                 terminalFields(terminals[i], bandTerminal.get(band));
 
                 // check the band from file and create entry in hash table
-                Log.p("Terminal: Processed terminal " + 
-                        Arrays.toString(terminals[i]),  Log.INFO);
+                Log.p("Terminal: Processed terminal "
+                        + Arrays.toString(terminals[i]), Log.INFO);
             }
         }
 
@@ -111,13 +112,16 @@ public class Terminal extends Entity {
         // gain, and band
         // get the band first
         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
-        
+
         // set uplin and downlink
         terminal.setuLband(RfBand.findUl(terminal.getBand()));
         terminal.setdLband(RfBand.findDl(terminal.getBand()));
 
         // update band and frequency for antenna
         // get the uplink version of the terminal band
+        
+        // this will collide with similar change for DownLink if
+        // the terminal is shared by Tx and Rx
         terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
 
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
@@ -125,7 +129,6 @@ public class Terminal extends Entity {
 
         terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
-        
 
         // where do we update terminal EIRP.  Now automatic with "update"
         vector.add(terminal);
@@ -138,13 +141,14 @@ public class Terminal extends Entity {
 
     // unless the constructor finishes this is not available
     public void init() {
-        
+
     }
+
     public Terminal(String name) {
-        
+
         // race condintion?   Had to move this before passing this in addAffected
         this.name = name;
-        
+
         antenna = new Antenna();
         antenna.addAffected(this);
         // System.out.println(this.name);
@@ -154,8 +158,6 @@ public class Terminal extends Entity {
         amplifier.addAffected(this);
         amplifier.setPower(10);
         // get current location
-
-        
 
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
@@ -251,10 +253,9 @@ public class Terminal extends Entity {
         // TODO, change simple setting to actually distributing change
         // to Antenna and Amplifier.   Call their set methods and let update
         // come back and change the EIRP
-        
+
         // Each set can do the max it can and let the caller know if it failed
         // or passed
-        
         return true;
     }
 
@@ -262,7 +263,7 @@ public class Terminal extends Entity {
      * @return the gain
      */
     public double getGain() {
-        
+
         return gain;
     }
 
@@ -271,24 +272,28 @@ public class Terminal extends Entity {
      */
     public boolean setGain(double gain) {
         // Gain also would depend on multiple components so use set methods
-        
+
         return true;
+    }
+
+    private double calcEIRP() {
+        double eirp = (10 * MathUtil.log10(
+                this.getAmplifier().getPower())) // was in W
+                + this.getAntenna().getGain() // in dB
+                - this.getAntenna().getDepointingLoss()
+                - this.getAmplifier().getLFTX(); // in dB
+        return eirp;
     }
 
     // this function called by children and sibling "e" of this when they change
     public void update(Entity e) {
-        
-        // update everything that could be affected
 
+        // update everything that could be affected
         // EIRP depends on antenna and amplifier, but both need to exist 
-        
-        if (this.getAmplifier() != null && this.getAntenna()!= null) {
-        this.EIRP = (10 * MathUtil.log10(
-                this.getAmplifier().getPower())) +      // was in W
-                this.getAntenna().getGain() +           // in dB
-                this.getAntenna().getDepointingLoss();  // in dB
+        if (this.getAmplifier() != null && this.getAntenna() != null) {
+            this.EIRP = calcEIRP();
         }
-        
+
         // avoid using set since that should be used to send updates down
     }
 
