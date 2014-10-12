@@ -121,9 +121,12 @@ public class SatelliteView extends View {
 
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
-        selection.getSatelliteView().summary = Com.shortText(selection.getSatellite().getLongitude());
-        selection.getSatelliteView().value = Com.shortText(selection.getSatellite().getEIRP());
-        selection.getSatelliteView().unit = Com.shortText(selection.getSatellite().getGainTemp());
+        selection.getSatelliteView().summary = Com.shortText(
+                selection.getSatellite().getLongitude());
+        selection.getSatelliteView().value = Com.shortText(
+                selection.getSatellite().getEIRP());
+        selection.getSatelliteView().unit = Com.shortText(
+                selection.getSatellite().getGainTemp());
     }
 
     public String getDisplayName() {

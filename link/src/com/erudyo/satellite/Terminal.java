@@ -37,6 +37,11 @@ public class Terminal extends Entity {
 
     private int index;
 
+    // for receiver
+    private double gainTemp;
+    private double polarizationLoss;
+    private double systemTemp;
+
     public Terminal() {
 
     }
@@ -80,6 +85,9 @@ public class Terminal extends Entity {
         // start at 1 since first line is heading (name, long, lat, eirp, gain, band
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
+            
+              Log.p("Terminal: Processing terminal "
+                        + Arrays.toString(terminals[i]), Log.INFO);
             RfBand.Band band = RfBand.rFbandHash.get(terminals[i][5]).getBand();
 
             // need to key on a correct band
@@ -119,7 +127,6 @@ public class Terminal extends Entity {
 
         // update band and frequency for antenna
         // get the uplink version of the terminal band
-        
         // this will collide with similar change for DownLink if
         // the terminal is shared by Tx and Rx
         terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
@@ -285,6 +292,40 @@ public class Terminal extends Entity {
         return eirp;
     }
 
+    private double calcGainTemp() {
+
+        double gain;
+
+        gain = 10.0 * MathUtil.log10(this.gain)
+                - this.getAntenna().calcDepointingLoss()
+                - this.getAmplifier().getLFRX()
+                - this.polarizationLoss
+                - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
+        return gain;
+    }
+
+    // downlink system noise temperature at the receiver input given by
+
+    private double calcSystemNoiseTemp() {
+        double tA;
+        double noiseTemp;
+        double teRX;
+        // noise figure is in dB
+        teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
+                - 1.0) * Com.T0;
+        tA = this.getAmplifier().getTempSky(this.dLband)
+                + this.getAmplifier().getTempGround();
+
+        // LFRX is in dB so change
+        double lfrx = MathUtil.pow(10.0, this.getAmplifier().getLFRX() / 10.0);
+
+        noiseTemp = tA / lfrx
+                + this.getAmplifier().getFeederTemp()
+                * (1.0 - 1.0 / lfrx) + teRX;
+
+        return noiseTemp;
+    }
+
     // this function called by children and sibling "e" of this when they change
     public void update(Entity e) {
 
@@ -292,6 +333,8 @@ public class Terminal extends Entity {
         // EIRP depends on antenna and amplifier, but both need to exist 
         if (this.getAmplifier() != null && this.getAntenna() != null) {
             this.EIRP = calcEIRP();
+
+            this.gainTemp = calcGainTemp();
         }
 
         // avoid using set since that should be used to send updates down
@@ -323,5 +366,47 @@ public class Terminal extends Entity {
      */
     public void setdLband(RfBand.Band dLband) {
         this.dLband = dLband;
+    }
+
+    /**
+     * @return the gainTemp
+     */
+    public double getGainTemp() {
+        return gainTemp;
+    }
+
+    /**
+     * @param gainTemp the gainTemp to set
+     */
+    public void setGainTemp(double gainTemp) {
+        this.gainTemp = gainTemp;
+    }
+
+    /**
+     * @return the polarizationLoss
+     */
+    public double getPolarizationLoss() {
+        return polarizationLoss;
+    }
+
+    /**
+     * @param polarizationLoss the polarizationLoss to set
+     */
+    public void setPolarizationLoss(double polarizationLoss) {
+        this.polarizationLoss = polarizationLoss;
+    }
+
+    /**
+     * @return the systemTemp
+     */
+    public double getSystemTemp() {
+        return systemTemp;
+    }
+
+    /**
+     * @param systemTemp the systemTemp to set
+     */
+    public void setSystemTemp(double systemTemp) {
+        this.systemTemp = systemTemp;
     }
 }

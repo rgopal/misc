@@ -359,4 +359,11 @@ public class Selection {
         this.uLpathView = uLpathView;
     }
 
+    /**
+     * @param dLpathView the dLpathView to set
+     */
+    public void setdLpathView(DlPathView dLpathView) {
+        this.dLpathView = dLpathView;
+    }
+
 }

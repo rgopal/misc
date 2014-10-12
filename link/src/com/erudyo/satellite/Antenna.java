@@ -183,8 +183,9 @@ public class Antenna extends Entity {
 
     /**
      * @param depointingLoss depends on depointing error 12(theta/3dBangl)^2
+     * Terminal uses it in Gain/T calc
      */
-    private double calcDepointingLoss() {
+    public double calcDepointingLoss() {
         double l;
         // This formula is already in dB
         l = 12.0 * MathUtil.pow(depointingError / threeDBangle, 2.0);
