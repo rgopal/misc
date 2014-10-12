@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW
+ * Covers both the amplifier for transmitter and the LNA for receiver.
+ * The feeder losses for both are also modeled here along feeder temp which
+ * is relevant only for receive. 
  */
 package com.erudyo.satellite;
 import com.codename1.io.Log;
@@ -21,8 +22,7 @@ public class Amplifier extends Entity {
     private double LFTX = 0.5;     // Tx loss between amplifier and antenna  in DB
     private double LFRX = 0.5;      // Rx loss between antenna and reciver in dB
     private double feederTemp = 290.0;  // feeder temp in K
-    private double tempGround = 45.0;
-    private double tempSky = 20.0;  // in K, depends on frequency
+
     private double noiseFigure = 1.0;   // in dB
 
     public final static double POWER_LO = 1.0;
@@ -124,52 +124,24 @@ public class Amplifier extends Entity {
      */
     public void setFeederTemp(double feederTemp) {
         this.feederTemp = feederTemp;
+         
     }
 
-    /**
-     * @return the tempGround
-     */
-    public double getTempGround() {
-        return tempGround;
-    }
-
-    /**
-     * @param tempGround the tempGround to set
-     */
-    public void setTempGround(double tempGround) {
-        this.tempGround = tempGround;
-    }
-
-    /**
-     * @return the tempSky
-     */
-    public double getTempSky(RfBand.Band band) {
-        double  temp=0;
-        if (band == RfBand.Band.C) 
-            temp = tempSky;
-        else
-            Log.p("Amplifier: no tempSky for band " + band, Log.WARNING);
-        return temp;
-    }
-
-    /**
-     * @param tempSky the tempSky to set
-     */
-    public void setTempSky(double tempSky) {
-        this.tempSky = tempSky;
-    }
 
     /**
      * @return the noiseFigure
      */
     public double getNoiseFigure() {
-        return noiseFigure;
+       
+         return noiseFigure;
+          
     }
 
     /**
      * @param noiseFigure the noiseFigure to set
      */
     public void setNoiseFigure(double noiseFigure) {
+          updateAffected();
         this.noiseFigure = noiseFigure;
     }
 

@@ -116,7 +116,7 @@ public class RxView extends View {
     }
 
     public Form createView(final Selection selection) {
-       Form sub = new Form("Rx " + selection.getrXterminal().getName());
+        Form sub = new Form("Rx " + selection.getrXterminal().getName());
 
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
@@ -133,7 +133,7 @@ public class RxView extends View {
         final Terminal rxTerm = selection.getrXterminal();
 
         Label L01 = new Label("Cent Freq");
-        Label L02 = new Label(Com.shortText(rxTerm.getAntenna().getFrequency() / 1E9));
+        Label L02 = new Label(Com.shortText(rxTerm.getrXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + rxTerm.getBand());
         cnt.addComponent(L01);
         cnt.addComponent(constraint, L02);
@@ -174,7 +174,7 @@ public class RxView extends View {
 
         // does not change
         Label L2A1 = new Label("Antenna Eff");
-        Label L2A2 = new Label(Com.shortText(rxTerm.getAntenna().getEfficiency()));
+        Label L2A2 = new Label(Com.shortText(rxTerm.getrXantenna().getEfficiency()));
         Label L2A3 = new Label(" ");
         cnt.addComponent(L2A1);
         cnt.addComponent(L2A2);
@@ -188,23 +188,23 @@ public class RxView extends View {
         lDiameter.setEditable(true);
         //L22.setPreferredW(8);
         lDiameter.setIncrements(5); //
-        lDiameter.setProgress((int) MathUtil.round(rxTerm.getAntenna().getDiameter() * 10));
+        lDiameter.setProgress((int) MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
 
         lDiameter.setRenderValueOnTop(true);
-        final Label L23 = new Label(Com.shortText(rxTerm.getAntenna().getDiameter()) + "m");
+        final Label L23 = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
         cnt.addComponent(L21);
         cnt.addComponent(lDiameter);
         cnt.addComponent(L23);
 
         Label L31 = new Label(" Gain");
-        final Label L32 = new Label(Com.shortText(rxTerm.getAntenna().getGain()));
+        final Label L32 = new Label(Com.shortText(rxTerm.getrXantenna().getGain()));
         Label L33 = new Label("dBi");
         cnt.addComponent(L31);
         cnt.addComponent(L32);
         cnt.addComponent(L33);
 
         Label L41 = new Label(" 3dB Angle");
-        final Label L42 = new Label(Com.toDMS(rxTerm.getAntenna().getThreeDBangle()));
+        final Label L42 = new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
         Label L43 = new Label("deg");
         cnt.addComponent(L41);
         cnt.addComponent(L42);
@@ -213,7 +213,7 @@ public class RxView extends View {
         // does change so not in combo/sliders
         Label lPointLoss = new Label(" Point Loss");
         final Label valuePointLoss = new Label(Com.shortText(
-                rxTerm.getAntenna().getDepointingLoss()));
+                rxTerm.getrXantenna().getDepointingLoss()));
         Label unitPointLoss = new Label("dB");
         cnt.addComponent(lPointLoss);
         cnt.addComponent(valuePointLoss);
@@ -227,6 +227,15 @@ public class RxView extends View {
         cnt.addComponent(lImpLoss);
         cnt.addComponent(valueImpLoss);
         cnt.addComponent(unitImpLoss);
+
+        // does not change so not in combo/sliders
+        Label lsysTemp = new Label(" Sys Noise T");
+        final Label valuesysTemp = new Label(Com.text(
+                rxTerm.calcSystemNoiseTemp()));
+        Label unitsysTemp = new Label("K");
+        cnt.addComponent(lsysTemp);
+        cnt.addComponent(valuesysTemp);
+        cnt.addComponent(unitsysTemp);
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);        // whole row
@@ -254,12 +263,14 @@ public class RxView extends View {
                     // update EIRP
                     L13.setText(Com.shortText(rxTerm.getAmplifier().
                             getNoiseFigure()) + "dB");
+                    valuesysTemp.setText(Com.text(
+                            rxTerm.calcSystemNoiseTemp()));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("RxView: bad number for Noise Figure " + 
-                            lNoiseFig.getText(), Log.DEBUG);
+                    Log.p("RxView: bad number for Noise Figure "
+                            + lNoiseFig.getText(), Log.DEBUG);
                 }
             }
         });
@@ -270,15 +281,18 @@ public class RxView extends View {
                 try {
 
                     // convert from cm to m first
-                    selection.getrXterminal().getAntenna().
+                    selection.getrXterminal().getrXantenna().
                             setDiameter(Double.parseDouble(lDiameter.getText()) / 10.0);
                     // update EIRP and three DB
-                    L23.setText(Com.shortText(rxTerm.getAntenna().getDiameter()) + "m");
-                    L42.setText(Com.toDMS(rxTerm.getAntenna().getThreeDBangle()));
-                    L32.setText(Com.shortText(rxTerm.getAntenna().getGain()));
+                    L23.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
+                    L42.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
+                    L32.setText(Com.shortText(rxTerm.getrXantenna().getGain()));
                     valuePointLoss.setText(Com.shortText(
-                            rxTerm.getAntenna().getDepointingLoss()));
+                            rxTerm.getrXantenna().getDepointingLoss()));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
+                    // should not change
+                    valuesysTemp.setText(Com.text(
+                            rxTerm.calcSystemNoiseTemp()));
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + lDiameter.getText(), Log.DEBUG);
 
@@ -290,5 +304,5 @@ public class RxView extends View {
         // have a multi-row table layout and dump the transmit terminal values
         return sub;
     }
-    
+
 }

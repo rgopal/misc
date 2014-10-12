@@ -171,7 +171,7 @@ public class UlPathView extends View {
         final Terminal txTerm = selection.gettXterminal();
 
         Label L01 = new Label("C Freq");
-        Label L02 = new Label(Com.shortText(txTerm.getAntenna().getFrequency() / 1E9));
+        Label L02 = new Label(Com.shortText(txTerm.gettXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + txTerm.getBand());
         cnt.addComponent(L01);
         cnt.addComponent(L02);
@@ -383,21 +383,21 @@ public class UlPathView extends View {
         /*
 
          Label L31 = new Label(" Gain");
-         final Label L32 = new Label(Com.shortText(ter.getAntenna().getGainTemp()));
+         final Label L32 = new Label(Com.shortText(ter.gettXantenna().getGainTemp()));
          Label L33 = new Label("dBi");
          cnt.addComponent(L31);
          cnt.addComponent(L32);
          cnt.addComponent(L33);
 
          Label L41 = new Label(" 3dB Angle");
-         final Label L42 = new Label(Com.toDMS(ter.getAntenna().getThreeDBangle()));
+         final Label L42 = new Label(Com.toDMS(ter.gettXantenna().getThreeDBangle()));
          Label L43 = new Label("deg");
          cnt.addComponent(L41);
          cnt.addComponent(L42);
          cnt.addComponent(L43);
 
          Label L4A1 = new Label(" Point Loss");
-         final Label L4A2 = new Label(Com.shortText(ter.getAntenna().getDepointingLoss()));
+         final Label L4A2 = new Label(Com.shortText(ter.gettXantenna().getDepointingLoss()));
          Label L4A3 = new Label("dB");
          cnt.addComponent(L4A1);
          cnt.addComponent(L4A2);

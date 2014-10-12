@@ -27,13 +27,17 @@ public class Terminal extends Entity {
     private double longitude;     //longitude
     private double latitude;       //latitude
     private RfBand.Band band;
-    private RfBand.Band uLband;
-    private RfBand.Band dLband;
-    private Antenna antenna;
+
+    private Antenna tXantenna;
+    private Antenna rXantenna;
     private Amplifier amplifier;
+    
+        
+        private double tempGround = 45.0;
+    private double tempSky = 20.0;  // in K, depends on frequency
+    
     // eventually calculate these things
     private double EIRP;        // somewhere this has to be updated
-    private double gain;
 
     private int index;
 
@@ -117,25 +121,24 @@ public class Terminal extends Entity {
         Terminal terminal = new Terminal(fields[0]);
 
         // terminals in format name, longitude, latitude, antenna size, amplifier
-        // gain, and band
+        //  and band
         // get the band first
         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
 
-        // set uplin and downlink
-        terminal.setuLband(RfBand.findUl(terminal.getBand()));
-        terminal.setdLband(RfBand.findDl(terminal.getBand()));
-
-        // update band and frequency for antenna
-        // get the uplink version of the terminal band
-        // this will collide with similar change for DownLink if
-        // the terminal is shared by Tx and Rx
-        terminal.getAntenna().setBand(RfBand.findUl(terminal.getBand()));
+        // set uplin and downlink bands for respective antenna
+        terminal.gettXantenna().setBand(RfBand.findUl(terminal.getBand()));
+        terminal.getrXantenna().setBand(RfBand.findDl(terminal.getBand()));
 
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
 
-        terminal.getAntenna().setDiameter(Double.parseDouble(fields[3]));
+        // set individually diameters for tx and rx (even though they should
+        // be same in a physical antenna (fine for the link budget tool)
+        terminal.getrXantenna().setDiameter(Double.parseDouble(fields[3]));
+        terminal.gettXantenna().setDiameter(Double.parseDouble(fields[3]));
+        
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
+        
 
         // where do we update terminal EIRP.  Now automatic with "update"
         vector.add(terminal);
@@ -156,11 +159,18 @@ public class Terminal extends Entity {
         // race condintion?   Had to move this before passing this in addAffected
         this.name = name;
 
-        antenna = new Antenna();
-        antenna.addAffected(this);
+        tXantenna = new Antenna();
+ 
+        tXantenna.addAffected(this);
         // System.out.println(this.name);
-        antenna.setDiameter(1);
+        tXantenna.setDiameter(1);
 
+     
+          rXantenna = new Antenna();
+        rXantenna.addAffected(this);
+        // System.out.println(this.name);
+        rXantenna.setDiameter(1);
+        
         amplifier = new Amplifier();
         amplifier.addAffected(this);
         amplifier.setPower(10);
@@ -231,15 +241,29 @@ public class Terminal extends Entity {
     /**
      * @return the antenna
      */
-    public Antenna getAntenna() {
-        return antenna;
+    public Antenna getrXantenna() {
+        return rXantenna;
     }
 
     /**
      * @param antenna the antenna to set
      */
-    public void setAntenna(Antenna antenna) {
-        this.antenna = antenna;
+    public void setrXantenna(Antenna antenna) {
+        this.rXantenna = antenna;
+    }
+    
+     /**
+     * @return the antenna
+     */
+    public Antenna gettXantenna() {
+        return tXantenna;
+    }
+
+    /**
+     * @param antenna the antenna to set
+     */
+    public void settXantenna(Antenna antenna) {
+        this.tXantenna = antenna;
     }
 
     public Amplifier getAmplifier() {
@@ -266,28 +290,12 @@ public class Terminal extends Entity {
         return true;
     }
 
-    /**
-     * @return the gain
-     */
-    public double getGain() {
-
-        return gain;
-    }
-
-    /**
-     * @param gain the gain to set
-     */
-    public boolean setGain(double gain) {
-        // Gain also would depend on multiple components so use set methods
-
-        return true;
-    }
 
     private double calcEIRP() {
         double eirp = (10 * MathUtil.log10(
                 this.getAmplifier().getPower())) // was in W
-                + this.getAntenna().getGain() // in dB
-                - this.getAntenna().getDepointingLoss()
+                + this.gettXantenna().getGain() // in dB
+                - this.gettXantenna().getDepointingLoss()
                 - this.getAmplifier().getLFTX(); // in dB
         return eirp;
     }
@@ -296,8 +304,9 @@ public class Terminal extends Entity {
 
         double gain;
 
-        gain = 10.0 * MathUtil.log10(this.gain)
-                - this.getAntenna().calcDepointingLoss()
+        // antenna gain is already in dB
+        gain = this.getrXantenna().getGain()
+                - this.getrXantenna().calcDepointingLoss()
                 - this.getAmplifier().getLFRX()
                 - this.polarizationLoss
                 - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
@@ -306,15 +315,15 @@ public class Terminal extends Entity {
 
     // downlink system noise temperature at the receiver input given by
 
-    private double calcSystemNoiseTemp() {
+    public double calcSystemNoiseTemp() {
         double tA;
         double noiseTemp;
         double teRX;
         // noise figure is in dB
         teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
                 - 1.0) * Com.T0;
-        tA = this.getAmplifier().getTempSky(this.dLband)
-                + this.getAmplifier().getTempGround();
+        tA = this.getTempSky(getrXantenna().getBand())
+                + this.getTempGround();
 
         // LFRX is in dB so change
         double lfrx = MathUtil.pow(10.0, this.getAmplifier().getLFRX() / 10.0);
@@ -331,7 +340,8 @@ public class Terminal extends Entity {
 
         // update everything that could be affected
         // EIRP depends on antenna and amplifier, but both need to exist 
-        if (this.getAmplifier() != null && this.getAntenna() != null) {
+        if (this.getAmplifier() != null && this.gettXantenna() != null
+                && this.getrXantenna() != null) {
             this.EIRP = calcEIRP();
 
             this.gainTemp = calcGainTemp();
@@ -340,33 +350,7 @@ public class Terminal extends Entity {
         // avoid using set since that should be used to send updates down
     }
 
-    /**
-     * @return the uLband
-     */
-    public RfBand.Band getuLband() {
-        return uLband;
-    }
 
-    /**
-     * @param uLband the uLband to set
-     */
-    public void setuLband(RfBand.Band uLband) {
-        this.uLband = uLband;
-    }
-
-    /**
-     * @return the dLband
-     */
-    public RfBand.Band getdLband() {
-        return dLband;
-    }
-
-    /**
-     * @param dLband the dLband to set
-     */
-    public void setdLband(RfBand.Band dLband) {
-        this.dLband = dLband;
-    }
 
     /**
      * @return the gainTemp
@@ -408,5 +392,36 @@ public class Terminal extends Entity {
      */
     public void setSystemTemp(double systemTemp) {
         this.systemTemp = systemTemp;
+    }
+
+    /**
+     * @return the tempGround
+     */
+    public double getTempGround() {
+        return tempGround;
+    }
+
+    /**
+     * @param tempGround the tempGround to set
+     */
+    public void setTempGround(double tempGround) {
+        this.tempGround = tempGround;
+    }
+
+
+    /**
+     * @param tempSky the tempSky to set
+     */
+    public void setTempSky(double tempSky) {
+        this.tempSky = tempSky;
+    }
+      /**
+     * @return the tempSky
+     */
+    public double getTempSky(RfBand.Band band) {
+        double temp = tempSky;
+        if (band != RfBand.Band.C) 
+             Log.p("Terminal: no tempSky for band " + band, Log.WARNING);
+        return temp;
     }
 }

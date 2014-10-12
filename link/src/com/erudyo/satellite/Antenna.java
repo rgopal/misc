@@ -1,4 +1,6 @@
 /*
+ * Overview
+ * Antenna could be instantiated for transmit or for receive (in Terminal).
  * STATUS:  20141001 All code in including functions in both directions
  * TODO:    Testing
  */
@@ -17,6 +19,7 @@ public class Antenna extends Entity {
     private double diameter = 1;
     private double efficiency = 0.6;
     private RfBand.Band band = RfBand.Band.KA;
+
     private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
 
     private double depointingLoss = 0.5;

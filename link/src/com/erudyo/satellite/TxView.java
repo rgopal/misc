@@ -132,7 +132,7 @@ public class TxView extends View {
         final Terminal ter = selection.gettXterminal();
 
         Label L01 = new Label("Cent Freq");
-        Label L02 = new Label(Com.shortText(ter.getAntenna().getFrequency() / 1E9));
+        Label L02 = new Label(Com.shortText(ter.gettXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + ter.getBand());
         cnt.addComponent(L01);
         cnt.addComponent(constraint, L02);
@@ -172,7 +172,7 @@ public class TxView extends View {
         cnt.addComponent(L13);
 
         Label L2A1 = new Label("Antenna Eff");
-        Label L2A2 = new Label(Com.shortText(ter.getAntenna().getEfficiency()));
+        Label L2A2 = new Label(Com.shortText(ter.gettXantenna().getEfficiency()));
         Label L2A3 = new Label(" ");
         cnt.addComponent(L2A1);
         cnt.addComponent(L2A2);
@@ -186,23 +186,23 @@ public class TxView extends View {
         L22.setEditable(true);
         //L22.setPreferredW(8);
         L22.setIncrements(5); //
-        L22.setProgress((int) MathUtil.round(ter.getAntenna().getDiameter() * 10));
+        L22.setProgress((int) MathUtil.round(ter.gettXantenna().getDiameter() * 10));
 
         L22.setRenderValueOnTop(true);
-        final Label L23 = new Label(Com.shortText(ter.getAntenna().getDiameter()) + "m");
+        final Label L23 = new Label(Com.shortText(ter.gettXantenna().getDiameter()) + "m");
         cnt.addComponent(L21);
         cnt.addComponent(L22);
         cnt.addComponent(L23);
 
         Label L31 = new Label(" Gain");
-        final Label L32 = new Label(Com.shortText(ter.getAntenna().getGain()));
+        final Label L32 = new Label(Com.shortText(ter.gettXantenna().getGain()));
         Label L33 = new Label("dBi");
         cnt.addComponent(L31);
         cnt.addComponent(L32);
         cnt.addComponent(L33);
 
         Label L41 = new Label(" 3dB Angle");
-        final Label L42 = new Label(Com.toDMS(ter.getAntenna().getThreeDBangle()));
+        final Label L42 = new Label(Com.toDMS(ter.gettXantenna().getThreeDBangle()));
         Label L43 = new Label("deg");
         cnt.addComponent(L41);
         cnt.addComponent(L42);
@@ -211,7 +211,7 @@ public class TxView extends View {
         // does change so not in combo/sliders
         Label lPointLoss = new Label(" Point Loss");
         final Label valuePointLoss = new Label(Com.shortText(
-                ter.getAntenna().getDepointingLoss()));
+                ter.gettXantenna().getDepointingLoss()));
         Label unitPointLoss = new Label("dB");
         cnt.addComponent(lPointLoss);
         cnt.addComponent(valuePointLoss);
@@ -267,14 +267,14 @@ public class TxView extends View {
                 try {
 
                     // convert from cm to m first
-                    selection.gettXterminal().getAntenna().
+                    selection.gettXterminal().gettXantenna().
                             setDiameter(Double.parseDouble(L22.getText()) / 10.0);
                     // update EIRP and three DB
-                    L23.setText(Com.shortText(ter.getAntenna().getDiameter()) + "m");
-                    L42.setText(Com.toDMS(ter.getAntenna().getThreeDBangle()));
-                    L32.setText(Com.shortText(ter.getAntenna().getGain()));
+                    L23.setText(Com.shortText(ter.gettXantenna().getDiameter()) + "m");
+                    L42.setText(Com.toDMS(ter.gettXantenna().getThreeDBangle()));
+                    L32.setText(Com.shortText(ter.gettXantenna().getGain()));
                     valuePointLoss.setText(Com.shortText(
-                            ter.getAntenna().getDepointingLoss()));
+                            ter.gettXantenna().getDepointingLoss()));
                     valueEIRP.setText(Com.shortText(ter.getEIRP()));
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + L22.getText(), Log.DEBUG);

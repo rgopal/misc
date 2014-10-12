@@ -2,8 +2,12 @@
  * OVERVIEW
  * Manages an instance representing path between semiMajor satellite and semiMajor terminal, 
  * including the distance, azimuth, and elevation angles (all stored in Radians).
- * Affected by satellite and terminal.
- * Currently does not affect anything else.  
+ * Affected by satellite and terminal.  Includes attenuation (atmospheric, and 
+ * rain).
+ * Includes sky and grouond temperatures for calculating G/T values.
+ * Currently does not affect anything else.  Antenna noise temperature can
+ * be calculated only here (and not in terminal) since the terminal needs to
+ * be involved in a path.  Unlike EIRP which was in terminal.
  * TODO:  check if it will affect the final Data Rate or Link Marging 
  * (may be in selection)
  * Expand attenuation as a function of frequency
@@ -25,11 +29,13 @@ public class Path extends Entity {
     private Satellite satellite;
     private RfBand.Band band;
     private Terminal terminal;
-    private double pathLoss = 200;        // in dB
+    private double pathLoss = 200.0;        // in dB
     private double attenuation = 0.3;         // in dB (varies on frequency)
     private double azimuth;
     private double elevation;
     private double distance;     //distance of satellite from terminal
+
+    private double rainAttenuation = 7.0;  // for .01
 
     public Path() {
 
@@ -61,6 +67,7 @@ public class Path extends Entity {
         setAll();
     }
 
+    
     /**
      * @return the terminal
      */
@@ -164,6 +171,20 @@ public class Path extends Entity {
         this.attenuation = attenuation;
     }
 
+    /**
+     * @return the rainAttenuation
+     */
+    public double getRainAttenuation() {
+        return rainAttenuation;
+    }
+
+    /**
+     * @param rainAttenuation the rainAttenuation to set
+     */
+    public void setRainAttenuation(double rainAttenuation) {
+        this.rainAttenuation = rainAttenuation;
+    }
+
     enum relativePosition {
 
         NE, SE, NW, SW, N, S, E, W
@@ -184,7 +205,7 @@ public class Path extends Entity {
 
         // get center frequency of band used by terminal
         this.pathLoss = calcPathLoss(this.distance,
-                RfBand.centerFrequency(terminal.getuLband()));
+                RfBand.centerFrequency(terminal.gettXantenna().getBand()));
     }
 
     public double calcPathLoss(double distance, Double frequency) {
@@ -342,4 +363,7 @@ public class Path extends Entity {
 
         return rel;
     }
+    
+    
+
 }
