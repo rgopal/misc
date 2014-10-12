@@ -30,6 +30,7 @@ import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.ui.events.DataChangedListener;
 import com.codename1.util.MathUtil;
+import java.util.ArrayList;
 
 public class TxView extends View {
 
@@ -42,6 +43,34 @@ public class TxView extends View {
 
     public TxView(Selection selection) {
         super.name = "Tx Terminal";
+    }
+
+    // create the text part fresh when called
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
+
+        ArrayList<String> inner = new ArrayList<String>();
+        // first row
+        inner.add("Transmit Terminal"); 
+        inner.add(selection.gettXterminal().getName());
+        outer.add(inner);
+
+        // get a new row
+        inner = new ArrayList<String>();
+        inner.add("Longitude"); 
+               inner.add(Com.toDMS(selection.gettXterminal().getLongitude())); 
+        inner.add("degree");
+         outer.add(inner);
+        
+         // get a new row
+        inner = new ArrayList<String>();
+        inner.add("Latitude"); 
+               inner.add(Com.toDMS(selection.gettXterminal().getLatitude())); 
+        inner.add("degree");
+        
+        outer.add(inner);
+
+        return outer;
     }
 
     public Component getWidget(final Selection selection) {

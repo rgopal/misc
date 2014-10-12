@@ -17,6 +17,7 @@ import com.codename1.ui.Label;
 import com.codename1.ui.Image;
 import com.codename1.ui.util.Resources;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public abstract class View {
 
@@ -27,7 +28,12 @@ public abstract class View {
     protected String value;
     protected String unit;
     
-
+    // store print ready items of a view
+    protected ArrayList<ArrayList<String>> text;
+    
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        return text;
+    }
     public String getName () {
         return name;
     }
