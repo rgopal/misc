@@ -24,6 +24,9 @@ public class Satellite extends Entity {
     private Antenna antenna;
     private Amplifier amplifier;
 
+    // can have multiple bands and transponders;
+    private Hashtable<RfBand.Band, Integer> transponders;
+
     // all satellites stored in semiMajor Class level hash.  For future, since
     // selection has its own at instance level
     static Hashtable<String, Satellite> satelliteHash
@@ -34,6 +37,18 @@ public class Satellite extends Entity {
             = new ArrayList<Satellite>();
 
     public Satellite() {
+    }
+
+    // return the number of transponders for a specific band
+    public int getNumberTransponders(RfBand.Band band) {
+        int num = 0;
+        if (transponders == null) {
+            Log.p("Satellite: transponders is null", Log.WARNING);
+        }
+        if (transponders.get(band) != null) {
+            num = transponders.get(band);
+        }
+        return num;
     }
 
     public String toString() {
@@ -49,7 +64,7 @@ public class Satellite extends Entity {
     protected double velocity;       // velocity
     protected double altitude;      // altitude
     protected Com.Orbit orbit;
-    protected RfBand.Band band; //
+    // protected RfBand.Band band; // now multiple bands in transponders
 
     private int index;
 
@@ -64,20 +79,12 @@ public class Satellite extends Entity {
         this.index = index;
     }
 
-    public void setBand(RfBand.Band band) {
-        this.band = band;
-    }
-
-    public RfBand.Band getBand() {
-        return band;
-    }
-
     public Satellite(String name) {
         amplifier = new Amplifier();
         antenna = new Antenna();
         // gainTemp should be calculated when diameter changed
         antenna.setDiameter(2.4);
-   
+
         this.name = name;       // should be unique
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
@@ -105,6 +112,36 @@ public class Satellite extends Entity {
 
     }
 
+    public static void processBand(String[] fields, RfBand.Band band,
+            Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite, 
+            Satellite satellite, int index) {
+
+        if (band == null) {
+            Log.p("Satellite: bad data " + Arrays.toString(fields), Log.WARNING);
+        } else {
+
+            // extract the band of the terminal
+            if (bandSatellite.get(band) == null) {
+                bandSatellite.put(band, new ArrayList<Satellite>());
+            }
+
+            int num = 0;
+            try {
+                num = Integer.parseInt(fields[index + 1]);
+            } catch (Exception e) {
+                Log.p("Satellite: no number of transponders for satellite "
+                        + Arrays.toString(fields), Log.DEBUG);
+            }
+            // put the number of transponders for this band
+            satellite.transponders.put(band, num);
+            
+            // add satellite to this band
+            bandSatellite.get(band).add(satellite);
+
+        }
+
+    }
+
     public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
@@ -112,46 +149,71 @@ public class Satellite extends Entity {
         Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
-        // go through all bands
+        // go through all satellites
         for (int i = 1; i < satellites.length; i++) {
-            // get the band first
-            RfBand.Band band = RfBand.rFbandHash.get(satellites[i][5]).getBand();
 
-            // need to key on semiMajor correct band
-            if (band == null) {
-                Log.p("Satellite: bad data " + Arrays.toString(satellites), Log.WARNING);
-            } else {
-                // extract the band of the terminal
-                if (bandSatellite.get(band) == null) {
-                    bandSatellite.put(band, new ArrayList<Satellite>());
-                }
+            Log.p("Satellite: processing satellite "
+                    + Arrays.toString(satellites[i])
+                    + Log.INFO);
 
-                // get band using its string version as key (* matches all)
-                satelliteFields(satellites[i], bandSatellite.get(band));
-
-                // check the band from file and create entry in hash table
-                Log.p("Satellite: processed satellite " + Arrays.toString(satellites[i]), Log.INFO);
-            }
+            satelliteFields(satellites[i], bandSatellite);
         }
         return bandSatellite;
     }
 
-    public static void satelliteFields(String[] fields, ArrayList<Satellite> vector) {
+    public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
+//            ArrayList<Satellite> vector) {
+//Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|Operator
+//Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|Longitude of GEO (de
+//grees) 9|Perigee (km) 10|Apogee (km) 11|Eccentricity 12|Inclination (degrees) 13
+//|Period (minutes) 14|Launch Mass (kg.) 15|Dry Mass (kg.) 16|Power (watts) 17|Dat
+//e of Launch 18|Expected Lifetime 19|Contractor 20|Country of Contractor 21|Launc
+//h Site 22|Launch Vehicle 23|COSPAR Number 24|NORAD Number 25|Comments 26| 27|Sou
+// rce Used for Orbital Data 28|Source1 29|Source2 30|Source3 31|Source4 32|Source5
+// 33|Source6 34|EIRP 35|Gain 36|BAND1 37|Transponders1 38|BAND2 39|Transponders2 
+// 40|BAND3 41|Transponders3 42
+
         // vector has already been created for semiMajor band, just add entries
         Satellite satellite = new Satellite(fields[0]);
 
         // fields are name, long, lat, eirp, gainTemp, band
-         satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
-         satellite.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
-       
-        satellite.setEIRP(Double.parseDouble(fields[3]));
-        satellite.setGainTemp(Double.parseDouble(fields[4]));
-        if (!fields[5].equalsIgnoreCase("*")) {
-            satellite.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
-            vector.add(satellite);
+        try {
+        satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[8])));
+        
+        // select only GEO satellites
+        satellite.setLatitude(0.0);
 
+        satellite.setEIRP(Double.parseDouble(fields[34]));
+        satellite.setGainTemp(Double.parseDouble(fields[35]));
+
+        } catch (Exception e) {
+            Log.p("Satellites: double error in Long,Lat,EIRP, or Gain " +
+                    fields, Log.WARNING);   
         }
-        // all these satellites are getting created and nothing selected so far
+        if (satellite.transponders == null) {
+            satellite.transponders = new Hashtable<RfBand.Band, Integer>();
+        }
+
+        // put the band and number of transponders
+        // process C, KU, and KA (they are in the order in all_satellites.txt
+        
+        if (!(fields[36].equals("")) && RfBand.rFbandHash.get(
+                fields[36].toUpperCase()).getBand()
+                == RfBand.Band.C) {
+
+            processBand(fields, RfBand.Band.C, bandSatellite, satellite, 36);
+        }
+        if (!(fields[38].equals("")) && RfBand.rFbandHash.get(
+                fields[38].toUpperCase()).getBand()
+                == RfBand.Band.KU) {
+            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 38);
+        }
+        if (!(fields[40].equals("")) && RfBand.rFbandHash.get(
+                fields[40].toUpperCase()).getBand()
+                == RfBand.Band.KU) {
+            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 40);
+        }
+
     }
 
     public double getEIRP() {
@@ -206,16 +268,12 @@ public class Satellite extends Entity {
         this.latitude = latitude;
     }
 
-  
-
     /**
      * @return the semiMajor
      */
     public double getSemiMajor() {
         return semiMajor;
     }
-
-  
 
     /**
      * @return the velocity

@@ -102,10 +102,11 @@ public class Link {
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
-            CSVParser parser = new CSVParser();
+            CSVParser parser = new CSVParser('|');
+            
             
             InputStream is = Display.getInstance().
-                    getResourceAsStream(null, "/satellites.txt");
+                    getResourceAsStream(null, "/all_satellites.txt");
 
             // Satellite has to read all the records from file.  Selection
             // could include only semiMajor subset per instance (e.g., satellites
@@ -115,6 +116,8 @@ public class Link {
             
             is = Display.getInstance().
                     getResourceAsStream(null, "/terminals.txt");
+            
+             parser = new CSVParser(',');
             
             selection.setBandTerminal(Terminal.getFromFile(
                     parser.parse(new InputStreamReader(is))));

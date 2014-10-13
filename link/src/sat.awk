@@ -4,7 +4,7 @@
 function getBand(band,str)
 {
     reg = "[0-9]+ " band "[\- ][Bb]and"
-    string = ""
+    string = "||"
     if (match(str,reg) != 0)
     {
        found=substr(str,RSTART,RLENGTH)
