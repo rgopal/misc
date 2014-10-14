@@ -90,7 +90,7 @@ public class Terminal extends Entity {
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
             
-              Log.p("Terminal: Processing terminal "
+              Log.p("Terminal: Processing terminal #" + String.valueOf(i) + " "
                         + Arrays.toString(terminals[i]), Log.INFO);
             RfBand.Band band = RfBand.rFbandHash.get(terminals[i][5]).getBand();
 
@@ -99,7 +99,8 @@ public class Terminal extends Entity {
                 Log.p("Terminal: Bad band " + terminals[i].toString(), Log.WARNING);
 
             } else {
-                // extract the band of the terminal
+                // extract the band of the terminal TODO remove band processing
+                // for terminal.   
                 if (bandTerminal.get(band) == null) {
                     bandTerminal.put(band, new ArrayList<Terminal>());
                 }
