@@ -71,19 +71,19 @@ import java.util.List;
 import java.util.Vector;
 
 public class Link {
-    
+
     private Form main;
     private Form current;
     private RfBand.Band band = RfBand.Band.KA;
     private RfBand.Band dLband = RfBand.Band.KA_DL;
     private RfBand.Band uLband = RfBand.Band.KA_UL;
     private Com.Orbit orbit = Com.Orbit.GEO;
-    
+
     private Selection selection;
 
     // Each band has semiMajor vector of terminals and satellites read from files
     private View[] views;
-    
+
     public void init(Object context) {
 
         // create semiMajor new instance to keep track of all other objects for UI
@@ -103,8 +103,7 @@ public class Link {
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
             CSVParser parser = new CSVParser('|');
-            
-            
+
             InputStream is = Display.getInstance().
                     getResourceAsStream(null, "/all_satellites.txt");
 
@@ -113,12 +112,12 @@ public class Link {
             // visible from semiMajor location
             selection.setBandSatellite(Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is))));
-            
+
             is = Display.getInstance().
                     getResourceAsStream(null, "/terminals.txt");
-            
-             parser = new CSVParser(',');
-            
+
+            parser = new CSVParser(',');
+
             selection.setBandTerminal(Terminal.getFromFile(
                     parser.parse(new InputStreamReader(is))));
 
@@ -126,7 +125,7 @@ public class Link {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         initViews(selection);
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
@@ -142,11 +141,11 @@ public class Link {
             }
         });
     }
-    
+
     private void initViews(Selection selection) {
-        
+
         Log.p("Started application");
-        
+
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage
@@ -157,24 +156,24 @@ public class Link {
         // process satellite first since it is needed by UlPath and DlPath
         views[2] = selection.getSatelliteView();
         views[3] = selection.getuLpathView();
-        
+
         views[4] = selection.getdLpathView();
         views[5] = selection.getRxView();
-        
+
     }
-    
+
     public void start() {
         if (current != null) {
             current.show();
             return;
         }
-        
+
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         // set the current Band and then satellite, terminal
         initBands(main, selection);
-        
+
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
 
@@ -182,9 +181,9 @@ public class Link {
         // no sub-label
         TableLayout layout = new TableLayout(6, 4);
         cnt.setLayout(layout);
-        
+
         for (final View view : views) {
-            
+
             initViews(view, cnt, selection, layout);
         }
         Button b = new Button("Map");
@@ -201,23 +200,23 @@ public class Link {
                 form.show();
             }
         });
-        
+
         LikeButton like = new LikeButton();
-        
+
         main.addComponent(like);
-        
+
         ShareButton s = new ShareButton();
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
         like.setUIID("Button");
-        
+
         main.show();
-        
+
     }
-    
+
     public void initViews(final View view, Container cnt, final Selection selection, TableLayout layout) {
-        
+
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
@@ -229,7 +228,7 @@ public class Link {
             // all these widgets have to be remembered by respective views 
             Component v = view.getLabel(selection);
             Component u = view.getSubLabel(selection);
-            
+
             Button c = new Button("->"); //view.getName());
 
             TableLayout.Constraint constraint = layout.createConstraint();
@@ -237,24 +236,24 @@ public class Link {
             constraint.setWidthPercentage(40);      // half of width
 
             cnt.addComponent(constraint, n);
-            
+
             constraint = layout.createConstraint(); // 30% of width
             constraint.setWidthPercentage(25);
-            
+
             cnt.addComponent(constraint, s);
             cnt.addComponent(v);
             // cnt.addComponent(u);  NO Sublabel
             cnt.addComponent(c);
-            
+
             c.setIcon(cmdIcon);
-            
+
             c.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     final Form form = view.createView(selection);
                     BackCommand bc = new BackCommand();
                     form.addCommand(bc);
                     form.setBackCommand(bc);
-                    
+
                     final Command cmd1 = new Command("Command1");
                     final Command cmd2 = new Command("Command2");
                     Command cmd = new Command("Command3") {
@@ -262,36 +261,36 @@ public class Link {
                             // create a new form with its own back.  In future
                             // add home (back to home)
                             final Form text = new Form(form.getName());
-                            
+
                             TextArea taTable = new TextArea();
-                            
+
                             ArrayList<ArrayList<String>> table
                                     = view.getText(selection);
-                          
+
                             String string = new String();
                             for (ArrayList<String> line : table) {
-                                
+
                                 for (String item : line) {
                                     if (item != null) {
-                          
+
                                         string = string + item;
                                         // put empty spaces
                                         string = string + "\t\t"; // "                   ".
-                                             //   substring(0,20 - item.length());
+                                        //   substring(0,20 - item.length());
                                     } else {
                                         Log.p("Link: null item in all " + line, Log.WARNING);
                                     }
                                 }
                                 string = string + "\n";
-                               
+
                             }
-                           
+
                             taTable.setText(string);
                             taTable.setEditable(false);
                             taTable.setFocusable(false);
                             taTable.setUIID("Label");
                             text.addComponent(taTable);
-                            
+
                             Command bc = new Command("Back to " + form.getName()) {
                                 public void actionPerformed(ActionEvent ev) {
                                     form.showBack();
@@ -300,7 +299,7 @@ public class Link {
                             text.addCommand(bc);
                             text.setBackCommand(bc);
                             text.show();
-                            
+
                             Log.p("Link: menu command " + cmd1.getId(), Log.DEBUG);
                         }
                     };
@@ -314,30 +313,30 @@ public class Link {
             });
         } catch (IOException ex) {
             ex.printStackTrace();
-            
+
         }
-        
+
     }
-    
+
     public void initBands(Form main, final Selection selection) {
         // band selection
 
         Container topLine = new Container();
         topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(topLine);
-        
+
         final Label bandLabel = new Label();
         final ComboBox spin = new ComboBox();
         topLine.addComponent(spin);
         topLine.addComponent(bandLabel);
-        
+
         ListModel model = new DefaultListModel(selection.getRfBands());
         spin.setModel(model);
-        
+
         String item = (String) spin.getSelectedItem();
-        
+
         RfBand rFband = RfBand.rFbandHash.get(item);
-        
+
         selection.setBand(rFband.getBand());
 
         // note that only semiMajor String has substring functions
@@ -350,12 +349,12 @@ public class Link {
         // then again in respective satellite and terminal change
         spin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                
+
                 String item = (String) spin.getSelectedItem();
                 RfBand rFband = RfBand.rFbandHash.get(item);
-                
+
                 selection.setBand(rFband.getBand());
-                
+
                 bandLabel.setText(Com.shortText((rFband.lowFrequency / 1E9))
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
@@ -363,19 +362,19 @@ public class Link {
 
                 // update combos and labels
                 comboSatellite(selection, spin);
-                
+
                 comboTx(selection, spin);
                 comboRx(selection, spin);
                 comboUlPath(selection);
             }
         });
-        
+
     }
-    
+
     public void comboSatellite(final Selection selection, final ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandSatellite().get(selection.getBand()) == null) {
-            
+
             Log.p("link: Can't get bandSatellite for band "
                     + selection.getBand(), Log.DEBUG);
             // Force it to KA which hopefully works
@@ -390,7 +389,7 @@ public class Link {
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new String[0])));
-        
+
         if (model == null) {
             Log.p("Link: Can't create DefaultListModel for satellite band "
                     + selection.getBand(), Log.DEBUG);
@@ -408,16 +407,21 @@ public class Link {
             selection.getSatelliteView().label.setText(
                     selection.getSatellite().getName());
         }
-        
+
     }
-    
+
     public void comboUlPath(Selection selection) {
+        // remove the original satellite
         selection.getuLpath().setSatellite(selection.getSatellite());
-        selection.getuLpath().setTerminal(selection.gettXterminal());
+
+        // why is terminal being changed
+        if (selection.getuLpath().getTerminal() != selection.gettXterminal()) {
+            selection.getuLpath().setTerminal(selection.gettXterminal());
+        }
         selection.getuLpath().setAll();
-        
+
     }
-    
+
     public void comboRx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandTerminal().get(selection.getBand()) == null) {
@@ -434,7 +438,7 @@ public class Link {
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
                         new String[0])));
-        
+
         if (model == null) {
             Log.p("Link: Can't create DefaultListModel for Rx terminal band "
                     + selection.getBand(), Log.DEBUG);
@@ -444,16 +448,21 @@ public class Link {
 
             String name = (String) selection.getRxView().spin.getSelectedItem();
 
-            // update selected satellite
+            // update selected receive terminal
             selection.setrXterminal(Terminal.terminalHash.get(name));
+            
+            
+            // update the UL path
+            comboUlPath(selection);
+
             // update label TODO
             selection.getRxView().label.setText(
                     selection.getrXterminal().getName());
-            
+
         }
-        
+
     }
-    
+
     public void comboTx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (selection.getBandTerminal().get(selection.getBand()) == null) {
@@ -467,11 +476,11 @@ public class Link {
             // change the current Combobox entry
             spin.setSelectedIndex(i);
         }
-        
+
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandTerminal().get(selection.getBand()).toArray(
                         new String[0])));
-        
+
         if (model == null) {
             Log.p("Link: Can't create DefaultListModel for Tx terminal band "
                     + selection.getBand(), Log.ERROR);
@@ -498,26 +507,26 @@ public class Link {
             selection.getuLpathView().subLabel.setText(
                     Com.toDMS(selection.gettXterminal().getLatitude()));
         }
-        
+
     }
-    
+
     class BackCommand extends Command {
-        
+
         public BackCommand() {
-            
+
             super("Back");
         }
-        
+
         public void actionPerformed(ActionEvent evt) {
             main.showBack();
         }
     }
-    
+
     public void stop() {
         current = Display.getInstance().getCurrent();
     }
-    
+
     public void destroy() {
     }
-    
+
 }

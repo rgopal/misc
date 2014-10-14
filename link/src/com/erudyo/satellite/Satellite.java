@@ -94,7 +94,7 @@ public class Satellite extends Entity {
 
         orbit = Com.Orbit.GEO;
 
-        amplifier.setPower(200);
+        amplifier.setPower(50);
 
         if (getName() == null) {
             Random randomGenerator = new Random();
@@ -113,7 +113,7 @@ public class Satellite extends Entity {
     }
 
     public static void processBand(String[] fields, RfBand.Band band,
-            Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite, 
+            Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite,
             Satellite satellite, int index) {
 
         if (band == null) {
@@ -129,12 +129,12 @@ public class Satellite extends Entity {
             try {
                 num = Integer.parseInt(fields[index + 1]);
             } catch (Exception e) {
-                Log.p("Satellite: no number of transponders for satellite "
+                Log.p("Satellite: no number for transponders for satellite "
                         + Arrays.toString(fields), Log.DEBUG);
             }
             // put the number of transponders for this band
             satellite.transponders.put(band, num);
-            
+
             // add satellite to this band
             bandSatellite.get(band).add(satellite);
 
@@ -152,9 +152,9 @@ public class Satellite extends Entity {
         // go through all satellites
         for (int i = 1; i < satellites.length; i++) {
 
-            Log.p("Satellite: processing satellite "
-                    + Arrays.toString(satellites[i])
-                    + Log.INFO);
+            Log.p("Satellite: processing satellite # "
+                    + i + " " + satellites[i][0],
+                    Log.INFO);
 
             satelliteFields(satellites[i], bandSatellite);
         }
@@ -178,17 +178,17 @@ public class Satellite extends Entity {
 
         // fields are name, long, lat, eirp, gainTemp, band
         try {
-        satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[8])));
-        
-        // select only GEO satellites
-        satellite.setLatitude(0.0);
+            satellite.setLongitude(Math.toRadians(Double.parseDouble(fields[8])));
 
-        satellite.setEIRP(Double.parseDouble(fields[34]));
-        satellite.setGainTemp(Double.parseDouble(fields[35]));
+            // select only GEO satellites
+            satellite.setLatitude(0.0);
+
+            satellite.setEIRP(Double.parseDouble(fields[34]));
+            satellite.setGainTemp(Double.parseDouble(fields[35]));
 
         } catch (Exception e) {
-            Log.p("Satellites: double error in Long,Lat,EIRP, or Gain " +
-                    fields, Log.WARNING);   
+            Log.p("Satellites: double error in Long,Lat,EIRP, or Gain "
+                    + fields, Log.WARNING);
         }
         if (satellite.transponders == null) {
             satellite.transponders = new Hashtable<RfBand.Band, Integer>();
@@ -196,7 +196,6 @@ public class Satellite extends Entity {
 
         // put the band and number of transponders
         // process C, KU, and KA (they are in the order in all_satellites.txt
-        
         if (!(fields[36].equals("")) && RfBand.rFbandHash.get(
                 fields[36].toUpperCase()).getBand()
                 == RfBand.Band.C) {
@@ -210,7 +209,7 @@ public class Satellite extends Entity {
         }
         if (!(fields[40].equals("")) && RfBand.rFbandHash.get(
                 fields[40].toUpperCase()).getBand()
-                == RfBand.Band.KU) {
+                == RfBand.Band.KA) {
             processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 40);
         }
 

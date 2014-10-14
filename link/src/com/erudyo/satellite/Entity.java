@@ -65,8 +65,8 @@ public class Entity {
             affected = new Hashtable<Entity, Integer>();
         }
         if (affected.get(e) != null) {
-            Log.p("Entity: addAffected reference value will by 1"
-                    + affected.get(e));
+            Log.p("Entity: addAffected reference value will increase by 1"
+                    + affected.get(e) + " in affected list of " + this, Log.DEBUG);
             affected.put(e, affected.get(e) + 1);
         } else {
             affected.put(e, 1);
@@ -85,13 +85,18 @@ public class Entity {
             return;
         }
         if (affected.get(e) == null) {
-            Log.p("Entity: Can't find entity " + e, Log.WARNING);
+            Log.p("Entity: Can't find entity " + e + " in affected list of " +
+                    this, Log.WARNING);
         } else {
             if (affected.get(e) < 1)
-                 Log.p("Entity: Reference is already 0 for " + e, Log.WARNING);
+                 Log.p("Entity: Reference is already 0 for " + e +
+                         " in affected list of " + this, Log.WARNING);
             else {
                 // decrement reference count
                 affected.put(e, affected.get(e) - 1);
+                Log.p("Entity: Decremented reference by 1 for " + 
+                        e + " in affected list of " + this , Log.DEBUG);
+                
             }
         } 
     }

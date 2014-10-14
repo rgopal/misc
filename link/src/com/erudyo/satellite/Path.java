@@ -63,11 +63,19 @@ public class Path extends Entity {
      * @param s the satellite to set
      */
     public void setSatellite(Satellite s) {
-        this.satellite = s;
+        // check if the satellite is new
+        if (s != this.satellite) {
+            this.satellite.removeAffected(this);
+            s.addAffected(this);
+            this.satellite = s;
+        } else {
+            Log.p("Path: path " + this
+                    + " already in affected list of satellite " + s,
+                    Log.WARNING);
+        }
         setAll();
     }
 
-    
     /**
      * @return the terminal
      */
@@ -79,6 +87,16 @@ public class Path extends Entity {
      * @param t the terminal to set
      */
     public void setTerminal(Terminal t) {
+        if (this.terminal != t) {
+            this.terminal.removeAffected(this);
+            t.addAffected(this);
+            this.terminal = t;
+        } else {
+             Log.p("Path: path " + this
+                    + " already in affected list of terminal " + t,
+                    Log.WARNING);
+
+        }
         this.terminal = t;
         setAll();
     }
@@ -228,18 +246,19 @@ public class Path extends Entity {
         setAll();
     }
 
-     public void update(Entity e) {
-        
-                // EIRP depends on antenna and amplifier, but both need to exist 
-        
-        if (this.getSatellite() != null && this.getTerminal()!= null) {
+    public void update(Entity e) {
+
+        // EIRP depends on antenna and amplifier, but both need to exist 
+        if (this.getSatellite() != null && this.getTerminal() != null) {
             setAll();       // calculate everything
-        } else
-            Log.p("Path: satellite or terminal is null " + 
-                    satellite + terminal, Log.ERROR);
-        
+        } else {
+            Log.p("Path: satellite or terminal is null "
+                    + satellite + terminal, Log.ERROR);
+        }
+
         // avoid using set since that should be used to send updates down
     }
+
     public Path(String n) {
         super(n);
     }
@@ -271,7 +290,7 @@ public class Path extends Entity {
                 + Math.sin(satellite.getLatitude())
                 * Math.sin(terminal.getLatitude())
         );
-         if (Phi < 0 || Phi > Com.PI/2.0) {
+        if (Phi < 0 || Phi > Com.PI / 2.0) {
             Log.p("Path: Phi value out of range " + Com.toDMS(Phi),
                     Log.WARNING);
         }
@@ -342,7 +361,7 @@ public class Path extends Entity {
     public relativePosition findRelativePosition() {
         // terminal in northern hemisphere
         relativePosition rel;
-        rel = relativePosition.NE;     
+        rel = relativePosition.NE;
         // northern hemisphere for terminal
         if (terminal.getLatitude() >= 0.0) {
             // satellite is East of Terminal
@@ -363,7 +382,5 @@ public class Path extends Entity {
 
         return rel;
     }
-    
-    
 
 }

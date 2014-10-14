@@ -73,7 +73,7 @@ public class SatelliteView extends View {
 
         String name = (String) combo.getSelectedItem();
 
-         //label does not exist yet, so this does not work
+        //label does not exist yet, so this does not work
         //       Satellite sat = Satellite.satelliteHash.get(name);
         // selection.getSatelliteView().label.setText(sat.getName());
         // selection.setSatelliteView (spin);
@@ -88,6 +88,10 @@ public class SatelliteView extends View {
                 // update other values dependent on this satellite
                 updateValues(selection);
 
+                // update the UL path
+                selection.getuLpath().setSatellite(selection.getSatellite());
+                 // update the DL path TODO
+                //selection.getdLpath().setSatellite(selection.getSatellite());
                 // change the subwidget, label, and sublabel etc.
                 selection.getSatelliteView().label.setText(
                         Satellite.satelliteHash.get(
@@ -138,7 +142,7 @@ public class SatelliteView extends View {
 
         sat.setScrollable(
                 false);
-            // override pointerPressed to locate new positions 
+        // override pointerPressed to locate new positions 
 
         return sat;
     }

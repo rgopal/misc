@@ -72,7 +72,7 @@ $6 ~ /GEO/ || NR < 2 {
        printf "|40|25"
 
         if (match($25,"Hybrid Ku-Ka") != 0)
-            printf "|Ku||Ka||"
+            printf "|||Ku||Ka||"
         else
         {
 
