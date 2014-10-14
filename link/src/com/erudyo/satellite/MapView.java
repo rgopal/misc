@@ -42,11 +42,65 @@ public class MapView extends View {
         this.unit = "xx";
     }
 
-    public Form createView(Selection selection) {
+    public void showSatellites(Selection selection, MapComponent mc) {
+
+    }
+
+    public Form createView(final Selection selection) {
 
         // this would not work if longPointerPress was overriden in MapComponent
-        final MapComponent mc = new MapComponent(new 
-        GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
+        final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
+
+        // show all satellites on the map
+        // showSatellites(selection, mc);
+        for (String sat : selection.getBandSatellite().
+                get(selection.getBand())) {
+            try {
+                Log.p("MapView: displaying satellite " + sat, Log.DEBUG);
+                Image blue_pin = Image.createImage("/blue_pin.png");
+                Image red_pin = Image.createImage("/red_pin.png");
+
+                Satellite satellite = Satellite.satelliteHash.get(sat);
+                if (satellite == null) {
+                    Log.p("MapView: satellite is null " + sat, Log.DEBUG);
+                }
+
+                PointsLayer pl = new PointsLayer();
+                pl.setPointIcon(red_pin);
+              
+
+                // Coord takes it in degrees
+                Coord c = new Coord (Math.toDegrees(satellite.getLatitude()),
+                                Math.toDegrees(satellite.getLongitude()));
+
+                final PointLayer p = new PointLayer(c, satellite.getName(), red_pin);
+            
+
+                p.setDisplayName(true);
+                pl.addPoint(p);
+              
+
+                pl.addActionListener(new ActionListener() {
+                    // need to get PointLayer and not PointsLayer
+
+                    public void actionPerformed(ActionEvent evt) {
+                        PointLayer pnew = (PointLayer) evt.getSource();
+
+                        // get the point in this point layer to print 
+                        
+                        
+                        Log.p("MapView: satellite  long | lat " + p.getName() + " " + 
+                                + pnew.getLongitude() + "|" + 
+                                pnew.getLatitude(), Log.DEBUG);
+
+                    }
+                });
+                mc.addLayer(pl);
+                // Google coordinatges are in degrees (no minutes, seconds)
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
 
         map = new Form(getName()) {
             @Override
@@ -63,7 +117,7 @@ public class MapView extends View {
                     Coord c = mc.getCoordFromPosition(x, y);
                     name = "T" + java.lang.String.valueOf((int) c.getLongitude())
                             + String.valueOf((int) c.getLatitude());
-                    final PointLayer p = new PointLayer(com.codename1.maps.Projection.toWGS84(c), name, blue_pin);
+                    final PointLayer p = new PointLayer(c, name, blue_pin);
 
                     // TODO - create a new terminal
                     Log.p("Map: new terminal " + name + " created", Log.DEBUG);
@@ -71,15 +125,12 @@ public class MapView extends View {
                     p.setDisplayName(true);
                     pl.addPoint(p);
 
-                   
-                    
-               
                     pl.addActionListener(new ActionListener() {
                         // need to get PointLayer and not PointsLayer
 
                         public void actionPerformed(ActionEvent evt) {
                             PointLayer pnew = (PointLayer) evt.getSource();
-                          
+
                             // get the point in this point layer to print 
                             Log.p("Map: current coordinates "
                                     + pnew.getLongitude() + "|" + pnew.getLatitude(), Log.DEBUG);
@@ -94,14 +145,14 @@ public class MapView extends View {
             }
 
         };
+
         map.setLayout(
                 new BorderLayout());
         map.setScrollable(
                 false);
         // override pointerPressed to locate new positions 
 
-       // putMeOnMap(mc);
-
+        // putMeOnMap(mc);
         mc.zoomToLayers();
 
         map.addComponent(BorderLayout.CENTER, mc);

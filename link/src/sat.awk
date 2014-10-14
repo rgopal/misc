@@ -84,10 +84,8 @@ $6 ~ /GEO/ || NR < 2 {
     
 
     printf "\n"
-    lines++;
 }
 
 END {
 # end, now output the total
-    print lines " lines read";
 }
