@@ -45,7 +45,8 @@ public class MapView extends View {
     public Form createView(Selection selection) {
 
         // this would not work if longPointerPress was overriden in MapComponent
-        final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
+        final MapComponent mc = new MapComponent(new 
+        GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"));
 
         map = new Form(getName()) {
             @Override
@@ -62,7 +63,7 @@ public class MapView extends View {
                     Coord c = mc.getCoordFromPosition(x, y);
                     name = "T" + java.lang.String.valueOf((int) c.getLongitude())
                             + String.valueOf((int) c.getLatitude());
-                    final PointLayer p = new PointLayer(c, name, blue_pin);
+                    final PointLayer p = new PointLayer(com.codename1.maps.Projection.toWGS84(c), name, blue_pin);
 
                     // TODO - create a new terminal
                     Log.p("Map: new terminal " + name + " created", Log.DEBUG);
@@ -70,12 +71,16 @@ public class MapView extends View {
                     p.setDisplayName(true);
                     pl.addPoint(p);
 
+                   
+                    
+               
                     pl.addActionListener(new ActionListener() {
+                        // need to get PointLayer and not PointsLayer
 
                         public void actionPerformed(ActionEvent evt) {
                             PointLayer pnew = (PointLayer) evt.getSource();
-                            // System.out.println("pressed " + p);
-
+                          
+                            // get the point in this point layer to print 
                             Log.p("Map: current coordinates "
                                     + pnew.getLongitude() + "|" + pnew.getLatitude(), Log.DEBUG);
 
@@ -95,7 +100,7 @@ public class MapView extends View {
                 false);
         // override pointerPressed to locate new positions 
 
-        putMeOnMap(mc);
+       // putMeOnMap(mc);
 
         mc.zoomToLayers();
 
