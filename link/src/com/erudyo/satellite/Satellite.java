@@ -150,20 +150,31 @@ public class Satellite extends Entity {
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
         // go through all satellites
-        int i=0;
+        int i = 0;
+        int comms = 0;
         try {
-            for ( i = 1; i < satellites.length; i++) {
+            
+            for (i = 1; i < satellites.length; i++) {
 
                 Log.p("Satellite: processing satellite # "
                         + i + " " + satellites[i][0],
                         Log.INFO);
+                if (!satellites[i][5].equals("Communications")) {
+                    Log.p("Satellite: " + satellites[i][0] + "  NOT Communications",
+                            Log.DEBUG);
+                    continue;
+                }
 
+                comms++;
                 satelliteFields(satellites[i], bandSatellite);
             }
         } catch (Exception e) {
-            Log.p("Satellite: error at txt file line " + i, Log.WARNING);
+            Log.p("Satellite: error at txt file line " +  
+                    String.valueOf(i), Log.WARNING);
         }
 
+        Log.p ("Satellite: processed " + comms + " Communications satellites" +
+                "out of total " + String.valueOf(i-1), Log.INFO);
         return bandSatellite;
     }
 

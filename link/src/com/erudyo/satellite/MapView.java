@@ -11,6 +11,7 @@ import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
 import com.codename1.maps.Coord;
 import com.codename1.maps.MapComponent;
+import com.codename1.maps.Mercator;
 import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
@@ -42,10 +43,6 @@ public class MapView extends View {
         this.unit = "xx";
     }
 
-    public void showSatellites(Selection selection, MapComponent mc) {
-
-    }
-
     public Form createView(final Selection selection) {
 
         try {
@@ -60,7 +57,8 @@ public class MapView extends View {
             for (String sat : selection.getBandSatellite().
                     get(selection.getBand())) {
                 try {
-                    Log.p("MapView: displaying satellite " + sat, Log.DEBUG);
+                    Log.p("MapView: displaying satellite " + sat + 
+                            " for " + selection.getBand() + " band.", Log.DEBUG);
                     Image blue_pin = Image.createImage("/blue_pin.png");
                     Image red_pin = Image.createImage("/red_pin.png");
 
@@ -72,13 +70,13 @@ public class MapView extends View {
                     PointsLayer pl = new PointsLayer();
                     pl.setPointIcon(red_pin);
 
-                    // Coord takes it in degrees
+                    // Coord takes it in degrees.   Don't use true for projected
                     Coord c = new Coord(Math.toDegrees(satellite.getLatitude()),
-                            Math.toDegrees(satellite.getLongitude()), true);
+                            Math.toDegrees(satellite.getLongitude()));
 
                     final PointLayer p = new PointLayer(c, satellite.getName(), red_pin);
 
-                    p.setDisplayName(true);
+                    p.setDisplayName(false);   // it clutters
                     pl.addPoint(p);
 
                     pl.addActionListener(new ActionListener() {
@@ -87,11 +85,66 @@ public class MapView extends View {
                         public void actionPerformed(ActionEvent evt) {
                             PointLayer pnew = (PointLayer) evt.getSource();
 
+                            // Mercator is the cylindrical projection.  Don't
+                            // know why this has to be called
+                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
+                                    pnew.getLongitude());
                         // get the point in this point layer to print 
                             Log.p("MapView: satellite " + p.getName()
                                     + " long | lat " + " "
-                                    + pnew.getLongitude() + "|"
-                                    + pnew.getLatitude(), Log.DEBUG);
+                                    + m.getLongitude() + "|"
+                                    + m.getLatitude(), Log.DEBUG);
+
+                        }
+                    });
+                    mc.addLayer(pl);
+                    // Google coordinatges are in degrees (no minutes, seconds)
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            
+            // now all terminals
+            for (String term : selection.getBandTerminal().
+                    get(selection.getBand())) {
+                try {
+                    Log.p("MapView: displaying terminal " + term + 
+                            " for " + selection.getBand() + " band.", Log.DEBUG);
+                    Image blue_pin = Image.createImage("/blue_pin.png");
+                    Image red_pin = Image.createImage("/red_pin.png");
+
+                    Terminal terminal = Terminal.terminalHash.get(term);
+                    if (terminal == null) {
+                        Log.p("MapView: terminal is null " + term, Log.DEBUG);
+                    }
+
+                    PointsLayer pl = new PointsLayer();
+                    pl.setPointIcon(red_pin);
+
+                    // Coord takes it in degrees.   Don't use true for projected
+                    Coord c = new Coord(Math.toDegrees(terminal.getLatitude()),
+                            Math.toDegrees(terminal.getLongitude()));
+
+                    final PointLayer p = new PointLayer(c, terminal.getName(), blue_pin);
+
+                    p.setDisplayName(false);   // it clutters
+                    pl.addPoint(p);
+
+                    pl.addActionListener(new ActionListener() {
+                        // need to get PointLayer and not PointsLayer
+
+                        public void actionPerformed(ActionEvent evt) {
+                            PointLayer pnew = (PointLayer) evt.getSource();
+
+                            // Mercator is the cylindrical projection.  Don't
+                            // know why this has to be called
+                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
+                                    pnew.getLongitude());
+                        // get the point in this point layer to print 
+                            Log.p("MapView: terminal " + p.getName()
+                                    + " long | lat " + " "
+                                    + m.getLongitude() + "|"
+                                    + m.getLatitude(), Log.DEBUG);
 
                         }
                     });
@@ -133,9 +186,13 @@ public class MapView extends View {
                         public void actionPerformed(ActionEvent evt) {
                             PointLayer pnew = (PointLayer) evt.getSource();
 
+                            // they kept it in internal format, so call this to
+                            // make it back to WGS84 (add point had called fromWGS
+                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
+                                    pnew.getLongitude());
                             // get the point in this point layer to print 
                             Log.p("Map: current long | lat "
-                                    + pnew.getLongitude() + "|" + pnew.getLatitude(), Log.DEBUG);
+                                    + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
 
                         }
                     });

@@ -46,6 +46,8 @@ $6 ~ /GEO/ || NR < 2 {
     # exclude extra fields
     for (i=1; i<= FIELDS ; i++) 
     { 
+       # remove | from GSAT and INSAT records (India)
+       sub("|","",$i)
        printf "|%s", $i 
 
 

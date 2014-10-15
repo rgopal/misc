@@ -389,6 +389,7 @@ public class Link {
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new String[0])));
+      
 
         if (model == null) {
             Log.p("Link: Can't create DefaultListModel for satellite band "
