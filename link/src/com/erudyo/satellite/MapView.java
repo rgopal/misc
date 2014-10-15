@@ -6,15 +6,16 @@
 package com.erudyo.satellite;
 
 import com.codename1.io.Log;
-
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
 import com.codename1.maps.Coord;
 import com.codename1.maps.MapComponent;
 import com.codename1.maps.Mercator;
+import com.codename1.maps.layers.LinesLayer;
 import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
+import com.codename1.ui.Button;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
@@ -22,6 +23,8 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -52,13 +55,13 @@ public class MapView extends View {
             // this would not work if longPointerPress was overriden in MapComponent
             final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"), loc, 5);
 
-        // show all satellites on the map
+            // show all satellites on the map
             // showSatellites(selection, mc);
             for (String sat : selection.getBandSatellite().
                     get(selection.getBand())) {
                 try {
-                    Log.p("MapView: displaying satellite " + sat + 
-                            " for " + selection.getBand() + " band.", Log.DEBUG);
+                    Log.p("MapView: displaying satellite " + sat
+                            + " for " + selection.getBand() + " band.", Log.DEBUG);
                     Image blue_pin = Image.createImage("/blue_pin.png");
                     Image red_pin = Image.createImage("/red_pin.png");
 
@@ -87,9 +90,11 @@ public class MapView extends View {
 
                             // Mercator is the cylindrical projection.  Don't
                             // know why this has to be called
-                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
+                            Coord m = Mercator.inverseMercator(pnew.getLatitude(),
                                     pnew.getLongitude());
-                        // get the point in this point layer to print 
+                            // get the point in this point layer to print 
+                                Dialog.show("GEO_Satellite", pnew.getName() + " at Long|Lat " +
+                                      m.getLatitude() + "|" + m.getLongitude(), "OK", null);
                             Log.p("MapView: satellite " + p.getName()
                                     + " long | lat " + " "
                                     + m.getLongitude() + "|"
@@ -103,13 +108,13 @@ public class MapView extends View {
                     ex.printStackTrace();
                 }
             }
-            
+
             // now all terminals
             for (String term : selection.getBandTerminal().
                     get(selection.getBand())) {
                 try {
-                    Log.p("MapView: displaying terminal " + term + 
-                            " for " + selection.getBand() + " band.", Log.DEBUG);
+                    Log.p("MapView: displaying terminal " + term
+                            + " for " + selection.getBand() + " band.", Log.DEBUG);
                     Image blue_pin = Image.createImage("/blue_pin.png");
                     Image red_pin = Image.createImage("/red_pin.png");
 
@@ -138,9 +143,11 @@ public class MapView extends View {
 
                             // Mercator is the cylindrical projection.  Don't
                             // know why this has to be called
-                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
+                            Coord m = Mercator.inverseMercator(pnew.getLatitude(),
                                     pnew.getLongitude());
-                        // get the point in this point layer to print 
+                            // get the point in this point layer to print 
+                                Dialog.show("Terminal", pnew.getName() + " at Long|Lat " +
+                                      m.getLatitude() + "|" + m.getLongitude(), "OK", null);
                             Log.p("MapView: terminal " + p.getName()
                                     + " long | lat " + " "
                                     + m.getLongitude() + "|"
@@ -154,70 +161,93 @@ public class MapView extends View {
                     ex.printStackTrace();
                 }
             }
-       
 
-        map = new Form(getName()) {
-            @Override
-            public void longPointerPress(int x, int y) {
-                try {
-                    Image blue_pin = Image.createImage("/blue_pin.png");
-                    Image red_pin = Image.createImage("/red_pin.png");
+            // now draw lines between terminals and satellite
+            Coord tx, sat, rx;
+            LinesLayer line = new LinesLayer();
+            tx = new Coord(Math.toDegrees(selection.gettXterminal().getLatitude()),
+                    Math.toDegrees(selection.gettXterminal().getLongitude()));
 
-                    // this is not correct in the model
-                    Log.p("Map: your location in x|y " + x + "|" + y, Log.DEBUG);
-                    PointsLayer pl = new PointsLayer();
-                    pl.setPointIcon(blue_pin);
-                    String name;
-                    Coord c = mc.getCoordFromPosition(x, y);
-                    c.setProjected(true);  // for correct coordinates
-                    name = "T" + java.lang.String.valueOf((int) c.getLongitude())
-                            + String.valueOf((int) c.getLatitude());
-                    final PointLayer p = new PointLayer(c, name, blue_pin);
+            sat = new Coord(Math.toDegrees(selection.getSatellite().getLatitude()),
+                    Math.toDegrees(selection.getSatellite().getLongitude()));
 
-                    // TODO - create a new terminal
-                    Log.p("Map: new terminal " + name + " created", Log.DEBUG);
+            line.addLineSegment(new Coord[]{tx, sat});
+            mc.addLayer(line);
 
-                    p.setDisplayName(true);
-                    pl.addPoint(p);
+            rx = new Coord(Math.toDegrees(selection.getrXterminal().getLatitude()),
+                    Math.toDegrees(selection.getrXterminal().getLongitude()));
 
-                    pl.addActionListener(new ActionListener() {
-                        // need to get PointLayer and not PointsLayer
+            sat = new Coord(Math.toDegrees(selection.getSatellite().getLatitude()),
+                    Math.toDegrees(selection.getSatellite().getLongitude()));
 
-                        public void actionPerformed(ActionEvent evt) {
-                            PointLayer pnew = (PointLayer) evt.getSource();
+            Log.p("MapView: drawing lines among " + rx + " " + sat
+                    + " " + tx, Log.DEBUG);
 
-                            // they kept it in internal format, so call this to
-                            // make it back to WGS84 (add point had called fromWGS
-                            Coord m = Mercator.inverseMercator(pnew.getLatitude(), 
-                                    pnew.getLongitude());
-                            // get the point in this point layer to print 
-                            Log.p("Map: current long | lat "
-                                    + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
+            line.addLineSegment(new Coord[]{rx, sat});
+            mc.addLayer(line);
 
-                        }
-                    });
-                    mc.addLayer(pl);
-                    // Google coordinatges are in degrees (no minutes, seconds)
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            map = new Form(getName()) {
+                @Override
+                public void longPointerPress(int x, int y) {
+                    try {
+                        Image blue_pin = Image.createImage("/blue_pin.png");
+                        Image red_pin = Image.createImage("/red_pin.png");
+
+                        // this is not correct in the model
+                        Log.p("Map: your location in x|y " + x + "|" + y, Log.DEBUG);
+                        PointsLayer pl = new PointsLayer();
+                        pl.setPointIcon(blue_pin);
+                        String name;
+                        Coord c = mc.getCoordFromPosition(x, y);
+                        c.setProjected(true);  // for correct coordinates
+                        name = "T" + java.lang.String.valueOf((int) c.getLongitude())
+                                + String.valueOf((int) c.getLatitude());
+                        final PointLayer p = new PointLayer(c, name, blue_pin);
+
+                        // TODO - create a new terminal
+                        Log.p("Map: new terminal " + name + " created", Log.DEBUG);
+
+                        p.setDisplayName(true);
+                        pl.addPoint(p);
+
+                        pl.addActionListener(new ActionListener() {
+                            // need to get PointLayer and not PointsLayer
+
+                            public void actionPerformed(ActionEvent evt) {
+                                PointLayer pnew = (PointLayer) evt.getSource();
+
+                                // they kept it in internal format, so call this to
+                                // make it back to WGS84 (add point had called fromWGS
+                                Coord m = Mercator.inverseMercator(pnew.getLatitude(),
+                                        pnew.getLongitude());
+                          
+                                // get the point in this point layer to print 
+                                Log.p("Map: current long | lat "
+                                        + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
+
+                            }
+                        });
+                        mc.addLayer(pl);
+                        // Google coordinatges are in degrees (no minutes, seconds)
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-            }
 
-        };
-        
+            };
 
-        map.setLayout(
-                new BorderLayout());
-        map.setScrollable(
-                false);
+            map.setLayout(
+                    new BorderLayout());
+            map.setScrollable(
+                    false);
         // override pointerPressed to locate new positions 
 
-        // putMeOnMap(mc);
-        mc.zoomToLayers();
+            // putMeOnMap(mc);
+            // mc.zoomToLayers();  // too sparse
+            mc.setZoomLevel(3); // see if does the job
+            map.addComponent(BorderLayout.CENTER, mc);
 
-        map.addComponent(BorderLayout.CENTER, mc);
-
-         } catch (Exception d) {
+        } catch (Exception d) {
             Log.p("MapView: CreateView can't get current location", Log.WARNING);
         }
         return map;
