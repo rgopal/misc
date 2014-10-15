@@ -94,7 +94,8 @@ public class MapView extends View {
                                     pnew.getLongitude());
                             // get the point in this point layer to print 
                                 Dialog.show("GEO_Satellite", pnew.getName() + " at Long|Lat " +
-                                      m.getLatitude() + "|" + m.getLongitude(), "OK", null);
+                                      Com.toDMS(Math.toRadians(m.getLongitude())) + "|" +  
+                                        Com.toDMS(Math.toRadians(m.getLatitude())), "OK", null);
                             Log.p("MapView: satellite " + p.getName()
                                     + " long | lat " + " "
                                     + m.getLongitude() + "|"
@@ -147,7 +148,8 @@ public class MapView extends View {
                                     pnew.getLongitude());
                             // get the point in this point layer to print 
                                 Dialog.show("Terminal", pnew.getName() + " at Long|Lat " +
-                                      m.getLatitude() + "|" + m.getLongitude(), "OK", null);
+                                      Com.toDMS(Math.toRadians(m.getLongitude())) + "|" +  
+                                        Com.toDMS(Math.toRadians(m.getLatitude())), "OK", null);
                             Log.p("MapView: terminal " + p.getName()
                                     + " long | lat " + " "
                                     + m.getLongitude() + "|"
@@ -199,9 +201,10 @@ public class MapView extends View {
                         pl.setPointIcon(blue_pin);
                         String name;
                         Coord c = mc.getCoordFromPosition(x, y);
-                        c.setProjected(true);  // for correct coordinates
+                        // dc.setProjected(true);  // WRONG
                         name = "T" + java.lang.String.valueOf((int) c.getLongitude())
                                 + String.valueOf((int) c.getLatitude());
+                        
                         final PointLayer p = new PointLayer(c, name, blue_pin);
 
                         // TODO - create a new terminal
@@ -209,6 +212,10 @@ public class MapView extends View {
 
                         p.setDisplayName(true);
                         pl.addPoint(p);
+                        Terminal term = new Terminal(name);
+                        term.setLatitude(Math.toRadians(c.getLatitude()));
+                        term.setLongitude(Math.toRadians(c.getLongitude()));
+                        term.setBand(selection.getBand());
 
                         pl.addActionListener(new ActionListener() {
                             // need to get PointLayer and not PointsLayer
@@ -222,7 +229,7 @@ public class MapView extends View {
                                         pnew.getLongitude());
                           
                                 // get the point in this point layer to print 
-                                Log.p("Map: current long | lat "
+                                Log.p("MapView: new terminal current long | lat "
                                         + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
 
                             }

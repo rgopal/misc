@@ -273,11 +273,45 @@ public class Selection {
         return bandSatelliteHash;
     }
 
+    // fix it later TODO
+    public void addBandTerminal(Terminal terminal) {
+        Hashtable<RfBand.Band, ArrayList<Terminal>> t;
+        t = null;
+        // go over all bands
+        for (RfBand band : RfBand.indexRfBand) {
+            int index = 0;
+//          // go through all terminals of this band
+            if (t.get(band.getBand()) != null) {
+                for (Terminal term : t.get(band.getBand())) {
+
+                    // check if the array exists
+                    if (bandTerminal.get(band.getBand()) == null) {
+                        bandTerminal.put(band.getBand(), new ArrayList());
+                    }
+
+                    // add the name of the terminal in the array list
+                    bandTerminal.get(band.getBand()).add(term.getName());
+
+                    // check if Hashtable entry for the band exists
+                    if (bandTerminalHash.get(band.getBand()) == null) {
+                        bandTerminalHash.put(band.getBand(),
+                                new Hashtable<String, Integer>());
+                    }
+
+                    // now add new satellite position
+                    bandTerminalHash.get(band.getBand()).
+                            put(term.getName(), index++);
+
+                }
+            }
+        }
+    }
+    
     public void setBandTerminal(Hashtable<RfBand.Band, ArrayList<Terminal>> t) {
         // go over all bands
         for (RfBand band : RfBand.indexRfBand) {
             int index = 0;
-//          // go through all satellites of this band
+//          // go through all terminals of this band
             if (t.get(band.getBand()) != null) {
                 for (Terminal term : t.get(band.getBand())) {
 
