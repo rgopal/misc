@@ -208,19 +208,26 @@ public class Path extends Entity {
         NE, SE, NW, SW, N, S, E, W
     };
 
-    public void setAll() {
+    public static Boolean visible (Satellite satellite, Terminal terminal) {
 
         // check if satellite is visible from terminal
         double degree = Math.abs(satellite.getLongitude()
                 - terminal.getLongitude()) * 180.0 / Com.PI;
         if (degree > 80.0) {
             Log.p("Path: terminal and satellite are far apart " + degree, Log.WARNING);
-        }
+            return false;
+        } else
+            return true;
+    }
+    public void setAll() {
+
 
         this.distance = calcDistance(satellite.getAltitude());
         this.azimuth = calcAzimuth();
         this.elevation = calcElevation();
 
+        visible (satellite, terminal);
+        
         // get center frequency of band used by terminal
         this.pathLoss = calcPathLoss(this.distance,
                 RfBand.centerFrequency(terminal.gettXantenna().getBand()));

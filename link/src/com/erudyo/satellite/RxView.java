@@ -47,14 +47,15 @@ public class RxView extends View {
         final ComboBox combo = new ComboBox();
 
         // bandTerminal has all terminals, so get the band specific list
-        if (selection.getBandTerminal().get(band) == null) {
-            System.out.println("Can't find terminals for band " + band);
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
+            System.out.println("Can't find terminals for satellite  " + 
+                    selection.getSatellite());
             return l;
         }
 
         // create model for all terminals of selected band
         ListModel model = new DefaultListModel(
-                selection.getBandTerminal().get(band));
+                selection.getVisibleTerminal().get(Selection.VISIBLE.YES));
 
         combo.setModel(model);
 
@@ -92,8 +93,6 @@ public class RxView extends View {
     public Component getLabel(final Selection selection) {
         Label l = new Label(getValue());
 
-        // get selected band
-        RfBand.Band band = selection.getBand();
 
         // does not work final Label label = new Label(selection.getrXterminal().getName()); 
         final Label label = new Label((String) selection.getRxView().spin.getSelectedItem());

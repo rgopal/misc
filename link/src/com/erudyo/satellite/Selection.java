@@ -15,6 +15,7 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.Log;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
@@ -39,6 +40,11 @@ public class Selection {
     private CommsView commsView;
     private DlPathView dLpathView;
 
+    public enum VISIBLE {
+
+        YES, NO
+    };
+
     private RfBand.Band band = RfBand.Band.KA;
 
     // all the UI oriented lists are to support ComboBox selection
@@ -52,12 +58,12 @@ public class Selection {
     // first hash has band as key and the second satellite name
     private Hashtable<RfBand.Band, Hashtable<String, Integer>> bandSatelliteHash
             = new Hashtable<RfBand.Band, Hashtable<String, Integer>>();
-    private Hashtable<RfBand.Band, ArrayList<String>> bandTerminal
-            = new Hashtable<RfBand.Band, ArrayList<String>>();
+    private Hashtable<VISIBLE, ArrayList<String>> visibleTerminal
+            = new Hashtable<VISIBLE, ArrayList<String>>();
 
     // first hash has band as key and the second terminal name
-    private Hashtable<RfBand.Band, Hashtable<String, Integer>> bandTerminalHash
-            = new Hashtable<RfBand.Band, Hashtable<String, Integer>>();
+    private Hashtable<VISIBLE, Hashtable<String, Integer>> visibleTerminalHash
+            = new Hashtable<VISIBLE, Hashtable<String, Integer>>();
 
     // lookup bands (could be customiazed for each Selection instance)
     // provides the position if name is known
@@ -67,8 +73,6 @@ public class Selection {
     // lookup by index with instance name vector 
     private ArrayList<String> rfBands
             = new ArrayList<String>();
-
-
 
     // Create a custom UI oriented Combo model from RfBand Arraylist
     // Can add filtering in future.   Light since only name is
@@ -87,12 +91,9 @@ public class Selection {
 
     }
 
-   
-
     public Hashtable<String, Integer> getRfBandHash() {
         return this.rFbandHash;
     }
-
 
     // this is created by setHashRfBand()
     /* public void setIndexRfBand(ArrayList<RfBand> h) {
@@ -100,12 +101,9 @@ public class Selection {
          
      }
      */
-
     public ArrayList<String> getRfBands() {
         return this.rfBands;
     }
-
- 
 
     public Selection() {
         // use constructor with Selection instance as input
@@ -257,86 +255,71 @@ public class Selection {
         }
     }
 
-    public Hashtable<RfBand.Band, ArrayList<String>> getBandTerminal() {
-        return this.bandTerminal;
+    public Hashtable<VISIBLE, ArrayList<String>> getVisibleTerminal() {
+        return this.visibleTerminal;
     }
 
     public Hashtable<RfBand.Band, ArrayList<String>> getBandSatellite() {
         return this.bandSatellite;
     }
 
-    public Hashtable<RfBand.Band, Hashtable<String, Integer>> getBandTerminalHash() {
-        return bandTerminalHash;
+    public Hashtable<VISIBLE, Hashtable<String, Integer>> getVisibleTerminalHash() {
+        return visibleTerminalHash;
     }
 
     public Hashtable<RfBand.Band, Hashtable<String, Integer>> getBandSatelliteHash() {
         return bandSatelliteHash;
     }
 
-    // fix it later TODO
-    public void addBandTerminal(Terminal terminal) {
+    // add a new terminal created by GUI
+    public void addVisibleTerminal() {
+        
+    }
+    // set the visible terminal String list based on the Terminal class
+    // list.   Call it again when a terminal is added so no new addVisible
+    // at this time
+    
+       
+    public void initVisibleTerminal() {
         Hashtable<RfBand.Band, ArrayList<Terminal>> t;
         t = null;
-        // go over all bands
-        for (RfBand band : RfBand.indexRfBand) {
+
+        for (VISIBLE vis : new VISIBLE[]{VISIBLE.YES, VISIBLE.NO}) {
+
             int index = 0;
-//          // go through all terminals of this band
-            if (t.get(band.getBand()) != null) {
-                for (Terminal term : t.get(band.getBand())) {
+            for (Terminal term : Terminal.indexTerminal) {
+
+                if (Path.visible(this.satellite, term)) {
+                    Log.p("Selection: terminal " + term
+                            + "is visible to satellite "
+                            + this.satellite, Log.DEBUG);
 
                     // check if the array exists
-                    if (bandTerminal.get(band.getBand()) == null) {
-                        bandTerminal.put(band.getBand(), new ArrayList());
+                    if (visibleTerminal.get(vis) == null) {
+                        visibleTerminal.put(vis, new ArrayList());
                     }
 
                     // add the name of the terminal in the array list
-                    bandTerminal.get(band.getBand()).add(term.getName());
+                    visibleTerminal.get(vis).add(term.getName());
 
                     // check if Hashtable entry for the band exists
-                    if (bandTerminalHash.get(band.getBand()) == null) {
-                        bandTerminalHash.put(band.getBand(),
+                    if (visibleTerminalHash.get(vis) == null) {
+                        visibleTerminalHash.put(vis,
                                 new Hashtable<String, Integer>());
                     }
 
                     // now add new satellite position
-                    bandTerminalHash.get(band.getBand()).
+                    visibleTerminalHash.get(vis).
                             put(term.getName(), index++);
-
                 }
+
             }
+
         }
+
     }
-    
-    public void setBandTerminal(Hashtable<RfBand.Band, ArrayList<Terminal>> t) {
-        // go over all bands
-        for (RfBand band : RfBand.indexRfBand) {
-            int index = 0;
-//          // go through all terminals of this band
-            if (t.get(band.getBand()) != null) {
-                for (Terminal term : t.get(band.getBand())) {
 
-                    // check if the array exists
-                    if (bandTerminal.get(band.getBand()) == null) {
-                        bandTerminal.put(band.getBand(), new ArrayList());
-                    }
-
-                    // add the name of the terminal in the array list
-                    bandTerminal.get(band.getBand()).add(term.getName());
-
-                    // check if Hashtable entry for the band exists
-                    if (bandTerminalHash.get(band.getBand()) == null) {
-                        bandTerminalHash.put(band.getBand(),
-                                new Hashtable<String, Integer>());
-                    }
-
-                    // now add new satellite position
-                    bandTerminalHash.get(band.getBand()).
-                            put(term.getName(), index++);
-
-                }
-            }
-        }
-    }
+ 
     /*
      * @param terminals the terminals to set
      */
@@ -380,12 +363,13 @@ public class Selection {
         return uLpathView;
     }
 
-      /**
+    /**
      * @return the uLpathView
      */
     public DlPathView getdLpathView() {
         return dLpathView;
     }
+
     /**
      * @param uLpathView the uLpathView to set
      */

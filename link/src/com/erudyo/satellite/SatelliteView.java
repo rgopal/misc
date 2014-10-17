@@ -10,6 +10,7 @@ package com.erudyo.satellite;
  *
  * @author rgopal
  */
+import com.codename1.io.Log;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
@@ -53,7 +54,7 @@ public class SatelliteView extends View {
 
         // indexSatellite has all satellites, so get the band specific list
         if (selection.getBandSatellite().get(band) == null) {
-            System.out.println("Can't find satellites for band " + band);
+            Log.p("Can't find satellites for band " + band, Log.WARNING);
             return l;
         }
 

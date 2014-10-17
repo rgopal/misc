@@ -47,6 +47,63 @@ public class MapView extends View {
         this.unit = "xx";
     }
 
+    private enum TERMINAL_CHOICE {
+
+        TX, RX
+    };
+
+    // ping pong for selecting a terminal by clicking
+    private TERMINAL_CHOICE currentChoice = TERMINAL_CHOICE.TX;
+
+    public void showTerminal(final Selection selection,
+            final MapComponent mc, String termName, final LinesLayer tXline,
+            final LinesLayer rXline) {
+        try {
+            Log.p("MapView: displaying terminal " + termName
+                    + " for " + selection.getBand() + " band.", Log.DEBUG);
+            Image blue_pin = Image.createImage("/blue_pin.png");
+            Image red_pin = Image.createImage("/red_pin.png");
+
+            Terminal terminal = Terminal.terminalHash.get(termName);
+            if (terminal == null) {
+                Log.p("MapView: terminal is null " + termName, Log.DEBUG);
+            }
+
+            PointsLayer pl = new PointsLayer();
+            pl.setPointIcon(blue_pin);
+
+            // Coord takes it in degrees.   Don't use true for projected
+            Coord c = new Coord(Math.toDegrees(terminal.getLatitude()),
+                    Math.toDegrees(terminal.getLongitude()));
+
+            final PointLayer p = new PointLayer(c, terminal.getName(), blue_pin);
+
+            p.setDisplayName(false);   // it clutters
+            pl.addPoint(p);
+
+            pl.addActionListener(new ActionListener() {
+                // need to get PointLayer and not PointsLayer
+
+                public void actionPerformed(ActionEvent evt) {
+                    PointLayer pnew = (PointLayer) evt.getSource();
+
+                    // Mercator is the cylindrical projection.  Don't
+                    // know why this has to be called
+                    Coord m = Mercator.inverseMercator(pnew.getLatitude(),
+                            pnew.getLongitude());
+                    // get the point in this point layer to print 
+
+                    changeTerminal(selection, mc, pnew, m, tXline, rXline);
+
+                }
+            });
+            mc.addLayer(pl);
+            // Google coordinatges are in degrees (no minutes, seconds)
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void showSatellite(final Selection selection,
             final MapComponent mc, String satName, final LinesLayer tXline,
             final LinesLayer rXline) {
@@ -149,17 +206,20 @@ public class MapView extends View {
     }
 
     public Form createView(final Selection selection) {
-        
 
         try {
-            Location loc = LocationManager.getLocationManager().getCurrentLocation();
-            lastLocation = new Coord(loc.getLatitude(), loc.getLongtitude(), true);
+            // giving exception 
+            // Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            Coord satLocation = new Coord(selection.getSatellite().getLatitude(),
+                    selection.getSatellite().getLongitude(), true);
 
             final LinesLayer rXline = new LinesLayer();
             final LinesLayer tXline = new LinesLayer();
 
             // this would not work if longPointerPress was overriden in MapComponent
-            final MapComponent mc = new MapComponent(new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"), loc, 5);
+            final MapComponent mc = new MapComponent(
+                    new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"),
+                    satLocation, 5);
 
             // now draw lines between terminals and satellite
             showLines(selection, mc, tXline, rXline);
@@ -171,61 +231,14 @@ public class MapView extends View {
                 showSatellite(selection, mc, sat, tXline, rXline);
             }
             // now display all terminal all terminals
-            for (String term : selection.getBandTerminal().
-                    get(selection.getBand())) {
-                try {
-                    Log.p("MapView: displaying terminal " + term
-                            + " for " + selection.getBand() + " band.", Log.DEBUG);
-                    Image blue_pin = Image.createImage("/blue_pin.png");
-                    Image red_pin = Image.createImage("/red_pin.png");
-
-                    Terminal terminal = Terminal.terminalHash.get(term);
-                    if (terminal == null) {
-                        Log.p("MapView: terminal is null " + term, Log.DEBUG);
-                    }
-
-                    PointsLayer pl = new PointsLayer();
-                    pl.setPointIcon(red_pin);
-
-                    // Coord takes it in degrees.   Don't use true for projected
-                    Coord c = new Coord(Math.toDegrees(terminal.getLatitude()),
-                            Math.toDegrees(terminal.getLongitude()));
-
-                    final PointLayer p = new PointLayer(c, terminal.getName(), blue_pin);
-
-                    p.setDisplayName(false);   // it clutters
-                    pl.addPoint(p);
-
-                    pl.addActionListener(new ActionListener() {
-                        // need to get PointLayer and not PointsLayer
-
-                        public void actionPerformed(ActionEvent evt) {
-                            PointLayer pnew = (PointLayer) evt.getSource();
-
-                            // Mercator is the cylindrical projection.  Don't
-                            // know why this has to be called
-                            Coord m = Mercator.inverseMercator(pnew.getLatitude(),
-                                    pnew.getLongitude());
-                            // get the point in this point layer to print 
-                            Dialog.show("Terminal", pnew.getName() + " at Long|Lat "
-                                    + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
-                                    + Com.toDMS(Math.toRadians(m.getLatitude())), "OK", null);
-                            Log.p("MapView: terminal " + p.getName()
-                                    + " long | lat " + " "
-                                    + m.getLongitude() + "|"
-                                    + m.getLatitude(), Log.DEBUG);
-
-                        }
-                    });
-                    mc.addLayer(pl);
-                    // Google coordinatges are in degrees (no minutes, seconds)
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+            for (String term : selection.getVisibleTerminal().
+                    get(Selection.VISIBLE.YES)) {
+                showTerminal(selection, mc, term, tXline, rXline);
             }
 
             map = new Form(getName()) {
                 @Override
+                // long press creates a new Terminal
                 public void longPointerPress(int x, int y) {
                     try {
                         Image blue_pin = Image.createImage("/blue_pin.png");
@@ -251,7 +264,28 @@ public class MapView extends View {
                         Terminal term = new Terminal(name);
                         term.setLatitude(Math.toRadians(c.getLatitude()));
                         term.setLongitude(Math.toRadians(c.getLongitude()));
-                        term.setBand(selection.getBand());
+                        term.setBand(selection.getBand()); // not used
+                        // update the list of visible terminals for this view
+                        selection.initVisibleTerminal();  // re populate visible
+                        Boolean ans = Dialog.show("Terminal", term.getName() + " at Long|Lat "
+                                + Com.toDMS(Math.toRadians(term.getLongitude())) + "|"
+                                + Com.toDMS(Math.toRadians(term.getLatitude()))
+                                + "Select this terminal?", "YES", "No");
+                        if (ans) {
+                            // change terminal and update lines
+                            Log.p("Mapview: selecting terminal " + term.getName(), Log.DEBUG);
+                            if (currentChoice == TERMINAL_CHOICE.TX) {
+                                selection.settXterminal(term);
+                            } else {
+                                selection.setrXterminal(term);
+                            }
+                            currentChoice = TERMINAL_CHOICE.RX;
+
+                            mc.removeLayer(tXline);
+                            mc.removeLayer(rXline);
+                            showLines(selection, mc, tXline, rXline);
+
+                        }
 
                         pl.addActionListener(new ActionListener() {
                             // need to get PointLayer and not PointsLayer
@@ -267,6 +301,8 @@ public class MapView extends View {
                                 // get the point in this point layer to print 
                                 Log.p("MapView: new terminal current long | lat "
                                         + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
+
+                                changeTerminal(selection, mc, pnew, m, tXline, rXline);
 
                             }
                         });
@@ -287,7 +323,7 @@ public class MapView extends View {
 
             // putMeOnMap(mc);
             // mc.zoomToLayers();  // too sparse
-            mc.setZoomLevel(3); // see if does the job
+            mc.setZoomLevel(2); // see if does the job
             map.addComponent(BorderLayout.CENTER, mc);
 
         } catch (Exception d) {
@@ -296,37 +332,39 @@ public class MapView extends View {
         return map;
     }
 
-    public void putMeOnMap(MapComponent map) {
+    public void changeTerminal(Selection selection, MapComponent mc,
+            PointLayer pnew, Coord m, LinesLayer tXline,
+            LinesLayer rXline) {
 
-        try {
-            final Image blue_pin = Image.createImage("/blue_pin.png");
-            final Image red_pin = Image.createImage("/red_pin.png");
+        Boolean ans = Dialog.show("Terminal", pnew.getName() + " at Long|Lat "
+                + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
+                + Com.toDMS(Math.toRadians(m.getLatitude()))
+                + "Select this terminal?", "YES", "No");
 
-            Location loc = LocationManager.getLocationManager().getCurrentLocation();
-            lastLocation = new Coord(loc.getLatitude(), loc.getLongtitude());
-
-            PointsLayer pl = new PointsLayer();
-            pl.setPointIcon(blue_pin);
-            PointLayer p = new PointLayer(lastLocation, "Current Location", red_pin);
-            p.setDisplayName(true);
-            pl.addPoint(p);
-            pl.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent evt) {
-                    PointLayer p = (PointLayer) evt.getSource();
-                    // System.out.println("pressed " + p);
-
-                    Log.p("Map: Current position coordinates "
-                            + p.getLongitude() + "|" + p.getLatitude(), Log.DEBUG);
-
-                    // Dialog.show("Current Position", "You Coordinates" + "\n" + p.getLatitude() + "|" + p.getLongitude(), "Ok", null);
+        if (ans) {
+            Terminal terminal = Terminal.terminalHash.get(pnew.getName());
+            if (terminal == null) {
+                Log.p("Mapview: can't find terminal " + pnew.getName() + " for "
+                        + currentChoice, Log.DEBUG);
+            } else {
+                // change terminal and update lines
+                Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
+                if (currentChoice == TERMINAL_CHOICE.TX) {
+                    selection.settXterminal(terminal);
+                } else {
+                    selection.setrXterminal(terminal);
                 }
-            });
-            map.addLayer(pl);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+                currentChoice = TERMINAL_CHOICE.RX;
+
+                mc.removeLayer(tXline);
+                mc.removeLayer(rXline);
+                showLines(selection, mc, tXline, rXline);
+
+            }
+
+        } else {
+            Log.p("MapView: terminal is not selected "
+                    + pnew.getName(), Log.DEBUG);
         }
-
     }
-
 }

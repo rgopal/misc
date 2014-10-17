@@ -76,20 +76,20 @@ public class TxView extends View {
     public Component getWidget(final Selection selection) {
         Label l = new Label(getName());
 
-        // get selected band
-        RfBand.Band band = selection.getBand();
-
         final ComboBox combo = new ComboBox();
+        
+        selection.initVisibleTerminal();
 
         // indexSatellite has all satellites, so get the band specific list
-        if (selection.getBandTerminal().get(band) == null) {
-            Log.p("TxView: Can't find terminals for band " + band, Log.DEBUG);
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
+            Log.p("TxView: Can't find terminals for satellite " + 
+                    selection.getSatellite(), Log.DEBUG);
             return l;
         }
 
         // create mtodel for all terminals of selected band
         ListModel model = new DefaultListModel(
-                selection.getBandTerminal().get(band));
+                selection.getVisibleTerminal().get(Selection.VISIBLE.YES));
 
         combo.setModel(model);
 
@@ -125,9 +125,6 @@ public class TxView extends View {
 
     public Component getLabel(final Selection selection) {
         Label l = new Label(getValue());
-
-        // get selected band
-        RfBand.Band band = selection.getBand();
 
         final Label label = new Label((String) selection.getTxView().spin.getSelectedItem());
  // terminal is not set yet               selection.gettXterminal().getName());      

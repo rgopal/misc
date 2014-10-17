@@ -118,8 +118,10 @@ public class Link {
 
             parser = new CSVParser(',');
 
-            selection.setBandTerminal(Terminal.getFromFile(
-                    parser.parse(new InputStreamReader(is))));
+            // initialize terminals from the file
+            Terminal.getFromFile(
+                    parser.parse(new InputStreamReader(is)));
+           // can't call since satellite null selection.initVisibleTerminal();
 
             // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
@@ -151,10 +153,11 @@ public class Link {
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
-        views[0] = selection.getCommsView();
-        views[1] = selection.getTxView();
-        // process satellite first since it is needed by UlPath and DlPath
-        views[2] = selection.getSatelliteView();
+   // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
+        views[0] = selection.getSatelliteView();
+        views[1] = selection.getCommsView();
+        views[2] = selection.getTxView();
+
         views[3] = selection.getuLpathView();
 
         views[4] = selection.getdLpathView();
@@ -389,7 +392,6 @@ public class Link {
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new String[0])));
-      
 
         if (model == null) {
             Log.p("Link: Can't create DefaultListModel for satellite band "
@@ -401,6 +403,9 @@ public class Link {
 
             // update selected satellite
             selection.setSatellite(Satellite.satelliteHash.get(name));
+
+            // now create visible lists for this satellite
+            selection.initVisibleTerminal();
 
             // update the UL paths
             comboUlPath(selection);
@@ -425,10 +430,7 @@ public class Link {
 
     public void comboRx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
-        if (selection.getBandTerminal().get(selection.getBand()) == null) {
-
-            // Force it to KA which hopefully works
-            selection.setBand(RfBand.Band.KA);
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
 
             // get index of KA
             int i = selection.getRfBandHash().get("KA");
@@ -437,7 +439,7 @@ public class Link {
             spin.setSelectedIndex(i);
         }
         DefaultListModel model = new DefaultListModel(
-                (selection.getBandTerminal().get(selection.getBand()).toArray(
+                (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
                         new String[0])));
 
         if (model == null) {
@@ -451,8 +453,7 @@ public class Link {
 
             // update selected receive terminal
             selection.setrXterminal(Terminal.terminalHash.get(name));
-            
-            
+
             // update the UL path
             comboUlPath(selection);
 
@@ -466,24 +467,20 @@ public class Link {
 
     public void comboTx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
-        if (selection.getBandTerminal().get(selection.getBand()) == null) {
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
 
-            // Force it to KA which hopefully works
-            selection.setBand(RfBand.Band.KA);
-
-            // get index of KA
-            int i = selection.getRfBandHash().get("KA");
-
+            Log.p("Link: Visible terminal list is empty "
+                    + selection.getBand(), Log.ERROR);
             // change the current Combobox entry
-            spin.setSelectedIndex(i);
+            // spin.setSelectedIndex(i);
         }
 
         DefaultListModel model = new DefaultListModel(
-                (selection.getBandTerminal().get(selection.getBand()).toArray(
+                (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
                         new String[0])));
 
         if (model == null) {
-            Log.p("Link: Can't create DefaultListModel for Tx terminal band "
+            Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal band "
                     + selection.getBand(), Log.ERROR);
         } else {
             selection.getTxView().spin.setModel(model);
