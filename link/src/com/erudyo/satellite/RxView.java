@@ -41,15 +41,12 @@ public class RxView extends View {
     public Component getWidget(final Selection selection) {
         Label l = new Label(getName());
 
-        // get selected band
-        RfBand.Band band = selection.getBand();
-
         final ComboBox combo = new ComboBox();
 
-        // bandTerminal has all terminals, so get the band specific list
+        // check the list of terminal visible for the satellite
         if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
-            System.out.println("Can't find terminals for satellite  " + 
-                    selection.getSatellite());
+            System.out.println("Can't find terminals for satellite  "
+                    + selection.getSatellite());
             return l;
         }
 
@@ -59,9 +56,24 @@ public class RxView extends View {
 
         combo.setModel(model);
 
+        int position;
+        // update selected receive terminal
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 2) {
+            // get the first terminal (only 1)
+            position = 0;
+        } else {
+            // else the second
+            position = 1;
+        }
+        // set the selected receive terminal
+
+        selection.setrXterminal(Terminal.terminalHash.
+                get(selection.getVisibleTerminal().
+                        get(Selection.VISIBLE.YES).toArray(
+                                new String[0])[position]));
+
         // set the Rx Terminal during initialization
-        selection.setrXterminal(Terminal.terminalHash.get(
-                (String) combo.getSelectedItem()));
+        combo.setSelectedItem(selection.getrXterminal().getName());
 
         // Band combobox should be able to change this
         selection.getRxView().spin = combo;
@@ -92,7 +104,6 @@ public class RxView extends View {
 
     public Component getLabel(final Selection selection) {
         Label l = new Label(getValue());
-
 
         // does not work final Label label = new Label(selection.getrXterminal().getName()); 
         final Label label = new Label((String) selection.getRxView().spin.getSelectedItem());

@@ -226,9 +226,9 @@ public class Path extends Entity {
     public void setAll() {
 
 
-        this.distance = calcDistance(satellite.getAltitude());
-        this.azimuth = calcAzimuth();
-        this.elevation = calcElevation();
+        this.distance = calcDistance(this.satellite, this.terminal);
+        this.azimuth = calcAzimuth(this.satellite, this.terminal);
+        this.elevation = calcElevation(this.satellite, this.terminal);
 
         visible (satellite, terminal);
         
@@ -274,7 +274,8 @@ public class Path extends Entity {
         super(n);
     }
 
-    public double calcRelativeLongitude() {
+    public static double calcRelativeLongitude(Satellite satellite,
+            Terminal terminal) {
 
         double relativeLong;
         // get relative longitdue between satellite and terminal
@@ -287,14 +288,14 @@ public class Path extends Entity {
         return Math.abs(relativeLong);
     }
 
-    public double calcBigPhi() {
+    public static double calcBigPhi(Satellite satellite, Terminal terminal) {
         if (satellite == null || terminal == null) {
             Log.p("Path: satellite or terminal is null " + satellite + terminal,
                     Log.WARNING);
         }
         double Phi;
         double relativeLong;
-        relativeLong = calcRelativeLongitude();
+        relativeLong = calcRelativeLongitude(satellite, terminal);
         Phi = MathUtil.acos(Math.cos(relativeLong)
                 * Math.cos(terminal.getLatitude())
                 * Math.cos(satellite.getLatitude())
@@ -308,20 +309,21 @@ public class Path extends Entity {
         return Phi;
     }
 
-    public double calcDistance(Double altitude) {
+    public static double calcDistance(Satellite satellite, Terminal terminal) {
         double d;
+        double altitude = satellite.getAltitude();
         d = MathUtil.pow((1.0
-                + 0.42 * (1.0 - Math.cos(calcBigPhi()))), 0.5)
+                + 0.42 * (1.0 - Math.cos(calcBigPhi(satellite, terminal)))), 0.5)
                 * altitude;
         return d;
     }
 
-    public double calcElevation() {
+    public static double calcElevation(Satellite satellite, Terminal terminal) {
 
         double elev;
         double bigPhi;
 
-        bigPhi = calcBigPhi();
+        bigPhi = calcBigPhi(satellite, terminal);
         // if bigPhi is zero then you have to look straight up
         if (Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI / 2.0);
@@ -332,13 +334,13 @@ public class Path extends Entity {
 
     }
 
-    public double calcAzimuth() {
+    public static double calcAzimuth(Satellite satellite, Terminal terminal) {
         double azimuth = 0.0;
         double a;
         relativePosition rel;
         double relLong, bigPhi;
-        relLong = calcRelativeLongitude();
-        bigPhi = calcBigPhi();
+        relLong = calcRelativeLongitude(satellite, terminal);
+        bigPhi = calcBigPhi(satellite, terminal);
 
         // if terminal and satellite are on the same longitude
         // then terminal is either looking south (in northern hemi)
@@ -350,7 +352,7 @@ public class Path extends Entity {
 
         a = MathUtil.asin(Math.sin(relLong) * Math.cos(satellite.getLatitude())
                 / Math.sin(bigPhi));
-        rel = findRelativePosition();
+        rel = findRelativePosition(satellite, terminal);
         // Here NE means Northern Hemishpere and Satellite East of Terminal
         switch (rel) {
             case NE:
@@ -369,7 +371,8 @@ public class Path extends Entity {
         return azimuth;
     }
 
-    public relativePosition findRelativePosition() {
+    public static relativePosition findRelativePosition(Satellite satellite,
+            Terminal terminal) {
         // terminal in northern hemisphere
         relativePosition rel;
         rel = relativePosition.NE;

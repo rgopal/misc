@@ -22,6 +22,7 @@ import com.codename1.ui.Image;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.list.DefaultListModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class MapView extends View {
                             plTerm.getLongitude());
 
                     // if approved change the selected terminal as tx or rx
-                    changeTerminal(selection, mc, plTerm, coord, tXline, rXline);
+                    changeTerminal(selection, mc, plTerm, coord);
 
                 }
             });
@@ -267,64 +268,62 @@ public class MapView extends View {
 
                         // this is not correct in the model
                         Log.p("Map: your location in x|y " + x + "|" + y, Log.DEBUG);
-                        PointsLayer pl = new PointsLayer();
-                        pl.setPointIcon(blue_pin);
+                        PointsLayer pslNewTerm = new PointsLayer();
+                        pslNewTerm.setPointIcon(blue_pin);
                         String name;
-                        Coord c = mc.getCoordFromPosition(x, y);
+                        Coord coordNewTerm = mc.getCoordFromPosition(x, y);
                         // dc.setProjected(true);  // WRONG
-                        
+
                         // get a name which is unique
-                        name = "T" + java.lang.String.valueOf((int) c.getLongitude())
-                                + String.valueOf((int) c.getLatitude());
+                        name = "T" + java.lang.String.valueOf((int) coordNewTerm.getLongitude())
+                                + String.valueOf((int) coordNewTerm.getLatitude());
                         if (Terminal.terminalHash.get(name) != null) {
                             Log.p("Mapview:  terminal already exists " + name, Log.WARNING);
                             // use more precision
-                            name = "T" + Com.toDMS(c.getLongitude())
-                                + Com.toDMS(c.getLatitude());
-                            if (Terminal.terminalHash.get(name) != null)
+                            name = "T" + Com.toDMS(coordNewTerm.getLongitude())
+                                    + Com.toDMS(coordNewTerm.getLatitude());
+                            if (Terminal.terminalHash.get(name) != null) {
                                 name = name + "A";
+                            }
                         }
 
-                        final PointLayer p = new PointLayer(c, name, blue_pin);
+                        final PointLayer plNewTerm = new PointLayer(coordNewTerm, name, blue_pin);
 
-                        p.setDisplayName(true);
-                        pl.addPoint(p);
-                        
+                        plNewTerm.setDisplayName(true);
+                        pslNewTerm.addPoint(plNewTerm);
+
                         // create a new terminal
-                        Terminal term = new Terminal(name);
-                        term.setLatitude(Math.toRadians(c.getLatitude()));
-                        term.setLongitude(Math.toRadians(c.getLongitude()));
-                        term.setBand(selection.getBand()); // not used
+                        Terminal newTerm = new Terminal(name);
+                        newTerm.setLatitude(Math.toRadians(coordNewTerm.getLatitude()));
+                        newTerm.setLongitude(Math.toRadians(coordNewTerm.getLongitude()));
+                        newTerm.setBand(selection.getBand()); // not used
                         // update the list of visible terminals for this view
-                        
+
                         // now update items for various views
                         selection.initVisibleTerminal();  // re populate visible
-                        
-                        // update the models for tx and rx combos in master view
-                        
+
                         Log.p("Map: new terminal " + name + " created", Log.DEBUG);
 
-                        Boolean ans = Dialog.show("Terminal", term.getName() + " at Long|Lat "
-                                + Com.toDMS(Math.toRadians(term.getLongitude())) + "|"
-                                + Com.toDMS(Math.toRadians(term.getLatitude()))
-                                + "Select this terminal?", "YES", "No");
-                        if (ans) {
-                            // change terminal and update lines
-                            Log.p("Mapview: selecting terminal " + term.getName(), Log.DEBUG);
-                            if (currentChoice == TERMINAL_CHOICE.TX) {
-                                selection.settXterminal(term);
-                                currentChoice = TERMINAL_CHOICE.RX;
+                        // update the models for tx and rx combos in master view
+                   
+                        selection.getTxView().spin.setModel(new DefaultListModel(
+                                selection.getVisibleTerminal().get(Selection.VISIBLE.YES)));
 
-                            } else {
-                                selection.setrXterminal(term);
-                                currentChoice = TERMINAL_CHOICE.TX;
-                            }
+                        selection.getRxView().spin.setModel(new DefaultListModel(
+                                selection.getVisibleTerminal().get(Selection.VISIBLE.YES)));
+                        
+                        // set current Tx and Rx terminals again since models have changed
+                        // (only one will get set again in changeTerminal)
+                        selection.getRxView().spin.setSelectedItem(
+                                selection.getrXterminal().getName());
+                        
+                         selection.getTxView().spin.setSelectedItem(
+                                selection.gettXterminal().getName());
+                        
+                        // now change terminal (since this was selected at creation
+                        changeTerminal(selection, mc, plNewTerm, coordNewTerm);
 
-                            showLines(selection, mc);
-
-                        }
-
-                        pl.addActionListener(new ActionListener() {
+                        pslNewTerm.addActionListener(new ActionListener() {
                             // need to get PointLayer and not PointsLayer
 
                             public void actionPerformed(ActionEvent evt) {
@@ -339,11 +338,10 @@ public class MapView extends View {
                                 Log.p("MapView: new terminal current long | lat "
                                         + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
 
-                                changeTerminal(selection, mc, pnew, m, tXline, rXline);
-
+                                // not needed changeTerminal(selection, mc, pnew, m);
                             }
                         });
-                        mc.addLayer(pl);
+                        mc.addLayer(pslNewTerm);
                         // Google coordinatges are in degrees (no minutes, seconds)
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -370,13 +368,12 @@ public class MapView extends View {
     }
 
     public void changeTerminal(Selection selection, MapComponent mc,
-            PointLayer pnew, Coord m, LinesLayer tXline,
-            LinesLayer rXline) {
+            PointLayer pnew, Coord m) {
 
         Boolean ans = Dialog.show("Terminal", pnew.getName() + " at Long|Lat "
                 + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
                 + Com.toDMS(Math.toRadians(m.getLatitude()))
-                + "Select this terminal?", "Yes", "No");
+                + "\nSelect this terminal as " + currentChoice + "?", "Yes", "No");
 
         if (ans) {
             Terminal terminal = Terminal.terminalHash.get(pnew.getName());
@@ -386,11 +383,24 @@ public class MapView extends View {
             } else {
                 // change terminal and update lines
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
+
                 if (currentChoice == TERMINAL_CHOICE.TX) {
                     selection.settXterminal(terminal);
+                    // update the selection of TxView 
+
+                    selection.getTxView().spin.
+                            setSelectedItem(terminal.getName());
                     currentChoice = TERMINAL_CHOICE.RX;
+                    Log.p("MapView: changeterminal() has select TX "
+                            + terminal.getName(), Log.DEBUG);
+
                 } else {
                     selection.setrXterminal(terminal);
+                    // update the model and selection of TxView 
+                    selection.getRxView().spin.
+                            setSelectedItem(terminal.getName());
+                    Log.p("MapView: changeterminal() has select RX "
+                            + terminal.getName(), Log.DEBUG);
                     currentChoice = TERMINAL_CHOICE.TX;
                 }
 

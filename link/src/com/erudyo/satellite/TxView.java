@@ -51,23 +51,23 @@ public class TxView extends View {
 
         ArrayList<String> inner = new ArrayList<String>();
         // first row
-        inner.add("Transmit Terminal"); 
+        inner.add("Transmit Terminal");
         inner.add(selection.gettXterminal().getName());
         outer.add(inner);
 
         // get a new row
         inner = new ArrayList<String>();
-        inner.add("Longitude"); 
-               inner.add(Com.toDMS(selection.gettXterminal().getLongitude())); 
+        inner.add("Longitude");
+        inner.add(Com.toDMS(selection.gettXterminal().getLongitude()));
         inner.add("degree");
-         outer.add(inner);
-        
-         // get a new row
+        outer.add(inner);
+
+        // get a new row
         inner = new ArrayList<String>();
-        inner.add("Latitude"); 
-               inner.add(Com.toDMS(selection.gettXterminal().getLatitude())); 
+        inner.add("Latitude");
+        inner.add(Com.toDMS(selection.gettXterminal().getLatitude()));
         inner.add("degree");
-        
+
         outer.add(inner);
 
         return outer;
@@ -77,13 +77,13 @@ public class TxView extends View {
         Label l = new Label(getName());
 
         final ComboBox combo = new ComboBox();
-        
-        selection.initVisibleTerminal();
 
+        // when satellite is set, this is already called
+        // selection.initVisibleTerminal();
         // indexSatellite has all satellites, so get the band specific list
         if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
-            Log.p("TxView: Can't find terminals for satellite " + 
-                    selection.getSatellite(), Log.DEBUG);
+            Log.p("TxView: Can't find terminals for satellite "
+                    + selection.getSatellite(), Log.DEBUG);
             return l;
         }
 
@@ -93,9 +93,21 @@ public class TxView extends View {
 
         combo.setModel(model);
 
-        // set the selected Tx terminal during initialization
-        selection.settXterminal(Terminal.terminalHash.get(
-                (String) combo.getSelectedItem()));
+        // update selected receive terminal
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 1) // get the first terminal (only 1)
+        {
+            Log.p("TxView: no terminals visible for satellite "
+                    + selection.getSatellite(), Log.DEBUG);
+        }
+
+        // select the nearest terminal to the satellite
+        selection.settXterminal(Terminal.terminalHash.
+                get(selection.getVisibleTerminal().
+                        get(Selection.VISIBLE.YES).toArray(
+                                new String[0])[0]));
+
+        // set the selected Tx on combo box also 
+        combo.setSelectedItem(selection.gettXterminal().getName());
 
         // Band combobox should be able to change this
         selection.getTxView().spin = combo;

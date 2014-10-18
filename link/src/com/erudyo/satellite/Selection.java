@@ -16,6 +16,8 @@
 package com.erudyo.satellite;
 
 import com.codename1.io.Log;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
@@ -118,6 +120,7 @@ public class Selection {
 
         // get the list of satellites read from the .txt file
         setBandSatellite(Satellite.getBandSatellite());
+        // initialize visible terminals for selected satellite (use Affected)
 
     }
 
@@ -192,7 +195,10 @@ public class Selection {
      * @param satellite the satellite to set
      */
     public void setSatellite(Satellite satellite) {
-        this.satellite = satellite;
+        // update visible terminals 
+         this.satellite = satellite;
+         initVisibleTerminal();  // they are both here in this class
+       
     }
 
     /**
@@ -278,17 +284,18 @@ public class Selection {
 
     }
     // set the visible terminal String list based on the Terminal class
-    // list.   Call it again when a terminal is added so no new addVisible
-    // at this time
+    // list.  Sorted by distance between satellite and a terminal.
+    // Call it again when a terminal is added so no new addVisible
+    // at this time.
 
     public void initVisibleTerminal() {
-        Hashtable<RfBand.Band, ArrayList<Terminal>> t;
-        t = null;
 
         int indexVis = 0;
         int indexNonVis = 0;
 
-        // create list of visible and non visible satellites with
+        visibleTerminal = new Hashtable<VISIBLE, ArrayList<String>> ();
+        
+        // create new list of visible and non visible satellites with
         // respect to selected satellite
         for (Terminal term : Terminal.indexTerminal) {
 
@@ -340,7 +347,42 @@ public class Selection {
             }
 
         }
+        // now sort each list by distance of terminal from satellite
+        Collections.sort(visibleTerminal.get(VISIBLE.YES), new Comparator<String>() {
+            @Override
+            public int compare(String one, String two) {
 
+                if (getSatellite() == null) {
+                    Log.p("Selection: satellite is null in initVisible YES so alpha sort ", Log.WARNING);
+                    return one.compareTo(two);
+                } else {
+
+                    return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
+                            - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                }
+
+            }
+
+        }
+        );
+
+        Collections.sort(visibleTerminal.get(VISIBLE.NO), new Comparator<String>() {
+            @Override
+            public int compare(String one, String two) {
+
+                if (getSatellite() == null) {
+                    Log.p("Selection: satellite is null in initVisible NO so alpha sort ", Log.WARNING);
+                    return one.compareTo(two);
+                } else {
+
+                    return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
+                            - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                }
+
+            }
+
+        }
+        );
     }
 
     /*

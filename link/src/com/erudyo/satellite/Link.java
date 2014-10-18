@@ -102,8 +102,7 @@ public class Link {
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
-        
-       
+
             // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,7 +133,7 @@ public class Link {
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
-   // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
+        // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
         views[0] = selection.getSatelliteView();
         views[1] = selection.getCommsView();
         views[2] = selection.getTxView();
@@ -413,64 +412,82 @@ public class Link {
         // use global variable to change ListModel of satellite combo
         if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
 
-            // get index of KA
-            int i = selection.getRfBandHash().get("KA");
-
-            // change the current Combobox entry
-            spin.setSelectedIndex(i);
-        }
-        DefaultListModel model = new DefaultListModel(
-                (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
-                        new String[0])));
-
-        if (model == null) {
-            Log.p("Link: Can't create DefaultListModel for Rx terminal band "
-                    + selection.getBand(), Log.DEBUG);
+            Log.p("Link: no visible terminal for satellite "
+                    + selection.getSatellite(), Log.WARNING);
         } else {
-            selection.getRxView().spin.setModel(model);
-            // update label TODO
 
-            String name = (String) selection.getRxView().spin.getSelectedItem();
+            selection.initVisibleTerminal();
+            DefaultListModel model = new DefaultListModel(
+                    (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
+                            new String[0])));
 
-            // update selected receive terminal
-            selection.setrXterminal(Terminal.terminalHash.get(name));
+            if (model == null) {
+                Log.p("Link: Can't create DefaultListModel for Rx satellite "
+                        + selection.getSatellite(), Log.DEBUG);
+            } else {
 
-            // update the UL path
-            comboUlPath(selection);
+                // let RxView do this again.   TODO Delete this
+                selection.getRxView().spin.setModel(model);
 
-            // update label TODO
-            selection.getRxView().label.setText(
-                    selection.getrXterminal().getName());
+                int position;
+                // update selected receive terminal
+                if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 2) {
+                    // get the first terminal (only 1)
+                    position = 0;
+                } else {
+                    position = 1;
+                }
+                // set the selected receive terminal
 
+                selection.setrXterminal(Terminal.terminalHash.
+                        get(selection.getVisibleTerminal().
+                                get(Selection.VISIBLE.YES).toArray(
+                                        new String[0])[position]));
+
+                // update the UL path
+                comboUlPath(selection);
+
+                // update label TODO
+                selection.getRxView().label.setText(
+                        selection.getrXterminal().getName());
+
+            }
         }
-
     }
 
     public void comboTx(final Selection selection, ComboBox spin) {
         // use global variable to change ListModel of satellite combo
         if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
 
-            Log.p("Link: Visible terminal list is empty "
-                    + selection.getBand(), Log.ERROR);
+            Log.p("Link: Visible terminal list is empty for "
+                    + selection.getSatellite(), Log.ERROR);
             // change the current Combobox entry
             // spin.setSelectedIndex(i);
         }
 
+        selection.initVisibleTerminal();
         DefaultListModel model = new DefaultListModel(
                 (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
                         new String[0])));
 
         if (model == null) {
-            Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal band "
-                    + selection.getBand(), Log.ERROR);
+            Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal for sat "
+                    + selection.getSatellite(), Log.ERROR);
         } else {
             selection.getTxView().spin.setModel(model);
             // update label TODO
 
-            String name = (String) selection.getTxView().spin.getSelectedItem();
+            if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 1) // get the first terminal (only 1)
+            {
+                Log.p("Link: no visible terminal for tx  for satellite " + selection.getSatellite(),
+                        Log.WARNING);
+            }
 
-            // update selected Tx terminal
-            selection.settXterminal(Terminal.terminalHash.get(name));
+            // set the selected receive terminal
+            selection.settXterminal(Terminal.terminalHash.
+                    get(selection.getVisibleTerminal().
+                            get(Selection.VISIBLE.YES).toArray(
+                                    new String[0])[0]));
 
             // update the UL path
             comboUlPath(selection);
