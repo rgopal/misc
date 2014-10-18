@@ -5,13 +5,17 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.CSVParser;
 import com.codename1.io.Log;
 
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
 import com.codename1.util.MathUtil;
 import com.codename1.maps.Coord;
+import com.codename1.ui.Display;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.ArrayList;
@@ -31,11 +35,10 @@ public class Terminal extends Entity {
     private Antenna tXantenna;
     private Antenna rXantenna;
     private Amplifier amplifier;
-    
-        
-        private double tempGround = 45.0;
+
+    private double tempGround = 45.0;
     private double tempSky = 20.0;  // in K, depends on frequency
-    
+
     // eventually calculate these things
     private double EIRP;        // somewhere this has to be updated
 
@@ -73,6 +76,23 @@ public class Terminal extends Entity {
     final public static ArrayList<Terminal> indexTerminal
             = new ArrayList<Terminal>();
 
+    static {
+
+        try {
+            InputStream is = Display.getInstance().
+                    getResourceAsStream(null, "/terminals.txt");
+
+            CSVParser parser = new CSVParser(',');
+
+            // initialize terminals from the file
+            Terminal.getFromFile(
+                    parser.parse(new InputStreamReader(is)));
+            // can't call since satellite null selection.initVisibleTerminal();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setBand(RfBand.Band band) {
         this.band = band;
     }
@@ -89,9 +109,9 @@ public class Terminal extends Entity {
         // start at 1 since first line is heading (name, long, lat, eirp, gain, band
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
-            
-              Log.p("Terminal: Processing terminal #" + String.valueOf(i) + " "
-                        + Arrays.toString(terminals[i]), Log.INFO);
+
+            Log.p("Terminal: Processing terminal #" + String.valueOf(i) + " "
+                    + Arrays.toString(terminals[i]), Log.INFO);
             RfBand.Band band = RfBand.rFbandHash.get(terminals[i][5]).getBand();
 
             // need to key on a correct band
@@ -137,9 +157,8 @@ public class Terminal extends Entity {
         // be same in a physical antenna (fine for the link budget tool)
         terminal.getrXantenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.gettXantenna().setDiameter(Double.parseDouble(fields[3]));
-        
+
         terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
-        
 
         // where do we update terminal EIRP.  Now automatic with "update"
         vector.add(terminal);
@@ -161,17 +180,16 @@ public class Terminal extends Entity {
         this.name = name;
 
         tXantenna = new Antenna();
- 
+
         tXantenna.addAffected(this);
         // System.out.println(this.name);
         tXantenna.setDiameter(1);
 
-     
-          rXantenna = new Antenna();
+        rXantenna = new Antenna();
         rXantenna.addAffected(this);
         // System.out.println(this.name);
         rXantenna.setDiameter(1);
-        
+
         amplifier = new Amplifier();
         amplifier.addAffected(this);
         amplifier.setPower(10);
@@ -252,8 +270,8 @@ public class Terminal extends Entity {
     public void setrXantenna(Antenna antenna) {
         this.rXantenna = antenna;
     }
-    
-     /**
+
+    /**
      * @return the antenna
      */
     public Antenna gettXantenna() {
@@ -291,7 +309,6 @@ public class Terminal extends Entity {
         return true;
     }
 
-
     private double calcEIRP() {
         double eirp = (10 * MathUtil.log10(
                 this.getAmplifier().getPower())) // was in W
@@ -315,7 +332,6 @@ public class Terminal extends Entity {
     }
 
     // downlink system noise temperature at the receiver input given by
-
     public double calcSystemNoiseTemp() {
         double tA;
         double noiseTemp;
@@ -350,8 +366,6 @@ public class Terminal extends Entity {
 
         // avoid using set since that should be used to send updates down
     }
-
-
 
     /**
      * @return the gainTemp
@@ -409,20 +423,21 @@ public class Terminal extends Entity {
         this.tempGround = tempGround;
     }
 
-
     /**
      * @param tempSky the tempSky to set
      */
     public void setTempSky(double tempSky) {
         this.tempSky = tempSky;
     }
-      /**
+
+    /**
      * @return the tempSky
      */
     public double getTempSky(RfBand.Band band) {
         double temp = tempSky;
-        if (band != RfBand.Band.C) 
-             Log.p("Terminal: no tempSky for band " + band, Log.WARNING);
+        if (band != RfBand.Band.C) {
+            Log.p("Terminal: no tempSky for band " + band, Log.WARNING);
+        }
         return temp;
     }
 }

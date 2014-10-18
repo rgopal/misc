@@ -211,10 +211,14 @@ public class Path extends Entity {
     public static Boolean visible (Satellite satellite, Terminal terminal) {
 
         // check if satellite is visible from terminal
-        double degree = Math.abs(satellite.getLongitude()
-                - terminal.getLongitude()) * 180.0 / Com.PI;
-        if (degree > 80.0) {
-            Log.p("Path: terminal and satellite are far apart " + degree, Log.WARNING);
+        
+        double radian = Math.abs(satellite.getLongitude()
+                - terminal.getLongitude());
+        double degree = radian* 180.0 / Com.PI;
+        if (radian > Com.VISIBLE_ANGLE) {
+            Log.p("Path: terminal and satellite are far apart with " + degree + 
+                    " satellite at " + Com.toDMS(satellite.getLongitude()) + 
+                    " terminal at " + Com.toDMS(terminal.getLongitude()), Log.WARNING);
             return false;
         } else
             return true;

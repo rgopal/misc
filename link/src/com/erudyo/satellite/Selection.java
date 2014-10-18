@@ -115,7 +115,9 @@ public class Selection {
         dLpathView = new DlPathView(this);
 
         initRfBandHash();
-      
+
+        // get the list of satellites read from the .txt file
+        setBandSatellite(Satellite.getBandSatellite());
 
     }
 
@@ -273,57 +275,77 @@ public class Selection {
 
     // add a new terminal created by GUI
     public void addVisibleTerminal() {
-        
+
     }
     // set the visible terminal String list based on the Terminal class
     // list.   Call it again when a terminal is added so no new addVisible
     // at this time
-    
-       
+
     public void initVisibleTerminal() {
         Hashtable<RfBand.Band, ArrayList<Terminal>> t;
         t = null;
 
-        for (VISIBLE vis : new VISIBLE[]{VISIBLE.YES, VISIBLE.NO}) {
+        int indexVis = 0;
+        int indexNonVis = 0;
 
-            int index = 0;
-            for (Terminal term : Terminal.indexTerminal) {
+        // create list of visible and non visible satellites with
+        // respect to selected satellite
+        for (Terminal term : Terminal.indexTerminal) {
 
-                if (Path.visible(this.satellite, term)) {
-                    Log.p("Selection: terminal " + term
-                            + "is visible to satellite "
-                            + this.satellite, Log.DEBUG);
+            if (Path.visible(this.satellite, term)) {
+                Log.p("Selection: terminal " + term
+                        + " is visible to satellite "
+                        + this.satellite, Log.DEBUG);
 
-                    // check if the array exists
-                    if (visibleTerminal.get(vis) == null) {
-                        visibleTerminal.put(vis, new ArrayList());
-                    }
-
-                    // add the name of the terminal in the array list
-                    visibleTerminal.get(vis).add(term.getName());
-
-                    // check if Hashtable entry for the band exists
-                    if (visibleTerminalHash.get(vis) == null) {
-                        visibleTerminalHash.put(vis,
-                                new Hashtable<String, Integer>());
-                    }
-
-                    // now add new satellite position
-                    visibleTerminalHash.get(vis).
-                            put(term.getName(), index++);
+                // check if the array exists
+                if (visibleTerminal.get(VISIBLE.YES) == null) {
+                    visibleTerminal.put(VISIBLE.YES, new ArrayList());
                 }
 
+                // add the name of the terminal in the array list
+                visibleTerminal.get(VISIBLE.YES).add(term.getName());
+
+                // check if Hashtable entry for the band exists
+                if (visibleTerminalHash.get(VISIBLE.YES) == null) {
+                    visibleTerminalHash.put(VISIBLE.YES,
+                            new Hashtable<String, Integer>());
+                }
+
+                // now add new satellite position
+                visibleTerminalHash.get(VISIBLE.YES).
+                        put(term.getName(), indexVis++);
+            } else {
+
+                Log.p("Selection: terminal " + term
+                        + " is NOT visible to satellite "
+                        + this.satellite, Log.DEBUG);
+
+                // check if the array exists
+                if (visibleTerminal.get(VISIBLE.NO) == null) {
+                    visibleTerminal.put(VISIBLE.NO, new ArrayList());
+                }
+
+                // add the name of the terminal in the array list
+                visibleTerminal.get(VISIBLE.NO).add(term.getName());
+
+                // check if Hashtable entry for the band exists
+                if (visibleTerminalHash.get(VISIBLE.NO) == null) {
+                    visibleTerminalHash.put(VISIBLE.NO,
+                            new Hashtable<String, Integer>());
+                }
+
+                // now add new satellite position
+                visibleTerminalHash.get(VISIBLE.NO).
+                        put(term.getName(), indexNonVis++);
             }
 
         }
 
     }
 
- 
     /*
      * @param terminals the terminals to set
      */
-
     public void setTerminals(String[][] terminals) {
 
     }

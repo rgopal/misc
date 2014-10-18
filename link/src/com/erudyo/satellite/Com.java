@@ -40,6 +40,8 @@ public class Com {
     public final static double C = 2.99792458E8;
     public final static double RE = 6378.1E3;     // mean equatorial radius
     public final static String DEGREE = "\u00b0";
+    public final static double VISIBLE_ANGLE = 80.0*PI/180.0;   
+    
 public final static double T0 = 290.0;
     // print 4 characters of a double number (format does not work)
     static String shortText(double num) {

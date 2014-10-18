@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Copyright (c) 2014 R. Gopal. All Rights Reserved.
+ * Copyright (coord) 2014 R. Gopal. All Rights Reserved.
  *
  * @author rgopal
  */
@@ -54,6 +54,11 @@ public class MapView extends View {
 
     // ping pong for selecting a terminal by clicking
     private TERMINAL_CHOICE currentChoice = TERMINAL_CHOICE.TX;
+    // need to remember these lines which are removed and added as selection
+    // of satellites or terminals changes
+
+    private LinesLayer tXline;
+    private LinesLayer rXline;
 
     public void showTerminal(final Selection selection,
             final MapComponent mc, String termName, final LinesLayer tXline,
@@ -85,15 +90,15 @@ public class MapView extends View {
                 // need to get PointLayer and not PointsLayer
 
                 public void actionPerformed(ActionEvent evt) {
-                    PointLayer pnew = (PointLayer) evt.getSource();
+                    PointLayer plTerm = (PointLayer) evt.getSource();
 
                     // Mercator is the cylindrical projection.  Don't
                     // know why this has to be called
-                    Coord m = Mercator.inverseMercator(pnew.getLatitude(),
-                            pnew.getLongitude());
-                    // get the point in this point layer to print 
+                    Coord coord = Mercator.inverseMercator(plTerm.getLatitude(),
+                            plTerm.getLongitude());
 
-                    changeTerminal(selection, mc, pnew, m, tXline, rXline);
+                    // if approved change the selected terminal as tx or rx
+                    changeTerminal(selection, mc, plTerm, coord, tXline, rXline);
 
                 }
             });
@@ -104,6 +109,7 @@ public class MapView extends View {
         }
     }
 
+    // display a satellite as a point on the equator
     public void showSatellite(final Selection selection,
             final MapComponent mc, String satName, final LinesLayer tXline,
             final LinesLayer rXline) {
@@ -119,56 +125,54 @@ public class MapView extends View {
                 Log.p("MapView: satellite is null " + satName, Log.DEBUG);
             }
 
-            PointsLayer pl = new PointsLayer();
-            pl.setPointIcon(red_pin);
+            PointsLayer plSat = new PointsLayer();
+            plSat.setPointIcon(red_pin);
 
             // Coord takes it in degrees.   Don't use true for projected
-            Coord c = new Coord(Math.toDegrees(satellite.getLatitude()),
+            Coord coord = new Coord(Math.toDegrees(satellite.getLatitude()),
                     Math.toDegrees(satellite.getLongitude()));
 
-            final PointLayer p = new PointLayer(c, satellite.getName(), red_pin);
+            final PointLayer pSat = new PointLayer(coord, satellite.getName(), red_pin);
 
-            p.setDisplayName(false);   // it clutters
-            pl.addPoint(p);
+            pSat.setDisplayName(false);   // it clutters
+            plSat.addPoint(pSat);
 
-            pl.addActionListener(new ActionListener() {
-                // need to get PointLayer and not PointsLayer
+            plSat.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
-                    PointLayer pnew = (PointLayer) evt.getSource();
+                    PointLayer plSelSat = (PointLayer) evt.getSource();
 
                     // Mercator is the cylindrical projection.  Don't
                     // know why this has to be called
-                    Coord m = Mercator.inverseMercator(pnew.getLatitude(),
-                            pnew.getLongitude());
+                    Coord coordSelSat = Mercator.inverseMercator(plSelSat.getLatitude(),
+                            plSelSat.getLongitude());
                     // get the point in this point layer to print 
-                    Boolean ans = Dialog.show("GEO_Satellite", pnew.getName() + " at Long|Lat "
-                            + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
-                            + Com.toDMS(Math.toRadians(m.getLatitude()))
+                    Boolean ans = Dialog.show("GEO_Satellite", plSelSat.getName() + " at Long|Lat "
+                            + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
+                            + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
                             + "Select this satellite?", "Yes", "No");
                     if (ans) {
-                        Satellite satellite = Satellite.satelliteHash.get(pnew.getName());
+                        Satellite satellite = Satellite.satelliteHash.get(plSelSat.getName());
                         if (satellite == null) {
-                            Log.p("Mapview: can't find satellite " + pnew.getName(), Log.DEBUG);
+                            Log.p("Mapview: can't find satellite " + plSelSat.getName(), Log.DEBUG);
                         } else {
                             // change satellite and update lines
-                            Log.p("Mapview: selecting satellite " + pnew.getName(), Log.DEBUG);
+                            Log.p("Mapview: selecting satellite " + plSelSat.getName(), Log.DEBUG);
                             selection.setSatellite(satellite);
-                            mc.removeLayer(tXline);
-                            mc.removeLayer(rXline);
-                            showLines(selection, mc, tXline, rXline);
+
+                            showLines(selection, mc);
 
                         }
                     }
 
-                    Log.p("MapView: satellite " + p.getName()
+                    Log.p("MapView: satellite " + pSat.getName()
                             + " long | lat " + " "
-                            + m.getLongitude() + "|"
-                            + m.getLatitude(), Log.DEBUG);
+                            + coordSelSat.getLongitude() + "|"
+                            + coordSelSat.getLatitude(), Log.DEBUG);
 
                 }
             });
-            mc.addLayer(pl);
+            mc.addLayer(plSat);
             // Google coordinatges are in degrees (no minutes, seconds)
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -176,10 +180,25 @@ public class MapView extends View {
 
     }
 
-    public void showLines(final Selection selection, final MapComponent mc,
-            final LinesLayer tXline, final LinesLayer rXline) {
+    // display two lines for transmit and receive  for selected satellite
+    // tX terminal and rX terminal
+    public void showLines(final Selection selection, final MapComponent mc) {
 
         Coord tx, cSatellite, rx;
+
+        // remove old lines first (if they exist)
+        if (tXline != null) {
+
+            Log.p("Mapview: removing tx line " + tXline, Log.DEBUG);
+            mc.removeLayer(tXline);
+        }
+        if (rXline != null) {
+            Log.p("Mapview: removing rx line " + rXline, Log.DEBUG);
+            mc.removeLayer(rXline);
+        }
+        // can't remove old line segments so create a  new object
+        tXline = new LinesLayer();
+        rXline = new LinesLayer();
 
         tx = new Coord(Math.toDegrees(selection.gettXterminal().getLatitude()),
                 Math.toDegrees(selection.gettXterminal().getLongitude()));
@@ -188,7 +207,7 @@ public class MapView extends View {
                 Math.toDegrees(selection.getSatellite().getLongitude()));
 
         tXline.addLineSegment(new Coord[]{tx, cSatellite});
-        tXline.lineColor(0xFF0000);
+        tXline.lineColor(0xFF0000);         // red for transmit
         mc.addLayer(tXline);
 
         rx = new Coord(Math.toDegrees(selection.getrXterminal().getLatitude()),
@@ -202,9 +221,11 @@ public class MapView extends View {
 
         rXline.addLineSegment(new Coord[]{rx, cSatellite});
         mc.addLayer(rXline);
-        rXline.lineColor(0x0000FF);  // Blue
+        rXline.lineColor(0x0000FF);  // Blue for receive
     }
 
+    // createa  new Map Form everytime this is called.  Other forms are stored
+    // in memory but Map seems to be bulky so recreated
     public Form createView(final Selection selection) {
 
         try {
@@ -213,19 +234,19 @@ public class MapView extends View {
             Coord satLocation = new Coord(selection.getSatellite().getLatitude(),
                     selection.getSatellite().getLongitude(), true);
 
-            final LinesLayer rXline = new LinesLayer();
-            final LinesLayer tXline = new LinesLayer();
-
             // this would not work if longPointerPress was overriden in MapComponent
             final MapComponent mc = new MapComponent(
                     new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"),
                     satLocation, 5);
 
+            // initialize static tx and rx lines
+            rXline = null;
+            tXline = null;
+
             // now draw lines between terminals and satellite
-            showLines(selection, mc, tXline, rXline);
+            showLines(selection, mc);
 
             // show all satellites on the map
-            // showSatellites(selection, mc);
             for (String sat : selection.getBandSatellite().
                     get(selection.getBand())) {
                 showSatellite(selection, mc, sat, tXline, rXline);
@@ -251,22 +272,38 @@ public class MapView extends View {
                         String name;
                         Coord c = mc.getCoordFromPosition(x, y);
                         // dc.setProjected(true);  // WRONG
+                        
+                        // get a name which is unique
                         name = "T" + java.lang.String.valueOf((int) c.getLongitude())
                                 + String.valueOf((int) c.getLatitude());
+                        if (Terminal.terminalHash.get(name) != null) {
+                            Log.p("Mapview:  terminal already exists " + name, Log.WARNING);
+                            // use more precision
+                            name = "T" + Com.toDMS(c.getLongitude())
+                                + Com.toDMS(c.getLatitude());
+                            if (Terminal.terminalHash.get(name) != null)
+                                name = name + "A";
+                        }
 
                         final PointLayer p = new PointLayer(c, name, blue_pin);
 
-                        // TODO - create a new terminal
-                        Log.p("Map: new terminal " + name + " created", Log.DEBUG);
-
                         p.setDisplayName(true);
                         pl.addPoint(p);
+                        
+                        // create a new terminal
                         Terminal term = new Terminal(name);
                         term.setLatitude(Math.toRadians(c.getLatitude()));
                         term.setLongitude(Math.toRadians(c.getLongitude()));
                         term.setBand(selection.getBand()); // not used
                         // update the list of visible terminals for this view
+                        
+                        // now update items for various views
                         selection.initVisibleTerminal();  // re populate visible
+                        
+                        // update the models for tx and rx combos in master view
+                        
+                        Log.p("Map: new terminal " + name + " created", Log.DEBUG);
+
                         Boolean ans = Dialog.show("Terminal", term.getName() + " at Long|Lat "
                                 + Com.toDMS(Math.toRadians(term.getLongitude())) + "|"
                                 + Com.toDMS(Math.toRadians(term.getLatitude()))
@@ -276,14 +313,14 @@ public class MapView extends View {
                             Log.p("Mapview: selecting terminal " + term.getName(), Log.DEBUG);
                             if (currentChoice == TERMINAL_CHOICE.TX) {
                                 selection.settXterminal(term);
+                                currentChoice = TERMINAL_CHOICE.RX;
+
                             } else {
                                 selection.setrXterminal(term);
+                                currentChoice = TERMINAL_CHOICE.TX;
                             }
-                            currentChoice = TERMINAL_CHOICE.RX;
 
-                            mc.removeLayer(tXline);
-                            mc.removeLayer(rXline);
-                            showLines(selection, mc, tXline, rXline);
+                            showLines(selection, mc);
 
                         }
 
@@ -339,7 +376,7 @@ public class MapView extends View {
         Boolean ans = Dialog.show("Terminal", pnew.getName() + " at Long|Lat "
                 + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
                 + Com.toDMS(Math.toRadians(m.getLatitude()))
-                + "Select this terminal?", "YES", "No");
+                + "Select this terminal?", "Yes", "No");
 
         if (ans) {
             Terminal terminal = Terminal.terminalHash.get(pnew.getName());
@@ -351,14 +388,13 @@ public class MapView extends View {
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
                 if (currentChoice == TERMINAL_CHOICE.TX) {
                     selection.settXterminal(terminal);
+                    currentChoice = TERMINAL_CHOICE.RX;
                 } else {
                     selection.setrXterminal(terminal);
+                    currentChoice = TERMINAL_CHOICE.TX;
                 }
-                currentChoice = TERMINAL_CHOICE.RX;
 
-                mc.removeLayer(tXline);
-                mc.removeLayer(rXline);
-                showLines(selection, mc, tXline, rXline);
+                showLines(selection, mc);
 
             }
 

@@ -5,14 +5,19 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.CSVParser;
 import java.util.Arrays;
 
 import com.codename1.io.Log;
+import com.codename1.ui.Display;
 import com.codename1.util.MathUtil;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Random;
+import java.io.IOException;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -79,6 +84,24 @@ public class Satellite extends Entity {
         this.index = index;
     }
 
+    static {
+        try {
+            CSVParser parser = new CSVParser('|');
+
+            InputStream is = Display.getInstance().
+                    getResourceAsStream(null, "/all_satellites.txt");
+
+            // Satellite has to read all the records from file.  Selection
+            // could include only semiMajor subset per instance (e.g., satellites
+            // visible from semiMajor location
+            Satellite.getFromFile(
+                    parser.parse(new InputStreamReader(is)));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+    }
     public Satellite(String name) {
         amplifier = new Amplifier();
         antenna = new Antenna();
@@ -142,18 +165,25 @@ public class Satellite extends Entity {
 
     }
 
-    public static Hashtable<RfBand.Band, ArrayList<Satellite>> getFromFile(String[][] satellites) {
+     private static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
+     
+     // selection needs this
+      public static Hashtable<RfBand.Band, ArrayList<Satellite>> getBandSatellite() {
+       return bandSatellite;   
+      }
+          
+    public static void getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in semiMajor hashtable
-        Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite
+       bandSatellite
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
         // go through all satellites
         int i = 0;
         int comms = 0;
         try {
-            
+
             for (i = 1; i < satellites.length; i++) {
 
                 Log.p("Satellite: processing satellite # "
@@ -169,13 +199,13 @@ public class Satellite extends Entity {
                 satelliteFields(satellites[i], bandSatellite);
             }
         } catch (Exception e) {
-            Log.p("Satellite: error at txt file line " +  
-                    String.valueOf(i), Log.WARNING);
+            Log.p("Satellite: error at txt file line "
+                    + String.valueOf(i), Log.WARNING);
         }
 
-        Log.p ("Satellite: processed " + comms + " Communications satellites" +
-                "out of total " + String.valueOf(i-1), Log.INFO);
-        return bandSatellite;
+        Log.p("Satellite: processed " + comms + " Communications satellites"
+                + "out of total " + String.valueOf(i - 1), Log.INFO);
+      
     }
 
     public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {

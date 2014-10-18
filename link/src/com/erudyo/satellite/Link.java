@@ -102,27 +102,8 @@ public class Link {
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
             // refreshTheme(parentForm);
-            CSVParser parser = new CSVParser('|');
-
-            InputStream is = Display.getInstance().
-                    getResourceAsStream(null, "/all_satellites.txt");
-
-            // Satellite has to read all the records from file.  Selection
-            // could include only semiMajor subset per instance (e.g., satellites
-            // visible from semiMajor location
-            selection.setBandSatellite(Satellite.getFromFile(
-                    parser.parse(new InputStreamReader(is))));
-
-            is = Display.getInstance().
-                    getResourceAsStream(null, "/terminals.txt");
-
-            parser = new CSVParser(',');
-
-            // initialize terminals from the file
-            Terminal.getFromFile(
-                    parser.parse(new InputStreamReader(is)));
-           // can't call since satellite null selection.initVisibleTerminal();
-
+        
+       
             // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
             e.printStackTrace();
