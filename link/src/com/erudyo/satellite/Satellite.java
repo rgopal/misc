@@ -6,18 +6,20 @@
 package com.erudyo.satellite;
 
 import com.codename1.io.CSVParser;
-import java.util.Arrays;
-
 import com.codename1.io.Log;
+import com.codename1.processing.Result;
 import com.codename1.ui.Display;
+import com.codename1.ui.List;
 import com.codename1.util.MathUtil;
+import com.codename1.util.StringUtil;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Random;
-import java.io.IOException;
+import java.util.Vector;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -84,6 +86,72 @@ public class Satellite extends Entity {
         this.index = index;
     }
 
+    public static void drawBeams() {
+        try {
+
+            InputStream is = Display.getInstance().
+                    getResourceAsStream(null, "/Amazonas 1 61W CTH Americas.kml");
+
+            // Satellite has to read all the records from file.  Selection
+            // could include only semiMajor subset per instance (e.g., satellites
+            // visible from semiMajor location
+            Result result = Result.fromContent(new InputStreamReader(is), Result.XML);
+            String placeMarks[] = result.getAsStringArray("//PlaceMark/name");
+            for (String string : placeMarks) {
+                Log.p("Satellite: drawbeams processing " + string, Log.DEBUG);
+                String beams[] = result.getAsStringArray("//PlaceMark/"
+                        + "[name='" + string + "']"
+                        + "/MultiGeometry");
+                for (String beam : beams) {
+                    String coordList = result.getAsString("//PlaceMark/"
+                            + "[name='" + string + "']"
+                            + "/MultiGeometry"
+                            + "/LineString/coordinates");
+
+                    // split into an array since the whole string is lat1,long2 lat2,long2
+                    String coordinates[] = com.codename1.io.Util.split(coordList, " ");
+
+                    // convert into two diemnstional integer
+                    Double dCoord[][] = new Double[coordinates.length][2];
+
+                
+                    // a string is "" in the beginneing because of space
+                    for (int i = 0, index=0; i < coordinates.length; i++) {
+
+                        // this is crazy. 
+                        String s = coordinates[i];
+                        if (s.length()!= 0) {
+                            String tokens[] = com.codename1.io.Util.split(s, ",");
+
+                            dCoord[index][0] = Double.parseDouble(tokens[0]);
+                            dCoord[index][1] = Double.parseDouble(tokens[1]);
+                            index++;
+                        }
+                    }
+                    
+
+                    // this is 8 bytes long so get rid of firs FF.  And note 16
+                    Integer color = Integer.parseInt(
+                            result.getAsString("//PlaceMark/"
+                                    + "[name='" + string + "']"
+                                    + "/Style/LineStyle/color").substring(2,7),16);
+
+                    Integer width = Integer.parseInt(
+                            result.getAsString("//PlaceMark/"
+                                    + "[name='" + string + "']"
+                                    + "/Style/LineStyle/width"));
+
+                    Log.p("Satellite drawbeams processing multiGeometry "
+                            + beam + " for " + string, Log.DEBUG);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     static {
         try {
             CSVParser parser = new CSVParser('|');
@@ -97,11 +165,14 @@ public class Satellite extends Entity {
             Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is)));
 
+            drawBeams();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-    
+
     }
+
     public Satellite(String name) {
         amplifier = new Amplifier();
         antenna = new Antenna();
@@ -165,18 +236,18 @@ public class Satellite extends Entity {
 
     }
 
-     private static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
-     
-     // selection needs this
-      public static Hashtable<RfBand.Band, ArrayList<Satellite>> getBandSatellite() {
-       return bandSatellite;   
-      }
-          
+    private static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
+
+    // selection needs this
+    public static Hashtable<RfBand.Band, ArrayList<Satellite>> getBandSatellite() {
+        return bandSatellite;
+    }
+
     public static void getFromFile(String[][] satellites) {
 
         // satellites contains values from the file.  Allow selection of an
         // vector of Satellite objects with band as the key in semiMajor hashtable
-       bandSatellite
+        bandSatellite
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
         // go through all satellites
@@ -205,7 +276,7 @@ public class Satellite extends Entity {
 
         Log.p("Satellite: processed " + comms + " Communications satellites"
                 + "out of total " + String.valueOf(i - 1), Log.INFO);
-      
+
     }
 
     public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
