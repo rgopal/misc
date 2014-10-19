@@ -106,10 +106,10 @@ public class Satellite extends Entity {
         public ArrayList<Contour> contours;
     }
 
-    // access a xCoord by its name in a hashtable (created from a file)
+    // access a lineString by its name in a hashtable (created from a file)
     Hashtable<String, Beam> beams;
 
-    // multiple contours per xCoord (one of two types (EIRP, GAIN_TEMP)
+    // multiple contours per lineString (one of two types (EIRP, GAIN_TEMP)
     private class Contour {
 
         public int color;
@@ -133,7 +133,8 @@ public class Satellite extends Entity {
     private class Line {
 
         public String altitudeMode;    // for future
-        public Double coordinates[][];   // in radians
+        public ArrayList<Double> latitude;   // in radians
+        public ArrayList<Double> longitude;
         public int position;
 
     }
@@ -154,6 +155,11 @@ public class Satellite extends Entity {
             // get all PlaceMarks (could be point or contours)
             String placeMarks[] = result.getAsStringArray("//PlaceMark");
 
+            // PROBLEMS.  Tried position() and it will be stuck at 0.
+            // can't use name (since there are duplicates
+            // subResults add single quotes and there are empty strings when
+            // tokenizing for coordinates.   StringUtil does not take regex
+            // so a lot of time spent in debugging all this
             Beam beam = new Beam();
             int posBeam = 0;
 
@@ -170,18 +176,16 @@ public class Satellite extends Entity {
             beam.contours = new ArrayList<Contour>();
             beam.points = new ArrayList<Point>();
 
-       
-            int placePos = 0;
+            int placePos = 1;
             // placeMark could be a point or a contour
             for (String placeMark : placeMarks) {
-           
+
                 // find the type of this placeMark
                 String pointExists = null;
                 pointExists
-                        = result.getAsString("//PlaceMark[position()="
-                                + placePos + "]"
-                                + "/MultiGeometry");
-                
+                        = Result.fromContent(placeMark, Result.XML).
+                        getAsString("//MultiGeometry");
+
                 if (pointExists == null) {
                     Log.p("Satellite: drawbeams creating new point # "
                             + pointPos, Log.DEBUG);
@@ -189,23 +193,23 @@ public class Satellite extends Entity {
                     beam.points.add(point);
 
                     point.position = pointPos++;
-                    point.name = placeMark;
+                    point.name = Result.fromContent(placeMark, Result.XML).
+                            getAsString("//name");
 
                     point.color = Integer.parseInt(
-                            result.getAsString(
-                                    "//PlaceMark/[name='"
-                                    + placeMark + "']/Style/LabelStyle/color").
+                            Result.fromContent(placeMark, Result.XML).
+                            getAsString("//Style/LabelStyle/color").
                             substring(2, 7), 16);
 
-                    String coords = result.getAsString(
-                            "//PlaceMark/[name='"
-                            + placeMark + "']/Point/coordinates");
+                    String coords = Com.removeNonNum(Result.fromContent(placeMark, Result.XML).
+                            getAsString("//Point/coordinates"));
 
-                    String latLong[] = com.codename1.io.Util.split(coords, ",");
+                    String latLong[] = com.codename1.io.Util.split(coords,
+                            ",");
 
-                    point.latitude = Double.parseDouble(latLong[0])
+                    point.longitude = Double.parseDouble(latLong[0])
                             * Com.PI / 180.0;
-                    point.longitude = Double.parseDouble(latLong[1])
+                    point.latitude = Double.parseDouble(latLong[1])
                             * Com.PI / 180.0;
 
                 } else {
@@ -215,49 +219,46 @@ public class Satellite extends Entity {
                             + contourPos, Log.DEBUG);
 
                     Contour contour = new Contour();
+                    contour.position = contourPos++;
                     beam.contours.add(contour);
 
                     // parent contour gets the power level name
-                    contour.name = placeMark;
+                    contour.name = Result.fromContent(placeMark, Result.XML).
+                            getAsString("//name");
 
                     // this is 8 bytes long so get rid of firs FF.  And note 16
                     contour.color = Integer.parseInt(
-                            result.getAsString("//PlaceMark/"
-                                    + "[name='" + placeMark + "']"
-                                    + "/Style/LineStyle/color").substring(2, 7), 16);
+                            Result.fromContent(placeMark, Result.XML).
+                            getAsString("//Style/LineStyle/color").substring(2, 7), 16);
 
                     contour.width = Integer.parseInt(
-                            result.getAsString("//PlaceMark/"
-                                    + "[name='" + placeMark + "']"
-                                    + "/Style/LineStyle/width"));
+                            Com.removeNonNum(Result.fromContent(placeMark, Result.XML).
+                                    getAsString("//Style/LineStyle/width")));
 
                     // now get multiple instances of MultiGeometry, each with
-                    String[] multiGeo = result.getAsStringArray("//PlaceMark/"
-                            + "[name='" + placeMark + "']"
-                            + "/MultiGeometry");
+                    String[] lineStrings = Result.fromContent(placeMark, Result.XML).
+                            getAsStringArray("//MultiGeometry/LineString");
 
                     // now get the individual lines for this contour
                     contour.lines = new ArrayList<Line>();
 
                     int linePos = 0;
-                    for (String xCoord : multiGeo) {
+                    for (String lineString : lineStrings) {
                         Line line = new Line();
                         contour.lines.add(line);
                         line.position = linePos++;
-                        line.altitudeMode = result.getAsString("//PlaceMark/"
-                                + "[name='" + placeMark + "']"
-                                + "/MultiGeometry"
-                                + "/LineString/altitudeMode");
-                        String coordList = result.getAsString("//PlaceMark/"
-                                + "[name='" + placeMark + "']"
-                                + "/MultiGeometry"
-                                + "/LineString/coordinates");
+                        line.altitudeMode = Result.fromContent(lineString, Result.XML).
+                                getAsString("//altitudeMode");
+
+                        String coordList = Result.fromContent(lineString, Result.XML).
+                                getAsString("//coordinates");
 
                         // split into an array since the whole placeMark is lat1,long2 lat2,long2
                         String coordinates[] = com.codename1.io.Util.split(coordList, " ");
 
                         // convert into two diemnstional integer
-                        line.coordinates = new Double[coordinates.length][2];
+                        line.longitude = new ArrayList<Double>();
+                        line.latitude = new ArrayList<Double>();
 
                         // a placeMark is "" in the beginneing because of space
                         for (int i = 0, index = 0; i < coordinates.length; i++) {
@@ -265,20 +266,35 @@ public class Satellite extends Entity {
                             // this is crazy. 
                             String s = coordinates[i];
                             if (s.length() != 0) {
+
                                 String tokens[] = com.codename1.io.Util.split(s, ",");
 
-                                line.coordinates[index][0]
-                                        = Double.parseDouble(tokens[0]) * Com.PI / 180.0;
-                                line.coordinates[index][1]
-                                        = Double.parseDouble(tokens[1]) * Com.PI / 180.0;
-                                index++;
+                                // check if both the tokens are numbers
+                                try {
+
+                                    double l, g;
+                                    g = Double.parseDouble(tokens[0]) * Com.PI / 180.0;
+                                    l = Double.parseDouble(tokens[1]) * Com.PI / 180.0;
+
+                                    line.latitude.add(l);
+                                    line.longitude.add(g);
+
+                                    index++;
+                                } catch (NumberFormatException nfe) {
+                                    Log.p("Satellite: KML bad number at " + i, Log.DEBUG);
+                                    // note that index is not incremented
+                                }
+
                             }
                         }
 
                         Log.p("Satellite drawbeams processed  "
-                                + line.coordinates.length + " segments ", Log.DEBUG);
+                                + line.latitude.size() + " segments ", Log.DEBUG);
                     }
                 }
+
+                // increment the index to get item from XML
+                placePos++;
             }
 
         } catch (IOException e) {
@@ -297,7 +313,7 @@ public class Satellite extends Entity {
         if (beams == null) {
             beams = getBeamsFromFile(this);
         } else {
-            // now the multiGeo Hashtable is available so use it and 
+            // now the lineStrings Hashtable is available so use it and 
         }
     }
 

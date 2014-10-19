@@ -5,10 +5,12 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.processing.Result;
 import java.text.Format;
 import java.lang.Math;
 import java.util.Hashtable;
 import com.codename1.util.MathUtil;
+import com.codename1.util.StringUtil;
 
 /**
  *
@@ -31,8 +33,6 @@ public class Com {
         LEO, MEO, GEO
     };
 
-    
-
     public final static double PI = Math.PI;
     public final static double K = 1.379E-23;       // Boltzmann constant, W/HzK
     public final static double KdB = -228.6;        // dBW/HzK
@@ -40,10 +40,12 @@ public class Com {
     public final static double C = 2.99792458E8;
     public final static double RE = 6378.1E3;     // mean equatorial radius
     public final static String DEGREE = "\u00b0";
-    public final static double VISIBLE_ANGLE = 80.0*PI/180.0;   
-    
-public final static double T0 = 290.0;
+    public final static double VISIBLE_ANGLE = 80.0 * PI / 180.0;
+
+    public final static double T0 = 290.0;
+
     // print 4 characters of a double number (format does not work)
+
     static String shortText(double num) {
         String s = String.valueOf(num);
         int len = s.length();
@@ -52,7 +54,7 @@ public final static double T0 = 290.0;
         }
         return s.substring(0, len);
     }
-    
+
     static String text(double num) {
         String s = String.valueOf(num);
         int len = s.length();
@@ -68,7 +70,14 @@ public final static double T0 = 290.0;
         return Math.toRadians(d + m / 60.0 + s / 3600.0);
     }
 
+    public static String removeNonNum(String s) {
+
+        return StringUtil.replaceAll(StringUtil.replaceAll(StringUtil.
+                replaceAll(s, "'", ""), "\n", ""), " ", "");
+    }
+
     // from picmath site
+
     public static double erf(double x) {
         // constants
         final double a1 = 0.254829592;
@@ -151,7 +160,7 @@ public final static double T0 = 290.0;
 
     public static boolean sameValue(double one, double two) {
         // difference is within .001 percent of first
-        if (Math.abs(one - two) < .00001*Math.abs(one)) {
+        if (Math.abs(one - two) < .00001 * Math.abs(one)) {
             return true;
         } else {
             return false;
