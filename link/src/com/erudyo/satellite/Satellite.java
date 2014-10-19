@@ -7,6 +7,7 @@ package com.erudyo.satellite;
 
 import com.codename1.io.CSVParser;
 import com.codename1.io.Log;
+import com.codename1.maps.MapComponent;
 import com.codename1.processing.Result;
 import com.codename1.ui.Display;
 import com.codename1.ui.List;
@@ -86,8 +87,58 @@ public class Satellite extends Entity {
         this.index = index;
     }
 
-    public static void drawBeams() {
+    public enum ContourType {
+
+        EIRP, GAIN_TEMP
+    };
+
+    // multiple multiGeo possible in a satellite
+    // satellite -> Beam -> (label, MultiGeo->Contour)
+    private class Beam {
+
+        public String name;
+        public int position;
+        public int color;
+        public double longitude;
+        public double latitude;
+
+        public ArrayList<Contour> contours;
+    }
+
+    // access a xCoord by its name in a hashtable (created from a file)
+    Hashtable<String, Beam> beams;
+
+    // multiple contours per xCoord (one of two types (EIRP, GAIN_TEMP)
+    private class Contour {
+
+        public int color;
+        public int weight;
+        public String name;
+        public int position;
+        public double latitude;
+        public double longitude;
+        public String EIRPname;
+        public String gainName;
+        public ContourType type;
+        ArrayList<Line> lines;
+
+    }
+
+    private class Line {
+
+        public Double coordinates[][];
+        
+        public int width;
+        public int color;
+    }
+
+    private Hashtable<String, Beam> getBeamsFromFile(Satellite satellite) {
+        Log.p("Satellite: getBeamsFromFile is trying to get beams for "
+                + satellite, Log.DEBUG);
+       Hashtable<String, Beam> beams = new Hashtable<String, Beam>();
         try {
+
+            
 
             InputStream is = Display.getInstance().
                     getResourceAsStream(null, "/Amazonas 1 61W CTH Americas.kml");
@@ -96,60 +147,124 @@ public class Satellite extends Entity {
             // could include only semiMajor subset per instance (e.g., satellites
             // visible from semiMajor location
             Result result = Result.fromContent(new InputStreamReader(is), Result.XML);
+
+            // note that returns are full XML strings so until they are atomic, you
+            // cannot use them as values
             String placeMarks[] = result.getAsStringArray("//PlaceMark/name");
-            for (String string : placeMarks) {
-                Log.p("Satellite: drawbeams processing " + string, Log.DEBUG);
-                String beams[] = result.getAsStringArray("//PlaceMark/"
-                        + "[name='" + string + "']"
+
+            Beam beam = new Beam();
+
+            int pos = 0;
+            // perhaps only one beam in this file
+            beam.name = result.getAsString(
+                    "//Document/name");
+            beam.position = pos++;
+            beams.put(beam.name, beam);
+
+            int contourPos = 0;
+
+            for (String placeMark : placeMarks) {
+                // get ready for new contour
+                beam.contours = new ArrayList<Contour>();
+                Contour contour = new Contour();
+                contour.position = contourPos++;
+                contour.name = result.getAsString(
+                        "//PlaceMark/Style[@id='dbwlabel']/../name");
+
+                contour.color = Integer.parseInt(
+                        result.getAsString(
+                                "//PlaceMark/Style[@id='dbwlabel']/LabelStyle/color").
+                        substring(2, 7), 16);
+
+                String coords = result.getAsString(
+                        "//PlaceMark/Style[@id='dbwlabel']/../Point/Coordinates");
+
+                String latLong[] = com.codename1.io.Util.split(coords, ",");
+
+                contour.latitude = Double.parseDouble(latLong[0])
+                        * Com.PI / 180.0;
+                contour.longitude = Double.parseDouble(latLong[1])
+                        * Com.PI / 180.0;
+    
+                beam.contours.add(contour);
+                
+                Log.p("Satellite: drawbeams created new contour # "
+                        + contour.position, Log.DEBUG);
+
+                // now get multiple instances of MultiGeometry, each with
+                String[] multiGeo = result.getAsStringArray("//PlaceMark/"
+                        + "[name='" + placeMark + "']"
                         + "/MultiGeometry");
-                for (String beam : beams) {
+
+                // now get the individual lines for this contour
+                contour.lines = new ArrayList<Line>();
+
+                for (String xCoord : multiGeo) {
+                    Line line = new Line();
+
+                    // parent contour gets the power level name
+                    contour.EIRPname = placeMark; 
+                    
                     String coordList = result.getAsString("//PlaceMark/"
-                            + "[name='" + string + "']"
+                            + "[name='" + placeMark + "']"
                             + "/MultiGeometry"
                             + "/LineString/coordinates");
 
-                    // split into an array since the whole string is lat1,long2 lat2,long2
+                    // split into an array since the whole placeMark is lat1,long2 lat2,long2
                     String coordinates[] = com.codename1.io.Util.split(coordList, " ");
 
                     // convert into two diemnstional integer
-                    Double dCoord[][] = new Double[coordinates.length][2];
+                    line.coordinates = new Double[coordinates.length][2];
 
-                
-                    // a string is "" in the beginneing because of space
-                    for (int i = 0, index=0; i < coordinates.length; i++) {
+                    // a placeMark is "" in the beginneing because of space
+                    for (int i = 0, index = 0; i < coordinates.length; i++) {
 
                         // this is crazy. 
                         String s = coordinates[i];
-                        if (s.length()!= 0) {
+                        if (s.length() != 0) {
                             String tokens[] = com.codename1.io.Util.split(s, ",");
 
-                            dCoord[index][0] = Double.parseDouble(tokens[0]);
-                            dCoord[index][1] = Double.parseDouble(tokens[1]);
+                            line.coordinates[index][0]
+                                    = Double.parseDouble(tokens[0]) * Com.PI / 180.0;
+                            line.coordinates[index][1]
+                                    = Double.parseDouble(tokens[1]) * Com.PI / 180.0;
                             index++;
                         }
                     }
-                    
 
                     // this is 8 bytes long so get rid of firs FF.  And note 16
-                    Integer color = Integer.parseInt(
+                    line.color = Integer.parseInt(
                             result.getAsString("//PlaceMark/"
-                                    + "[name='" + string + "']"
-                                    + "/Style/LineStyle/color").substring(2,7),16);
+                                    + "[name='" + placeMark + "']"
+                                    + "/Style/LineStyle/color").substring(2, 7), 16);
 
-                    Integer width = Integer.parseInt(
+                    line.width = Integer.parseInt(
                             result.getAsString("//PlaceMark/"
-                                    + "[name='" + string + "']"
+                                    + "[name='" + placeMark + "']"
                                     + "/Style/LineStyle/width"));
 
-                    Log.p("Satellite drawbeams processing multiGeometry "
-                            + beam + " for " + string, Log.DEBUG);
+                    // add it to the current contour
+                    contour.lines.add(line);
+
+                    Log.p("Satellite drawbeams processing segments "
+                            + line.coordinates.length + " color "
+                            + line.color + " width" + line.width, Log.DEBUG);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return beams;
+    }
 
+    public void drawBeams(MapComponent mc) {
+        // TODO get the right file for a specific satellite (this)
+        if (beams == null) {
+            beams = getBeamsFromFile(this);
+        } else {
+            // now the multiGeo Hashtable is available so use it and 
+        }
     }
 
     static {
@@ -164,8 +279,6 @@ public class Satellite extends Entity {
             // visible from semiMajor location
             Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is)));
-
-            drawBeams();
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -125,6 +125,9 @@ public class MapView extends View {
             if (satellite == null) {
                 Log.p("MapView: satellite is null " + satName, Log.DEBUG);
             }
+            
+            // first its beams
+            satellite.drawBeams(mc);
 
             PointsLayer plSat = new PointsLayer();
             plSat.setPointIcon(red_pin);
