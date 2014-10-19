@@ -125,9 +125,6 @@ public class MapView extends View {
             if (satellite == null) {
                 Log.p("MapView: satellite is null " + satName, Log.DEBUG);
             }
-            
-            // first its beams
-            satellite.drawBeams(mc);
 
             PointsLayer plSat = new PointsLayer();
             plSat.setPointIcon(red_pin);
@@ -162,7 +159,10 @@ public class MapView extends View {
                         } else {
                             // change satellite and update lines
                             Log.p("Mapview: selecting satellite " + plSelSat.getName(), Log.DEBUG);
+                            // remove beams of old satellite
+                            selection.getSatellite().removeBeams(mc);
                             selection.setSatellite(satellite);
+                            selection.getSatellite().drawBeams(mc);
 
                             showLines(selection, mc);
 
@@ -254,6 +254,10 @@ public class MapView extends View {
             for (String sat : selection.getBandSatellite().
                     get(selection.getBand())) {
                 showSatellite(selection, mc, sat, tXline, rXline);
+                if (Satellite.satelliteHash.get(sat) == selection.getSatellite()) {
+                    // show the beams of the selected satellite
+                    selection.getSatellite().drawBeams(mc);
+                }
             }
             // now display all terminal all terminals
             for (String term : selection.getVisibleTerminal().
@@ -308,21 +312,20 @@ public class MapView extends View {
                         Log.p("Map: new terminal " + name + " created", Log.DEBUG);
 
                         // update the models for tx and rx combos in master view
-                   
                         selection.getTxView().spin.setModel(new DefaultListModel(
                                 selection.getVisibleTerminal().get(Selection.VISIBLE.YES)));
 
                         selection.getRxView().spin.setModel(new DefaultListModel(
                                 selection.getVisibleTerminal().get(Selection.VISIBLE.YES)));
-                        
+
                         // set current Tx and Rx terminals again since models have changed
                         // (only one will get set again in changeTerminal)
                         selection.getRxView().spin.setSelectedItem(
                                 selection.getrXterminal().getName());
-                        
-                         selection.getTxView().spin.setSelectedItem(
+
+                        selection.getTxView().spin.setSelectedItem(
                                 selection.gettXterminal().getName());
-                        
+
                         // now change terminal (since this was selected at creation
                         changeTerminal(selection, mc, plNewTerm, coordNewTerm);
 
