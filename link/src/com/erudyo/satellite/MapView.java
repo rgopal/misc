@@ -23,9 +23,9 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.list.DefaultListModel;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 /**
@@ -55,11 +55,15 @@ public class MapView extends View {
 
     // ping pong for selecting a terminal by clicking
     private TERMINAL_CHOICE currentChoice = TERMINAL_CHOICE.TX;
-    // need to remember these lines which are removed and added as selection
+    // need to remember these linesSat which are removed and added as selection
     // of satellites or terminals changes
 
-    private LinesLayer tXline;
+    private LinesLayer tXline;          // this is for satellite, tx, rx
     private LinesLayer rXline;
+    private ArrayList<PointsLayer> pointsSat = new 
+       ArrayList<PointsLayer> () ;  // pointsSat of beams of selected satellite
+    private ArrayList<LinesLayer> linesSat = new
+        ArrayList<LinesLayer> () ;    // linesSat of beams of selec satellite
 
     public void showTerminal(final Selection selection,
             final MapComponent mc, String termName, final LinesLayer tXline,
@@ -157,12 +161,13 @@ public class MapView extends View {
                         if (satellite == null) {
                             Log.p("Mapview: can't find satellite " + plSelSat.getName(), Log.DEBUG);
                         } else {
-                            // change satellite and update lines
+                            // change satellite and update linesSat
                             Log.p("Mapview: selecting satellite " + plSelSat.getName(), Log.DEBUG);
                             // remove beams of old satellite
-                            selection.getSatellite().removeBeams(mc);
+                            removeBeams(selection, pointsSat, linesSat, mc);
                             selection.setSatellite(satellite);
-                            selection.getSatellite().drawBeams(mc);
+
+                            drawBeams(selection, pointsSat, linesSat, mc);
 
                             showLines(selection, mc);
 
@@ -184,13 +189,121 @@ public class MapView extends View {
 
     }
 
-    // display two lines for transmit and receive  for selected satellite
+    // remove lines and points of older satellite
+    private void removeBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
+            ArrayList<LinesLayer> linesSat, MapComponent mc) {
+        if (pointsSat == null)
+            return;
+        if (linesSat == null)
+            return;
+        for (PointsLayer p : pointsSat) {
+            Log.p("MapView: removebeams removing " + p, Log.DEBUG);
+            mc.removeLayer(p);
+        }
+        // this array list does not follow contour/line structure, all
+        // lines are present in a flat list
+        for (LinesLayer l : linesSat) {
+            Log.p("MapView: removebeams removing " + l, Log.DEBUG);
+            mc.removeLayer(l);
+        }
+
+    }
+
+    // draw lines and points of newly selected satellite
+    public void drawBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
+            ArrayList<LinesLayer> linesSat, MapComponent mc) {
+        Hashtable<String, Satellite.Beam> beams
+                = selection.getSatellite().getBeams();
+        try {
+            Image blue_pin = Image.createImage("/blue_pin.png");
+          
+
+            if (beams == null) {
+                Log.p("MapView: drawbeams beams is null", Log.DEBUG);
+            } else {
+                for (String beam : beams.keySet()) {
+                    Log.p("Mapview: drawbeams processing beam " + beam
+                            + " for satellite " + selection.getSatellite(), Log.DEBUG);
+                    // first all the points
+                    for (Satellite.Point point : beams.get(beam).points) {
+                        Log.p("  Mapview: drawbeams processing point " + point.name,
+                                Log.DEBUG);
+                        PointLayer p = new PointLayer(new Coord(Math.toDegrees(point.latitude),
+                                Math.toDegrees(point.longitude)),
+                                point.name, blue_pin);
+                        PointsLayer psl = new PointsLayer();
+
+                        //if (mc.getZoomLevel() > 10) {
+                            p.setDisplayName(true);
+                        
+                        psl.addPoint(p);
+                        psl.setPointIcon(blue_pin);
+                        mc.addLayer(psl);
+                        pointsSat.add(psl);
+
+                    }
+
+                    // then all the contours
+                    for (Satellite.Contour contour : beams.get(beam).contours) {
+                        Log.p("  Mapview: drawbeams processing contour " + contour.name,
+                                Log.DEBUG);
+
+                        for (Satellite.Line line : contour.lines) {
+                            Log.p("    Mapview: drawbeams processing line " + line.position,
+                                    Log.DEBUG);
+
+                            // start a new line 
+                            LinesLayer ll = new LinesLayer();
+                            linesSat.add(ll);
+
+                            int segments = line.latitude.size();
+                            if (segments != line.longitude.size()) {
+                                Log.p("        MapView: lat and long have different size "
+                                        + segments, Log.DEBUG);
+                            }
+
+                            for (int i = 0; i < segments; i++) {
+
+                                Double lat = Math.toDegrees(line.latitude.toArray(new Double[0])[i]);
+
+                                Double lng = Math.toDegrees(line.longitude.toArray(new Double[0])[i]);
+
+                                Coord start = new Coord(lat, lng);
+                                if ((i + 1) < segments) {
+                                    Double lat2 = Math.toDegrees(line.latitude.toArray(new Double[0])[i + 1]);
+
+                                    Double lng2 = Math.toDegrees(line.longitude.toArray(new Double[0])[i + 1]);
+
+                                    Coord end = new Coord(lat2, lng2);
+
+                                    ll.addLineSegment(new Coord[]{start, end});
+                                    ll.lineColor(contour.color);         // red for transmit
+
+                                }
+
+                            }
+                            // add in the list of LinesLayer for future removal
+                            mc.addLayer(ll);
+                         
+
+                        }
+                    }
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // display two linesSat for transmit and receive  for selected satellite
     // tX terminal and rX terminal
     public void showLines(final Selection selection, final MapComponent mc) {
 
         Coord tx, cSatellite, rx;
 
-        // remove old lines first (if they exist)
+        // remove old linesSat first (if they exist)
         if (tXline != null) {
 
             Log.p("Mapview: removing tx line " + tXline, Log.DEBUG);
@@ -243,11 +356,11 @@ public class MapView extends View {
                     new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"),
                     satLocation, 5);
 
-            // initialize static tx and rx lines
+            // initialize static tx and rx linesSat
             rXline = null;
             tXline = null;
 
-            // now draw lines between terminals and satellite
+            // now draw linesSat between terminals and satellite
             showLines(selection, mc);
 
             // show all satellites on the map
@@ -256,7 +369,9 @@ public class MapView extends View {
                 showSatellite(selection, mc, sat, tXline, rXline);
                 if (Satellite.satelliteHash.get(sat) == selection.getSatellite()) {
                     // show the beams of the selected satellite
-                    selection.getSatellite().drawBeams(mc);
+                    // first remove
+                    
+                    drawBeams(selection, pointsSat, linesSat, mc);
                 }
             }
             // now display all terminal all terminals
@@ -387,7 +502,7 @@ public class MapView extends View {
                 Log.p("Mapview: can't find terminal " + pnew.getName() + " for "
                         + currentChoice, Log.DEBUG);
             } else {
-                // change terminal and update lines
+                // change terminal and update linesSat
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
 
                 if (currentChoice == TERMINAL_CHOICE.TX) {

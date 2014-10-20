@@ -97,7 +97,7 @@ public class Satellite extends Entity {
     // A placemark could be a point or a contour
     // A placemark could be of type EIRP or GAIN
     // A contour has multiple lines
-    private class Beam {
+    public class Beam {
 
         public String name;
         public int position;
@@ -110,7 +110,7 @@ public class Satellite extends Entity {
     Hashtable<String, Beam> beams;
 
     // multiple contours per lineString (one of two types (EIRP, GAIN_TEMP)
-    private class Contour {
+    public class Contour {
 
         public int color;
         public int width;
@@ -120,7 +120,7 @@ public class Satellite extends Entity {
         ArrayList<Line> lines;
     }
 
-    private class Point {
+    public class Point {
 
         public String name;
         public int position;
@@ -130,7 +130,7 @@ public class Satellite extends Entity {
         public ContourType type;   // share type with contour
     }
 
-    private class Line {
+    public class Line {
 
         public String altitudeMode;    // for future
         public ArrayList<Double> latitude;   // in radians
@@ -303,18 +303,15 @@ public class Satellite extends Entity {
         return beams;
     }
 
-    // remove beams and associated points, lines from map component
-    public void removeBeams(MapComponent mc) {
+    
 
-    }
-
-    public void drawBeams(MapComponent mc) {
+    public Hashtable <String, Beam> getBeams() {
         // TODO get the right file for a specific satellite (this)
         if (beams == null) {
             beams = getBeamsFromFile(this);
-        } else {
-            // now the lineStrings Hashtable is available so use it and 
+            Log.p("Satellite: got beams from file for " + this, Log.DEBUG);
         }
+        return beams;
     }
 
     static {
