@@ -180,17 +180,20 @@ public class Terminal extends Entity {
         this.name = name;
 
         tXantenna = new Antenna();
+        tXantenna.setName("tX" + this.name);
 
         tXantenna.addAffected(this);
         // System.out.println(this.name);
         tXantenna.setDiameter(1);
 
         rXantenna = new Antenna();
+          tXantenna.setName("rX" + this.name);
         rXantenna.addAffected(this);
         // System.out.println(this.name);
         rXantenna.setDiameter(1);
 
         amplifier = new Amplifier();
+        amplifier.setName("amp" + this.name);
         amplifier.addAffected(this);
         amplifier.setPower(10);
         // get current location

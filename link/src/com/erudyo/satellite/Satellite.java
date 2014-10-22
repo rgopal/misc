@@ -29,7 +29,8 @@ import java.util.Vector;
  */
 public class Satellite extends Entity {
 
-    private Antenna antenna;
+    private Antenna rXantenna;
+    private Antenna tXantenna;
     private Amplifier amplifier;
 
     // can have multiple bands and transponders;
@@ -73,11 +74,10 @@ public class Satellite extends Entity {
     protected double altitude;      // altitude
     protected Com.Orbit orbit;
     // protected RfBand.Band band; // now multiple bands in transponders
-    
-        private double tempGround = 45.0;
+
+    private double tempGround = 45.0;
     private double tempSky = 20.0;  // in K, depends on frequency
     private double polarizationLoss;
-
 
     private int index;
 
@@ -109,7 +109,7 @@ public class Satellite extends Entity {
     /**
      * @return the tempSky
      */
-   public double getTempSky(RfBand.Band band) {
+    public double getTempSky(RfBand.Band band) {
         double temp = tempSky;
         if (band != RfBand.Band.C) {
             Log.p("Satellite: no tempSky for band " + band, Log.WARNING);
@@ -136,6 +136,20 @@ public class Satellite extends Entity {
      */
     public void setPolarizationLoss(double polarizationLoss) {
         this.polarizationLoss = polarizationLoss;
+    }
+
+    /**
+     * @return the tXantenna
+     */
+    public Antenna getTxAntenna() {
+        return tXantenna;
+    }
+
+    /**
+     * @param tXantenna the tXantenna to set
+     */
+    public void setTxAntenna(Antenna tXantenna) {
+        this.tXantenna = tXantenna;
     }
 
     public enum ContourType {
@@ -354,9 +368,7 @@ public class Satellite extends Entity {
         return beams;
     }
 
-    
-
-    public Hashtable <String, Beam> getBeams() {
+    public Hashtable<String, Beam> getBeams() {
         // TODO get the right file for a specific satellite (this)
         if (beams == null) {
             beams = getBeamsFromFile(this);
@@ -386,18 +398,25 @@ public class Satellite extends Entity {
 
     public Satellite(String name) {
         amplifier = new Amplifier();
-        antenna = new Antenna();
+        rXantenna = new Antenna();
         // gainTemp should be calculated when diameter changed
-        antenna.setDiameter(2.4);
+        rXantenna.setDiameter(2.4);
+        rXantenna.setName("RxAnt" + this.name);
 
-            antenna.addAffected(this);
-  
+        rXantenna.addAffected(this);
+        
+         tXantenna = new Antenna();
+        // gainTemp should be calculated when diameter changed
+        tXantenna.setDiameter(2.4);
+        tXantenna.setName("Tnt" + this.name);
 
+        tXantenna.addAffected(this);
 
         amplifier = new Amplifier();
+        amplifier.setName("amp" + this.name);
         amplifier.addAffected(this);
         amplifier.setPower(100);
-        
+
         this.name = name;       // should be unique
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
@@ -552,7 +571,7 @@ public class Satellite extends Entity {
 
     }
 
-      // uplink system noise temperature at the receiver input given by
+    // uplink system noise temperature at the receiver input given by
     public double calcSystemNoiseTemp() {
         double tA;
         double noiseTemp;
@@ -560,7 +579,7 @@ public class Satellite extends Entity {
         // noise figure is in dB
         teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
                 - 1.0) * Com.T0;
-        tA = this.getTempSky(getAntenna().getBand())
+        tA = this.getTempSky(getRxAntenna().getBand())
                 + this.getTempGround();
 
         // LFRX is in dB so change
@@ -572,7 +591,7 @@ public class Satellite extends Entity {
 
         return noiseTemp;
     }
-    
+
     public double getEIRP() {
         return 55;
     }
@@ -660,8 +679,8 @@ public class Satellite extends Entity {
         this.altitude = R0;
     }
 
-    public Antenna getAntenna() {
-        return antenna;
+    public Antenna getRxAntenna() {
+        return rXantenna;
     }
 
     /**
@@ -680,10 +699,10 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @param antenna the antenna to set
+     * @param antenna the rXantenna to set
      */
-    public void setAntenna(Antenna antenna) {
-        this.antenna = antenna;
+    public void setRxAntenna(Antenna antenna) {
+        this.rXantenna = antenna;
         updateAffected();
     }
 
@@ -717,11 +736,13 @@ public class Satellite extends Entity {
         this.semiMajor = semiMajor;
     }
 
-      private double calcEIRP() {
+    private double calcEIRP() {
         double eirp = (10 * MathUtil.log10(
                 this.getAmplifier().getPower())) // was in W
-                + this.getAntenna().getGain() // in dB
-                - this.getAntenna().getDepointingLoss()
+                + this.getAntenna().getGain() // in dB(10 * MathUtil.log10(
+                this.getAmplifier().getPower())) // was in W
+                + this.getRxAntenna().getGain() // in dB
+                - this.getRxAntenna().getDepointingLoss()
                 - this.getAmplifier().getLFTX(); // in dB
         return eirp;
     }
@@ -730,25 +751,24 @@ public class Satellite extends Entity {
 
         double gain;
 
-        // antenna gain is already in dB
-        gain = this.getAntenna().getGain()
-                - this.getAntenna().calcDepointingLoss()
+        // rXantenna gain is already in dB
+        gain = this.getRxAntenna().getGain()
+                - this.getRxAntenna().calcDepointingLoss()
                 - this.getAmplifier().getLFRX()
                 - this.getPolarizationLoss()
                 - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
         return gain;
     }
 
-       public void update(Entity e) {
+    public void update(Entity e) {
 
         // update everything that could be affected
-        // EIRP depends on antenna and amplifier, but both need to exist 
-        if (this.getAmplifier() != null && this.getAntenna() != null
-               ) {
+        // EIRP depends on rXantenna and amplifier, but both need to exist 
+        if (this.getAmplifier() != null && this.getRxAntenna() != null) {
             this.EIRP = calcEIRP();
 
             this.gainTemp = calcGainTemp();
-           
+
         }
 
         // avoid using set since that should be used to send updates down

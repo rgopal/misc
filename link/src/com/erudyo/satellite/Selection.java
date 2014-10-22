@@ -121,7 +121,6 @@ public class Selection {
         // get the list of satellites read from the .txt file
         setBandSatellite(Satellite.getBandSatellite());
         // initialize visible terminals for selected satellite (use Affected)
-        
 
     }
 
@@ -169,13 +168,12 @@ public class Selection {
      */
     public void settXterminal(Terminal tXterminal) {
         this.tXterminal = tXterminal;
-        
-   
+
         // after init
-        if (getuLpath() != null)
+        if (getuLpath() != null) {
             getuLpath().setTerminal(gettXterminal());
-    
-      
+        }
+
     }
 
     /**
@@ -183,7 +181,7 @@ public class Selection {
      */
     public Terminal getrXterminal() {
          // why is terminal being changed
-      
+
         return rXterminal;
     }
 
@@ -191,14 +189,13 @@ public class Selection {
      * @param rXterminal the rXterminal to set
      */
     public void setrXterminal(Terminal rXterminal) {
-         // why is terminal being changed
-         this.rXterminal = rXterminal;
-     
-         if (getdLpath() != null)
+        // why is terminal being changed
+        this.rXterminal = rXterminal;
+
+        if (getdLpath() != null) {
             getdLpath().setTerminal(getrXterminal());
-      
-        
-      
+        }
+
     }
 
     /**
@@ -213,12 +210,18 @@ public class Selection {
      */
     public void setSatellite(Satellite satellite) {
         // update visible terminals 
-         this.satellite = satellite;
-     
+        this.satellite = satellite;
 
-       
-         initVisibleTerminal();  // they are both here in this class
-       
+        initVisibleTerminal();  // they are both here in this class
+
+        // update the UL and DL paths
+        if (uLpath != null) {
+            uLpath.setSatellite(satellite);
+        }
+        if (dLpath != null) {
+            dLpath.setSatellite(satellite);
+        }
+
     }
 
     /**
@@ -235,9 +238,6 @@ public class Selection {
         this.uLpath = uLpath;
     }
 
-
-
-    
     /**
      * @return the dLpath
      */
@@ -316,8 +316,8 @@ public class Selection {
         int indexVis = 0;
         int indexNonVis = 0;
 
-        visibleTerminal = new Hashtable<VISIBLE, ArrayList<String>> ();
-        
+        visibleTerminal = new Hashtable<VISIBLE, ArrayList<String>>();
+
         // create new list of visible and non visible satellites with
         // respect to selected satellite
         for (Terminal term : Terminal.indexTerminal) {
@@ -371,28 +371,29 @@ public class Selection {
 
         }
         if (visibleTerminal.get(VISIBLE.YES) == null) {
-            Log.p("Selection: visible terminal list is null for satellite " 
+            Log.p("Selection: visible terminal list is null for satellite "
                     + this.getSatellite(), Log.DEBUG);
-            
-        } else
-        // now sort each list by distance of terminal from satellite
-        Collections.sort(visibleTerminal.get(VISIBLE.YES), new Comparator<String>() {
-            @Override
-            public int compare(String one, String two) {
 
-                if (getSatellite() == null) {
-                    Log.p("Selection: satellite is null in initVisible YES so alpha sort ", Log.WARNING);
-                    return one.compareTo(two);
-                } else {
+        } else // now sort each list by distance of terminal from satellite
+        {
+            Collections.sort(visibleTerminal.get(VISIBLE.YES), new Comparator<String>() {
+                @Override
+                public int compare(String one, String two) {
 
-                    return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
-                            - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                    if (getSatellite() == null) {
+                        Log.p("Selection: satellite is null in initVisible YES so alpha sort ", Log.WARNING);
+                        return one.compareTo(two);
+                    } else {
+
+                        return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
+                                - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                    }
+
                 }
 
             }
-
+            );
         }
-        );
 
         Collections.sort(visibleTerminal.get(VISIBLE.NO), new Comparator<String>() {
             @Override

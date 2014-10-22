@@ -131,8 +131,8 @@ public class DlPathView extends View {
         final Satellite satellite = selection.getdLpath().getSatellite();
 
         Label L01 = new Label("C Freq");
-        Label lFrequency = new Label(Com.shortText(satellite.getAntenna().getFrequency() / 1E9));
-        Label L03 = new Label("GHz " + satellite.getAntenna().getBand());
+        Label lFrequency = new Label(Com.shortText(satellite.getRxAntenna().getFrequency() / 1E9));
+        Label L03 = new Label("GHz " + satellite.getRxAntenna().getBand());
         cnt.addComponent(L01);
         cnt.addComponent(lFrequency);
         cnt.addComponent(constraint, L03);

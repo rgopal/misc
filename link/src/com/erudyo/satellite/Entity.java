@@ -65,7 +65,7 @@ public class Entity {
             affected = new Hashtable<Entity, Integer>();
         }
         if (affected.get(e) != null) {
-            Log.p("Entity: addAffected reference value will increase by 1"
+            Log.p("Entity: addAffected reference value will increase by 1, current value = "
                     + affected.get(e) + " in affected list of " + this, Log.DEBUG);
             affected.put(e, affected.get(e) + 1);
         } else {

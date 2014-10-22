@@ -99,6 +99,7 @@ public class Path extends Entity {
         // include this Path in the Affected list of satellite and terminal
         s.addAffected(this);
         t.addAffected(this);
+        this.name = pathType + ":" + s.getName() + "-" +  t.getName();
 
         setAll();
     }
@@ -119,6 +120,10 @@ public class Path extends Entity {
             this.satellite.removeAffected(this);
             s.addAffected(this);
             this.satellite = s;
+            this.name = pathType + ":" + s.getName() + "-" + terminal.getName();
+               Log.p("Path: path " + this
+                    + " added satellite " + s + " in Affected list",
+                    Log.WARNING);
         } else {
             Log.p("Path: path " + this
                     + " already in affected list of satellite " + s,
@@ -142,6 +147,7 @@ public class Path extends Entity {
             this.terminal.removeAffected(this);
             t.addAffected(this);
             this.terminal = t;
+            this.name = pathType + ":" + satellite.getName() + "-" + terminal.getName();
         } else {
             Log.p("Path: path " + this
                     + " already in affected list of terminal " + t,
