@@ -11,6 +11,7 @@
  * TODO:  check if it will affect the final Data Rate or Link Marging 
  * (may be in selection)
  * Expand attenuation as a function of frequency
+ * THis class may be superfluous!   See RxView and TxView for duplication
  */
 package com.erudyo.satellite;
 

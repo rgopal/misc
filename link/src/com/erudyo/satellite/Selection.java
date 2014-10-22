@@ -215,6 +215,31 @@ public class Selection {
         this.uLpath = uLpath;
     }
 
+     public void changeUlPath() {
+        // remove the original satellite
+        this.getuLpath().setSatellite(this.getSatellite());
+
+        // why is terminal being changed
+        if (getuLpath().getTerminal() != gettXterminal()) {
+            getuLpath().setTerminal(gettXterminal());
+        }
+        getuLpath().setAll();
+
+    }
+    
+    // change the Dl selections in Path
+    public void changeDlPath() {
+        // remove the original satellite
+        getdLpath().setSatellite(getSatellite());
+
+        // why is terminal being changed
+        if (getdLpath().getTerminal() != getrXterminal()) {
+            getdLpath().setTerminal(getrXterminal());
+        }
+        getdLpath().setAll();
+
+    }
+    
     /**
      * @return the dLpath
      */

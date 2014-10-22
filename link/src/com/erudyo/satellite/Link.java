@@ -136,12 +136,12 @@ public class Link {
         // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
         views[0] = selection.getSatelliteView();
         views[1] = selection.getCommsView();
+        
         views[2] = selection.getTxView();
-
         views[3] = selection.getuLpathView();
-
-        views[4] = selection.getdLpathView();
-        views[5] = selection.getRxView();
+        
+        views[4] = selection.getRxView();
+        views[5] = selection.getdLpathView();
 
     }
 
@@ -169,12 +169,12 @@ public class Link {
 
             initViews(view, cnt, selection, layout);
         }
-        Button b = new Button("Map");
+        Button bMap = new Button("Map");
 
         // get map form for selecting terminals and satellite
-        main.addComponent(b);
+        main.addComponent(bMap);
         final MapView map = new MapView("Map");
-        b.addActionListener(new ActionListener() {
+        bMap.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 Form form = map.createView(selection);
                 BackCommand bc = new BackCommand();
@@ -198,7 +198,7 @@ public class Link {
 
     }
 
-    public void initViews(final View view, Container cnt, final Selection selection, TableLayout layout) {
+    public void initViews(final View view, Container cntLink, final Selection selection, TableLayout layout) {
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
@@ -212,25 +212,25 @@ public class Link {
             Component v = view.getLabel(selection);
             Component u = view.getSubLabel(selection);
 
-            Button c = new Button("->"); //view.getName());
+            Button bSelectView = new Button("->"); //view.getName());
 
             TableLayout.Constraint constraint = layout.createConstraint();
             // constraint.setVerticalSpan(2);
             constraint.setWidthPercentage(40);      // half of width
 
-            cnt.addComponent(constraint, n);
+            cntLink.addComponent(constraint, n);
 
             constraint = layout.createConstraint(); // 30% of width
             constraint.setWidthPercentage(25);
 
-            cnt.addComponent(constraint, s);
-            cnt.addComponent(v);
-            // cnt.addComponent(u);  NO Sublabel
-            cnt.addComponent(c);
+            cntLink.addComponent(constraint, s);
+            cntLink.addComponent(v);
+            // cntLink.addComponent(u);  NO Sublabel
+            cntLink.addComponent(bSelectView);
 
-            c.setIcon(cmdIcon);
+            bSelectView.setIcon(cmdIcon);
 
-            c.addActionListener(new ActionListener() {
+            bSelectView.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     final Form form = view.createView(selection);
                     BackCommand bc = new BackCommand();
@@ -304,51 +304,55 @@ public class Link {
     public void initBands(Form main, final Selection selection) {
         // band selection
 
-        Container topLine = new Container();
-        topLine.setLayout(new BoxLayout(BoxLayout.X_AXIS));
-        main.addComponent(topLine);
+        Container cntBand = new Container();
+        cntBand.setLayout(new BoxLayout(BoxLayout.X_AXIS));
+        main.addComponent(cntBand);
 
-        final Label bandLabel = new Label();
-        final ComboBox spin = new ComboBox();
-        topLine.addComponent(spin);
-        topLine.addComponent(bandLabel);
+        final Label lBand = new Label();
+        final ComboBox cbBand = new ComboBox();
+        cntBand.addComponent(cbBand);
+        cntBand.addComponent(lBand);
 
         ListModel model = new DefaultListModel(selection.getRfBands());
-        spin.setModel(model);
+        cbBand.setModel(model);
 
-        String item = (String) spin.getSelectedItem();
+        String item = (String) cbBand.getSelectedItem();
 
         RfBand rFband = RfBand.rFbandHash.get(item);
 
         selection.setBand(rFband.getBand());
 
         // note that only semiMajor String has substring functions
-        bandLabel.setText((Com.shortText(rFband.lowFrequency / 1E9))
+        lBand.setText((Com.shortText(rFband.lowFrequency / 1E9))
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
 
         // change in band will change satellite and terminals which would
         // change the paths UL and DL also.   Need to handle it here and
         // then again in respective satellite and terminal change
-        spin.addActionListener(new ActionListener() {
+        cbBand.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                String item = (String) spin.getSelectedItem();
+                String item = (String) cbBand.getSelectedItem();
                 RfBand rFband = RfBand.rFbandHash.get(item);
 
                 selection.setBand(rFband.getBand());
 
-                bandLabel.setText(Com.shortText((rFband.lowFrequency / 1E9))
+                lBand.setText(Com.shortText((rFband.lowFrequency / 1E9))
                         + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                         + " GHz");
-                Log.p("Link: band selection " + spin.getSelectedItem().toString(), Log.DEBUG);
+                Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
 
                 // update combos and labels
-                comboSatellite(selection, spin);
+                comboSatellite(selection, cbBand);
 
-                comboTx(selection, spin);
-                comboRx(selection, spin);
-                comboUlPath(selection);
+                // it will select Tx terminal
+                comboTx(selection, cbBand);
+
+                // will select Rx terminal
+                comboRx(selection, cbBand);
+                selection.changeUlPath();
+                selection.changeDlPath();
             }
         });
 
@@ -388,23 +392,12 @@ public class Link {
             selection.initVisibleTerminal();
 
             // update the UL paths
-            comboUlPath(selection);
+            selection.changeUlPath();
+            selection.changeDlPath();
             // update label of satellite
             selection.getSatelliteView().label.setText(
                     selection.getSatellite().getName());
         }
-
-    }
-
-    public void comboUlPath(Selection selection) {
-        // remove the original satellite
-        selection.getuLpath().setSatellite(selection.getSatellite());
-
-        // why is terminal being changed
-        if (selection.getuLpath().getTerminal() != selection.gettXterminal()) {
-            selection.getuLpath().setTerminal(selection.gettXterminal());
-        }
-        selection.getuLpath().setAll();
 
     }
 
@@ -422,7 +415,7 @@ public class Link {
                             new String[0])));
 
             if (model == null) {
-                Log.p("Link: Can't create DefaultListModel for Rx satellite "
+                Log.p("Link: Can't create DefaultListModel for Rx terminal "
                         + selection.getSatellite(), Log.DEBUG);
             } else {
 
@@ -430,7 +423,7 @@ public class Link {
                 selection.getRxView().spin.setModel(model);
 
                 int position;
-                // update selected receive terminal
+                // update selected receive terminal  TODO check for 0 terminals
                 if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 2) {
                     // get the first terminal (only 1)
                     position = 0;
@@ -445,11 +438,20 @@ public class Link {
                                         new String[0])[position]));
 
                 // update the UL path
-                comboUlPath(selection);
+                selection.changeUlPath();
+                selection.changeDlPath();
 
-                // update label TODO
+                // update label 
                 selection.getRxView().label.setText(
                         selection.getrXterminal().getName());
+
+                // update its lat/long (comes from DlPath)
+                selection.getdLpathView().label.setText(
+                        Com.toDMS(selection.getrXterminal().getLongitude()));
+                // update label of Rx terminal
+
+                selection.getdLpathView().subLabel.setText(
+                        Com.toDMS(selection.getrXterminal().getLatitude()));
 
             }
         }
@@ -462,7 +464,7 @@ public class Link {
             Log.p("Link: Visible terminal list is empty for "
                     + selection.getSatellite(), Log.ERROR);
             // change the current Combobox entry
-            // spin.setSelectedIndex(i);
+            // cbBand.setSelectedIndex(i);
         }
 
         selection.initVisibleTerminal();
@@ -483,14 +485,15 @@ public class Link {
                         Log.WARNING);
             }
 
-            // set the selected receive terminal
+            // set the selected Tx terminal
             selection.settXterminal(Terminal.terminalHash.
                     get(selection.getVisibleTerminal().
                             get(Selection.VISIBLE.YES).toArray(
                                     new String[0])[0]));
 
             // update the UL path
-            comboUlPath(selection);
+            selection.changeUlPath();
+            selection.changeDlPath();
 
             // update label of Tx terminal
             selection.getTxView().label.setText(
