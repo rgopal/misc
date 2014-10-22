@@ -143,29 +143,29 @@ public class RxView extends View {
         final Terminal rxTerm = selection.getrXterminal();
 
         Label L01 = new Label("Cent Freq");
-        Label L02 = new Label(Com.shortText(rxTerm.getrXantenna().getFrequency() / 1E9));
+        Label lFrequency = new Label(Com.shortText(rxTerm.getrXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + rxTerm.getBand());
         cnt.addComponent(L01);
-        cnt.addComponent(constraint, L02);
+        cnt.addComponent(constraint, lFrequency);
         cnt.addComponent(L03);
 
         Label L61 = new Label("  Longitude");
-        final Label L62 = new Label(Com.toDMS(rxTerm.getLongitude()));
+        final Label lLongitude = new Label(Com.toDMS(rxTerm.getLongitude()));
         Label L63 = new Label("deg");
 
         cnt.addComponent(L61);
-        cnt.addComponent(L62);
+        cnt.addComponent(lLongitude);
         cnt.addComponent(L63);
 
         Label L71 = new Label("  Latitude");
-        final Label L72 = new Label(Com.toDMS(rxTerm.getLatitude()));
+        final Label lLatitude = new Label(Com.toDMS(rxTerm.getLatitude()));
         Label L73 = new Label("deg");
 
         cnt.addComponent(L71);
-        cnt.addComponent(L72);
+        cnt.addComponent(lLatitude);
         cnt.addComponent(L73);
 
-        Label L11 = new Label("Noise Figure");
+        Label lNoiseFigureLabel = new Label("Noise Figure");
 
         final Slider lNoiseFig = new Slider();
         lNoiseFig.setMinValue((int) MathUtil.round(Amplifier.NOISE_FIG_LO * 10)); // x10
@@ -176,21 +176,21 @@ public class RxView extends View {
         lNoiseFig.setProgress((int) MathUtil.round(rxTerm.getAmplifier().getNoiseFigure() * 10));
         lNoiseFig.setRenderValueOnTop(true);
 
-        final Label L13 = new Label(Com.shortText(rxTerm.getAmplifier().
+        final Label lNoiseFigure = new Label(Com.shortText(rxTerm.getAmplifier().
                 getNoiseFigure()) + "dB");
-        cnt.addComponent(L11);
+        cnt.addComponent(lNoiseFigureLabel);
         cnt.addComponent(lNoiseFig);
-        cnt.addComponent(L13);
+        cnt.addComponent(lNoiseFigure);
 
         // does not change
-        Label L2A1 = new Label("Antenna Eff");
-        Label L2A2 = new Label(Com.shortText(rxTerm.getrXantenna().getEfficiency()));
+        Label lAntennaEfficiencyLabel = new Label("Antenna Eff");
+        Label lEfficiency = new Label(Com.shortText(rxTerm.getrXantenna().getEfficiency()));
         Label L2A3 = new Label(" ");
-        cnt.addComponent(L2A1);
-        cnt.addComponent(L2A2);
+        cnt.addComponent(lAntennaEfficiencyLabel);
+        cnt.addComponent(lEfficiency);
         cnt.addComponent(L2A3);
 
-        Label L21 = new Label("  Diameter");
+        Label lDiameterLabel = new Label("  Diameter");
         final Slider lDiameter = new Slider();
 
         lDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
@@ -201,23 +201,23 @@ public class RxView extends View {
         lDiameter.setProgress((int) MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
 
         lDiameter.setRenderValueOnTop(true);
-        final Label L23 = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
-        cnt.addComponent(L21);
+        final Label lTermDiameter = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
+        cnt.addComponent(lDiameterLabel);
         cnt.addComponent(lDiameter);
-        cnt.addComponent(L23);
+        cnt.addComponent(lTermDiameter);
 
         Label L31 = new Label(" Gain");
-        final Label L32 = new Label(Com.shortText(rxTerm.getrXantenna().getGain()));
+        final Label lGain = new Label(Com.shortText(rxTerm.getrXantenna().getGain()));
         Label L33 = new Label("dBi");
         cnt.addComponent(L31);
-        cnt.addComponent(L32);
+        cnt.addComponent(lGain);
         cnt.addComponent(L33);
 
         Label L41 = new Label(" 3dB Angle");
-        final Label L42 = new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
+        final Label lThreeDBangle = new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
         Label L43 = new Label("deg");
         cnt.addComponent(L41);
-        cnt.addComponent(L42);
+        cnt.addComponent(lThreeDBangle);
         cnt.addComponent(L43);
 
         // does change so not in combo/sliders
@@ -271,7 +271,7 @@ public class RxView extends View {
                     selection.getrXterminal().getAmplifier().
                             setNoiseFigure(Double.parseDouble(lNoiseFig.getText()) / 10.0);
                     // update EIRP
-                    L13.setText(Com.shortText(rxTerm.getAmplifier().
+                    lNoiseFigure.setText(Com.shortText(rxTerm.getAmplifier().
                             getNoiseFigure()) + "dB");
                     valuesysTemp.setText(Com.text(
                             rxTerm.calcSystemNoiseTemp()));
@@ -294,9 +294,9 @@ public class RxView extends View {
                     selection.getrXterminal().getrXantenna().
                             setDiameter(Double.parseDouble(lDiameter.getText()) / 10.0);
                     // update EIRP and three DB
-                    L23.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
-                    L42.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
-                    L32.setText(Com.shortText(rxTerm.getrXantenna().getGain()));
+                    lTermDiameter.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
+                    lThreeDBangle.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
+                    lGain.setText(Com.shortText(rxTerm.getrXantenna().getGain()));
                     valuePointLoss.setText(Com.shortText(
                             rxTerm.getrXantenna().getDepointingLoss()));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));

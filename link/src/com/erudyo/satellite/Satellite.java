@@ -73,6 +73,11 @@ public class Satellite extends Entity {
     protected double altitude;      // altitude
     protected Com.Orbit orbit;
     // protected RfBand.Band band; // now multiple bands in transponders
+    
+        private double tempGround = 45.0;
+    private double tempSky = 20.0;  // in K, depends on frequency
+    private double polarizationLoss;
+
 
     private int index;
 
@@ -85,6 +90,52 @@ public class Satellite extends Entity {
      */
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * @return the tempGround
+     */
+    public double getTempGround() {
+        return tempGround;
+    }
+
+    /**
+     * @param tempGround the tempGround to set
+     */
+    public void setTempGround(double tempGround) {
+        this.tempGround = tempGround;
+    }
+
+    /**
+     * @return the tempSky
+     */
+   public double getTempSky(RfBand.Band band) {
+        double temp = tempSky;
+        if (band != RfBand.Band.C) {
+            Log.p("Satellite: no tempSky for band " + band, Log.WARNING);
+        }
+        return temp;
+    }
+
+    /**
+     * @param tempSky the tempSky to set
+     */
+    public void setTempSky(double tempSky) {
+        this.tempSky = tempSky;
+    }
+
+    /**
+     * @return the polarizationLoss
+     */
+    public double getPolarizationLoss() {
+        return polarizationLoss;
+    }
+
+    /**
+     * @param polarizationLoss the polarizationLoss to set
+     */
+    public void setPolarizationLoss(double polarizationLoss) {
+        this.polarizationLoss = polarizationLoss;
     }
 
     public enum ContourType {
@@ -130,7 +181,7 @@ public class Satellite extends Entity {
         public ContourType type;   // share type with contour
     }
 
-    public class Line {
+    private class Line {
 
         public String altitudeMode;    // for future
         public ArrayList<Double> latitude;   // in radians
@@ -339,6 +390,14 @@ public class Satellite extends Entity {
         // gainTemp should be calculated when diameter changed
         antenna.setDiameter(2.4);
 
+            antenna.addAffected(this);
+  
+
+
+        amplifier = new Amplifier();
+        amplifier.addAffected(this);
+        amplifier.setPower(100);
+        
         this.name = name;       // should be unique
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
@@ -493,6 +552,27 @@ public class Satellite extends Entity {
 
     }
 
+      // uplink system noise temperature at the receiver input given by
+    public double calcSystemNoiseTemp() {
+        double tA;
+        double noiseTemp;
+        double teRX;
+        // noise figure is in dB
+        teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
+                - 1.0) * Com.T0;
+        tA = this.getTempSky(getAntenna().getBand())
+                + this.getTempGround();
+
+        // LFRX is in dB so change
+        double lfrx = MathUtil.pow(10.0, this.getAmplifier().getLFRX() / 10.0);
+
+        noiseTemp = tA / lfrx
+                + this.getAmplifier().getFeederTemp()
+                * (1.0 - 1.0 / lfrx) + teRX;
+
+        return noiseTemp;
+    }
+    
     public double getEIRP() {
         return 55;
     }
@@ -627,7 +707,7 @@ public class Satellite extends Entity {
      */
     public void setGainTemp(double gain) {
         this.gainTemp = gain;
-        updateAffected();
+        updateAffected();  // for parents
     }
 
     /**
@@ -637,4 +717,40 @@ public class Satellite extends Entity {
         this.semiMajor = semiMajor;
     }
 
+      private double calcEIRP() {
+        double eirp = (10 * MathUtil.log10(
+                this.getAmplifier().getPower())) // was in W
+                + this.getAntenna().getGain() // in dB
+                - this.getAntenna().getDepointingLoss()
+                - this.getAmplifier().getLFTX(); // in dB
+        return eirp;
+    }
+
+    private double calcGainTemp() {
+
+        double gain;
+
+        // antenna gain is already in dB
+        gain = this.getAntenna().getGain()
+                - this.getAntenna().calcDepointingLoss()
+                - this.getAmplifier().getLFRX()
+                - this.getPolarizationLoss()
+                - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
+        return gain;
+    }
+
+       public void update(Entity e) {
+
+        // update everything that could be affected
+        // EIRP depends on antenna and amplifier, but both need to exist 
+        if (this.getAmplifier() != null && this.getAntenna() != null
+               ) {
+            this.EIRP = calcEIRP();
+
+            this.gainTemp = calcGainTemp();
+           
+        }
+
+        // avoid using set since that should be used to send updates down
+    }
 }

@@ -50,19 +50,19 @@ public class DlPathView extends View {
             Log.p("DlPathView: Can't find Rx terminal ", Log.DEBUG);
             return lName;
         }
-
+  
         // chcek for satellite
         if (selection.getSatellite() == null) {
             Log.p("DlPathView: Can't find satellite ", Log.DEBUG);
             return lName;
         }
-
-        // create a Path object to hold specific satellite and terminal
+         // create  Path object to hold specific satellite and terminal
         // Path get satellite and terminal (two ways to access it)
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal()));
-        
-         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
+        selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
+       
+      
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +

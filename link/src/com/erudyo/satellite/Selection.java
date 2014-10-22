@@ -121,6 +121,7 @@ public class Selection {
         // get the list of satellites read from the .txt file
         setBandSatellite(Satellite.getBandSatellite());
         // initialize visible terminals for selected satellite (use Affected)
+        
 
     }
 

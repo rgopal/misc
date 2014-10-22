@@ -46,7 +46,7 @@ public class Terminal extends Entity {
 
     // for receiver
     private double gainTemp;
-    private double polarizationLoss;
+    private double polarizationLoss = 0.0;
     private double systemTemp;
 
     public Terminal() {

@@ -3,6 +3,9 @@
  * main driver for the application.  Uses models (such as Terminal) and views
  * such as (TxView) to organize code.  Selection class can hold semiMajor specific collection
  * of both views and models to provide multiple instances for user selections.
+ *
+ * Satellite and Terminal instances are created when .txt files are read.
+ * Path objects are created 
  * 
  * Typicall, semiMajor class has semiMajor calc* function which is stateless (defined as static)
  * while the set* function would change instance level values.  Object instances
