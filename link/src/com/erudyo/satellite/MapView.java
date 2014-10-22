@@ -166,10 +166,7 @@ public class MapView extends View {
                             // remove beams of old satellite
                             removeBeams(selection, pointsSat, linesSat, mc);
                             selection.setSatellite(satellite);
-                            // affects both uplink and downlink paths
-                            selection.changeUlPath();
-                            selection.changeDlPath();
-
+                         
                             drawBeams(selection, pointsSat, linesSat, mc);
 
                             showLines(selection, mc);
@@ -514,7 +511,7 @@ public class MapView extends View {
 
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
-                    selection.changeUlPath();
+                  
                     currentChoice = TERMINAL_CHOICE.RX;
                     Log.p("MapView: changeterminal() has select TX "
                             + terminal.getName(), Log.DEBUG);
@@ -524,7 +521,7 @@ public class MapView extends View {
                     // update the model and selection of TxView 
                     selection.getRxView().spin.
                             setSelectedItem(terminal.getName());
-                    selection.changeDlPath();
+                  
                     Log.p("MapView: changeterminal() has select RX "
                             + terminal.getName(), Log.DEBUG);
                     currentChoice = TERMINAL_CHOICE.TX;

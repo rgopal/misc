@@ -61,6 +61,8 @@ public class DlPathView extends View {
         // Path get satellite and terminal (two ways to access it)
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal()));
+        
+         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +
@@ -345,12 +347,7 @@ public class DlPathView extends View {
         String str;
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
-        str = Com.text(
-                selection.getdLpath().getSatellite().getEIRP()
-                - selection.getdLpath().getPathLoss()
-                - selection.getdLpath().getAttenuation()
-                + selection.getdLpath().getTerminal().getGainTemp()
-                - Com.KdB);
+        str = Com.text(selection.getdLpath().getCNo());
         return str;
     }
 
@@ -358,13 +355,7 @@ public class DlPathView extends View {
     private String calcSpecDens(Selection selection) {
         String str;
         // Spec density depends on EIRP/4piR2 but EIRP is already in dB
-        str = Com.text(
-                selection.getdLpath().getSatellite().getEIRP()
-                - selection.getuLpath().getAttenuation()
-                - 10 * MathUtil.log10(4.0 * Com.PI
-                        * (selection.getdLpath().getDistance()
-                        * selection.getdLpath().getDistance()))
-        );
+        str = Com.text(selection.getdLpath().getSpectralDensity());
         return str;
     }
 }

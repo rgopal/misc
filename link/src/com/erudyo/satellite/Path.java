@@ -34,6 +34,56 @@ public class Path extends Entity {
     private double attenuation = 0.3;         // in dB (varies on frequency)
     private double azimuth;
     private double elevation;
+    private double CNo;
+    private double spectralDensity;
+
+    /**
+     * @return the CNo
+     */
+    public double getCNo() {
+        return CNo;
+    }
+
+    /**
+     * @param CNo the CNo to set
+     */
+    public void setCNo(double CNo) {
+        this.CNo = CNo;
+    }
+
+    /**
+     * @return the spectralDensity
+     */
+    public double getSpectralDensity() {
+        return spectralDensity;
+    }
+
+    /**
+     * @param spectralDensity the spectralDensity to set
+     */
+    public void setSpectralDensity(double spectralDensity) {
+        this.spectralDensity = spectralDensity;
+    }
+
+    /**
+     * @return the pathType
+     */
+    public PATH_TYPE getPathType() {
+        return pathType;
+    }
+
+    /**
+     * @param pathType the pathType to set
+     */
+    public void setPathType(PATH_TYPE pathType) {
+        this.pathType = pathType;
+    }
+
+    public enum PATH_TYPE {
+
+        UPLINK, DOWNLINK
+    };
+    private PATH_TYPE pathType = PATH_TYPE.UPLINK;
     private double distance;     //distance of satellite from terminal
 
     private double rainAttenuation = 7.0;  // for .01
@@ -93,13 +143,56 @@ public class Path extends Entity {
             t.addAffected(this);
             this.terminal = t;
         } else {
-             Log.p("Path: path " + this
+            Log.p("Path: path " + this
                     + " already in affected list of terminal " + t,
                     Log.WARNING);
 
         }
         this.terminal = t;
         setAll();
+    }
+
+    private double calcCNo() {
+        double result;
+        // CNo depends on Tx and receive of satellite, here EIRP, loss
+        // and gain are all in dBHz
+        if (getPathType() == PATH_TYPE.UPLINK) {
+            result
+                    = terminal.getEIRP()
+                    - getPathLoss()
+                    - getAttenuation()
+                    + satellite.getGainTemp()
+                    - Com.KdB;
+        } else {
+            result = satellite.getEIRP()
+                    - getPathLoss()
+                    - getAttenuation()
+                    + terminal.getGainTemp()
+                    - Com.KdB;
+        }
+        return result;
+    }
+
+    private double calcSpecDens() {
+        double result;
+        if (getPathType() == PATH_TYPE.UPLINK) {
+            result
+                    = terminal.getEIRP()
+                    - getAttenuation()
+                    - 10 * MathUtil.log10(4.0 * Com.PI
+                            * (getDistance()
+                            * getDistance())
+                    );
+
+        } else {
+            result = satellite.getEIRP()
+                    - getAttenuation()
+                    - 10 * MathUtil.log10(4.0 * Com.PI
+                            * getDistance()
+                            * getDistance());
+        }
+        return result;
+        // Spec density depends on EIRP/4piR2 but EIRP is already in dB
     }
 
     /**
@@ -209,33 +302,35 @@ public class Path extends Entity {
         NE, SE, NW, SW, N, S, E, W
     };
 
-    public static Boolean visible (Satellite satellite, Terminal terminal) {
+    public static Boolean visible(Satellite satellite, Terminal terminal) {
 
         // check if satellite is visible from terminal
-        
         double radian = Math.abs(satellite.getLongitude()
                 - terminal.getLongitude());
-        double degree = radian* 180.0 / Com.PI;
+        double degree = radian * 180.0 / Com.PI;
         if (radian > Com.VISIBLE_ANGLE) {
-            Log.p("Path: terminal and satellite are far apart with " + degree + 
-                    " satellite at " + Com.toDMS(satellite.getLongitude()) + 
-                    " terminal at " + Com.toDMS(terminal.getLongitude()), Log.WARNING);
+            Log.p("Path: terminal and satellite are far apart with " + degree
+                    + " satellite at " + Com.toDMS(satellite.getLongitude())
+                    + " terminal at " + Com.toDMS(terminal.getLongitude()), Log.WARNING);
             return false;
-        } else
+        } else {
             return true;
+        }
     }
-    public void setAll() {
 
+    public void setAll() {
 
         this.distance = calcDistance(this.satellite, this.terminal);
         this.azimuth = calcAzimuth(this.satellite, this.terminal);
         this.elevation = calcElevation(this.satellite, this.terminal);
 
-        visible (satellite, terminal);
-        
+        visible(satellite, terminal);
+
         // get center frequency of band used by terminal
         this.pathLoss = calcPathLoss(this.distance,
                 RfBand.centerFrequency(terminal.gettXantenna().getBand()));
+        this.CNo = calcCNo();
+        this.spectralDensity = calcSpecDens();
     }
 
     public double calcPathLoss(double distance, Double frequency) {

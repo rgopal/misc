@@ -73,6 +73,7 @@ public class UlPathView extends View {
         // Path get satellite and terminal (two ways to access it)
         selection.setuLpath(new Path(selection.getSatellite(),
                 selection.gettXterminal()));
+        selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
        
 
         // terminal name and location
@@ -127,25 +128,14 @@ public class UlPathView extends View {
         String str;
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
-        str = Com.text(
-                selection.getuLpath().getTerminal().getEIRP()
-                - selection.getuLpath().getPathLoss()
-                - selection.getuLpath().getAttenuation()
-                + selection.getuLpath().getSatellite().getGainTemp()
-                - Com.KdB);
+        str = Com.text(selection.getuLpath().getCNo());
         return str;
     }
 
     private String calcSpecDens(Selection selection) {
         String str;
         // Spec density depends on EIRP/4piR2 but EIRP is already in dB
-        str = Com.text(
-                selection.getuLpath().getTerminal().getEIRP()
-                - selection.getuLpath().getAttenuation()
-                - 10 * MathUtil.log10(4.0 * Com.PI
-                        * (selection.getuLpath().getDistance()
-                        * selection.getuLpath().getDistance()))
-        );
+        str = Com.text(selection.getuLpath().getSpectralDensity());
         return str;
     }
 

@@ -351,8 +351,7 @@ public class Link {
 
                 // will select Rx terminal
                 comboRx(selection, cbBand);
-                selection.changeUlPath();
-                selection.changeDlPath();
+              
             }
         });
 
@@ -391,9 +390,6 @@ public class Link {
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
 
-            // update the UL paths
-            selection.changeUlPath();
-            selection.changeDlPath();
             // update label of satellite
             selection.getSatelliteView().label.setText(
                     selection.getSatellite().getName());
@@ -437,9 +433,7 @@ public class Link {
                                 get(Selection.VISIBLE.YES).toArray(
                                         new String[0])[position]));
 
-                // update the UL path
-                selection.changeUlPath();
-                selection.changeDlPath();
+              
 
                 // update label 
                 selection.getRxView().label.setText(
@@ -491,9 +485,6 @@ public class Link {
                             get(Selection.VISIBLE.YES).toArray(
                                     new String[0])[0]));
 
-            // update the UL path
-            selection.changeUlPath();
-            selection.changeDlPath();
 
             // update label of Tx terminal
             selection.getTxView().label.setText(

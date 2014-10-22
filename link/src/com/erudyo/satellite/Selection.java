@@ -168,12 +168,21 @@ public class Selection {
      */
     public void settXterminal(Terminal tXterminal) {
         this.tXterminal = tXterminal;
+        
+   
+        // after init
+        if (getuLpath() != null)
+            getuLpath().setTerminal(gettXterminal());
+    
+      
     }
 
     /**
      * @return the rXterminal
      */
     public Terminal getrXterminal() {
+         // why is terminal being changed
+      
         return rXterminal;
     }
 
@@ -181,7 +190,14 @@ public class Selection {
      * @param rXterminal the rXterminal to set
      */
     public void setrXterminal(Terminal rXterminal) {
-        this.rXterminal = rXterminal;
+         // why is terminal being changed
+         this.rXterminal = rXterminal;
+     
+         if (getdLpath() != null)
+            getdLpath().setTerminal(getrXterminal());
+      
+        
+      
     }
 
     /**
@@ -197,6 +213,9 @@ public class Selection {
     public void setSatellite(Satellite satellite) {
         // update visible terminals 
          this.satellite = satellite;
+     
+
+       
          initVisibleTerminal();  // they are both here in this class
        
     }
@@ -208,37 +227,15 @@ public class Selection {
         return uLpath;
     }
 
-    /**
+    /*
      * @param uLpath the uLpath to set
      */
     public void setuLpath(Path uLpath) {
         this.uLpath = uLpath;
     }
 
-     public void changeUlPath() {
-        // remove the original satellite
-        this.getuLpath().setSatellite(this.getSatellite());
 
-        // why is terminal being changed
-        if (getuLpath().getTerminal() != gettXterminal()) {
-            getuLpath().setTerminal(gettXterminal());
-        }
-        getuLpath().setAll();
 
-    }
-    
-    // change the Dl selections in Path
-    public void changeDlPath() {
-        // remove the original satellite
-        getdLpath().setSatellite(getSatellite());
-
-        // why is terminal being changed
-        if (getdLpath().getTerminal() != getrXterminal()) {
-            getdLpath().setTerminal(getrXterminal());
-        }
-        getdLpath().setAll();
-
-    }
     
     /**
      * @return the dLpath
@@ -372,6 +369,11 @@ public class Selection {
             }
 
         }
+        if (visibleTerminal.get(VISIBLE.YES) == null) {
+            Log.p("Selection: visible terminal list is null for satellite " 
+                    + this.getSatellite(), Log.DEBUG);
+            
+        } else
         // now sort each list by distance of terminal from satellite
         Collections.sort(visibleTerminal.get(VISIBLE.YES), new Comparator<String>() {
             @Override
