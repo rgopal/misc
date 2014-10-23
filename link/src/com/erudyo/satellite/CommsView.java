@@ -240,7 +240,8 @@ public class CommsView extends View {
 
         sldrDataRate.setRenderValueOnTop(true);
 
-        final Label lDataRateValue = new Label(Com.shortText(selection.getComms().getDataRate()) + "Mbps");
+        final Label lDataRateValue = new Label(Com.shortText(
+                selection.getComms().getDataRate()) + "Mbps");
         cntAllThree.addComponent(lDataRate);
         cntAllThree.addComponent(sldrDataRate);
         cntAllThree.addComponent(lDataRateValue);

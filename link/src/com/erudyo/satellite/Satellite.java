@@ -31,7 +31,8 @@ public class Satellite extends Entity {
 
     private Antenna rXantenna;
     private Antenna tXantenna;
-    private Amplifier amplifier;
+    private Amplifier rXamplifier;
+    private Amplifier tXamplifier;
 
     // can have multiple bands and transponders;
     private Hashtable<RfBand.Band, Integer> transponders;
@@ -150,6 +151,23 @@ public class Satellite extends Entity {
      */
     public void setTxAntenna(Antenna tXantenna) {
         this.tXantenna = tXantenna;
+         updateAffected();
+        
+    }
+
+    /**
+     * @return the tXamplifier
+     */
+    public Amplifier getTxAmplifier() {
+        return tXamplifier;
+    }
+
+    /**
+     * @param tXamplifier the tXamplifier to set
+     */
+    public void setTxAmplifier(Amplifier tXamplifier) {
+        this.tXamplifier = tXamplifier;
+        updateAffected();
     }
 
     public enum ContourType {
@@ -396,28 +414,34 @@ public class Satellite extends Entity {
 
     }
 
-    public Satellite(String name) {
-        amplifier = new Amplifier();
+    public void init(String name) {
+    
+        this.name = name;       // should be unique
+            
         rXantenna = new Antenna();
-        // gainTemp should be calculated when diameter changed
         rXantenna.setDiameter(2.4);
         rXantenna.setName("RxAnt" + this.name);
-
         rXantenna.addAffected(this);
-        
-         tXantenna = new Antenna();
-        // gainTemp should be calculated when diameter changed
-        tXantenna.setDiameter(2.4);
-        tXantenna.setName("Tnt" + this.name);
 
+        tXantenna = new Antenna();
+        tXantenna.setDiameter(2.4);
+        tXantenna.setName("TxAnt" + this.name);
         tXantenna.addAffected(this);
 
-        amplifier = new Amplifier();
-        amplifier.setName("amp" + this.name);
-        amplifier.addAffected(this);
-        amplifier.setPower(100);
+        rXamplifier = new Amplifier();
+        rXamplifier.setName("RxAmp" + this.name);
+         rXamplifier.setPower(50.0);
+         // set the power prior to caling affected (most objects are empty)
+         rXamplifier.addAffected(this);
+       
 
-        this.name = name;       // should be unique
+          tXamplifier = new Amplifier();
+        tXamplifier.setName("TxAmp" + this.name);
+        tXamplifier.setPower(100.0);
+        // set everything before affected call.
+        tXamplifier.addAffected(this);
+        // nasty bug.  SHould be double format
+        
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
         setVelocity(3075E3);        // GEO satellite velocity
@@ -425,8 +449,6 @@ public class Satellite extends Entity {
         setLatitude(0.0);         // latitude is zero
 
         orbit = Com.Orbit.GEO;
-
-        amplifier.setPower(50);
 
         if (getName() == null) {
             Random randomGenerator = new Random();
@@ -530,7 +552,9 @@ public class Satellite extends Entity {
 // 40|BAND3 41|Transponders3 42
 
         // vector has already been created for semiMajor band, just add entries
-        Satellite satellite = new Satellite(fields[0]);
+        Satellite satellite = new Satellite();
+        // race condition?
+        satellite.init(fields[0]);
 
         // fields are name, long, lat, eirp, gainTemp, band
         try {
@@ -577,23 +601,23 @@ public class Satellite extends Entity {
         double noiseTemp;
         double teRX;
         // noise figure is in dB
-        teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
+        teRX = (MathUtil.pow(10.0, this.rXamplifier.getNoiseFigure() / 10.0)
                 - 1.0) * Com.T0;
         tA = this.getTempSky(getRxAntenna().getBand())
                 + this.getTempGround();
 
         // LFRX is in dB so change
-        double lfrx = MathUtil.pow(10.0, this.getAmplifier().getLFRX() / 10.0);
+        double lfrx = MathUtil.pow(10.0, this.getRxAmplifier().getLFRX() / 10.0);
 
         noiseTemp = tA / lfrx
-                + this.getAmplifier().getFeederTemp()
+                + this.getRxAmplifier().getFeederTemp()
                 * (1.0 - 1.0 / lfrx) + teRX;
 
         return noiseTemp;
     }
 
     public double getEIRP() {
-        return 55;
+        return this.EIRP;
     }
 
     public double maxCoverage() {
@@ -684,17 +708,17 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @return the amplifier
+     * @return the rXamplifier
      */
-    public Amplifier getAmplifier() {
-        return amplifier;
+    public Amplifier getRxAmplifier() {
+        return rXamplifier;
     }
 
     /**
-     * @param amplifier the amplifier to set
+     * @param amplifier the rXamplifier to set
      */
-    public void setAmplifier(Amplifier amplifier) {
-        this.amplifier = amplifier;
+    public void setRxAmplifier(Amplifier amplifier) {
+        this.rXamplifier = amplifier;
         updateAffected();
     }
 
@@ -736,17 +760,18 @@ public class Satellite extends Entity {
         this.semiMajor = semiMajor;
     }
 
+    // uses Transmit antenna
     private double calcEIRP() {
+        // rXamplifier was in dB others 
         double eirp = (10 * MathUtil.log10(
-                this.getAmplifier().getPower())) // was in W
-                + this.getAntenna().getGain() // in dB(10 * MathUtil.log10(
-                this.getAmplifier().getPower())) // was in W
-                + this.getRxAntenna().getGain() // in dB
-                - this.getRxAntenna().getDepointingLoss()
-                - this.getAmplifier().getLFTX(); // in dB
+                this.getTxAmplifier().getPower()))
+                + this.getTxAntenna().getGain()
+                - this.getTxAntenna().getDepointingLoss()
+                - this.getTxAmplifier().getLFTX();
         return eirp;
     }
 
+    // users receive antenna
     private double calcGainTemp() {
 
         double gain;
@@ -754,7 +779,7 @@ public class Satellite extends Entity {
         // rXantenna gain is already in dB
         gain = this.getRxAntenna().getGain()
                 - this.getRxAntenna().calcDepointingLoss()
-                - this.getAmplifier().getLFRX()
+                - this.getRxAmplifier().getLFRX()
                 - this.getPolarizationLoss()
                 - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
         return gain;
@@ -763,12 +788,16 @@ public class Satellite extends Entity {
     public void update(Entity e) {
 
         // update everything that could be affected
-        // EIRP depends on rXantenna and amplifier, but both need to exist 
-        if (this.getAmplifier() != null && this.getRxAntenna() != null) {
+        // EIRP depends on rXantenna and rXamplifier, but both need to exist 
+        if (this.getRxAmplifier() != null && this.getRxAntenna() != null
+                && this.getTxAntenna() != null) {
             this.EIRP = calcEIRP();
-
             this.gainTemp = calcGainTemp();
+            // updateAffected();   should be called automatically
 
+        } else {
+            Log.p("Satellite: amplifier, Tx antenna or Rx antenna is null for " +
+                    this, Log.DEBUG);
         }
 
         // avoid using set since that should be used to send updates down

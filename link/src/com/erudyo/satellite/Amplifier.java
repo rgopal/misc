@@ -14,9 +14,9 @@ import com.codename1.io.Log;
  */
 public class Amplifier extends Entity {
 
-    private double power = 1;       // in watts for Tx
-    private double gain = 10;    // in dB for Rx
-    private double Te = 290;   // in degree K, effective temperature
+    private double power = 1.0;       // in watts for Tx
+    private double gain = 10.0;    // in dB for Rx
+    private double Te = 290.0;   // in degree K, effective temperature
 
     // all gains and loss will be in dB addition/subtraction 
     private double LFTX = 0.5;     // Tx loss between amplifier and antenna  in DB
@@ -26,7 +26,7 @@ public class Amplifier extends Entity {
     private double noiseFigure = 1.0;   // in dB
 
     public final static double POWER_LO = 1.0;
-    public final static double POWER_HI = 100.0;
+    public final static double POWER_HI = 200.0;
     
     public final static double NOISE_FIG_LO = 1.0;
     public final static double NOISE_FIG_HI = 10.0;
@@ -141,8 +141,9 @@ public class Amplifier extends Entity {
      * @param noiseFigure the noiseFigure to set
      */
     public void setNoiseFigure(double noiseFigure) {
-          updateAffected();
+        
         this.noiseFigure = noiseFigure;
+          updateAffected();
     }
 
 }
