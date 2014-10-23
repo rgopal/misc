@@ -136,20 +136,20 @@ public class RxView extends View {
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
-        // constraint.setVerticalSpan(2);
-        constraint.setWidthPercentage(20);
+        // constraint.setHorizontalSpan(3);
+        constraint.setWidthPercentage(45);
 
         // now go sequentially through the Tx terminal fields
         final Terminal rxTerm = selection.getrXterminal();
 
-        Label L01 = new Label("Cent Freq");
+        Label L01 = new Label("Center Frequency");
         Label lFrequency = new Label(Com.shortText(rxTerm.getrXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + rxTerm.getBand());
-        cnt.addComponent(L01);
-        cnt.addComponent(constraint, lFrequency);
+        cnt.addComponent(constraint,L01);
+        cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("  Longitude");
+        Label L61 = new Label("Termianl Longitude");
         final Label lLongitude = new Label(Com.toDMS(rxTerm.getLongitude()));
         Label L63 = new Label("deg");
 
@@ -157,71 +157,80 @@ public class RxView extends View {
         cnt.addComponent(lLongitude);
         cnt.addComponent(L63);
 
-        Label L71 = new Label("  Latitude");
+        Label L71 = new Label("    Latitude");
         final Label lLatitude = new Label(Com.toDMS(rxTerm.getLatitude()));
-        Label L73 = new Label("deg");
+        Label L73 = new Label("degree");
 
         cnt.addComponent(L71);
         cnt.addComponent(lLatitude);
         cnt.addComponent(L73);
 
-        Label lNoiseFigureLabel = new Label("Noise Figure");
-
-        final Slider lNoiseFig = new Slider();
-        lNoiseFig.setMinValue((int) MathUtil.round(Amplifier.NOISE_FIG_LO * 10)); // x10
-        lNoiseFig.setMaxValue((int) MathUtil.round(Amplifier.NOISE_FIG_HI * 10));
-        lNoiseFig.setEditable(true);
-        // lNoiseFig.setPreferredW(8);
-        lNoiseFig.setIncrements(5); //
-        lNoiseFig.setProgress((int) MathUtil.round(rxTerm.getAmplifier().getNoiseFigure() * 10));
-        lNoiseFig.setRenderValueOnTop(true);
+        Label lNoiseFigureLabel = new Label("LNA Noise Figure");
+   Label lNoiseFigureUnit = new Label("dB");
+        final Slider sldrNoiseFigure = new Slider();
+        sldrNoiseFigure.setMinValue((int) MathUtil.round(Amplifier.NOISE_FIG_LO * 10)); // x10
+        sldrNoiseFigure.setMaxValue((int) MathUtil.round(Amplifier.NOISE_FIG_HI * 10));
+        sldrNoiseFigure.setEditable(true);
+        // sldrNoiseFigure.setPreferredW(8);
+        sldrNoiseFigure.setIncrements(5); //
+        sldrNoiseFigure.setProgress((int) MathUtil.round(rxTerm.getAmplifier().getNoiseFigure() * 10));
+        sldrNoiseFigure.setRenderValueOnTop(true);
 
         final Label lNoiseFigure = new Label(Com.shortText(rxTerm.getAmplifier().
-                getNoiseFigure()) + "dB");
+                getNoiseFigure()));
         cnt.addComponent(lNoiseFigureLabel);
-        cnt.addComponent(lNoiseFig);
-        cnt.addComponent(lNoiseFigure);
-
+      cnt.addComponent(lNoiseFigure);
+        cnt.addComponent(lNoiseFigureUnit);
+        
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+          cnt.addComponent(constraint, sldrNoiseFigure);
         // does not change
-        Label lAntennaEfficiencyLabel = new Label("Antenna Eff");
+        Label lAntennaEfficiencyLabel = new Label("Antenna Efficiency");
         Label lEfficiency = new Label(Com.shortText(rxTerm.getrXantenna().getEfficiency()));
         Label L2A3 = new Label(" ");
         cnt.addComponent(lAntennaEfficiencyLabel);
         cnt.addComponent(lEfficiency);
         cnt.addComponent(L2A3);
 
-        Label lDiameterLabel = new Label("  Diameter");
-        final Slider lDiameter = new Slider();
+        Label lDiameterLabel = new Label("    Diameter");
+           Label lDiameterUnit = new Label("m");
+        final Slider sldrDiameter = new Slider();
 
-        lDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
-        lDiameter.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
-        lDiameter.setEditable(true);
+        sldrDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
+        sldrDiameter.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
+        sldrDiameter.setEditable(true);
         //L22.setPreferredW(8);
-        lDiameter.setIncrements(5); //
-        lDiameter.setProgress((int) MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
+        sldrDiameter.setIncrements(5); //
+        sldrDiameter.setProgress((int) MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
 
-        lDiameter.setRenderValueOnTop(true);
-        final Label lTermDiameter = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
+        sldrDiameter.setRenderValueOnTop(true);
+        final Label lDiameterValue = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()));
         cnt.addComponent(lDiameterLabel);
-        cnt.addComponent(lDiameter);
-        cnt.addComponent(lTermDiameter);
+       cnt.addComponent(lDiameterValue);
+        cnt.addComponent(lDiameterUnit);
 
-        Label L31 = new Label(" Gain");
+             constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+         cnt.addComponent(constraint,sldrDiameter);
+         
+
+        Label L31 = new Label("Antenna Gain");
         final Label lGain = new Label(Com.shortText(rxTerm.getrXantenna().getGain()));
         Label L33 = new Label("dBi");
         cnt.addComponent(L31);
         cnt.addComponent(lGain);
         cnt.addComponent(L33);
 
-        Label L41 = new Label(" 3dB Angle");
+        Label L41 = new Label("    3dB Angle");
         final Label lThreeDBangle = new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
-        Label L43 = new Label("deg");
+        Label L43 = new Label("degree");
         cnt.addComponent(L41);
         cnt.addComponent(lThreeDBangle);
         cnt.addComponent(L43);
 
         // does change so not in combo/sliders
-        Label lPointLoss = new Label(" Point Loss");
+        Label lPointLoss = new Label("    Pointing Loss");
         final Label valuePointLoss = new Label(Com.shortText(
                 rxTerm.getrXantenna().getDepointingLoss()));
         Label unitPointLoss = new Label("dB");
@@ -230,7 +239,7 @@ public class RxView extends View {
         cnt.addComponent(unitPointLoss);
 
         // does not change so not in combo/sliders
-        Label lImpLoss = new Label(" LFRX");
+        Label lImpLoss = new Label("    LFRX");
         final Label valueImpLoss = new Label(Com.shortText(
                 rxTerm.getAmplifier().getLFRX()));
         Label unitImpLoss = new Label("dB");
@@ -239,9 +248,9 @@ public class RxView extends View {
         cnt.addComponent(unitImpLoss);
 
         // does not change so not in combo/sliders
-        Label lsysTemp = new Label(" Sys Noise T");
-        final Label valuesysTemp = new Label(Com.text(
-                rxTerm.calcSystemNoiseTemp()));
+        Label lsysTemp = new Label("System Noise Temperature");
+        final Label valuesysTemp = new Label(Com.textN(
+                rxTerm.calcSystemNoiseTemp(),6));
         Label unitsysTemp = new Label("K");
         cnt.addComponent(lsysTemp);
         cnt.addComponent(valuesysTemp);
@@ -250,11 +259,7 @@ public class RxView extends View {
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);        // whole row
 
-        Label L0A1 = new Label("Terminal");
-        L0A1.setAlignment(Component.CENTER);
-        cnt.addComponent(constraint, L0A1);
-
-        Label lGainTemp = new Label("Gain/Temp");
+        Label lGainTemp = new Label("Terminal Gain/Temp");
         final Label valueGainTemp = new Label(Com.shortText(rxTerm.getGainTemp()));
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);
@@ -264,47 +269,47 @@ public class RxView extends View {
         sub.setScrollable(true);
 
         // all actions at the end to update other fields
-        lNoiseFig.addDataChangedListener(new DataChangedListener() {
+        sldrNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("RxView: selected noise figure " + lNoiseFig.getText(), Log.DEBUG);
+                Log.p("RxView: selected noise figure " + sldrNoiseFigure.getText(), Log.DEBUG);
                 try {
                     selection.getrXterminal().getAmplifier().
-                            setNoiseFigure(Double.parseDouble(lNoiseFig.getText()) / 10.0);
+                            setNoiseFigure(Double.parseDouble(sldrNoiseFigure.getText()) / 10.0);
                     // update EIRP
                     lNoiseFigure.setText(Com.shortText(rxTerm.getAmplifier().
                             getNoiseFigure()) + "dB");
-                    valuesysTemp.setText(Com.text(
-                            rxTerm.calcSystemNoiseTemp()));
+                    valuesysTemp.setText(Com.textN(
+                            rxTerm.calcSystemNoiseTemp(),6));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("RxView: bad number for Noise Figure "
-                            + lNoiseFig.getText(), Log.DEBUG);
+                            + sldrNoiseFigure.getText(), Log.DEBUG);
                 }
             }
         });
 
-        lDiameter.addDataChangedListener(new DataChangedListener() {
+        sldrDiameter.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("RxView: selected diameter " + lDiameter.getText(), Log.DEBUG);
+                Log.p("RxView: selected diameter " + sldrDiameter.getText(), Log.DEBUG);
                 try {
 
                     // convert from cm to m first
                     selection.getrXterminal().getrXantenna().
-                            setDiameter(Double.parseDouble(lDiameter.getText()) / 10.0);
+                            setDiameter(Double.parseDouble(sldrDiameter.getText()) / 10.0);
                     // update EIRP and three DB
-                    lTermDiameter.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) + "m");
+                    lDiameterValue.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) );
                     lThreeDBangle.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
                     lGain.setText(Com.shortText(rxTerm.getrXantenna().getGain()));
                     valuePointLoss.setText(Com.shortText(
                             rxTerm.getrXantenna().getDepointingLoss()));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // should not change
-                    valuesysTemp.setText(Com.text(
-                            rxTerm.calcSystemNoiseTemp()));
+                    valuesysTemp.setText(Com.textN(
+                            rxTerm.calcSystemNoiseTemp(),6));
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("TxView: bad number for diameter " + lDiameter.getText(), Log.DEBUG);
+                    Log.p("TxView: bad number for diameter " + sldrDiameter.getText(), Log.DEBUG);
 
                 }
 

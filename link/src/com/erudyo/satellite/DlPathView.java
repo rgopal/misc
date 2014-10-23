@@ -25,11 +25,10 @@ import com.codename1.ui.util.Resources;
 import com.codename1.util.MathUtil;
 
 public class DlPathView extends View {
-    
-        public Label label;
+
+    public Label label;
     public Label subLabel;
 
-  
     public DlPathView() {
 
     }
@@ -41,7 +40,8 @@ public class DlPathView extends View {
     public String getDisplayName() {
         return name;
     }
- // this is simple so return terminal's name and location
+
+    // this is simple so return terminal's name and location
     public Component getWidget(final Selection selection) {
         Label lName = new Label(getName());
 
@@ -50,19 +50,17 @@ public class DlPathView extends View {
             Log.p("DlPathView: Can't find Rx terminal ", Log.DEBUG);
             return lName;
         }
-  
+
         // chcek for satellite
         if (selection.getSatellite() == null) {
             Log.p("DlPathView: Can't find satellite ", Log.DEBUG);
             return lName;
         }
-         // create  Path object to hold specific satellite and terminal
+        // create  Path object to hold specific satellite and terminal
         // Path get satellite and terminal (two ways to access it)
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal()));
         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
-       
-      
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +
@@ -73,7 +71,7 @@ public class DlPathView extends View {
         selection.getdLpathView().label = lName;
         return lName;
     }
-    
+
     // this is simple so return terminal's name and location
     public Component getSubWidget(final Selection selection) {
         Label lName = new Label(getName());
@@ -94,8 +92,7 @@ public class DlPathView extends View {
         return lName;
     }
 
-    
-      public Component getLabel(final Selection selection) {
+    public Component getLabel(final Selection selection) {
         Label lNameGain = new Label(getValue());
 
         // indexSatellite has all satellites, so get the band specific list
@@ -111,6 +108,7 @@ public class DlPathView extends View {
         // + Com.toDMS(selection.getSatellite().getGainTemp()) + " x");
         return lNameGain;
     }
+
     public Form createView(final Selection selection) {
 
         Form sub = new Form("Tx Satellite: " + selection.getSatellite().getName());
@@ -123,21 +121,21 @@ public class DlPathView extends View {
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
-        // constraint.setVerticalSpan(2);
-        constraint.setWidthPercentage(35);
+        // constraint.setHorizontalSpan(3);
+        constraint.setWidthPercentage(40);
 
         // now go sequentially through the Uplink path fields
         final Terminal rxTerm = selection.getdLpath().getTerminal();
         final Satellite satellite = selection.getdLpath().getSatellite();
 
-        Label L01 = new Label("C Freq");
+        Label L01 = new Label("Center Frequency");
         Label lFrequency = new Label(Com.shortText(satellite.getRxAntenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + satellite.getRxAntenna().getBand());
-        cnt.addComponent(L01);
+        cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
-        cnt.addComponent(constraint, L03);
+        cnt.addComponent(L03);
 
-        Label L61 = new Label("s " + selection.getdLpath().
+        Label L61 = new Label("Satellite: " + selection.getdLpath().
                 getSatellite());
         final Label L62 = new Label(Com.toDMS(selection.getdLpath().
                 getSatellite().getLongitude()));
@@ -147,8 +145,8 @@ public class DlPathView extends View {
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
-        Label lLatitude = new Label("Lat.");
-
+        Label lLatitude = new Label("Terminal Latitude");
+        Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
@@ -167,10 +165,17 @@ public class DlPathView extends View {
 
         final Label valueLatitude = new Label(Com.toDMS(rxTerm.getLatitude()) + "");
         cnt.addComponent(lLatitude);
-        cnt.addComponent(sldrLatitude);
+
         cnt.addComponent(valueLatitude);
 
-        Label lLongitude = new Label("Long.");
+        cnt.addComponent(lLatitudeUnit);
+
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        cnt.addComponent(constraint, sldrLatitude);
+
+        Label lLongitude = new Label("Terminal Longitude");
+        Label lLongitudeUnit = new Label("degree");
         final Slider sldrLongitude = new Slider();
 
         // longitude should be around the satellite longitude (still -81.3 to +81.3
@@ -190,12 +195,16 @@ public class DlPathView extends View {
 
         sldrLongitude.setRenderValueOnTop(true);
         final Label valueLongitude = new Label(Com.toDMS(
-                rxTerm.getLongitude()) + "");
+                rxTerm.getLongitude()) + "d");
         cnt.addComponent(lLongitude);
-        cnt.addComponent(sldrLongitude);
-        cnt.addComponent(valueLongitude);
 
-        Label lElevation = new Label("Elevat");
+        cnt.addComponent(valueLongitude);
+        cnt.addComponent(lLongitudeUnit);
+
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        cnt.addComponent(constraint, sldrLongitude);
+        Label lElevation = new Label("Terminal Elevation");
         final Label valueElevation = new Label(Com.toDMS(
                 selection.getdLpath().getElevation()));
         Label unitElevation = new Label(" ");
@@ -203,15 +212,15 @@ public class DlPathView extends View {
         cnt.addComponent(valueElevation);
         cnt.addComponent(unitElevation);
 
-        Label lAzimuth = new Label("Azimuth");
+        Label lAzimuth = new Label("    Azimuth");
         final Label valueAzimuth = new Label(Com.toDMS(
                 selection.getdLpath().getAzimuth()));
-        Label unitAzimuth = new Label(" ");
+        Label unitAzimuth = new Label("d");
         cnt.addComponent(lAzimuth);
         cnt.addComponent(valueAzimuth);
         cnt.addComponent(unitAzimuth);
 
-        Label lDistance = new Label("Distance");
+        Label lDistance = new Label("    Distance");
         final Label valueDistance = new Label(Com.text(selection.
                 getdLpath().getDistance() / 1E3));
         Label unitDistance = new Label("km");
@@ -219,7 +228,7 @@ public class DlPathView extends View {
         cnt.addComponent(valueDistance);
         cnt.addComponent(unitDistance);
 
-        Label lPathLoss = new Label("PathLoss");
+        Label lPathLoss = new Label("    DL PathLoss");
         final Label valuePathLoss = new Label(Com.text(selection.
                 getdLpath().getPathLoss()));
         Label unitPathLoss = new Label("dB");
@@ -229,7 +238,7 @@ public class DlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lAttenuation = new Label("Atm Atten.");
+        Label lAttenuation = new Label("Atmospheric Atten");
         final Label valueAttenuation = new Label(Com.shortText(
                 selection.getdLpath().getAttenuation()));
         Label unitAttenuation = new Label("dB");
@@ -239,7 +248,7 @@ public class DlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lGainTemp = new Label("Rx G/T");
+        Label lGainTemp = new Label("Rx Terminal G/T");
         final Label valueGainTemp = new Label(Com.shortText(
                 selection.getdLpath().getTerminal().getGainTemp()));
         Label unitGainTemp = new Label("dB 1/K");
@@ -248,16 +257,18 @@ public class DlPathView extends View {
         cnt.addComponent(unitGainTemp);
 
         // C/No depends on Tx EIRP and the path loss
-        Label lCNo = new Label("C/No");
-        final Label valueCNo = new Label(calcCNo(selection));
+        Label lCNo = new Label("Downlink C/No");
+        final Label valueCNo = new Label(Com.textN(
+                selection.getdLpath().getCNo(), 7));
 
         Label unitCNo = new Label("dB Hz");
         cnt.addComponent(lCNo);
         cnt.addComponent(valueCNo);
         cnt.addComponent(unitCNo);
 
-        Label lSpecDensity = new Label("Spec Dens");
-        final Label valueSpecDensity = new Label(calcSpecDens(selection));
+        Label lSpecDensity = new Label("    Spectral Density");
+        final Label valueSpecDensity = new Label(Com.textN(
+                selection.getdLpath().getSpectralDensity(), 7));
         Label unitSpecDensity = new Label("dBW/m2");
         cnt.addComponent(lSpecDensity);
         cnt.addComponent(valueSpecDensity);
@@ -289,8 +300,10 @@ public class DlPathView extends View {
                     valuePathLoss.setText(Com.shortText(selection.getdLpath().
                             getPathLoss()));
 
-                    valueCNo.setText(calcCNo(selection));
-                    valueSpecDensity.setText(calcSpecDens(selection));
+                    valueCNo.setText(Com.textN(
+                            selection.getdLpath().getCNo(), 7));
+                    valueSpecDensity.setText(Com.textN(
+                            selection.getdLpath().getSpectralDensity(), 7));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("DlPathView: bad number for Latitude "
@@ -327,11 +340,13 @@ public class DlPathView extends View {
                     valuePathLoss.setText(Com.text(selection.getdLpath().
                             getPathLoss()));            // already in dB
 
-                    valueCNo.setText(calcCNo(selection));
-                    valueSpecDensity.setText(calcSpecDens(selection));
+                    valueCNo.setText(Com.textN(
+                            selection.getdLpath().getCNo(), 7));
+                    valueSpecDensity.setText(Com.textN(
+                            selection.getdLpath().getSpectralDensity(), 7));
 
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("RxView: bad number for diameter " + sldrLongitude.getText(), Log.DEBUG);
+                    Log.p("DlPathView: bad number for diameter " + sldrLongitude.getText(), Log.DEBUG);
 
                 }
 

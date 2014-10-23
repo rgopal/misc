@@ -64,6 +64,15 @@ public class Com {
         return s.substring(0, len);
     }
 
+    static String textN(double num, int length) {
+        String s = String.valueOf(num);
+        int len = s.length();
+        if (len > length) {
+            len = length;
+        }
+        return s.substring(0, len);
+    }
+    
     // convert degree, minute, second to radian.  Note it does not know about
     // North or South etc.   
     public static double toRadian(double d, double m, double s) {
