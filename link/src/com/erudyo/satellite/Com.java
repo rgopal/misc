@@ -85,6 +85,11 @@ public class Com {
                 replaceAll(s, "'", ""), "\n", ""), " ", "");
     }
 
+    public static String removeQuoteEol(String s) {
+        
+        return (StringUtil.replaceAll(StringUtil.
+                replaceAll(s, "'", ""), "\n", ""));
+    }
     // from picmath site
 
     public static double erf(double x) {

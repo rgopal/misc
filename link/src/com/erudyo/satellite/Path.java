@@ -167,10 +167,10 @@ public class Path extends Entity {
                     = terminal.getEIRP()
                     - getPathLoss()
                     - getAttenuation()
-                    + satellite.getGainTemp()
+                    + satellite.getGainTempForTerminal(terminal)  // location based
                     - Com.KdB;
         } else {
-            result = satellite.getEIRP()
+            result = satellite.getEIRPforTerminal(terminal)
                     - getPathLoss()
                     - getAttenuation()
                     + terminal.getGainTemp()
@@ -183,7 +183,7 @@ public class Path extends Entity {
         double result;
         if (getPathType() == PATH_TYPE.UPLINK) {
             result
-                    = terminal.getEIRP()
+                    = terminal.getEIRP()   // satellite Gain is location based
                     - getAttenuation()
                     - 10 * MathUtil.log10(4.0 * Com.PI
                             * (getDistance()
@@ -191,7 +191,7 @@ public class Path extends Entity {
                     );
 
         } else {
-            result = satellite.getEIRP()
+            result = satellite.getEIRPforTerminal(terminal)  
                     - getAttenuation()
                     - 10 * MathUtil.log10(4.0 * Com.PI
                             * getDistance()

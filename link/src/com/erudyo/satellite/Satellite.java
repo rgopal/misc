@@ -34,6 +34,11 @@ public class Satellite extends Entity {
     private Amplifier rXamplifier;
     private Amplifier tXamplifier;
 
+    private double maxEIRPfromContours = 0.0;      // in dBW
+    private double maxGTfromContours = 0.0;        // in dB 1/K  
+
+    private static Hashtable<String, ArrayList<String>> satBeamFile;
+
     // can have multiple bands and transponders;
     private Hashtable<RfBand.Band, Integer> transponders;
 
@@ -151,8 +156,8 @@ public class Satellite extends Entity {
      */
     public void setTxAntenna(Antenna tXantenna) {
         this.tXantenna = tXantenna;
-         updateAffected();
-        
+        updateAffected();
+
     }
 
     /**
@@ -168,6 +173,34 @@ public class Satellite extends Entity {
     public void setTxAmplifier(Amplifier tXamplifier) {
         this.tXamplifier = tXamplifier;
         updateAffected();
+    }
+
+    /**
+     * @return the maxEIRPfromContours
+     */
+    public double getMaxEIRPfromContours() {
+        return maxEIRPfromContours;
+    }
+
+    /**
+     * @param maxEIRPfromContours the maxEIRPfromContours to set
+     */
+    public void setMaxEIRPfromContours(double maxEIRPfromContours) {
+        this.maxEIRPfromContours = maxEIRPfromContours;
+    }
+
+    /**
+     * @return the maxGTfromContours
+     */
+    public double getMaxGTfromContours() {
+        return maxGTfromContours;
+    }
+
+    /**
+     * @param maxGTfromContours the maxGTfromContours to set
+     */
+    public void setMaxGTfromContours(double maxGTfromContours) {
+        this.maxGTfromContours = maxGTfromContours;
     }
 
     public enum ContourType {
@@ -198,6 +231,8 @@ public class Satellite extends Entity {
         public int color;
         public int width;
         public String name;
+        public double EIRP;
+        public double GT;
         public int position;
         public ContourType type;
         ArrayList<Line> lines;
@@ -213,7 +248,7 @@ public class Satellite extends Entity {
         public ContourType type;   // share type with contour
     }
 
-    private class Line {
+    public class Line {
 
         public String altitudeMode;    // for future
         public ArrayList<Double> latitude;   // in radians
@@ -222,14 +257,15 @@ public class Satellite extends Entity {
 
     }
 
-    private Hashtable<String, Beam> getBeamsFromFile(Satellite satellite) {
+    private Beam getBeamFromFile(Satellite satellite, String file) {
         Log.p("Satellite: getBeamsFromFile is trying to get beams for "
                 + satellite, Log.DEBUG);
+        Beam beam = new Beam();
         Hashtable<String, Beam> beams = new Hashtable<String, Beam>();
         try {
 
             InputStream is = Display.getInstance().
-                    getResourceAsStream(null, "/Amazonas 1 61W CTH Americas.kml");
+                    getResourceAsStream(null, file);
 
             Result result = Result.fromContent(new InputStreamReader(is), Result.XML);
 
@@ -243,14 +279,11 @@ public class Satellite extends Entity {
             // subResults add single quotes and there are empty strings when
             // tokenizing for coordinates.   StringUtil does not take regex
             // so a lot of time spent in debugging all this
-            Beam beam = new Beam();
             int posBeam = 0;
 
             // perhaps only one beam in this file
             beam.name = result.getAsString(
                     "//Document/name");
-            beam.position = posBeam++;
-            beams.put(beam.name, beam);
 
             int contourPos = 0;
             int pointPos = 0;
@@ -270,14 +303,14 @@ public class Satellite extends Entity {
                         getAsString("//MultiGeometry");
 
                 if (pointExists == null) {
-                    Log.p("Satellite: drawbeams creating new point # "
+                    Log.p("Satellite: getBeamFromFile creating new point # "
                             + pointPos, Log.DEBUG);
                     Point point = new Point();
                     beam.points.add(point);
 
                     point.position = pointPos++;
-                    point.name = Result.fromContent(placeMark, Result.XML).
-                            getAsString("//name");
+                    point.name = Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
+                            getAsString("//name"));
 
                     point.color = Integer.parseInt(
                             Result.fromContent(placeMark, Result.XML).
@@ -298,7 +331,7 @@ public class Satellite extends Entity {
                 } else {
 
                     // process this as contour
-                    Log.p("Satellite: drawbeams creating new contour # "
+                    Log.p("Satellite: getBeamFromFile creating new contour # "
                             + contourPos, Log.DEBUG);
 
                     Contour contour = new Contour();
@@ -306,8 +339,24 @@ public class Satellite extends Entity {
                     beam.contours.add(contour);
 
                     // parent contour gets the power level name
-                    contour.name = Result.fromContent(placeMark, Result.XML).
-                            getAsString("//name");
+                    contour.name = Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
+                            getAsString("//name"));
+                    
+                    // TODO fix this there is a space before numeric value
+
+                    String nameTokens[] = com.codename1.io.Util.split(contour.name, " ");
+
+                    // check if both the tokens are numbers
+                    try {
+
+                        // first item is "" string so get number from second item
+                        contour.EIRP = Double.parseDouble(nameTokens[1]);
+
+                    } catch (NumberFormatException nfe) {
+                        Log.p("Satellite: KML bad number in " + contour.name,
+                                Log.DEBUG);
+                        // note that index is not incremented
+                    }
 
                     // this is 8 bytes long so get rid of firs FF.  And note 16
                     contour.color = Integer.parseInt(
@@ -383,16 +432,67 @@ public class Satellite extends Entity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return beams;
+
+        return beam;
     }
 
     public Hashtable<String, Beam> getBeams() {
-        // TODO get the right file for a specific satellite (this)
-        if (beams == null) {
-            beams = getBeamsFromFile(this);
-            Log.p("Satellite: got beams from file for " + this, Log.DEBUG);
+
+        // maybe the beams were already read from the files
+        if (beams != null) {
+            return beams;
+        } else {
+
+            int posBeam = 0;
+
+            String[] beamFiles = satBeamFile.get(this.name).toArray(new String[0]);
+            if (beamFiles == null) {
+                return null;
+            }
+
+            // read the beam files and populate beams member
+            for (String beamFile : beamFiles) {
+                if (beams == null) {
+                    beams = new Hashtable<String, Beam>();
+                }
+                Beam beam = getBeamFromFile(this, "/" + beamFile);
+                beam.position = posBeam++;
+                beams.put(beam.name, beam);
+                Log.p("Satellite: got beam for " + this
+                        + " at position " + posBeam + " from file "
+                        + beamFile, Log.DEBUG);
+                double current = maxEIRP(beam);
+                if (maxEIRPfromContours < current) {
+                    maxEIRPfromContours = current;
+                }
+                current = maxGT(beam);
+                if (maxGTfromContours < current) {
+                    maxGTfromContours = current;
+                }
+            }
+            return beams;
         }
-        return beams;
+    }
+
+    public double maxEIRP(Beam beam) {
+        double max = 0.0;
+        for (Contour contour : beam.contours) {
+            if (max > contour.EIRP) {
+                max = contour.EIRP;
+            }
+        }
+        return max;
+    }
+
+    public double maxGT(Beam beam) {
+        double max = 0.0;
+        for (Contour contour : beam.contours) {
+            if (max > contour.GT) {
+                max = contour.GT;
+            }
+        }
+        return max;
+
     }
 
     static {
@@ -405,8 +505,33 @@ public class Satellite extends Entity {
             // Satellite has to read all the records from file.  Selection
             // could include only semiMajor subset per instance (e.g., satellites
             // visible from semiMajor location
+            Log.p("Satellite: static{} reading file all_satellites.txt", Log.DEBUG);
             Satellite.getFromFile(
                     parser.parse(new InputStreamReader(is)));
+
+            Log.p("Satellite: static reading file satellite_beams", Log.DEBUG);
+
+            is = Display.getInstance().
+                    getResourceAsStream(null, "/satellite_beams.txt");
+            satBeamFile = new Hashtable<String, ArrayList<String>>();
+
+            String satBeams[][] = parser.parse(new InputStreamReader(is));
+
+            String oldSat = "", sat, beam, file;
+            for (int i = 0; i < satBeams.length; i++) {
+                sat = satBeams[i][0];
+                beam = satBeams[i][1];
+                file = satBeams[i][2];
+
+                if (!sat.equalsIgnoreCase(oldSat)) {
+                    // new satellite so create a new list of beams
+                    satBeamFile.put(sat, new ArrayList<String>());
+                    oldSat = sat;
+                }
+                satBeamFile.get(sat).add(file);  // add the file
+                Log.p("Satellite: added file " + file + " for sat|beam "
+                        + sat + "|" + beam, Log.DEBUG);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -415,9 +540,9 @@ public class Satellite extends Entity {
     }
 
     public void init(String name) {
-    
+
         this.name = name;       // should be unique
-            
+
         rXantenna = new Antenna();
         rXantenna.setDiameter(2.4);
         rXantenna.setName("RxAnt" + this.name);
@@ -430,18 +555,16 @@ public class Satellite extends Entity {
 
         rXamplifier = new Amplifier();
         rXamplifier.setName("RxAmp" + this.name);
-         rXamplifier.setPower(50.0);
-         // set the power prior to caling affected (most objects are empty)
-         rXamplifier.addAffected(this);
-       
+        rXamplifier.setPower(50.0);
+        // set the power prior to caling affected (most objects are empty)
+        rXamplifier.addAffected(this);
 
-          tXamplifier = new Amplifier();
+        tXamplifier = new Amplifier();
         tXamplifier.setName("TxAmp" + this.name);
         tXamplifier.setPower(100.0);
         // set everything before affected call.
         tXamplifier.addAffected(this);
         // nasty bug.  SHould be double format
-        
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
         setVelocity(3075E3);        // GEO satellite velocity
@@ -620,6 +743,11 @@ public class Satellite extends Entity {
         return this.EIRP;
     }
 
+    public double getEIRPforTerminal(Terminal terminal) {
+        // TODO use terminal's location to adjust EIRP
+        return getEIRP();
+    }
+
     public double maxCoverage() {
         double angle;
         angle = MathUtil.asin(Com.RE / (Com.RE + this.altitude));
@@ -745,6 +873,11 @@ public class Satellite extends Entity {
         return gainTemp;
     }
 
+    public double getGainTempForTerminal(Terminal terminal) {
+        // TODO use the G/T contours and terminal's location to adjust
+        return getGainTemp();
+    }
+
     /**
      * @param gain the gainTemp to set
      */
@@ -796,8 +929,8 @@ public class Satellite extends Entity {
             // updateAffected();   should be called automatically
 
         } else {
-            Log.p("Satellite: amplifier, Tx antenna or Rx antenna is null for " +
-                    this, Log.DEBUG);
+            Log.p("Satellite: amplifier, Tx antenna or Rx antenna is null for "
+                    + this, Log.DEBUG);
         }
 
         // avoid using set since that should be used to send updates down

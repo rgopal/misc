@@ -60,10 +60,8 @@ public class MapView extends View {
 
     private LinesLayer tXline;          // this is for satellite, tx, rx
     private LinesLayer rXline;
-    private ArrayList<PointsLayer> pointsSat = new 
-       ArrayList<PointsLayer> () ;  // pointsSat of beams of selected satellite
-    private ArrayList<LinesLayer> linesSat = new
-        ArrayList<LinesLayer> () ;    // linesSat of beams of selec satellite
+    private ArrayList<PointsLayer> pointsSat = new ArrayList<PointsLayer>();  // pointsSat of beams of selected satellite
+    private ArrayList<LinesLayer> linesSat = new ArrayList<LinesLayer>();    // linesSat of beams of selec satellite
 
     public void showTerminal(final Selection selection,
             final MapComponent mc, String termName, final LinesLayer tXline,
@@ -166,7 +164,7 @@ public class MapView extends View {
                             // remove beams of old satellite
                             removeBeams(selection, pointsSat, linesSat, mc);
                             selection.setSatellite(satellite);
-                         
+
                             drawBeams(selection, pointsSat, linesSat, mc);
 
                             showLines(selection, mc);
@@ -192,10 +190,12 @@ public class MapView extends View {
     // remove lines and points of older satellite
     private void removeBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
-        if (pointsSat == null)
+        if (pointsSat == null) {
             return;
-        if (linesSat == null)
+        }
+        if (linesSat == null) {
             return;
+        }
         for (PointsLayer p : pointsSat) {
             Log.p("MapView: removebeams removing " + p, Log.DEBUG);
             mc.removeLayer(p);
@@ -214,92 +214,96 @@ public class MapView extends View {
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
         Hashtable<String, Satellite.Beam> beams
                 = selection.getSatellite().getBeams();
-        try {
-            Image blue_pin = Image.createImage("/blue_pin.png");
-          
+        if (beams == null) {
+            Log.p("MapView: no beams found for satellite "
+                    + selection.getSatellite(), Log.DEBUG);
+            return;
+        } else {
+            try {
+                Image blue_pin = Image.createImage("/blue_pin.png");
 
-            if (beams == null) {
-                Log.p("MapView: drawbeams beams is null", Log.DEBUG);
-            } else {
-                for (String beam : beams.keySet()) {
-                    Log.p("Mapview: drawbeams processing beam " + beam
-                            + " for satellite " + selection.getSatellite(), Log.DEBUG);
-                    // first all the points
-                    for (Satellite.Point point : beams.get(beam).points) {
-                        Log.p("  Mapview: drawbeams processing point " + point.name,
-                                Log.DEBUG);
-                        PointLayer p = new PointLayer(new Coord(Math.toDegrees(point.latitude),
-                                Math.toDegrees(point.longitude)),
-                                point.name, blue_pin);
-                        PointsLayer psl = new PointsLayer();
-
-                        //if (mc.getZoomLevel() > 10) {
-                            p.setDisplayName(true);
-                        
-                        psl.addPoint(p);
-                        psl.setPointIcon(blue_pin);
-                        mc.addLayer(psl);
-                        pointsSat.add(psl);
-
-                    }
-
-                    // then all the contours
-                    for (Satellite.Contour contour : beams.get(beam).contours) {
-                        Log.p("  Mapview: drawbeams processing contour " + contour.name,
-                                Log.DEBUG);
-
-                        for (Satellite.Line line : contour.lines) {
-                            Log.p("    Mapview: drawbeams processing line " + line.position,
+                if (beams == null) {
+                    Log.p("MapView: drawbeams beams is null", Log.DEBUG);
+                } else {
+                    for (String beam : beams.keySet()) {
+                        Log.p("Mapview: drawbeams processing beam " + beam
+                                + " for satellite " + selection.getSatellite(), Log.DEBUG);
+                        // first all the points
+                        for (Satellite.Point point : beams.get(beam).points) {
+                            Log.p("  Mapview: drawbeams processing point " + point.name,
                                     Log.DEBUG);
+                            PointLayer p = new PointLayer(new Coord(Math.toDegrees(point.latitude),
+                                    Math.toDegrees(point.longitude)),
+                                    point.name, blue_pin);
+                            PointsLayer psl = new PointsLayer();
 
-                            // start a new line 
-                            LinesLayer ll = new LinesLayer();
-                            linesSat.add(ll);
+                            //if (mc.getZoomLevel() > 10) {
+                            p.setDisplayName(true);
 
-                            int segments = line.latitude.size();
-                            if (segments != line.longitude.size()) {
-                                Log.p("        MapView: lat and long have different size "
-                                        + segments, Log.DEBUG);
-                            }
-
-                            for (int i = 0; i < segments; i++) {
-
-                                Double lat = Math.toDegrees(line.latitude.toArray(new Double[0])[i]);
-
-                                Double lng = Math.toDegrees(line.longitude.toArray(new Double[0])[i]);
-
-                                Coord start = new Coord(lat, lng);
-                                if ((i + 1) < segments) {
-                                    Double lat2 = Math.toDegrees(line.latitude.toArray(new Double[0])[i + 1]);
-
-                                    Double lng2 = Math.toDegrees(line.longitude.toArray(new Double[0])[i + 1]);
-
-                                    Coord end = new Coord(lat2, lng2);
-
-                                    ll.addLineSegment(new Coord[]{start, end});
-                                    ll.lineColor(contour.color);         // red for transmit
-
-                                }
-
-                            }
-                            // add in the list of LinesLayer for future removal
-                            mc.addLayer(ll);
-                         
+                            psl.addPoint(p);
+                            psl.setPointIcon(blue_pin);
+                            mc.addLayer(psl);
+                            pointsSat.add(psl);
 
                         }
+
+                        // then all the contours
+                        for (Satellite.Contour contour : beams.get(beam).contours) {
+                            Log.p("  Mapview: drawbeams processing contour " + contour.name,
+                                    Log.DEBUG);
+
+                            for (Satellite.Line line : contour.lines) {
+                                Log.p("    Mapview: drawbeams processing line " + line.position,
+                                        Log.DEBUG);
+
+                                // start a new line 
+                                LinesLayer ll = new LinesLayer();
+                                linesSat.add(ll);
+
+                                int segments = line.latitude.size();
+                                if (segments != line.longitude.size()) {
+                                    Log.p("        MapView: lat and long have different size "
+                                            + segments, Log.DEBUG);
+                                }
+
+                                for (int i = 0; i < segments; i++) {
+
+                                    Double lat = Math.toDegrees(line.latitude.toArray(new Double[0])[i]);
+
+                                    Double lng = Math.toDegrees(line.longitude.toArray(new Double[0])[i]);
+
+                                    Coord start = new Coord(lat, lng);
+                                    if ((i + 1) < segments) {
+                                        Double lat2 = Math.toDegrees(line.latitude.toArray(new Double[0])[i + 1]);
+
+                                        Double lng2 = Math.toDegrees(line.longitude.toArray(new Double[0])[i + 1]);
+
+                                        Coord end = new Coord(lat2, lng2);
+
+                                        ll.addLineSegment(new Coord[]{start, end});
+                                        ll.lineColor(contour.color);         // red for transmit
+
+                                    }
+
+                                }
+                                // add in the list of LinesLayer for future removal
+                                mc.addLayer(ll);
+
+                            }
+                        }
                     }
+
                 }
-
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-    }
+    
+}
 
     // display two linesSat for transmit and receive  for selected satellite
-    // tX terminal and rX terminal
-    public void showLines(final Selection selection, final MapComponent mc) {
+// tX terminal and rX terminal
+public void showLines(final Selection selection, final MapComponent mc) {
 
         Coord tx, cSatellite, rx;
 
@@ -382,8 +386,8 @@ public class MapView extends View {
 
             map = new Form(getName()) {
                 @Override
-                // long press creates a new Terminal
-                public void longPointerPress(int x, int y) {
+        // long press creates a new Terminal
+        public void longPointerPress(int x, int y) {
                     try {
                         Image blue_pin = Image.createImage("/blue_pin.png");
                         Image red_pin = Image.createImage("/red_pin.png");
