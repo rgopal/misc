@@ -816,9 +816,9 @@ public class Satellite extends Entity {
 
             }
 
-        } else {
-            return getEIRP();
         }
+        return getEIRP();
+
     }
 
     public double maxCoverage() {
@@ -1024,15 +1024,18 @@ public class Satellite extends Entity {
         int crossings = 0;
         ArrayList<LatLng> path = new ArrayList<LatLng>();
         int size = 0;
+        
+        
 
         LatLng point = new LatLng();
         point.latitude = lat;
         point.longitude = lng;
+        size = latitude.length < longitude.length
+                    ? latitude.length : longitude.length;
         if (latitude.length != longitude.length) {
             Log.p("Com: pointInPolygon different size for lat|lng "
                     + latitude.length + "|" + longitude.length, Log.DEBUG);
-            size = latitude.length < longitude.length
-                    ? latitude.length : longitude.length;
+            
         }
         // path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()
 
@@ -1079,9 +1082,9 @@ public class Satellite extends Entity {
         }
         // alter longitude to cater for 180 degree crossings
         if (px < 0 || ax < 0 || bx < 0) {
-            px += 360;
-            ax += 360;
-            bx += 360;
+            px += Com.PI*2.0;
+            ax += Com.PI*2.0;
+            bx += Com.PI*2.0;
         }
 
         // if the point has the same latitude as a or b, increase slightly py
