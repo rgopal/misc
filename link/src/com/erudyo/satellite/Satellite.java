@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Vector;
@@ -38,7 +40,6 @@ public class Satellite extends Entity {
     private double maxGT = 0.0;        // in dB 1/K
     private Beam maxEIRPbeam;
     private Beam maxGTbeam;
-    
 
     private static Hashtable<String, ArrayList<String>> satBeamFile;
 
@@ -348,25 +349,26 @@ public class Satellite extends Entity {
                     // parent contour gets the power level name
                     contour.name = Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
                             getAsString("//name"));
-                    
+
                     // space separated value and string dBW (but "" get added by split)
                     String nameTokens[] = com.codename1.io.Util.split(contour.name, " ");
 
                     // check if both the tokens are numbers
-                    int nameInd = 0;  
+                    int nameInd = 0;
                     try {
 
-                        for (; nameInd<nameTokens.length; nameInd++) {
-                        // first item is ""  so get number from second item
-                          if (nameTokens[nameInd].length() != 0)
-                              break;
-                        
+                        for (; nameInd < nameTokens.length; nameInd++) {
+                            // first item is ""  so get number from second item
+                            if (nameTokens[nameInd].length() != 0) {
+                                break;
+                            }
+
                         }
-                        
+
                         contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
                         // and the next item after number is dBW string
-                        if ((nameInd < nameTokens.length-1) && 
-                                (nameTokens[nameInd + 1].toUpperCase().equals("DBW"))) {
+                        if ((nameInd < nameTokens.length - 1)
+                                && (nameTokens[nameInd + 1].toUpperCase().equals("DBW"))) {
                             contour.type = ContourType.EIRP;
                         } else {
                             contour.type = ContourType.GAIN_TEMP;
@@ -378,12 +380,12 @@ public class Satellite extends Entity {
                     }
                     // update current maximum for the beam (EIRP or GT)
                     if (contour.type == ContourType.EIRP) {
-                        if (contour.EIRP > beam.maxEIRP ) {
+                        if (contour.EIRP > beam.maxEIRP) {
                             beam.maxEIRP = contour.EIRP;
                             beam.maxEIRPcontour = contour;
                         }
                     } else {
-                        if (contour.GT > beam.maxGT ) {
+                        if (contour.GT > beam.maxGT) {
                             beam.maxGT = contour.GT;
                             beam.maxGTcontour = contour;
                         }
@@ -504,7 +506,6 @@ public class Satellite extends Entity {
             return beams;
         }
     }
-
 
     static {
         try {
@@ -754,11 +755,70 @@ public class Satellite extends Entity {
         return this.EIRP;
     }
 
+    private class Hierarchy {
+
+        public Beam beam;
+        public Contour contour;
+        public double value;   // could be EIRP or GainTemp
+    }
+
     public double getEIRPforTerminal(Terminal terminal) {
         // TODO use terminal's location to adjust EIRP
         Log.p("Satellite: getEIRPforTerminal EIRP = " + getEIRP() + " max EIRP "
                 + "from beam = " + this.maxEIRP, Log.DEBUG);
-        return getEIRP();
+
+        if (beams != null) {
+            // sort the contours by EIRP across all beams
+            ArrayList<Hierarchy> beamEIRP
+                    = new ArrayList<Hierarchy>();
+            // get all EIRP values for each beam and each contour
+            for (Beam beam : beams.values()) {
+                for (Contour contour : beam.contours) {
+                    Hierarchy hier = new Hierarchy();
+                    hier.beam = beam;
+                    hier.contour = contour;
+                    hier.value = contour.EIRP;
+                    beamEIRP.add(hier);
+                }
+
+            }
+            // now sort with descending EIRP.  
+
+            Collections.sort(beamEIRP, new Comparator<Hierarchy>() {
+                @Override
+                public int compare(Hierarchy one, Hierarchy two) {
+
+                    return (int) (two.value - one.value);
+
+                }
+
+            });
+
+            // find the  EIRP of contour, starting with higest, that contains terminal 
+            for (Hierarchy hier : beamEIRP) {
+                // get the contour details first
+                Contour contour = hier.contour;
+
+                // consider all lines (
+                for (Line line : contour.lines) {
+
+                    if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
+                            line.latitude.toArray(new Double[0]),
+                            line.longitude.toArray(new Double[0]))) {
+                        Log.p("Satellite getEIRPforTerminal " + terminal
+                                + " found in beam " + hier.beam.name + " contour "
+                                + contour.name + " lines " + line.position, Log.DEBUG);
+                        return contour.EIRP;
+
+                    }
+
+                }
+
+            }
+
+        } else {
+            return getEIRP();
+        }
     }
 
     public double maxCoverage() {
@@ -949,6 +1009,7 @@ public class Satellite extends Entity {
 
         // avoid using set since that should be used to send updates down
     }
+
     // used to find point inside a polygon
     private class LatLng {
 
@@ -956,9 +1017,9 @@ public class Satellite extends Entity {
         public double longitude;    // 
 
     }
-    
-      public boolean pointInPolygon(double lat, double lng,
-            double[] latitude, double[] longitude) {
+
+    public boolean pointInPolygon(double lat, double lng,
+            Double[] latitude, Double[] longitude) {
         // ray casting alogrithm http://rosettacode.org/wiki/Ray-casting_algorithm
         int crossings = 0;
         ArrayList<LatLng> path = new ArrayList<LatLng>();
@@ -970,11 +1031,11 @@ public class Satellite extends Entity {
         if (latitude.length != longitude.length) {
             Log.p("Com: pointInPolygon different size for lat|lng "
                     + latitude.length + "|" + longitude.length, Log.DEBUG);
-            size = latitude.length < longitude.length ? 
-                    latitude.length : longitude.length;
+            size = latitude.length < longitude.length
+                    ? latitude.length : longitude.length;
         }
         // path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()
- 
+
         for (int i = 0; i < size; i++) {
             LatLng ll = new LatLng();
             ll.latitude = latitude[i];
