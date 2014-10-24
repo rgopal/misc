@@ -124,20 +124,7 @@ public class UlPathView extends View {
         return lNameGain;
     }
 
-    private String calcCNo(Selection selection) {
-        String str;
-        // CNo depends on Tx and receive of satellite, here EIRP, loss
-        // and gain are all in dBHz
-        str = Com.text(selection.getuLpath().getCNo());
-        return str;
-    }
-
-    private String calcSpecDens(Selection selection) {
-        String str;
-        // Spec density depends on EIRP/4piR2 but EIRP is already in dB
-        str = Com.text(selection.getuLpath().getSpectralDensity());
-        return str;
-    }
+  
 
     public Form createView(final Selection selection) {
 

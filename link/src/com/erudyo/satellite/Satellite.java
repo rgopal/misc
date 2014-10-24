@@ -366,7 +366,7 @@ public class Satellite extends Entity {
                         contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
                         // and the next item after number is dBW string
                         if ((nameInd < nameTokens.length-1) && 
-                                (nameTokens[nameInd + 1].equals("dBW"))) {
+                                (nameTokens[nameInd + 1].toUpperCase().equals("DBW"))) {
                             contour.type = ContourType.EIRP;
                         } else {
                             contour.type = ContourType.GAIN_TEMP;
@@ -756,6 +756,8 @@ public class Satellite extends Entity {
 
     public double getEIRPforTerminal(Terminal terminal) {
         // TODO use terminal's location to adjust EIRP
+        Log.p("Satellite: getEIRPforTerminal EIRP = " + getEIRP() + " max EIRP "
+                + "from beam = " + this.maxEIRP, Log.DEBUG);
         return getEIRP();
     }
 
@@ -886,6 +888,7 @@ public class Satellite extends Entity {
 
     public double getGainTempForTerminal(Terminal terminal) {
         // TODO use the G/T contours and terminal's location to adjust
+        Log.p("Satellite: getGainTempForTerminal max GT " + this.maxGT);
         return getGainTemp();
     }
 

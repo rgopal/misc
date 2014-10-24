@@ -60,6 +60,8 @@ public class DlPathView extends View {
         // Path get satellite and terminal (two ways to access it)
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal()));
+        
+        // it is a bit late for the first logging message which says UL
         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
 
         // terminal name and location

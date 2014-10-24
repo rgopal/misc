@@ -95,11 +95,11 @@ public class Path extends Entity {
     public Path(Satellite s, Terminal t) {
         this.satellite = s;
         this.terminal = t;
-
+        this.name = pathType + ":" + s.getName() + "-" + t.getName();
+        
         // include this Path in the Affected list of satellite and terminal
         s.addAffected(this);
         t.addAffected(this);
-        this.name = pathType + ":" + s.getName() + "-" +  t.getName();
 
         setAll();
     }
@@ -118,10 +118,11 @@ public class Path extends Entity {
         // check if the satellite is new
         if (s != this.satellite) {
             this.satellite.removeAffected(this);
+            this.name = pathType + ":" + s.getName() + "-" + terminal.getName();
             s.addAffected(this);
             this.satellite = s;
-            this.name = pathType + ":" + s.getName() + "-" + terminal.getName();
-               Log.p("Path: path " + this
+
+            Log.p("Path: path " + this
                     + " added satellite " + s + " in Affected list",
                     Log.WARNING);
         } else {
@@ -145,9 +146,13 @@ public class Path extends Entity {
     public void setTerminal(Terminal t) {
         if (this.terminal != t) {
             this.terminal.removeAffected(this);
+            this.name = pathType + ":" + satellite.getName() + "-" + t.getName();
             t.addAffected(this);
             this.terminal = t;
-            this.name = pathType + ":" + satellite.getName() + "-" + terminal.getName();
+            Log.p("Path: path " + this
+                    + " added terminal " + t + " in Affected list",
+                    Log.WARNING);
+
         } else {
             Log.p("Path: path " + this
                     + " already in affected list of terminal " + t,
@@ -167,7 +172,7 @@ public class Path extends Entity {
                     = terminal.getEIRP()
                     - getPathLoss()
                     - getAttenuation()
-                    + satellite.getGainTempForTerminal(terminal)  // location based
+                    + satellite.getGainTempForTerminal(terminal) // location based
                     - Com.KdB;
         } else {
             result = satellite.getEIRPforTerminal(terminal)
@@ -183,7 +188,7 @@ public class Path extends Entity {
         double result;
         if (getPathType() == PATH_TYPE.UPLINK) {
             result
-                    = terminal.getEIRP()   // satellite Gain is location based
+                    = terminal.getEIRP() // satellite Gain is location based
                     - getAttenuation()
                     - 10 * MathUtil.log10(4.0 * Com.PI
                             * (getDistance()
@@ -191,7 +196,7 @@ public class Path extends Entity {
                     );
 
         } else {
-            result = satellite.getEIRPforTerminal(terminal)  
+            result = satellite.getEIRPforTerminal(terminal)
                     - getAttenuation()
                     - 10 * MathUtil.log10(4.0 * Com.PI
                             * getDistance()

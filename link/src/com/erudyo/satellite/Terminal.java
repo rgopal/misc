@@ -181,23 +181,20 @@ public class Terminal extends Entity {
 
         tXantenna = new Antenna();
         tXantenna.setName("tX" + this.name);
-
+        tXantenna.setDiameter(1.0);
         tXantenna.addAffected(this);
-        // System.out.println(this.name);
-        tXantenna.setDiameter(1);
 
         rXantenna = new Antenna();
-          tXantenna.setName("rX" + this.name);
+        rXantenna.setName("rX" + this.name);
         rXantenna.addAffected(this);
-        // System.out.println(this.name);
-        rXantenna.setDiameter(1);
+        rXantenna.setDiameter(1.0);
 
         amplifier = new Amplifier();
         amplifier.setName("amp" + this.name);
+        amplifier.setPower(10.0);
         amplifier.addAffected(this);
-        amplifier.setPower(10);
-        // get current location
 
+        // get current location
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
             latitude = loc.getLatitude();
