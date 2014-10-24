@@ -12,6 +12,7 @@ import java.lang.Math;
 import java.util.Hashtable;
 import com.codename1.util.MathUtil;
 import com.codename1.util.StringUtil;
+import java.util.ArrayList;
 
 /**
  *
@@ -46,7 +47,6 @@ public class Com {
     public final static double T0 = 290.0;
 
     // print 4 characters of a double number (format does not work)
-
     static String shortText(double num) {
         String s = String.valueOf(num);
         int len = s.length();
@@ -55,6 +55,8 @@ public class Com {
         }
         return s.substring(0, len);
     }
+
+    
 
     static String text(double num) {
         String s = String.valueOf(num);
@@ -73,7 +75,7 @@ public class Com {
         }
         return s.substring(0, len);
     }
-    
+
     // convert degree, minute, second to radian.  Note it does not know about
     // North or South etc.   
     public static double toRadian(double d, double m, double s) {
@@ -88,12 +90,14 @@ public class Com {
 
     public static String SwapBlueRed(String s) {
         // KML uses BGR vs Java which has RGB (KML has two more opacity Hex upfront
-        if (s.length() > 6)
+        if (s.length() > 6) {
             Log.p("Com: SwapBlueRed found larger than 6 color " + s, Log.WARNING);
-        return (s.substring(4, 5) + s.substring(2, 3) + s.substring(0,1));
+        }
+        return (s.substring(4, 5) + s.substring(2, 3) + s.substring(0, 1));
     }
+
     public static String removeQuoteEol(String s) {
-        
+
         return (StringUtil.replaceAll(StringUtil.
                 replaceAll(s, "'", ""), "\n", ""));
     }
@@ -187,4 +191,7 @@ public class Com {
             return false;
         }
     }
+
+  
+
 }
