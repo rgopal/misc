@@ -148,6 +148,9 @@ public class Entity {
         return summary;
     }
 
+    public String toString() {
+        return name;
+    }
     /**
      * @param summary the summary to set
      */

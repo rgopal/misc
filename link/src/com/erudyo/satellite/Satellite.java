@@ -34,8 +34,11 @@ public class Satellite extends Entity {
     private Amplifier rXamplifier;
     private Amplifier tXamplifier;
 
-    private double maxEIRPfromContours = 0.0;      // in dBW
-    private double maxGTfromContours = 0.0;        // in dB 1/K  
+    private double maxEIRP = 0.0;      // in dBW
+    private double maxGT = 0.0;        // in dB 1/K
+    private Beam maxEIRPbeam;
+    private Beam maxGTbeam;
+    
 
     private static Hashtable<String, ArrayList<String>> satBeamFile;
 
@@ -179,28 +182,28 @@ public class Satellite extends Entity {
      * @return the maxEIRPfromContours
      */
     public double getMaxEIRPfromContours() {
-        return maxEIRPfromContours;
+        return maxEIRP;
     }
 
     /**
      * @param maxEIRPfromContours the maxEIRPfromContours to set
      */
     public void setMaxEIRPfromContours(double maxEIRPfromContours) {
-        this.maxEIRPfromContours = maxEIRPfromContours;
+        this.maxEIRP = maxEIRPfromContours;
     }
 
     /**
      * @return the maxGTfromContours
      */
     public double getMaxGTfromContours() {
-        return maxGTfromContours;
+        return maxGT;
     }
 
     /**
      * @param maxGTfromContours the maxGTfromContours to set
      */
     public void setMaxGTfromContours(double maxGTfromContours) {
-        this.maxGTfromContours = maxGTfromContours;
+        this.maxGT = maxGTfromContours;
     }
 
     public enum ContourType {
@@ -217,6 +220,10 @@ public class Satellite extends Entity {
 
         public String name;
         public int position;
+        public double maxEIRP;
+        public Contour maxEIRPcontour;
+        public double maxGT;
+        public Contour maxGTcontour;
 
         public ArrayList<Point> points;  // one or more points (EIRP, GAIN)
         public ArrayList<Contour> contours;
@@ -342,26 +349,50 @@ public class Satellite extends Entity {
                     contour.name = Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
                             getAsString("//name"));
                     
-                    // TODO fix this there is a space before numeric value
-
+                    // space separated value and string dBW (but "" get added by split)
                     String nameTokens[] = com.codename1.io.Util.split(contour.name, " ");
 
                     // check if both the tokens are numbers
+                    int nameInd = 0;  
                     try {
 
-                        // first item is "" string so get number from second item
-                        contour.EIRP = Double.parseDouble(nameTokens[1]);
-
+                        for (; nameInd<nameTokens.length; nameInd++) {
+                        // first item is ""  so get number from second item
+                          if (nameTokens[nameInd].length() != 0)
+                              break;
+                        
+                        }
+                        
+                        contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
+                        // and the next item after number is dBW string
+                        if ((nameInd < nameTokens.length-1) && 
+                                (nameTokens[nameInd + 1].equals("dBW"))) {
+                            contour.type = ContourType.EIRP;
+                        } else {
+                            contour.type = ContourType.GAIN_TEMP;
+                        }
                     } catch (NumberFormatException nfe) {
                         Log.p("Satellite: KML bad number in " + contour.name,
                                 Log.DEBUG);
                         // note that index is not incremented
                     }
+                    // update current maximum for the beam (EIRP or GT)
+                    if (contour.type == ContourType.EIRP) {
+                        if (contour.EIRP > beam.maxEIRP ) {
+                            beam.maxEIRP = contour.EIRP;
+                            beam.maxEIRPcontour = contour;
+                        }
+                    } else {
+                        if (contour.GT > beam.maxGT ) {
+                            beam.maxGT = contour.GT;
+                            beam.maxGTcontour = contour;
+                        }
+                    }
 
                     // this is 8 bytes long so get rid of firs FF.  And note 16
-                    contour.color = Integer.parseInt(
+                    contour.color = Integer.parseInt(Com.SwapBlueRed(
                             Result.fromContent(placeMark, Result.XML).
-                            getAsString("//Style/LineStyle/color").substring(2, 7), 16);
+                            getAsString("//Style/LineStyle/color").substring(2, 7)), 16);
 
                     contour.width = Integer.parseInt(
                             Com.removeNonNum(Result.fromContent(placeMark, Result.XML).
@@ -461,39 +492,19 @@ public class Satellite extends Entity {
                 Log.p("Satellite: got beam for " + this
                         + " at position " + posBeam + " from file "
                         + beamFile, Log.DEBUG);
-                double current = maxEIRP(beam);
-                if (maxEIRPfromContours < current) {
-                    maxEIRPfromContours = current;
+                double current = beam.maxEIRP;
+                if (current > maxEIRP) {
+                    maxEIRP = current;
                 }
-                current = maxGT(beam);
-                if (maxGTfromContours < current) {
-                    maxGTfromContours = current;
+                current = beam.maxGT;
+                if (current > maxGT) {
+                    maxGT = current;
                 }
             }
             return beams;
         }
     }
 
-    public double maxEIRP(Beam beam) {
-        double max = 0.0;
-        for (Contour contour : beam.contours) {
-            if (max > contour.EIRP) {
-                max = contour.EIRP;
-            }
-        }
-        return max;
-    }
-
-    public double maxGT(Beam beam) {
-        double max = 0.0;
-        for (Contour contour : beam.contours) {
-            if (max > contour.GT) {
-                max = contour.GT;
-            }
-        }
-        return max;
-
-    }
 
     static {
         try {

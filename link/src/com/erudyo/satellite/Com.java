@@ -5,6 +5,7 @@
  */
 package com.erudyo.satellite;
 
+import com.codename1.io.Log;
 import com.codename1.processing.Result;
 import java.text.Format;
 import java.lang.Math;
@@ -85,6 +86,12 @@ public class Com {
                 replaceAll(s, "'", ""), "\n", ""), " ", "");
     }
 
+    public static String SwapBlueRed(String s) {
+        // KML uses BGR vs Java which has RGB (KML has two more opacity Hex upfront
+        if (s.length() > 6)
+            Log.p("Com: SwapBlueRed found larger than 6 color " + s, Log.WARNING);
+        return (s.substring(4, 5) + s.substring(2, 3) + s.substring(0,1));
+    }
     public static String removeQuoteEol(String s) {
         
         return (StringUtil.replaceAll(StringUtil.
