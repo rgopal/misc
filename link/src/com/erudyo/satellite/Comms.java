@@ -15,6 +15,10 @@
  * Comms itself does not depend on any child or siblint (so has no update()
  * processing.
  * TODO: 
+ * 
+ * Put it the end of the list of views and include data rate and bandwidth, BER
+ * calculate total C/No and Eb/No and store in Comms.
+ * 
  */
 package com.erudyo.satellite;
 

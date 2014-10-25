@@ -60,8 +60,6 @@ public class MapView extends View {
 
     private LinesLayer tXline;          // this is for satellite, tx, rx
     private LinesLayer rXline;
-    private ArrayList<PointsLayer> pointsSat = new ArrayList<PointsLayer>();  // pointsSat of beams of selected satellite
-    private ArrayList<LinesLayer> linesSat = new ArrayList<LinesLayer>();    // linesSat of beams of selec satellite
 
     public void showTerminal(final Selection selection,
             final MapComponent mc, String termName, final LinesLayer tXline,
@@ -112,34 +110,67 @@ public class MapView extends View {
         }
     }
 
+    // used to remove icons etc. for previous selected satellite
+    private class PreviousSatellite {
+
+        public Satellite satellite;
+        public PointLayer pointLayer;
+        public PointsLayer pointsLayer;
+        public ArrayList<PointsLayer> pointsSat = new ArrayList<PointsLayer>();
+// pointsSat of beams of selected satellite
+        public ArrayList<LinesLayer> linesSat = new ArrayList<LinesLayer>();
+// linesSat of beams of selec satellite
+
+    }
+
+    // used in two places (showBeams)
+    final PreviousSatellite prevSat = new PreviousSatellite();
+
     // display a satellite as a point on the equator
     public void showSatellite(final Selection selection,
             final MapComponent mc, String satName, final LinesLayer tXline,
             final LinesLayer rXline) {
 
+        // 
         try {
             Log.p("MapView: displaying satellite " + satName
                     + " for " + selection.getBand() + " band.", Log.DEBUG);
-            Image blue_pin = Image.createImage("/blue_pin.png");
-            Image red_pin = Image.createImage("/red_pin.png");
+            final Image blue_pin = Image.createImage("/blue_pin.png");
+            final Image red_pin = Image.createImage("/red_pin.png");
 
             Satellite satellite = Satellite.satelliteHash.get(satName);
             if (satellite == null) {
                 Log.p("MapView: satellite is null " + satName, Log.DEBUG);
             }
 
-            PointsLayer plSat = new PointsLayer();
-            plSat.setPointIcon(red_pin);
+            final PointsLayer plSat = new PointsLayer();
+
+            // default is blue
+            Image pin;
+
+            if (satellite == selection.getSatellite()) {
+                pin = red_pin;
+            } else {
+                pin = blue_pin;
+            }
+
+            plSat.setPointIcon(pin);
 
             // Coord takes it in degrees.   Don't use true for projected
             Coord coord = new Coord(Math.toDegrees(satellite.getLatitude()),
                     Math.toDegrees(satellite.getLongitude()));
 
-            final PointLayer pSat = new PointLayer(coord, satellite.getName(), red_pin);
+            final PointLayer pSat = new PointLayer(coord, satellite.getName(), pin);
 
             pSat.setDisplayName(false);   // it clutters
             plSat.addPoint(pSat);
 
+            // memorize the currently selected satellite
+            if (satellite == selection.getSatellite()) {
+                prevSat.pointLayer = pSat;
+                prevSat.pointsLayer = plSat;
+                prevSat.satellite = satellite;
+            }
             plSat.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
@@ -162,10 +193,22 @@ public class MapView extends View {
                             // change satellite and update linesSat
                             Log.p("Mapview: selecting satellite " + plSelSat.getName(), Log.DEBUG);
                             // remove beams of old satellite
-                            // Can't do this, removeLayer complains removeBeams(selection, pointsSat, linesSat, mc);
-                            selection.setSatellite(satellite);
+                            if (prevSat != null) {
+                                removeBeams(prevSat.satellite, prevSat.pointsSat,
+                                        prevSat.linesSat, mc);
 
-                            drawBeams(selection, pointsSat, linesSat, mc);
+                                prevSat.pointLayer.setIcon(blue_pin);
+                                prevSat.pointsLayer.setPointIcon(blue_pin);
+
+                            }
+                            selection.setSatellite(satellite);
+                            plSat.setPointIcon(red_pin);
+                            plSelSat.setIcon(red_pin);
+                            prevSat.satellite = selection.getSatellite();
+                            prevSat.pointLayer = plSelSat;
+                            prevSat.pointsLayer = plSat;
+
+                            drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
 
                             // draw tx and rx lines for terminals
                             showLines(selection, mc);
@@ -189,7 +232,7 @@ public class MapView extends View {
     }
 
     // remove lines and points of older satellite
-    private void removeBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
+    private void removeBeams(Satellite satellite, ArrayList<PointsLayer> pointsSat,
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
         if (pointsSat == null) {
             return;
@@ -199,14 +242,14 @@ public class MapView extends View {
         }
         for (PointsLayer p : pointsSat) {
             Log.p("MapView: removebeams removing points " + p + " for "
-                    + selection.getSatellite(), Log.DEBUG);
+                    + satellite, Log.DEBUG);
             mc.removeLayer(p);
         }
         // this array list does not follow contour/line structure, all
         // lines are present in a flat list
         for (LinesLayer l : linesSat) {
             Log.p("MapView: removebeams removing lines " + l
-                    + " for " + selection.getSatellite(), Log.DEBUG);
+                    + " for " + satellite, Log.DEBUG);
             mc.removeLayer(l);
         }
 
@@ -217,9 +260,17 @@ public class MapView extends View {
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
         Hashtable<String, Satellite.Beam> beams
                 = selection.getSatellite().getBeams();
+        
+        // they will be emptied (not nulled, not recreated).  Also, even if the beams is null, these 
+        // could have been non empty because of previous satellite
+        
+        pointsSat.clear();
+        linesSat.clear();
+            
         if (beams == null) {
-            Log.p("MapView: no beams found for satellite "
+            Log.p("MapView: no beams found for satellite nulling older"
                     + selection.getSatellite(), Log.DEBUG);
+   
             return;
         } else {
             try {
@@ -305,7 +356,7 @@ public class MapView extends View {
     }
 
     // display two linesSat for transmit and receive  for selected satellite
-// tX terminal and rX terminal
+// tX terminal and rX terminal and change icon colors
     public void showLines(final Selection selection, final MapComponent mc) {
 
         Coord tx, cSatellite, rx;
@@ -385,7 +436,7 @@ public class MapView extends View {
                 //  since each MapView is newly created 
                 // NOT NEEDED removeBeams(selection, pointsSat, linesSat, mc);
                 // show the beams of the selected satellite
-                drawBeams(selection, pointsSat, linesSat, mc);
+                drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
             }
         }
         // now display all terminal all terminals
@@ -447,7 +498,7 @@ public class MapView extends View {
                     selection.getRxView().spin.setModel(new DefaultListModel(
                             selection.getVisibleTerminal().get(Selection.VISIBLE.YES)));
 
-                        // set current Tx and Rx terminals again since models have changed
+                    // set current Tx and Rx terminals again since models have changed
                     // (only one will get set again in changeTerminal)
                     selection.getRxView().spin.setSelectedItem(
                             selection.getrXterminal().getName());
@@ -464,7 +515,7 @@ public class MapView extends View {
                         public void actionPerformed(ActionEvent evt) {
                             PointLayer pnew = (PointLayer) evt.getSource();
 
-                                // they kept it in internal format, so call this to
+                            // they kept it in internal format, so call this to
                             // make it back to WGS84 (add point had called fromWGS
                             Coord m = Mercator.inverseMercator(pnew.getLatitude(),
                                     pnew.getLongitude());
@@ -491,7 +542,7 @@ public class MapView extends View {
                 false);
         // override pointerPressed to locate new positions 
 
-            // putMeOnMap(mc);
+        // putMeOnMap(mc);
         // mc.zoomToLayers();  // too sparse
         mc.setZoomLevel(2); // see if does the job
         map.addComponent(BorderLayout.CENTER, mc);

@@ -12,6 +12,13 @@
  * could depend on each other and instance's update method is automatically called
  * when any child or sibling changes.  An instance registers itself by calling
  * the addAffected method of another object (such as its child).
+ * TODO
+ * create a new optimization view.   It will ask which parameters (dish size, amp
+ * power, mod/cod, bandwidth, data rate, ber) should be fixed and which can be varied.   Another settings view
+ * will take minimum and maximum values for this ranges so that algorithm can 
+ * enumerate/vary and get the optimize the value.  Locations and satellite is probably fixed
+ * for this optimization.   One can then select a specific variable (data rate,
+ * ber, bandwidth) that need to be optimized.
  */
 package com.erudyo.satellite;
 // this is main
