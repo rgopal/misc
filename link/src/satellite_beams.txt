@@ -2,3 +2,4 @@ ABS-2|1|Amazonas 1 61W CTH Americas.kml
 ABS-2|2|Amazonas 1 61W CTV Americas.kml
 ABS-3|1|Amazonas 1 61W CTH Americas.kml
 ABS-3|2|Amazonas 1 61W CTV Americas.kml
+Amazonas-1|1|Amazonas 1 61W CTV Americas.kml

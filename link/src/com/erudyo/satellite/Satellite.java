@@ -296,7 +296,7 @@ public class Satellite extends Entity {
             int contourPos = 0;
             int pointPos = 0;
 
-            // get ready for new contour or point
+            // get ready for new contour (EIRP or GT) or point
             beam.contours = new ArrayList<Contour>();
             beam.points = new ArrayList<Point>();
 
@@ -317,6 +317,8 @@ public class Satellite extends Entity {
                     beam.points.add(point);
 
                     point.position = pointPos++;
+                    // TODO differentiate between EIRP and GT points (similar to
+                    // contours
                     point.name = Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
                             getAsString("//name"));
 
@@ -353,25 +355,23 @@ public class Satellite extends Entity {
                     // space separated value and string dBW (but "" get added by split)
                     String nameTokens[] = com.codename1.io.Util.split(contour.name, " ");
 
-                    // check if both the tokens are numbers
+                    // find the token which is a number
                     int nameInd = 0;
                     try {
-
                         for (; nameInd < nameTokens.length; nameInd++) {
                             // first item is ""  so get number from second item
                             if (nameTokens[nameInd].length() != 0) {
                                 break;
                             }
-
                         }
-
-                        contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
-                        // and the next item after number is dBW string
+                        // and the next item after number is dBW (for EIRP) string
                         if ((nameInd < nameTokens.length - 1)
                                 && (nameTokens[nameInd + 1].toUpperCase().equals("DBW"))) {
                             contour.type = ContourType.EIRP;
+                            contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
                         } else {
                             contour.type = ContourType.GAIN_TEMP;
+                            contour.GT = Double.parseDouble(nameTokens[nameInd]);
                         }
                     } catch (NumberFormatException nfe) {
                         Log.p("Satellite: KML bad number in " + contour.name,
@@ -774,61 +774,78 @@ public class Satellite extends Entity {
         public double value;   // could be EIRP or GainTemp
     }
 
+    // Returns a real EIRP based on satellite EIRP contours if they are 
+    // available.  Otherwise returns the calculated EIRP assuming
+    // satellite EIRP contours have same value in the whole footprint
     public double getEIRPforTerminal(Terminal terminal) {
-        // TODO use terminal's location to adjust EIRP
-        Log.p("Satellite: getEIRPforTerminal EIRP = " + getEIRP() + " max EIRP "
-                + "from beam = " + this.maxEIRP, Log.DEBUG);
+
+        Log.p("Satellite: getEIRPforTerminal calculated EIRP = " + getEIRP() + " max EIRP "
+                + "from contours = " + this.maxEIRP, Log.DEBUG);
 
         if (beams != null) {
-            // sort the contours by EIRP across all beams
+            // need to sort the contours by EIRP across all beams
             ArrayList<Hierarchy> beamEIRP
                     = new ArrayList<Hierarchy>();
             // get all EIRP values for each beam and each contour
             for (Beam beam : beams.values()) {
                 for (Contour contour : beam.contours) {
-                    Hierarchy hier = new Hierarchy();
-                    hier.beam = beam;
-                    hier.contour = contour;
-                    hier.value = contour.EIRP;
-                    beamEIRP.add(hier);
+                    // consier relevant contours
+                    if (contour.type == ContourType.EIRP) {
+                        Hierarchy hier = new Hierarchy();
+                        hier.beam = beam;
+                        hier.contour = contour;
+                        hier.value = contour.EIRP;
+                        beamEIRP.add(hier);
+                    }
                 }
 
             }
-            // now sort with descending EIRP.  
+            if (beamEIRP.size() == 0) {
+                Log.p("Satellite: getEIRPforTerminal there are no EIRP contours"
+                        + " for satellite " + this, Log.DEBUG);
+            } else {
+                // now sort with descending EIRP.  
+                Collections.sort(beamEIRP, new Comparator<Hierarchy>() {
+                    @Override
+                    public int compare(Hierarchy one, Hierarchy two) {
 
-            Collections.sort(beamEIRP, new Comparator<Hierarchy>() {
-                @Override
-                public int compare(Hierarchy one, Hierarchy two) {
+                        return (int) (two.value - one.value);
 
-                    return (int) (two.value - one.value);
+                    }
 
-                }
+                });
 
-            });
+                // find the  EIRP of contour, starting with higest, that contains terminal 
+                for (Hierarchy hier : beamEIRP) {
+                    // get the contour details first
+                    Contour contour = hier.contour;
 
-            // find the  EIRP of contour, starting with higest, that contains terminal 
-            for (Hierarchy hier : beamEIRP) {
-                // get the contour details first
-                Contour contour = hier.contour;
+                    // consider all lines (
+                    for (Line line : contour.lines) {
 
-                // consider all lines (
-                for (Line line : contour.lines) {
+                        if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
+                                line.latitude.toArray(new Double[0]),
+                                line.longitude.toArray(new Double[0]))) {
+                            Log.p("Satellite getEIRPforTerminal " + terminal
+                                    + " found in beam " + hier.beam.name + " contour "
+                                    + contour.name + " lines " + line.position, Log.DEBUG);
+                            return contour.EIRP;
 
-                    if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
-                            line.latitude.toArray(new Double[0]),
-                            line.longitude.toArray(new Double[0]))) {
-                        Log.p("Satellite getEIRPforTerminal " + terminal
-                                + " found in beam " + hier.beam.name + " contour "
-                                + contour.name + " lines " + line.position, Log.DEBUG);
-                        return contour.EIRP;
+                        }
 
                     }
 
                 }
 
             }
-
         }
+        
+        // could not find contours so return calculated value
+        
+        // TODO see if there are GT contours available.  Then use that
+        // to determine the change from calculated EIRP value.  Similar
+        // logic in GT determination.
+        
         return getEIRP();
 
     }

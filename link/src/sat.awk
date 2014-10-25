@@ -38,6 +38,8 @@ $6 ~ /GEO/ || NR < 2 {
     sub("[\\t| ]+\(.*\)","",first) 
     sub("Wideband Global Satcom", "WGS", first)
     sub("UHF Follow-On", "", first)
+    # remove spaces before and after | in first field (Amazonas 1 had problem)
+    gsub("[ ]*|[ ]*","|",first)
     # remove all double quotes
     gsub("[ ]*\"", "", first)
 
