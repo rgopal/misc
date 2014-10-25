@@ -261,8 +261,8 @@ public class MapView extends View {
     // draw lines and points of newly selected satellite
     public void drawBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
-        Hashtable<String, Satellite.Beam> beams
-                = selection.getSatellite().getBeams();
+        Hashtable<String, Satellite.Beam> beams;
+              beams  = selection.getSatellite().getBeams(selection);
         
         // they will be emptied (not nulled, not recreated).  Also, even if the beams is null, these 
         // could have been non empty because of previous satellite

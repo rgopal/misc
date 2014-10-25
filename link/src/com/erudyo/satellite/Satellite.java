@@ -29,6 +29,14 @@ import java.util.Vector;
  *
  * @author rgopal
  */
+// satellite hierarchy is as follows: antenna and amplifier are for rx and
+// tx and used for interactive calculations only.
+// If the beam files are available EIRP and/or Gain then they are used for calcs
+// 
+// A beam has multiple contours. Each beam supports a specific band and has multiple
+// transponders.  Each contour could be for EIRP or GT type
+// 
+// A beam also has multiple transponders.   
 public class Satellite extends Entity {
 
     private Antenna rXantenna;
@@ -38,13 +46,27 @@ public class Satellite extends Entity {
 
     private double maxEIRP = 0.0;      // in dBW
     private double maxGT = 0.0;        // in dB 1/K
+
     private Beam maxEIRPbeam;
     private Beam maxGTbeam;
 
-    private static Hashtable<String, ArrayList<String>> satBeamFile;
+    private static Hashtable<String, Hashtable<String, ArrayList<String>>> satBandBeamFile;
 
     // can have multiple bands and transponders;
     private Hashtable<RfBand.Band, Integer> transponders;
+
+    // each band would have its own beam items
+    private class BandBeams {
+
+        RfBand.Band band;           // band of these beams
+        public double maxEIRP;      // maximum across all beams of a band
+        public double maxGT;
+
+        // access a lineString by its name in a hashtable (created from a file)
+        Hashtable<String, Beam> beams;  // collection of beams.
+    }
+
+    private Hashtable<RfBand.Band, BandBeams> bandBeams;
 
     // all satellites stored in semiMajor Class level hash.  For future, since
     // selection has its own at instance level
@@ -55,10 +77,87 @@ public class Satellite extends Entity {
     final public static ArrayList<Satellite> indexSatellite
             = new ArrayList<Satellite>();
 
+    private double EIRP;       // they should be calculated
+    private double gainTemp;       // they should be calculated dB 1/K
+    protected double latitude;     // latitude
+    protected double longitude;  // longitude
+    protected double distanceEarthCenter;       // distance from center of Earth
+    protected double h;       // altitude of satellite from sub-satellite point
+    private double semiMajor;       // semi major axis
+    protected double velocity;       // velocity
+    protected double altitude;      // altitude
+    protected Com.Orbit orbit;
+    // protected RfBand.Band band; // now multiple bands in Beam
+
+    private double tempGround = 45.0;
+    private double tempSky = 20.0;  // in K, depends on frequency
+    private double polarizationLoss;
+
+    private int index;
+
+    public enum ContourType {
+
+        EIRP, GAIN_TEMP
+    };
+
+    // satellite has multiple beams of a specific band (child of BandBeam)
+    // A beam has multiple placemarks (placemark has name)
+    // A placemark could be a point or a contour
+    // A placemark could be of type EIRP or GAIN
+    // A contour has multiple lines
+    public class Beam {
+
+        public String name;
+        public int transponders;    // number of transponders
+        public int position;
+        public double maxEIRP;      // maximum across all contours within a beam
+        public Contour maxEIRPcontour;
+        public double maxGT;
+        public Contour maxGTcontour;
+
+        public ArrayList<Point> points;  // one or more points (EIRP, GAIN)
+        public ArrayList<Contour> contours;
+    }
+
+    // access a lineString by its name in a hashtable (created from a file)
+    // now a part of BandBeams - Hashtable<String, Beam> beams;
+    // multiple contours per lineString (one of two types (EIRP, GAIN_TEMP)
+    public class Contour {
+
+        public int color;
+        public int width;
+        public String name;
+        public double EIRP;
+        public double GT;
+        public int position;
+        public ContourType type;
+        ArrayList<Line> lines;
+    }
+
+    public class Point {
+
+        public String name;
+        public int position;
+        public int color;
+        public double latitude;     // in radians
+        public double longitude;    // in radians
+        public ContourType type;   // share type with contour
+    }
+
+    public class Line {
+
+        public String altitudeMode;    // for future
+        public ArrayList<Double> latitude;   // in radians
+        public ArrayList<Double> longitude;
+        public int position;
+
+    }
+
     public Satellite() {
     }
 
     // return the number of transponders for a specific band
+    // used when no contours are present
     public int getNumberTransponders(RfBand.Band band) {
         int num = 0;
         if (transponders == null) {
@@ -73,23 +172,6 @@ public class Satellite extends Entity {
     public String toString() {
         return getName();
     }
-    private double EIRP;       // they should be calculated
-    private double gainTemp;       // they should be calculated dB 1/K
-    protected double latitude;     // latitude
-    protected double longitude;  // longitude
-    protected double distanceEarthCenter;       // distance from center of Earth
-    protected double h;       // altitude of satellite from sub-satellite point
-    private double semiMajor;       // semi major axis
-    protected double velocity;       // velocity
-    protected double altitude;      // altitude
-    protected Com.Orbit orbit;
-    // protected RfBand.Band band; // now multiple bands in transponders
-
-    private double tempGround = 45.0;
-    private double tempSky = 20.0;  // in K, depends on frequency
-    private double polarizationLoss;
-
-    private int index;
 
     public int getIndex() {
         return index;
@@ -182,89 +264,25 @@ public class Satellite extends Entity {
     /**
      * @return the maxEIRPfromContours
      */
-    public double getMaxEIRPfromContours() {
-        return maxEIRP;
-    }
+    public double getMaxEIRPfromContours(RfBand.Band band) {
 
-    /**
-     * @param maxEIRPfromContours the maxEIRPfromContours to set
-     */
-    public void setMaxEIRPfromContours(double maxEIRPfromContours) {
-        this.maxEIRP = maxEIRPfromContours;
+        if (bandBeams != null && bandBeams.get(band) != null) {
+            return bandBeams.get(band).maxEIRP;
+        }
+        return -100.0;
     }
 
     /**
      * @return the maxGTfromContours
      */
-    public double getMaxGTfromContours() {
-        return maxGT;
+    public double getMaxGTfromContours(RfBand.Band band) {
+        if (bandBeams != null && bandBeams.get(band) != null) {
+            return bandBeams.get(band).maxGT;
+        }
+        return -100;
     }
 
-    /**
-     * @param maxGTfromContours the maxGTfromContours to set
-     */
-    public void setMaxGTfromContours(double maxGTfromContours) {
-        this.maxGT = maxGTfromContours;
-    }
-
-    public enum ContourType {
-
-        EIRP, GAIN_TEMP
-    };
-
-    // satellite has multiple beams
-    // A beam has multiple placemarks (placemark has name)
-    // A placemark could be a point or a contour
-    // A placemark could be of type EIRP or GAIN
-    // A contour has multiple lines
-    public class Beam {
-
-        public String name;
-        public int position;
-        public double maxEIRP;
-        public Contour maxEIRPcontour;
-        public double maxGT;
-        public Contour maxGTcontour;
-
-        public ArrayList<Point> points;  // one or more points (EIRP, GAIN)
-        public ArrayList<Contour> contours;
-    }
-
-    // access a lineString by its name in a hashtable (created from a file)
-    Hashtable<String, Beam> beams;
-
-    // multiple contours per lineString (one of two types (EIRP, GAIN_TEMP)
-    public class Contour {
-
-        public int color;
-        public int width;
-        public String name;
-        public double EIRP;
-        public double GT;
-        public int position;
-        public ContourType type;
-        ArrayList<Line> lines;
-    }
-
-    public class Point {
-
-        public String name;
-        public int position;
-        public int color;
-        public double latitude;     // in radians
-        public double longitude;    // in radians
-        public ContourType type;   // share type with contour
-    }
-
-    public class Line {
-
-        public String altitudeMode;    // for future
-        public ArrayList<Double> latitude;   // in radians
-        public ArrayList<Double> longitude;
-        public int position;
-
-    }
-
+    // gets beam contours from a file (already known that it exists)
     private Beam getBeamFromFile(Satellite satellite, String file) {
         Log.p("Satellite: getBeamsFromFile is trying to get beams for "
                 + satellite, Log.DEBUG);
@@ -470,40 +488,54 @@ public class Satellite extends Entity {
     }
 
     // called from MapView
-    public Hashtable<String, Beam> getBeams() {
+    public Hashtable<String, Beam> getBeams(Selection selection) {
 
-        return (beams);
+        // find the beams for a specific band
+        if (bandBeams != null
+                && bandBeams.get(selection.getBand()) != null) {
+            return bandBeams.get(selection.getBand()).beams;
+        }
 
+        return null;
     }
 
     // called when a satellite is selected (setSatellite is called?)
     // so that terminal location can be processed independent of Maps
-    public void readBeams() {
+    public void readBeams(RfBand.Band band) {
 
-        // maybe the beams were already read from the files
+        Hashtable<String, Beam> beams = null;
+
+        // first check if beams are available for this band
+        if (bandBeams != null
+                && bandBeams.get(band) != null) {
+            beams = bandBeams.get(band).beams;
+        }
+        // maybe the beams were already read from the files, if not
         if (beams == null) {
             int posBeam = 0;
 
-            if (satBeamFile == null) {
-                Log.p("Satellite: readBeams satBeamFile is null for " + this,
+            if (satBandBeamFile == null) {
+                Log.p("Satellite: readBeams satBeamFile is null for " + this
+                        + " and band " + band,
                         Log.WARNING);
                 return;
             }
 
-            if (satBeamFile.get(this.name) == null) {
-                Log.p("Satellite: readBeams no beam files for " + this,
+            if (satBandBeamFile.get(this.name) == null) {
+                Log.p("Satellite: readBeams no beam files for " + this
+                        + " and band " + band,
                         Log.INFO);
                 return;
             }
             // read the beam files and populate beams member
-            for (String beamFile : satBeamFile.get(this.name)) {
+            for (String beamFile : satBandBeamFile.get(this.name).get(band)) {
                 if (beams == null) {
                     beams = new Hashtable<String, Beam>();
                 }
                 Beam beam = getBeamFromFile(this, "/" + beamFile);
                 beam.position = posBeam++;
                 beams.put(beam.name, beam);
-                Log.p("Satellite: got a beam for " + this
+                Log.p("Satellite: got a beam for " + this + " and band " + band
                         + " at position " + posBeam + " from file "
                         + beamFile, Log.DEBUG);
                 double current = beam.maxEIRP;
@@ -517,6 +549,16 @@ public class Satellite extends Entity {
             }
 
         }
+        // add new beams to bandBeams for specific (create as necessary)
+        if (bandBeams == null) {
+            bandBeams = new Hashtable<RfBand.Band, BandBeams>();
+        }
+        if (bandBeams.get(band) == null) {
+            bandBeams.put(band, new BandBeams());
+        }
+
+        bandBeams.get(band).beams = beams;
+
     }
 
     static {
@@ -537,24 +579,39 @@ public class Satellite extends Entity {
 
             is = Display.getInstance().
                     getResourceAsStream(null, "/satellite_beams.txt");
-            satBeamFile = new Hashtable<String, ArrayList<String>>();
+            
+            satBandBeamFile = new Hashtable<String, 
+                    Hashtable<String, ArrayList<String>>>();
 
             String satBeams[][] = parser.parse(new InputStreamReader(is));
 
-            String oldSat = "", sat, beam, file;
+            String oldSat = "", oldBand = "", sat, beam, file, band;
             for (int i = 0; i < satBeams.length; i++) {
                 sat = satBeams[i][0];
                 beam = satBeams[i][1];
                 file = satBeams[i][2];
+                band = satBeams[i][3];
 
+                // assume this is sorted by satellite and band
                 if (!sat.equalsIgnoreCase(oldSat)) {
-                    // new satellite so create a new list of beams
-                    satBeamFile.put(sat, new ArrayList<String>());
+                    // new satellite so create a new collections of bands
+                    satBandBeamFile.put(sat, new Hashtable<String, ArrayList<String>>());
                     oldSat = sat;
+                  
                 }
-                satBeamFile.get(sat).add(file);  // add the file
-                Log.p("Satellite: added file " + file + " for sat|beam "
-                        + sat + "|" + beam, Log.DEBUG);
+                
+                  if (!band.equalsIgnoreCase(oldBand)) {
+                        ArrayList<String> a
+                                = new ArrayList<String>();
+
+                        // new band start a new collection of files
+                        satBandBeamFile.get(sat).put(band,a);
+                        oldBand = band;
+                    }
+                satBandBeamFile.get(sat).get(band).add(file);  // add the file
+
+                Log.p("Satellite: added file " + file + " for sat|beam|band "
+                        + sat + "|" + beam + "|" + band, Log.DEBUG);
             }
 
         } catch (IOException e) {
@@ -643,6 +700,7 @@ public class Satellite extends Entity {
 
     }
 
+  
     private static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
 
     // selection needs this
@@ -782,6 +840,11 @@ public class Satellite extends Entity {
         Log.p("Satellite: getEIRPforTerminal calculated EIRP = " + getEIRP() + " max EIRP "
                 + "from contours = " + this.maxEIRP, Log.DEBUG);
 
+        Hashtable <String, Beam> beams = null;
+        
+        if (bandBeams != null && bandBeams.get(terminal.gettXantenna().getBand()) != null) {
+            beams = bandBeams.get(terminal.gettXantenna().getBand()).beams;
+        }
         if (beams != null) {
             // need to sort the contours by EIRP across all beams
             ArrayList<Hierarchy> beamEIRP
@@ -839,13 +902,11 @@ public class Satellite extends Entity {
 
             }
         }
-        
+
         // could not find contours so return calculated value
-        
         // TODO see if there are GT contours available.  Then use that
         // to determine the change from calculated EIRP value.  Similar
         // logic in GT determination.
-        
         return getEIRP();
 
     }

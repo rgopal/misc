@@ -213,7 +213,7 @@ public class Selection {
         this.satellite = satellite;
         
         // try to get beams from txt files for this satellite
-        satellite.readBeams();
+        satellite.readBeams(band);
 
         initVisibleTerminal();  // they are both here in this class
 
