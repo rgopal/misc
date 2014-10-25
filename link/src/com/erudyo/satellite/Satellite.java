@@ -469,29 +469,41 @@ public class Satellite extends Entity {
         return beam;
     }
 
+    // called from MapView
     public Hashtable<String, Beam> getBeams() {
 
-        // maybe the beams were already read from the files
-        if (beams != null) {
-            return beams;
-        } else {
+        return (beams);
 
+    }
+
+    // called when a satellite is selected (setSatellite is called?)
+    // so that terminal location can be processed independent of Maps
+    public void readBeams() {
+
+        // maybe the beams were already read from the files
+        if (beams == null) {
             int posBeam = 0;
 
-            String[] beamFiles = satBeamFile.get(this.name).toArray(new String[0]);
-            if (beamFiles == null) {
-                return null;
+            if (satBeamFile == null) {
+                Log.p("Satellite: readBeams satBeamFile is null for " + this,
+                        Log.WARNING);
+                return;
             }
 
+            if (satBeamFile.get(this.name) == null) {
+                Log.p("Satellite: readBeams no beam files for " + this,
+                        Log.INFO);
+                return;
+            }
             // read the beam files and populate beams member
-            for (String beamFile : beamFiles) {
+            for (String beamFile : satBeamFile.get(this.name)) {
                 if (beams == null) {
                     beams = new Hashtable<String, Beam>();
                 }
                 Beam beam = getBeamFromFile(this, "/" + beamFile);
                 beam.position = posBeam++;
                 beams.put(beam.name, beam);
-                Log.p("Satellite: got beam for " + this
+                Log.p("Satellite: got a beam for " + this
                         + " at position " + posBeam + " from file "
                         + beamFile, Log.DEBUG);
                 double current = beam.maxEIRP;
@@ -503,7 +515,7 @@ public class Satellite extends Entity {
                     maxGT = current;
                 }
             }
-            return beams;
+
         }
     }
 
@@ -1024,18 +1036,16 @@ public class Satellite extends Entity {
         int crossings = 0;
         ArrayList<LatLng> path = new ArrayList<LatLng>();
         int size = 0;
-        
-        
 
         LatLng point = new LatLng();
         point.latitude = lat;
         point.longitude = lng;
         size = latitude.length < longitude.length
-                    ? latitude.length : longitude.length;
+                ? latitude.length : longitude.length;
         if (latitude.length != longitude.length) {
             Log.p("Com: pointInPolygon different size for lat|lng "
                     + latitude.length + "|" + longitude.length, Log.DEBUG);
-            
+
         }
         // path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()
 
@@ -1082,9 +1092,9 @@ public class Satellite extends Entity {
         }
         // alter longitude to cater for 180 degree crossings
         if (px < 0 || ax < 0 || bx < 0) {
-            px += Com.PI*2.0;
-            ax += Com.PI*2.0;
-            bx += Com.PI*2.0;
+            px += Com.PI * 2.0;
+            ax += Com.PI * 2.0;
+            bx += Com.PI * 2.0;
         }
 
         // if the point has the same latitude as a or b, increase slightly py

@@ -211,6 +211,9 @@ public class Selection {
     public void setSatellite(Satellite satellite) {
         // update visible terminals 
         this.satellite = satellite;
+        
+        // try to get beams from txt files for this satellite
+        satellite.readBeams();
 
         initVisibleTerminal();  // they are both here in this class
 
