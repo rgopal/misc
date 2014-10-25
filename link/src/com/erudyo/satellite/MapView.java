@@ -207,6 +207,9 @@ public class MapView extends View {
                             prevSat.satellite = selection.getSatellite();
                             prevSat.pointLayer = plSelSat;
                             prevSat.pointsLayer = plSat;
+                            
+                               selection.getSatelliteView().spin.
+                            setSelectedItem(selection.getSatellite().getName());
 
                             drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
 
