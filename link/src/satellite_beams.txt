@@ -1,5 +1,5 @@
-ABS-2|1|Amazonas 1 61W CTH Americas.kml|C
-ABS-2|2|Amazonas 1 61W CTV Americas.kml|KA
-ABS-3|1|Amazonas 1 61W CTH Americas.kml|C
-ABS-3|2|Amazonas 1 61W CTV Americas.kml|KA
+ABS-2|1|Amazonas 1 61W CTV Americas.kml|C
+ABS-2|2|Amazonas 1 61W CTHKA Americas.kml|KA
+ABS-3|1|Amazonas 1 61W CTV Americas.kml|C
+ABS-3|2|Amazonas 1 61W CTV GTK Americas.kml|C
 Amazonas-1|1|Amazonas 1 61W CTV Americas.kml|C

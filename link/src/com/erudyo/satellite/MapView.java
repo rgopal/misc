@@ -527,7 +527,7 @@ public class MapView extends View {
                             Log.p("MapView: new terminal current long | lat "
                                     + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
 
-                            // not needed changeTerminal(selection, mc, pnew, m);
+                            // TODO ??? not needed changeTerminal(selection, mc, pnew, m);
                         }
                     });
                     mc.addLayer(pslNewTerm);

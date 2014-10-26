@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
+
 import java.util.Random;
 import java.util.Vector;
 
@@ -50,7 +51,7 @@ public class Satellite extends Entity {
     private Beam maxEIRPbeam;
     private Beam maxGTbeam;
 
-    private static Hashtable<String, Hashtable<String, ArrayList<String>>> satBandBeamFile;
+    private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
     // can have multiple bands and transponders;
     private Hashtable<RfBand.Band, Integer> transponders;
@@ -287,7 +288,7 @@ public class Satellite extends Entity {
         Log.p("Satellite: getBeamsFromFile is trying to get beams for "
                 + satellite, Log.DEBUG);
         Beam beam = new Beam();
-        Hashtable<String, Beam> beams = new Hashtable<String, Beam>();
+     
         try {
 
             InputStream is = Display.getInstance().
@@ -528,23 +529,33 @@ public class Satellite extends Entity {
                 return;
             }
             // read the beam files and populate beams member
-            for (String beamFile : satBandBeamFile.get(this.name).get(band)) {
-                if (beams == null) {
-                    beams = new Hashtable<String, Beam>();
-                }
-                Beam beam = getBeamFromFile(this, "/" + beamFile);
-                beam.position = posBeam++;
-                beams.put(beam.name, beam);
-                Log.p("Satellite: got a beam for " + this + " and band " + band
-                        + " at position " + posBeam + " from file "
-                        + beamFile, Log.DEBUG);
-                double current = beam.maxEIRP;
-                if (current > maxEIRP) {
-                    maxEIRP = current;
-                }
-                current = beam.maxGT;
-                if (current > maxGT) {
-                    maxGT = current;
+            // a check for null would not work so had to use size()
+            if (satBandBeamFile.get(this.name).get(band).size() == 0) {
+                return;
+            } else {
+                for (String beamFile : satBandBeamFile.get(this.name).get(band)) {
+                    if (beams == null) {
+                        beams = new Hashtable<String, Beam>();
+                        if (bandBeams == null)
+                            bandBeams = new Hashtable<RfBand.Band, BandBeams>();
+                        if (bandBeams.get(band) == null)
+                            bandBeams.put(band, new BandBeams());
+                        bandBeams.get(band).beams = beams;
+                    }
+                    Beam beam = getBeamFromFile(this, "/" + beamFile);
+                    beam.position = posBeam++;
+                    beams.put(beam.name, beam);
+                    Log.p("Satellite: got a beam for " + this + " and band " + band
+                            + " at position " + posBeam + " from file "
+                            + beamFile, Log.DEBUG);
+                    double current = beam.maxEIRP;
+                    if (current > maxEIRP) {
+                        maxEIRP = current;
+                    }
+                    current = beam.maxGT;
+                    if (current > maxGT) {
+                        maxGT = current;
+                    }
                 }
             }
 
@@ -579,9 +590,8 @@ public class Satellite extends Entity {
 
             is = Display.getInstance().
                     getResourceAsStream(null, "/satellite_beams.txt");
-            
-            satBandBeamFile = new Hashtable<String, 
-                    Hashtable<String, ArrayList<String>>>();
+
+            satBandBeamFile = new Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>>();
 
             String satBeams[][] = parser.parse(new InputStreamReader(is));
 
@@ -595,20 +605,30 @@ public class Satellite extends Entity {
                 // assume this is sorted by satellite and band
                 if (!sat.equalsIgnoreCase(oldSat)) {
                     // new satellite so create a new collections of bands
-                    satBandBeamFile.put(sat, new Hashtable<String, ArrayList<String>>());
+                    satBandBeamFile.put(sat, new Hashtable<RfBand.Band, ArrayList<String>>());
                     oldSat = sat;
-                  
-                }
-                
-                  if (!band.equalsIgnoreCase(oldBand)) {
-                        ArrayList<String> a
-                                = new ArrayList<String>();
 
-                        // new band start a new collection of files
-                        satBandBeamFile.get(sat).put(band,a);
-                        oldBand = band;
-                    }
-                satBandBeamFile.get(sat).get(band).add(file);  // add the file
+                    // create a new entry for a band
+                    ArrayList<String> a
+                            = new ArrayList<String>();
+
+                    // new band start a new collection of files
+                    satBandBeamFile.get(sat).put(RfBand.rFbandHash.
+                            get(band.toUpperCase()).getBand(), a);
+
+                } else // create a new band item if band changes for same satellite
+                if (!band.equalsIgnoreCase(oldBand)) {
+                    ArrayList<String> a
+                            = new ArrayList<String>();
+
+                    // new band start a new collection of files
+                    satBandBeamFile.get(sat).put(RfBand.rFbandHash.
+                            get(band.toUpperCase()).getBand(), a);
+                    oldBand = band;
+                }
+
+                satBandBeamFile.get(sat).get(RfBand.rFbandHash.
+                            get(band.toUpperCase()).getBand()).add(file);  // add the file
 
                 Log.p("Satellite: added file " + file + " for sat|beam|band "
                         + sat + "|" + beam + "|" + band, Log.DEBUG);
@@ -700,7 +720,6 @@ public class Satellite extends Entity {
 
     }
 
-  
     private static Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite;
 
     // selection needs this
@@ -744,7 +763,8 @@ public class Satellite extends Entity {
 
     }
 
-    public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
+    public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, 
+            ArrayList<Satellite>> bandSatellite) {
 //            ArrayList<Satellite> vector) {
 //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|Operator
 //Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|Longitude of GEO (de
@@ -840,8 +860,8 @@ public class Satellite extends Entity {
         Log.p("Satellite: getEIRPforTerminal calculated EIRP = " + getEIRP() + " max EIRP "
                 + "from contours = " + this.maxEIRP, Log.DEBUG);
 
-        Hashtable <String, Beam> beams = null;
-        
+        Hashtable<String, Beam> beams = null;
+
         if (bandBeams != null && bandBeams.get(terminal.gettXantenna().getBand()) != null) {
             beams = bandBeams.get(terminal.gettXantenna().getBand()).beams;
         }
