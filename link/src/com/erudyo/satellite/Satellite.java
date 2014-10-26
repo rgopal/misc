@@ -40,26 +40,26 @@ import java.util.Vector;
 // A beam also has multiple transponders.   
 public class Satellite extends Entity {
 
-    private Antenna rXantenna;
-    private Antenna tXantenna;
-    private Amplifier rXamplifier;
-    private Amplifier tXamplifier;
-
     private double maxEIRP = -100.0;      // in dBW
     private double maxGT = -100.0;        // in dB 1/K
 
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
     // can have multiple bands and transponders;
-    private Hashtable<RfBand.Band, Integer> transponders;
-
+    // in bandBeams private Hashtable<RfBand.Band, Integer> transponders;
     // each band would have its own beam items
     private class BandBeams {
 
         RfBand.Band band;           // band of these beams
+        public double EIRP;       // they should be calculated
+        public double gainTemp;       // they should be calculated dB 1/K
         public double maxEIRP;      // maximum across all beams of a band
         public double maxGT;
-
+        public int transponders;    // number of transponders (same across beams)
+        public Antenna rXantenna;  // assumed same chars across beams (for same band)
+        public Antenna tXantenna;
+        public Amplifier rXamplifier;
+        public Amplifier tXamplifier;
         // access a lineString by its name in a hashtable (created from a file)
         Hashtable<String, Beam> beams;  // collection of beams.
     }
@@ -75,8 +75,6 @@ public class Satellite extends Entity {
     final public static ArrayList<Satellite> indexSatellite
             = new ArrayList<Satellite>();
 
-    private double EIRP;       // they should be calculated
-    private double gainTemp;       // they should be calculated dB 1/K
     protected double latitude;     // latitude
     protected double longitude;  // longitude
     protected double distanceEarthCenter;       // distance from center of Earth
@@ -106,7 +104,7 @@ public class Satellite extends Entity {
     public class Beam {
 
         public String name;
-        public int transponders;    // number of transponders
+
         public int position;
         public double maxEIRP;      // maximum across all contours within a beam
         public Contour maxEIRPcontour;
@@ -158,12 +156,12 @@ public class Satellite extends Entity {
     // used when no contours are present
     public int getNumberTransponders(RfBand.Band band) {
         int num = 0;
-        if (transponders == null) {
-            Log.p("Satellite: transponders is null", Log.WARNING);
+        if (bandBeams == null) {
+            Log.p("Satellite: bandBeams is null", Log.WARNING);
         }
-        if (transponders.get(band) != null) {
-            num = transponders.get(band);
-        }
+
+        num = bandBeams.get(band).transponders;
+
         return num;
     }
 
@@ -231,15 +229,15 @@ public class Satellite extends Entity {
     /**
      * @return the tXantenna
      */
-    public Antenna getTxAntenna() {
-        return tXantenna;
+    public Antenna getTxAntenna(RfBand.Band band) {
+        return bandBeams.get(band).tXantenna;
     }
 
     /**
      * @param tXantenna the tXantenna to set
      */
-    public void setTxAntenna(Antenna tXantenna) {
-        this.tXantenna = tXantenna;
+    public void setTxAntenna(Antenna tXantenna, RfBand.Band band) {
+        bandBeams.get(band).tXantenna = tXantenna;
         updateAffected();
 
     }
@@ -247,15 +245,15 @@ public class Satellite extends Entity {
     /**
      * @return the tXamplifier
      */
-    public Amplifier getTxAmplifier() {
-        return tXamplifier;
+    public Amplifier getTxAmplifier(RfBand.Band band) {
+        return bandBeams.get(band).tXamplifier;
     }
 
     /**
      * @param tXamplifier the tXamplifier to set
      */
-    public void setTxAmplifier(Amplifier tXamplifier) {
-        this.tXamplifier = tXamplifier;
+    public void setTxAmplifier(Amplifier tXamplifier, RfBand.Band band) {
+        bandBeams.get(band).tXamplifier = tXamplifier;
         updateAffected();
     }
 
@@ -639,32 +637,43 @@ public class Satellite extends Entity {
 
     }
 
+    public static void initAntAmp(Satellite satellite, RfBand.Band band, int num) {
+
+        satellite.bandBeams.get(band).transponders = num;
+
+        satellite.bandBeams.get(band).rXantenna = new Antenna();
+        satellite.bandBeams.get(band).rXantenna.setDiameter(2.4);
+        satellite.bandBeams.get(band).rXantenna.setName("RxAnt" + band + satellite.name);
+        satellite.bandBeams.get(band).rXantenna.setBand(RfBand.findUl(band));
+        satellite.bandBeams.get(band).rXantenna.addAffected(satellite);
+
+        satellite.bandBeams.get(band).tXantenna = new Antenna();
+        satellite.bandBeams.get(band).tXantenna.setDiameter(2.4);
+        satellite.bandBeams.get(band).rXantenna.setBand(RfBand.findDl(band));
+        satellite.bandBeams.get(band).tXantenna.setName("TxAnt" + band + satellite.name);
+        satellite.bandBeams.get(band).tXantenna.addAffected(satellite);
+
+        satellite.bandBeams.get(band).rXamplifier = new Amplifier();
+        satellite.bandBeams.get(band).rXamplifier.setName("RxAmp" + band + satellite.name);
+        satellite.bandBeams.get(band).rXamplifier.setPower(50.0);
+
+        // set the power prior to caling affected (most objects are empty)
+        satellite.bandBeams.get(band).rXamplifier.addAffected(satellite);
+
+        satellite.bandBeams.get(band).tXamplifier = new Amplifier();
+        satellite.bandBeams.get(band).tXamplifier.setName("TxAmp" + band + satellite.name);
+        satellite.bandBeams.get(band).tXamplifier.setPower(100.0);
+
+        // set everything before affected call.
+        satellite.bandBeams.get(band).tXamplifier.addAffected(satellite);
+        // nasty bug.  SHould be double format
+    }
+
     public void init(String name) {
 
         this.name = name;       // should be unique
 
-        rXantenna = new Antenna();
-        rXantenna.setDiameter(2.4);
-        rXantenna.setName("RxAnt" + this.name);
-        rXantenna.addAffected(this);
-
-        tXantenna = new Antenna();
-        tXantenna.setDiameter(2.4);
-        tXantenna.setName("TxAnt" + this.name);
-        tXantenna.addAffected(this);
-
-        rXamplifier = new Amplifier();
-        rXamplifier.setName("RxAmp" + this.name);
-        rXamplifier.setPower(50.0);
-        // set the power prior to caling affected (most objects are empty)
-        rXamplifier.addAffected(this);
-
-        tXamplifier = new Amplifier();
-        tXamplifier.setName("TxAmp" + this.name);
-        tXamplifier.setPower(100.0);
-        // set everything before affected call.
-        tXamplifier.addAffected(this);
-        // nasty bug.  SHould be double format
+        this.bandBeams = new Hashtable<RfBand.Band, BandBeams>();
 
         setSemiMajor(42164.2E3);        //semi major axis of GEO orbit
         setVelocity(3075E3);        // GEO satellite velocity
@@ -712,12 +721,11 @@ public class Satellite extends Entity {
                         + Arrays.toString(fields), Log.DEBUG);
             }
             // TODO handle transponders  put the number of transponders for this band
-            satellite.transponders.put(band, num);
-            
-            satellite.getRxAntenna().setBand(RfBand.findUl(band));
-            satellite.getTxAntenna().setBand(RfBand.findDl(band));
-          
-            
+
+            satellite.bandBeams.get(band).EIRP = (Double.parseDouble(fields[34]));
+            satellite.bandBeams.get(band).gainTemp = (Double.parseDouble(fields[35]));
+
+            initAntAmp(satellite, band, num);
 
             // add satellite to this band
             bandSatellite.get(band).add(satellite);
@@ -793,15 +801,9 @@ public class Satellite extends Entity {
             // select only GEO satellites
             satellite.setLatitude(0.0);
 
-            satellite.setEIRP(Double.parseDouble(fields[34]));
-            satellite.setGainTemp(Double.parseDouble(fields[35]));
-
         } catch (Exception e) {
             Log.p("Satellites: double error in Long,Lat,EIRP, or Gain "
                     + fields, Log.WARNING);
-        }
-        if (satellite.transponders == null) {
-            satellite.transponders = new Hashtable<RfBand.Band, Integer>();
         }
 
         // put the band and number of transponders
@@ -811,6 +813,12 @@ public class Satellite extends Entity {
                 == RfBand.Band.C) {
 
             processBand(fields, RfBand.Band.C, bandSatellite, satellite, 36);
+        }
+        if (!(fields[36].equals("")) && RfBand.rFbandHash.get(
+                fields[36].toUpperCase()).getBand()
+                == RfBand.Band.X) {
+
+            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 36);
         }
         if (!(fields[38].equals("")) && RfBand.rFbandHash.get(
                 fields[38].toUpperCase()).getBand()
@@ -826,28 +834,28 @@ public class Satellite extends Entity {
     }
 
     // uplink system noise temperature at the receiver input given by
-    public double calcSystemNoiseTemp() {
+    public double calcSystemNoiseTemp(RfBand.Band band) {
         double tA;
         double noiseTemp;
         double teRX;
         // noise figure is in dB
-        teRX = (MathUtil.pow(10.0, this.rXamplifier.getNoiseFigure() / 10.0)
+        teRX = (MathUtil.pow(10.0, bandBeams.get(band).rXamplifier.getNoiseFigure() / 10.0)
                 - 1.0) * Com.T0;
-        tA = this.getTempSky(getRxAntenna().getBand())
+        tA = this.getTempSky(bandBeams.get(band).rXantenna.getBand())
                 + this.getTempGround();
 
         // LFRX is in dB so change
-        double lfrx = MathUtil.pow(10.0, this.getRxAmplifier().getLFRX() / 10.0);
+        double lfrx = MathUtil.pow(10.0, bandBeams.get(band).rXamplifier.getLFRX() / 10.0);
 
         noiseTemp = tA / lfrx
-                + this.getRxAmplifier().getFeederTemp()
+                + bandBeams.get(band).rXamplifier.getFeederTemp()
                 * (1.0 - 1.0 / lfrx) + teRX;
 
         return noiseTemp;
     }
 
-    public double getEIRP() {
-        return this.EIRP;
+    public double getEIRP(RfBand.Band band) {
+        return bandBeams.get(band).EIRP;
     }
 
     private class Hierarchy {
@@ -874,11 +882,11 @@ public class Satellite extends Entity {
         if (contourType == ContourType.EIRP) {
             band = terminal.getrXantenna().getBand();
             maxValue = this.getMaxEIRPfromContours(band);
-            calcValue = this.getEIRP();
+            calcValue = bandBeams.get(band).EIRP;
         } else {
             band = terminal.gettXantenna().getBand();
             maxValue = this.getMaxGTfromContours(band);
-            calcValue = this.getGainTemp();
+            calcValue = bandBeams.get(band).gainTemp;
         }
 
         Log.p("Satellite: getEIRPforTerminal calculated " + contourType + " = "
@@ -962,9 +970,9 @@ public class Satellite extends Entity {
         // to determine the change from calculated EIRP value.  Similar
         // logic in GT determination.
         if (contourType == ContourType.EIRP) {
-            return getEIRP();
+            return getEIRP(band);
         } else {
-            return getGainTemp();
+            return getGainTemp(band);
         }
 
     }
@@ -1052,59 +1060,59 @@ public class Satellite extends Entity {
         this.altitude = R0;
     }
 
-    public Antenna getRxAntenna() {
-        return rXantenna;
+    public Antenna getRxAntenna(RfBand.Band band) {
+        return bandBeams.get(band).rXantenna;
     }
 
     /**
      * @return the rXamplifier
      */
-    public Amplifier getRxAmplifier() {
-        return rXamplifier;
+    public Amplifier getRxAmplifier(RfBand.Band band) {
+        return bandBeams.get(band).rXamplifier;
     }
 
     /**
      * @param amplifier the rXamplifier to set
      */
-    public void setRxAmplifier(Amplifier amplifier) {
-        this.rXamplifier = amplifier;
+    public void setRxAmplifier(Amplifier amplifier, RfBand band) {
+        bandBeams.get(band).rXamplifier = amplifier;
         updateAffected();
     }
 
     /**
      * @param antenna the rXantenna to set
      */
-    public void setRxAntenna(Antenna antenna) {
-        this.rXantenna = antenna;
+    public void setRxAntenna(Antenna antenna, RfBand.Band band) {
+        bandBeams.get(band).rXantenna = antenna;
         updateAffected();
     }
 
     /**
      * @param EIRP the EIRP to set
      */
-    public void setEIRP(double EIRP) {
-        this.EIRP = EIRP;
+    public void setEIRP(double EIRP, RfBand.Band band) {
+        bandBeams.get(band).EIRP = EIRP;
         updateAffected();
     }
 
     /**
      * @return the gainTemp
      */
-    public double getGainTemp() {
-        return gainTemp;
+    public double getGainTemp(RfBand.Band band) {
+        return bandBeams.get(band).gainTemp;
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-       
+
         return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
-        
+
     }
 
     /**
      * @param gain the gainTemp to set
      */
-    public void setGainTemp(double gain) {
-        this.gainTemp = gain;
+    public void setGainTemp(double gain, RfBand.Band band) {
+        bandBeams.get(band).gainTemp = gain;
         updateAffected();  // for parents
     }
 
@@ -1116,27 +1124,27 @@ public class Satellite extends Entity {
     }
 
     // uses Transmit antenna
-    private double calcEIRP() {
+    private double calcEIRP(RfBand.Band band) {
         // rXamplifier was in dB others 
         double eirp = (10 * MathUtil.log10(
-                this.getTxAmplifier().getPower()))
-                + this.getTxAntenna().getGain()
-                - this.getTxAntenna().getDepointingLoss()
-                - this.getTxAmplifier().getLFTX();
+                bandBeams.get(band).tXamplifier.getPower()))
+                + bandBeams.get(band).tXantenna.getGain()
+                - bandBeams.get(band).tXantenna.getDepointingLoss()
+                - bandBeams.get(band).tXamplifier.getLFTX();
         return eirp;
     }
 
     // users receive antenna
-    private double calcGainTemp() {
+    private double calcGainTemp(RfBand.Band band) {
 
         double gain;
 
         // rXantenna gain is already in dB
-        gain = this.getRxAntenna().getGain()
-                - this.getRxAntenna().calcDepointingLoss()
-                - this.getRxAmplifier().getLFRX()
+        gain = bandBeams.get(band).rXantenna.getGain()
+                - bandBeams.get(band).rXantenna.calcDepointingLoss()
+                - bandBeams.get(band).rXamplifier.getLFRX()
                 - this.getPolarizationLoss()
-                - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
+                - 10.0 * MathUtil.log10(calcSystemNoiseTemp(band));
         return gain;
     }
 
@@ -1145,17 +1153,19 @@ public class Satellite extends Entity {
         // update everything that could be affected
         // EIRP depends on rXantenna and rXamplifier, but both need to exist
         // if beams are not present then calcEIRP is used
-        if (this.getRxAmplifier() != null && this.getRxAntenna() != null
-                && this.getTxAntenna() != null) {
-            this.EIRP = calcEIRP();
-            this.gainTemp = calcGainTemp();
-            // updateAffected();   should be called automatically
+        for (RfBand.Band band : bandBeams.keySet()) {
+            if (bandBeams.get(band).rXamplifier != null && 
+                    bandBeams.get(band).rXantenna != null
+                    && bandBeams.get(band).tXantenna != null) {
+                bandBeams.get(band).EIRP = calcEIRP(band);
+                bandBeams.get(band).gainTemp = calcGainTemp(band);
+                // updateAffected();   should be called automatically
 
-        } else {
-            Log.p("Satellite: amplifier, Tx antenna or Rx antenna is null for "
-                    + this, Log.DEBUG);
+            } else {
+                Log.p("Satellite: amplifier, Tx antenna or Rx antenna is null for "
+                        + this, Log.DEBUG);
+            }
         }
-
         // avoid using set since that should be used to send updates down
     }
 
