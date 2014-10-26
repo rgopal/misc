@@ -722,6 +722,11 @@ public class Satellite extends Entity {
             }
             // TODO handle transponders  put the number of transponders for this band
 
+            if (satellite.bandBeams.get(band) == null) {
+                
+              
+                satellite.bandBeams.put(band, new BandBeams());
+            }
             satellite.bandBeams.get(band).EIRP = (Double.parseDouble(fields[34]));
             satellite.bandBeams.get(band).gainTemp = (Double.parseDouble(fields[35]));
 
