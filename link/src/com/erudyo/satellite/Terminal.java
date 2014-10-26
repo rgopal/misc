@@ -93,9 +93,11 @@ public class Terminal extends Entity {
         }
     }
 
-    public void setBand(RfBand.Band band) {
+   // NOT USED by others.  RxAntenna and TxAntenna have band
+    private void setBand(RfBand.Band band) {
         this.band = band;
     }
+   
 
     // read the terminals.txt file and return all data as a Hashtable, one ArrayList
     // of terminals for each band.

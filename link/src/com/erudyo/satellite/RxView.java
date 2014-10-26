@@ -84,6 +84,9 @@ public class RxView extends View {
                 // change the the selected  rX satellite
                 selection.setrXterminal(Terminal.terminalHash.get(
                         (String) combo.getSelectedItem()));
+                
+                selection.getrXterminal().getrXantenna().setBand(
+                        RfBand.findDl(selection.getBand()));
 
                 // update other values dependent on this satellite
                 // updateValues(selection);
@@ -143,8 +146,9 @@ public class RxView extends View {
         final Terminal rxTerm = selection.getrXterminal();
 
         Label L01 = new Label("Center Frequency");
-        Label lFrequency = new Label(Com.shortText(rxTerm.getrXantenna().getFrequency() / 1E9));
-        Label L03 = new Label("GHz " + rxTerm.getBand());
+        Label lFrequency = new Label(Com.shortText(rxTerm.
+                getrXantenna().getFrequency() / 1E9));
+        Label L03 = new Label("GHz " + rxTerm.getrXantenna().getBand());
         cnt.addComponent(constraint,L01);
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);

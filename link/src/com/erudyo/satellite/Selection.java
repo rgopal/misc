@@ -113,9 +113,9 @@ public class Selection {
         tXview = new TxView(this);
         uLpathView = new UlPathView(this);
         rXview = new RxView(this);
-        commsView = new CommsView(this);
-        dLpathView = new DlPathView(this);
 
+        dLpathView = new DlPathView(this);
+        commsView = new CommsView(this);
         initRfBandHash();
 
         // get the list of satellites read from the .txt file
@@ -180,7 +180,7 @@ public class Selection {
      * @return the rXterminal
      */
     public Terminal getrXterminal() {
-         // why is terminal being changed
+        // why is terminal being changed
 
         return rXterminal;
     }
@@ -211,7 +211,7 @@ public class Selection {
     public void setSatellite(Satellite satellite) {
         // update visible terminals 
         this.satellite = satellite;
-        
+
         // try to get beams from txt files for this satellite
         satellite.readBeams(band);
 

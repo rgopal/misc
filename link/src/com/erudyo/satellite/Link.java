@@ -145,13 +145,13 @@ public class Link {
 
         // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
         views[0] = selection.getSatelliteView();
-        views[1] = selection.getCommsView();
-        
-        views[2] = selection.getTxView();
-        views[3] = selection.getuLpathView();
-        
-        views[4] = selection.getRxView();
-        views[5] = selection.getdLpathView();
+
+        views[1] = selection.getTxView();
+        views[2] = selection.getuLpathView();
+
+        views[3] = selection.getRxView();
+        views[4] = selection.getdLpathView();
+        views[5] = selection.getCommsView();
 
     }
 
@@ -331,6 +331,7 @@ public class Link {
         RfBand rFband = RfBand.rFbandHash.get(item);
 
         selection.setBand(rFband.getBand());
+      
 
         // note that only semiMajor String has substring functions
         lBand.setText((Com.shortText(rFband.lowFrequency / 1E9))
@@ -361,7 +362,7 @@ public class Link {
 
                 // will select Rx terminal
                 comboRx(selection, cbBand);
-              
+
             }
         });
 
@@ -396,6 +397,9 @@ public class Link {
 
             // update selected satellite
             selection.setSatellite(Satellite.satelliteHash.get(name));
+            
+            // Satellite Band processed on its own
+           
 
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
@@ -443,8 +447,10 @@ public class Link {
                                 get(Selection.VISIBLE.YES).toArray(
                                         new String[0])[position]));
 
-              
-
+                // update band
+                selection.getrXterminal().getrXantenna().
+                        setBand(RfBand.findDl(selection.getBand()));
+                
                 // update label 
                 selection.getRxView().label.setText(
                         selection.getrXterminal().getName());
@@ -469,43 +475,48 @@ public class Link {
                     + selection.getSatellite(), Log.ERROR);
             // change the current Combobox entry
             // cbBand.setSelectedIndex(i);
-        }
-
-        selection.initVisibleTerminal();
-        DefaultListModel model = new DefaultListModel(
-                (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
-                        new String[0])));
-
-        if (model == null) {
-            Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal for sat "
-                    + selection.getSatellite(), Log.ERROR);
         } else {
-            selection.getTxView().spin.setModel(model);
-            // update label TODO
 
-            if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 1) // get the first terminal (only 1)
-            {
-                Log.p("Link: no visible terminal for tx  for satellite " + selection.getSatellite(),
-                        Log.WARNING);
+            selection.initVisibleTerminal();
+            DefaultListModel model = new DefaultListModel(
+                    (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
+                            new String[0])));
+
+            if (model == null) {
+                Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal for sat "
+                        + selection.getSatellite(), Log.ERROR);
+            } else {
+                selection.getTxView().spin.setModel(model);
+                // update label TODO
+
+                if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 1) // get the first terminal (only 1)
+                {
+                    Log.p("Link: no visible terminal for tx  for satellite " + selection.getSatellite(),
+                            Log.WARNING);
+                }
+
+                // set the selected Tx terminal
+                selection.settXterminal(Terminal.terminalHash.
+                        get(selection.getVisibleTerminal().
+                                get(Selection.VISIBLE.YES).toArray(
+                                        new String[0])[0]));
+
+                   selection.gettXterminal().gettXantenna().
+                           setBand(RfBand.findUl(selection.getBand()));
+                
+                // update label 
+                   
+                // update label of Tx terminal
+                selection.getTxView().label.setText(
+                        selection.gettXterminal().getName());
+                // update its lat/long (comes from UlPath)
+                selection.getuLpathView().label.setText(
+                        Com.toDMS(selection.gettXterminal().getLongitude()));
+                // update label of Tx terminal
+
+                selection.getuLpathView().subLabel.setText(
+                        Com.toDMS(selection.gettXterminal().getLatitude()));
             }
-
-            // set the selected Tx terminal
-            selection.settXterminal(Terminal.terminalHash.
-                    get(selection.getVisibleTerminal().
-                            get(Selection.VISIBLE.YES).toArray(
-                                    new String[0])[0]));
-
-
-            // update label of Tx terminal
-            selection.getTxView().label.setText(
-                    selection.gettXterminal().getName());
-            // update its lat/long (comes from UlPath)
-            selection.getuLpathView().label.setText(
-                    Com.toDMS(selection.gettXterminal().getLongitude()));
-            // update label of Tx terminal
-
-            selection.getuLpathView().subLabel.setText(
-                    Com.toDMS(selection.gettXterminal().getLatitude()));
         }
 
     }

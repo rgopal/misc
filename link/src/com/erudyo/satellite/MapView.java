@@ -486,7 +486,7 @@ public class MapView extends View {
                     Terminal newTerm = new Terminal(name);
                     newTerm.setLatitude(Math.toRadians(coordNewTerm.getLatitude()));
                     newTerm.setLongitude(Math.toRadians(coordNewTerm.getLongitude()));
-                    newTerm.setBand(selection.getBand()); // not used
+                    // newTerm.setBand(selection.getBand()); // not used
                     // update the list of visible terminals for this view
 
                     // now update items for various views
@@ -576,6 +576,9 @@ public class MapView extends View {
 
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
+                    
+                    selection.gettXterminal().gettXantenna().
+                            setBand(selection.getBand());
 
                     currentChoice = TERMINAL_CHOICE.RX;
                     Log.p("MapView: changeterminal() has select TX "
@@ -586,6 +589,9 @@ public class MapView extends View {
                     // update the model and selection of TxView 
                     selection.getRxView().spin.
                             setSelectedItem(terminal.getName());
+                    
+                       selection.getrXterminal().getrXantenna().
+                            setBand(selection.getBand());
 
                     Log.p("MapView: changeterminal() has select RX "
                             + terminal.getName(), Log.DEBUG);

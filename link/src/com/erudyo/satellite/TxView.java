@@ -127,6 +127,9 @@ public class TxView extends View {
                         Terminal.terminalHash.get(
                                 (String) combo.getSelectedItem()).getName());
 
+                 selection.gettXterminal().gettXantenna().setBand(
+                        RfBand.findUl(selection.getBand()));
+                 
                 Log.p("TxView: Terminal selection "
                         + combo.getSelectedItem(), Log.DEBUG);
             }
@@ -172,7 +175,7 @@ public class TxView extends View {
 
         Label L01 = new Label("Center Frequency");
         Label L02 = new Label(Com.shortText(tXterminal.gettXantenna().getFrequency() / 1E9));
-        Label L03 = new Label("GHz " + tXterminal.getBand());
+        Label L03 = new Label("GHz " + tXterminal.gettXantenna().getBand());
         cnt.addComponent(constraint, L01);
         cnt.addComponent(L03);
         cnt.addComponent(L02);

@@ -45,11 +45,8 @@ public class Satellite extends Entity {
     private Amplifier rXamplifier;
     private Amplifier tXamplifier;
 
-    private double maxEIRP = 0.0;      // in dBW
-    private double maxGT = 0.0;        // in dB 1/K
-
-    private Beam maxEIRPbeam;
-    private Beam maxGTbeam;
+    private double maxEIRP = -100.0;      // in dBW
+    private double maxGT = -100.0;        // in dB 1/K
 
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
@@ -280,7 +277,7 @@ public class Satellite extends Entity {
         if (bandBeams != null && bandBeams.get(band) != null) {
             return bandBeams.get(band).maxGT;
         }
-        return -100;
+        return -100.0;
     }
 
     // gets beam contours from a file (already known that it exists)
@@ -288,7 +285,7 @@ public class Satellite extends Entity {
         Log.p("Satellite: getBeamsFromFile is trying to get beams for "
                 + satellite, Log.DEBUG);
         Beam beam = new Beam();
-     
+
         try {
 
             InputStream is = Display.getInstance().
@@ -536,10 +533,12 @@ public class Satellite extends Entity {
                 for (String beamFile : satBandBeamFile.get(this.name).get(band)) {
                     if (beams == null) {
                         beams = new Hashtable<String, Beam>();
-                        if (bandBeams == null)
+                        if (bandBeams == null) {
                             bandBeams = new Hashtable<RfBand.Band, BandBeams>();
-                        if (bandBeams.get(band) == null)
+                        }
+                        if (bandBeams.get(band) == null) {
                             bandBeams.put(band, new BandBeams());
+                        }
                         bandBeams.get(band).beams = beams;
                     }
                     Beam beam = getBeamFromFile(this, "/" + beamFile);
@@ -628,7 +627,7 @@ public class Satellite extends Entity {
                 }
 
                 satBandBeamFile.get(sat).get(RfBand.rFbandHash.
-                            get(band.toUpperCase()).getBand()).add(file);  // add the file
+                        get(band.toUpperCase()).getBand()).add(file);  // add the file
 
                 Log.p("Satellite: added file " + file + " for sat|beam|band "
                         + sat + "|" + beam + "|" + band, Log.DEBUG);
@@ -690,6 +689,8 @@ public class Satellite extends Entity {
 
     }
 
+    // TODO this is a problem since Rxantenna is there only once.  Need to have 
+    // band specific antenna for both Tx and Rx
     public static void processBand(String[] fields, RfBand.Band band,
             Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite,
             Satellite satellite, int index) {
@@ -710,8 +711,13 @@ public class Satellite extends Entity {
                 Log.p("Satellite: no number for transponders for satellite "
                         + Arrays.toString(fields), Log.DEBUG);
             }
-            // put the number of transponders for this band
+            // TODO handle transponders  put the number of transponders for this band
             satellite.transponders.put(band, num);
+            
+            satellite.getRxAntenna().setBand(RfBand.findUl(band));
+            satellite.getTxAntenna().setBand(RfBand.findDl(band));
+          
+            
 
             // add satellite to this band
             bandSatellite.get(band).add(satellite);
@@ -763,8 +769,7 @@ public class Satellite extends Entity {
 
     }
 
-    public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, 
-            ArrayList<Satellite>> bandSatellite) {
+    public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
 //            ArrayList<Satellite> vector) {
 //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|Operator
 //Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|Longitude of GEO (de
@@ -857,38 +862,62 @@ public class Satellite extends Entity {
     // satellite EIRP contours have same value in the whole footprint
     public double getEIRPforTerminal(Terminal terminal) {
 
-        Log.p("Satellite: getEIRPforTerminal calculated EIRP = " + getEIRP() + " max EIRP "
-                + "from contours = " + this.maxEIRP, Log.DEBUG);
+        return getMaxforTerminal(terminal, ContourType.EIRP);
+    }
+
+    // common function to find the contour with max EIRP or GT containing the terminal
+    public double getMaxforTerminal(Terminal terminal, ContourType contourType) {
+        RfBand.Band band;
+        double maxValue = -100.0;
+        double calcValue = -100.0;
+
+        if (contourType == ContourType.EIRP) {
+            band = terminal.getrXantenna().getBand();
+            maxValue = this.getMaxEIRPfromContours(band);
+            calcValue = this.getEIRP();
+        } else {
+            band = terminal.gettXantenna().getBand();
+            maxValue = this.getMaxGTfromContours(band);
+            calcValue = this.getGainTemp();
+        }
+
+        Log.p("Satellite: getEIRPforTerminal calculated " + contourType + " = "
+                + calcValue + " value from contours = " + maxValue, Log.DEBUG
+        );
 
         Hashtable<String, Beam> beams = null;
 
-        if (bandBeams != null && bandBeams.get(terminal.gettXantenna().getBand()) != null) {
-            beams = bandBeams.get(terminal.gettXantenna().getBand()).beams;
+        if (bandBeams != null && bandBeams.get(band) != null) {
+            beams = bandBeams.get(band).beams;
         }
         if (beams != null) {
             // need to sort the contours by EIRP across all beams
-            ArrayList<Hierarchy> beamEIRP
+            ArrayList<Hierarchy> beamValue
                     = new ArrayList<Hierarchy>();
             // get all EIRP values for each beam and each contour
             for (Beam beam : beams.values()) {
                 for (Contour contour : beam.contours) {
                     // consier relevant contours
+                    Hierarchy hier = new Hierarchy();
+                    hier.beam = beam;
+                    hier.contour = contour;
+                    beamValue.add(hier);
                     if (contour.type == ContourType.EIRP) {
-                        Hierarchy hier = new Hierarchy();
-                        hier.beam = beam;
-                        hier.contour = contour;
                         hier.value = contour.EIRP;
-                        beamEIRP.add(hier);
+                    } else {
+                        hier.value = contour.GT;
                     }
                 }
 
             }
-            if (beamEIRP.size() == 0) {
-                Log.p("Satellite: getEIRPforTerminal there are no EIRP contours"
-                        + " for satellite " + this, Log.DEBUG);
+            if (beamValue.size() == 0) {
+                Log.p("Satellite: getMaxforTerminal there are no " + contourType
+                        + " contours"
+                        + " for satellite " + this + " and band "
+                        + band, Log.DEBUG);
             } else {
                 // now sort with descending EIRP.  
-                Collections.sort(beamEIRP, new Comparator<Hierarchy>() {
+                Collections.sort(beamValue, new Comparator<Hierarchy>() {
                     @Override
                     public int compare(Hierarchy one, Hierarchy two) {
 
@@ -898,8 +927,8 @@ public class Satellite extends Entity {
 
                 });
 
-                // find the  EIRP of contour, starting with higest, that contains terminal 
-                for (Hierarchy hier : beamEIRP) {
+                // find the  EIRP/GT of contour, starting with higest, that contains terminal 
+                for (Hierarchy hier : beamValue) {
                     // get the contour details first
                     Contour contour = hier.contour;
 
@@ -909,10 +938,15 @@ public class Satellite extends Entity {
                         if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
                                 line.latitude.toArray(new Double[0]),
                                 line.longitude.toArray(new Double[0]))) {
-                            Log.p("Satellite getEIRPforTerminal " + terminal
-                                    + " found in beam " + hier.beam.name + " contour "
+                            Log.p("Satellite getMaxforTerminal " + terminal
+                                    + " found in contour " + " for " + contourType
+                                    + " beam " + hier.beam.name + " contour "
                                     + contour.name + " lines " + line.position, Log.DEBUG);
-                            return contour.EIRP;
+                            if (contourType == ContourType.EIRP) {
+                                return contour.EIRP;
+                            } else {
+                                return contour.GT;
+                            }
 
                         }
 
@@ -927,7 +961,11 @@ public class Satellite extends Entity {
         // TODO see if there are GT contours available.  Then use that
         // to determine the change from calculated EIRP value.  Similar
         // logic in GT determination.
-        return getEIRP();
+        if (contourType == ContourType.EIRP) {
+            return getEIRP();
+        } else {
+            return getGainTemp();
+        }
 
     }
 
@@ -1057,9 +1095,9 @@ public class Satellite extends Entity {
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-        // TODO use the G/T contours and terminal's location to adjust
-        Log.p("Satellite: getGainTempForTerminal max GT " + this.maxGT);
-        return getGainTemp();
+       
+        return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
+        
     }
 
     /**
@@ -1105,7 +1143,8 @@ public class Satellite extends Entity {
     public void update(Entity e) {
 
         // update everything that could be affected
-        // EIRP depends on rXantenna and rXamplifier, but both need to exist 
+        // EIRP depends on rXantenna and rXamplifier, but both need to exist
+        // if beams are not present then calcEIRP is used
         if (this.getRxAmplifier() != null && this.getRxAntenna() != null
                 && this.getTxAntenna() != null) {
             this.EIRP = calcEIRP();
@@ -1142,7 +1181,7 @@ public class Satellite extends Entity {
                 ? latitude.length : longitude.length;
         if (latitude.length != longitude.length) {
             Log.p("Com: pointInPolygon different size for lat|lng "
-                    + latitude.length + "|" + longitude.length, Log.DEBUG);
+                    + latitude.length + "|" + longitude.length, Log.WARNING);
 
         }
         // path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()

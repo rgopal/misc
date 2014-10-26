@@ -159,7 +159,7 @@ public class Path extends Entity {
                     Log.WARNING);
 
         }
-        this.terminal = t;
+        // not needed this.terminal = t;
         setAll();
     }
 
