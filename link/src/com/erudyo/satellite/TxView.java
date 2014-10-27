@@ -128,8 +128,11 @@ public class TxView extends View {
                                 (String) combo.getSelectedItem()).getName());
 
                  selection.gettXterminal().gettXantenna().setBand(
-                        RfBand.findUl(selection.getBand()));
+                        (selection.getBand()));
                  
+                 selection.gettXterminal().gettXantenna().
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findUl(selection.getBand())));
                 Log.p("TxView: Terminal selection "
                         + combo.getSelectedItem(), Log.DEBUG);
             }

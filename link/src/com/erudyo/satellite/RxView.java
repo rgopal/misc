@@ -86,7 +86,11 @@ public class RxView extends View {
                         (String) combo.getSelectedItem()));
                 
                 selection.getrXterminal().getrXantenna().setBand(
-                        RfBand.findDl(selection.getBand()));
+                        selection.getBand());
+                
+                selection.getrXterminal().getrXantenna().
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findDl(selection.getBand())));
 
                 // update other values dependent on this satellite
                 // updateValues(selection);

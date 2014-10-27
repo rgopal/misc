@@ -331,7 +331,6 @@ public class Link {
         RfBand rFband = RfBand.rFbandHash.get(item);
 
         selection.setBand(rFband.getBand());
-      
 
         // note that only semiMajor String has substring functions
         lBand.setText((Com.shortText(rFband.lowFrequency / 1E9))
@@ -397,10 +396,8 @@ public class Link {
 
             // update selected satellite
             selection.setSatellite(Satellite.satelliteHash.get(name));
-            
-            // Satellite Band processed on its own
-           
 
+            // Satellite Band processed on its own
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
 
@@ -449,8 +446,11 @@ public class Link {
 
                 // update band
                 selection.getrXterminal().getrXantenna().
-                        setBand(RfBand.findDl(selection.getBand()));
-                
+                        setBand(selection.getBand());
+                selection.getrXterminal().getrXantenna().
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findDl(selection.getBand())));
+
                 // update label 
                 selection.getRxView().label.setText(
                         selection.getrXterminal().getName());
@@ -501,11 +501,13 @@ public class Link {
                                 get(Selection.VISIBLE.YES).toArray(
                                         new String[0])[0]));
 
-                   selection.gettXterminal().gettXantenna().
-                           setBand(RfBand.findUl(selection.getBand()));
-                
+                selection.gettXterminal().gettXantenna().
+                        setBand(selection.getBand());
+                selection.gettXterminal().gettXantenna().
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findUl(selection.getBand())));
+
                 // update label 
-                   
                 // update label of Tx terminal
                 selection.getTxView().label.setText(
                         selection.gettXterminal().getName());

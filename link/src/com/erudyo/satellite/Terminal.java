@@ -148,9 +148,15 @@ public class Terminal extends Entity {
         // get the band first
         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
 
-        // set uplin and downlink bands for respective antenna
-        terminal.gettXantenna().setBand(RfBand.findUl(terminal.getBand()));
-        terminal.getrXantenna().setBand(RfBand.findDl(terminal.getBand()));
+        // set uplin and downlink bands for respective antenna.  use
+        // findUL and findDL only when doing calculations.   All structures
+        // such as bandBeams etc. use just KA or C and not KA_DL or 
+        terminal.gettXantenna().setBand((terminal.getBand()));
+        terminal.gettXantenna().setFrequency(RfBand.centerFrequency(
+                RfBand.findUl(terminal.getBand())));
+        terminal.getrXantenna().setBand((terminal.getBand()));
+        terminal.getrXantenna().setFrequency(RfBand.centerFrequency(
+                RfBand.findDl(terminal.getBand())));
 
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));

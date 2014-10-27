@@ -45,26 +45,9 @@ public class Satellite extends Entity {
 
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
-    // can have multiple bands and transponders;
-    // in bandBeams private Hashtable<RfBand.Band, Integer> transponders;
-    // each band would have its own beam items
-    private class BandBeams {
+  
 
-        RfBand.Band band;           // band of these beams
-        public double EIRP;       // they should be calculated
-        public double gainTemp;       // they should be calculated dB 1/K
-        public double maxEIRP;      // maximum across all beams of a band
-        public double maxGT;
-        public int transponders;    // number of transponders (same across beams)
-        public Antenna rXantenna;  // assumed same chars across beams (for same band)
-        public Antenna tXantenna;
-        public Amplifier rXamplifier;
-        public Amplifier tXamplifier;
-        // access a lineString by its name in a hashtable (created from a file)
-        Hashtable<String, Beam> beams;  // collection of beams.
-    }
-
-    private Hashtable<RfBand.Band, BandBeams> bandBeams;
+    public Hashtable<RfBand.Band, BandBeams> bandBeams;
 
     // all satellites stored in semiMajor Class level hash.  For future, since
     // selection has its own at instance level
@@ -644,12 +627,18 @@ public class Satellite extends Entity {
         satellite.bandBeams.get(band).rXantenna = new Antenna();
         satellite.bandBeams.get(band).rXantenna.setDiameter(2.4);
         satellite.bandBeams.get(band).rXantenna.setName("RxAnt" + band + satellite.name);
-        satellite.bandBeams.get(band).rXantenna.setBand(RfBand.findUl(band));
+        satellite.bandBeams.get(band).rXantenna.setBand((band));
+        satellite.bandBeams.get(band).rXantenna.
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findUl(band)));
         satellite.bandBeams.get(band).rXantenna.addAffected(satellite);
 
         satellite.bandBeams.get(band).tXantenna = new Antenna();
         satellite.bandBeams.get(band).tXantenna.setDiameter(2.4);
-        satellite.bandBeams.get(band).rXantenna.setBand(RfBand.findDl(band));
+        satellite.bandBeams.get(band).tXantenna.setBand((band));
+        satellite.bandBeams.get(band).tXantenna.
+                        setFrequency(RfBand.centerFrequency(
+                                        RfBand.findDl(band)));
         satellite.bandBeams.get(band).tXantenna.setName("TxAnt" + band + satellite.name);
         satellite.bandBeams.get(band).tXantenna.addAffected(satellite);
 
@@ -885,11 +874,12 @@ public class Satellite extends Entity {
         double calcValue = -100.0;
 
         if (contourType == ContourType.EIRP) {
+            // don't change to _UL or _DL (just show the frequency)
             band = terminal.getrXantenna().getBand();
             maxValue = this.getMaxEIRPfromContours(band);
             calcValue = bandBeams.get(band).EIRP;
         } else {
-            band = terminal.gettXantenna().getBand();
+            band = terminal.getrXantenna().getBand();
             maxValue = this.getMaxGTfromContours(band);
             calcValue = bandBeams.get(band).gainTemp;
         }
@@ -1101,7 +1091,7 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @return the gainTemp
+     * @return the gainTemp without any specific terminal
      */
     public double getGainTemp(RfBand.Band band) {
         return bandBeams.get(band).gainTemp;

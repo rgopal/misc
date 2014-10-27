@@ -10,7 +10,7 @@
  * be involved in a path.  Unlike EIRP which was in terminal.
  * TODO:  check if it will affect the final Data Rate or Link Marging 
  * (may be in selection)
- * Expand attenuation as a function of frequency
+ * Expand attenuation as a function of frequency (now use _DL and _UL)
  * THis class may be superfluous!   See RxView and TxView for duplication
  */
 package com.erudyo.satellite;
@@ -337,9 +337,17 @@ public class Path extends Entity {
 
         visible(satellite, terminal);
 
-        // get center frequency of band used by terminal
-        this.pathLoss = calcPathLoss(this.distance,
-                RfBand.centerFrequency(terminal.gettXantenna().getBand()));
+        // get center frequency of band used by terminal.  Note the _UL
+        // and _DL at this time
+        double frequency;
+        if (pathType == PATH_TYPE.UPLINK)
+            frequency = RfBand.centerFrequency(RfBand.findUl(terminal.
+                    gettXantenna().getBand()));
+        else
+            frequency = RfBand.centerFrequency(
+                    RfBand.findDl(terminal.getrXantenna().getBand()));
+        
+        this.pathLoss = calcPathLoss(this.distance,frequency);
         this.CNo = calcCNo();
         this.spectralDensity = calcSpecDens();
     }
