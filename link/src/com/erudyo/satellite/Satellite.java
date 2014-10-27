@@ -711,15 +711,16 @@ public class Satellite extends Entity {
                 Log.p("Satellite: no number for transponders for satellite "
                         + Arrays.toString(fields), Log.DEBUG);
             }
-            // TODO handle transponders  put the number of transponders for this band
+         
 
             if (satellite.bandBeams.get(band) == null) {
                 
-              
                 satellite.bandBeams.put(band, new BandBeams());
             }
-            satellite.bandBeams.get(band).EIRP = (Double.parseDouble(fields[34]));
-            satellite.bandBeams.get(band).gainTemp = (Double.parseDouble(fields[35]));
+            satellite.bandBeams.get(band).EIRP = 
+                    (Double.parseDouble(fields[index+2]));
+            satellite.bandBeams.get(band).gainTemp = 
+                    (Double.parseDouble(fields[index+3]));
 
             initAntAmp(satellite, band, num);
 
@@ -774,16 +775,18 @@ public class Satellite extends Entity {
     }
 
     public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
-//            ArrayList<Satellite> vector) {
-//Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|Operator
-//Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|Longitude of GEO (de
-//grees) 9|Perigee (km) 10|Apogee (km) 11|Eccentricity 12|Inclination (degrees) 13
-//|Period (minutes) 14|Launch Mass (kg.) 15|Dry Mass (kg.) 16|Power (watts) 17|Dat
-//e of Launch 18|Expected Lifetime 19|Contractor 20|Country of Contractor 21|Launc
-//h Site 22|Launch Vehicle 23|COSPAR Number 24|NORAD Number 25|Comments 26| 27|Sou
-// rce Used for Orbital Data 28|Source1 29|Source2 30|Source3 31|Source4 32|Source5
-// 33|Source6 34|EIRP 35|Gain 36|BAND1 37|Transponders1 38|BAND2 39|Transponders2 
-// 40|BAND3 41|Transponders3 42
+
+        //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|
+        //Operator/Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|
+        //Longitude of GEO (degrees) 9|Perigee (km) 10|Apogee (km) 11|Eccentricity 12|
+        //Inclination (degrees) 13|Period (minutes) 14|Launch Mass (kg.) 15|Dry Mass (kg.) 16|
+        //Power (watts) 17|Date of Launch 18|Expected Lifetime 19|Contractor 20|
+        //Country of Contractor 21|Launch Site 22|Launch Vehicle 23|COSPAR Number 24|
+        //NORAD Number 25|Comments 26| 27|Source Used for Orbital Data 28|Source1 29|
+        //Source2 30|Source3 31|Source4 32|Source5 33|Source6 34|BAND C 35|Transponders C 36|EIRP C 37|GT C 38|
+        //BAND X 39|Transponders X 40|EIRP X 41|GT X 42|BAND Ku 43|Transponders Ku 44|
+        //EIRP Ku 45|GT Ku 46|BAND Ka 47|Transponders Ka 48|EIRP Ka 49|GT Ka 50
+        
 
         // vector has already been created for semiMajor band, just add entries
         Satellite satellite = new Satellite();
@@ -802,29 +805,30 @@ public class Satellite extends Entity {
                     + fields, Log.WARNING);
         }
 
-        // put the band and number of transponders
+        // put the band, number of transponders, EIRP, GT
         // process C, KU, and KA (they are in the order in all_satellites.txt
-        if (!(fields[36].equals("")) && RfBand.rFbandHash.get(
-                fields[36].toUpperCase()).getBand()
+        
+        if (!(fields[34].equals("")) && RfBand.rFbandHash.get(
+                fields[34].toUpperCase()).getBand()
                 == RfBand.Band.C) {
 
-            processBand(fields, RfBand.Band.C, bandSatellite, satellite, 36);
-        }
-        if (!(fields[36].equals("")) && RfBand.rFbandHash.get(
-                fields[36].toUpperCase()).getBand()
-                == RfBand.Band.X) {
-
-            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 36);
+            processBand(fields, RfBand.Band.C, bandSatellite, satellite, 34);
         }
         if (!(fields[38].equals("")) && RfBand.rFbandHash.get(
                 fields[38].toUpperCase()).getBand()
-                == RfBand.Band.KU) {
-            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 38);
+                == RfBand.Band.X) {
+
+            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 38);
         }
-        if (!(fields[40].equals("")) && RfBand.rFbandHash.get(
-                fields[40].toUpperCase()).getBand()
+        if (!(fields[42].equals("")) && RfBand.rFbandHash.get(
+                fields[42].toUpperCase()).getBand()
+                == RfBand.Band.KU) {
+            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 42);
+        }
+        if (!(fields[46].equals("")) && RfBand.rFbandHash.get(
+                fields[46].toUpperCase()).getBand()
                 == RfBand.Band.KA) {
-            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 40);
+            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 46);
         }
 
     }
@@ -877,11 +881,11 @@ public class Satellite extends Entity {
 
         if (contourType == ContourType.EIRP) {
             // don't change to _UL or _DL (just show the frequency)
-            band = terminal.getrXantenna().getBand();
+            band = terminal.getBand();
             maxValue = this.getMaxEIRPfromContours(band);
             calcValue = bandBeams.get(band).EIRP;
         } else {
-            band = terminal.getrXantenna().getBand();
+            band = terminal.getBand();
             maxValue = this.getMaxGTfromContours(band);
             calcValue = bandBeams.get(band).gainTemp;
         }
