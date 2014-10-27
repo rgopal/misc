@@ -620,6 +620,8 @@ public class Satellite extends Entity {
 
     }
 
+    // a satellite has dedicated antennas and amplifiers for each band
+    // and the bands do not change (unlike terminals)
     public static void initAntAmp(Satellite satellite, RfBand.Band band, int num) {
 
         satellite.bandBeams.get(band).transponders = num;

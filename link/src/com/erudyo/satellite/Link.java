@@ -445,11 +445,8 @@ public class Link {
                                         new String[0])[position]));
 
                 // update band
-                selection.getrXterminal().getrXantenna().
-                        setBand(selection.getBand());
-                selection.getrXterminal().getrXantenna().
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findDl(selection.getBand())));
+              
+                selection.getrXterminal().setBand(selection.getBand());
 
                 // update label 
                 selection.getRxView().label.setText(
@@ -501,12 +498,9 @@ public class Link {
                                 get(Selection.VISIBLE.YES).toArray(
                                         new String[0])[0]));
 
-                selection.gettXterminal().gettXantenna().
-                        setBand(selection.getBand());
-                selection.gettXterminal().gettXantenna().
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findUl(selection.getBand())));
-
+                // tX terminal will set UL and DL band/freq for antennas
+                selection.gettXterminal().setBand(selection.getBand());
+             
                 // update label 
                 // update label of Tx terminal
                 selection.getTxView().label.setText(

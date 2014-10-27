@@ -39,7 +39,6 @@ public class UlPathView extends View {
     public Label label;
     public Label subLabel;
 
-
     public UlPathView() {
 
     }
@@ -74,7 +73,6 @@ public class UlPathView extends View {
         selection.setuLpath(new Path(selection.getSatellite(),
                 selection.gettXterminal()));
         selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
-       
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +
@@ -124,8 +122,6 @@ public class UlPathView extends View {
         return lNameGain;
     }
 
-  
-
     public Form createView(final Selection selection) {
 
         Form path = new Form(this.getName());
@@ -149,9 +145,9 @@ public class UlPathView extends View {
         Label L01 = new Label("Center Frequency");
         Label lFrequency = new Label(Com.shortText(txTerm.gettXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + txTerm.getBand());
-        cnt.addComponent(constraint,L01);
+        cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
-        cnt.addComponent(L03 );
+        cnt.addComponent(L03);
 
         Label L61 = new Label("Satellite: " + selection.getuLpath().
                 getSatellite());
@@ -162,9 +158,9 @@ public class UlPathView extends View {
         cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
-     
+
         Label lLatitude = new Label("Terminal Latitude");
-Label lLatitudeUnit = new Label("degree");
+        Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
@@ -184,11 +180,11 @@ Label lLatitudeUnit = new Label("degree");
         final Label valueLatitude = new Label(Com.toDMS(txTerm.getLatitude()) + "");
         cnt.addComponent(lLatitude);
         cnt.addComponent(valueLatitude);
-        cnt.addComponent(lLatitudeUnit);    
-        
+        cnt.addComponent(lLatitudeUnit);
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-        cnt.addComponent(constraint,sldrLatitude);
+        cnt.addComponent(constraint, sldrLatitude);
 
         Label lLongitude = new Label("Terminal Longitude");
         Label lLongitudeUnit = new Label("degree");
@@ -213,13 +209,13 @@ Label lLatitudeUnit = new Label("degree");
         final Label valueLongitude = new Label(Com.toDMS(
                 txTerm.getLongitude()) + "");
         cnt.addComponent(lLongitude);
-       
+
         cnt.addComponent(valueLongitude);
         cnt.addComponent(lLongitudeUnit);
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-         cnt.addComponent(constraint, sldrLongitude);
+        cnt.addComponent(constraint, sldrLongitude);
         Label lElevation = new Label("Terminal Elevation");
         final Label valueElevation = new Label(Com.toDMS(
                 selection.getuLpath().getElevation()));
@@ -246,7 +242,7 @@ Label lLatitudeUnit = new Label("degree");
 
         Label lPathLoss = new Label("    Sat Path Loss");
         final Label valuePathLoss = new Label(Com.textN(selection.
-                getuLpath().getPathLoss(),7));
+                getuLpath().getPathLoss(), 7));
         Label unitPathLoss = new Label("dB");
         cnt.addComponent(lPathLoss);
         cnt.addComponent(valuePathLoss);
@@ -256,7 +252,7 @@ Label lLatitudeUnit = new Label("degree");
         // sliders
         Label lAttenuation = new Label("Atmospheric Atten");
         final Label valueAttenuation = new Label(Com.textN(
-                selection.getuLpath().getAttenuation(),7));
+                selection.getuLpath().getAttenuation(), 7));
         Label unitAttenuation = new Label("dB");
         cnt.addComponent(lAttenuation);
         cnt.addComponent(valueAttenuation);
@@ -266,7 +262,8 @@ Label lLatitudeUnit = new Label("degree");
         // sliders
         Label lGainTemp = new Label("Satellite Gain/Temp");
         final Label valueGainTemp = new Label(Com.shortText(
-                selection.getuLpath().getSatellite().getGainTemp()));
+                selection.getuLpath().getSatellite().bandBeams.
+                        get(selection.getBand()).gainTemp));
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);
         cnt.addComponent(valueGainTemp);
@@ -275,7 +272,7 @@ Label lLatitudeUnit = new Label("degree");
         // C/No depends on Tx EIRP and the path loss
         Label lCNo = new Label("C/No");
         final Label valueCNo = new Label(Com.textN(
-                selection.getuLpath().getCNo(),7));
+                selection.getuLpath().getCNo(), 7));
 
         Label unitCNo = new Label("dB Hz");
         cnt.addComponent(lCNo);
@@ -312,10 +309,10 @@ Label lLatitudeUnit = new Label("degree");
                             getDistance() / 1E3));
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
-                            getPathLoss(),7));
+                            getPathLoss(), 7));
 
                     valueCNo.setText(Com.textN(
-                            selection.getuLpath().getCNo(),7));
+                            selection.getuLpath().getCNo(), 7));
                     valueSpecDensity.setText(Com.shortText(
                             selection.getuLpath().getSpectralDensity()));
 
@@ -352,7 +349,7 @@ Label lLatitudeUnit = new Label("degree");
                             getDistance() / 1E3));      // convert to km
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
-                            getPathLoss(),7));            // already in dB
+                            getPathLoss(), 7));            // already in dB
 
                     valueCNo.setText(Com.shortText(
                             selection.getuLpath().getCNo()));

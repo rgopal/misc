@@ -85,7 +85,7 @@ public class RxView extends View {
                 selection.setrXterminal(Terminal.terminalHash.get(
                         (String) combo.getSelectedItem()));
                 
-                selection.getrXterminal().getrXantenna().setBand(
+                selection.getrXterminal().setBand(
                         selection.getBand());
                 
                 selection.getrXterminal().getrXantenna().

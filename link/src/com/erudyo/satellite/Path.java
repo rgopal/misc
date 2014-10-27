@@ -341,11 +341,9 @@ public class Path extends Entity {
         // and _DL at this time
         double frequency;
         if (pathType == PATH_TYPE.UPLINK)
-            frequency = RfBand.centerFrequency(RfBand.findUl(terminal.
-                    gettXantenna().getBand()));
+            frequency = terminal.gettXantenna().getFrequency();
         else
-            frequency = RfBand.centerFrequency(
-                    RfBand.findDl(terminal.getrXantenna().getBand()));
+            frequency = terminal.gettXantenna().getFrequency();
         
         this.pathLoss = calcPathLoss(this.distance,frequency);
         this.CNo = calcCNo();

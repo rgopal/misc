@@ -577,12 +577,9 @@ public class MapView extends View {
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
                     
-                    selection.gettXterminal().gettXantenna().
+                    selection.gettXterminal().
                             setBand(selection.getBand());
-                    
-                    selection.gettXterminal().gettXantenna().
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findUl(selection.getBand())));
+                 
 
                     currentChoice = TERMINAL_CHOICE.RX;
                     Log.p("MapView: changeterminal() has select TX "
@@ -594,12 +591,10 @@ public class MapView extends View {
                     selection.getRxView().spin.
                             setSelectedItem(terminal.getName());
                     
-                       selection.getrXterminal().getrXantenna().
+                       selection.getrXterminal().
                             setBand(selection.getBand());
                        
-                       selection.getrXterminal().getrXantenna().
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findDl(selection.getBand())));
+                    
 
                     Log.p("MapView: changeterminal() has select RX "
                             + terminal.getName(), Log.DEBUG);

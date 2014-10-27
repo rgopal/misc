@@ -93,11 +93,21 @@ public class Terminal extends Entity {
         }
     }
 
-   // NOT USED by others.  RxAntenna and TxAntenna have band
-    private void setBand(RfBand.Band band) {
+    // TODO treat amplifers for band specific changes
+    // RxAntenna and TxAntenna bands are set from here
+    public void setBand(RfBand.Band band) {
         this.band = band;
+        rXantenna.setBand(RfBand.findDl(band));
+        rXantenna.setFrequency(RfBand.centerFrequency(
+                RfBand.findDl(band))
+        );
+        
+        tXantenna.setBand(RfBand.findUl(band));
+        tXantenna.setFrequency(RfBand.centerFrequency(
+                RfBand.findUl(band))
+        );
+
     }
-   
 
     // read the terminals.txt file and return all data as a Hashtable, one ArrayList
     // of terminals for each band.
@@ -149,15 +159,17 @@ public class Terminal extends Entity {
         terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
 
         // set uplin and downlink bands for respective antenna.  use
-        // findUL and findDL only when doing calculations.   All structures
-        // such as bandBeams etc. use just KA or C and not KA_DL or 
-        terminal.gettXantenna().setBand((terminal.getBand()));
+        // findUL and findDL only when doing calculations with antenna.   
+        // All structures bandBeams etc. use just KA or C and not KA_DL
+        // Terminal band is just C and not C_DL or C_UL
+       /* terminal.gettXantenna().setBand((terminal.getBand()));
+        // NOT NEEDED since setBand() of terminal does this
         terminal.gettXantenna().setFrequency(RfBand.centerFrequency(
                 RfBand.findUl(terminal.getBand())));
         terminal.getrXantenna().setBand((terminal.getBand()));
         terminal.getrXantenna().setFrequency(RfBand.centerFrequency(
                 RfBand.findDl(terminal.getBand())));
-
+        */
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
 
