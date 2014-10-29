@@ -41,8 +41,7 @@ import java.util.Vector;
 public class Satellite extends Entity {
 
     public double MIN_EIRP = -100.0;
-    private double maxEIRP = MIN_EIRP;      // in dBW
-    private double maxGT = MIN_EIRP;        // in dB 1/K
+
 
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
@@ -530,12 +529,12 @@ public class Satellite extends Entity {
                             + " at position " + posBeam + " from file "
                             + beamFile, Log.DEBUG);
                     double current = beam.maxEIRP;
-                    if (current > maxEIRP) {
-                        maxEIRP = current;
+                    if (beam.maxEIRP > bandBeams.get(band).maxEIRP) {
+                        bandBeams.get(band).maxEIRP = current;
                     }
                     current = beam.maxGT;
-                    if (current > maxGT) {
-                        maxGT = current;
+                    if (beam.maxGT > bandBeams.get(band).maxGT) {
+                        bandBeams.get(band).maxGT = current;
                     }
                 }
             }

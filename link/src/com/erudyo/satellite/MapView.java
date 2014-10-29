@@ -484,6 +484,7 @@ public class MapView extends View {
 
                     // create a new terminal
                     Terminal newTerm = new Terminal(name);
+                    newTerm.setBand(selection.getBand());
                     newTerm.setLatitude(Math.toRadians(coordNewTerm.getLatitude()));
                     newTerm.setLongitude(Math.toRadians(coordNewTerm.getLongitude()));
                     // newTerm.setBand(selection.getBand()); // not used
@@ -571,14 +572,17 @@ public class MapView extends View {
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
 
                 if (currentChoice == TERMINAL_CHOICE.TX) {
+                    
+                    selection.gettXterminal().
+                            setBand(selection.getBand());
+                      
                     selection.settXterminal(terminal);
                     // update the selection of TxView 
 
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
                     
-                    selection.gettXterminal().
-                            setBand(selection.getBand());
+                  
                  
 
                     currentChoice = TERMINAL_CHOICE.RX;
@@ -586,13 +590,15 @@ public class MapView extends View {
                             + terminal.getName(), Log.DEBUG);
 
                 } else {
+                         selection.getrXterminal().
+                            setBand(selection.getBand());
+                         
                     selection.setrXterminal(terminal);
                     // update the model and selection of TxView 
                     selection.getRxView().spin.
                             setSelectedItem(terminal.getName());
                     
-                       selection.getrXterminal().
-                            setBand(selection.getBand());
+                  
                        
                     
 
