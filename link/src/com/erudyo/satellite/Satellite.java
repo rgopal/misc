@@ -40,12 +40,11 @@ import java.util.Vector;
 // A beam also has multiple transponders.   
 public class Satellite extends Entity {
 
-    private double maxEIRP = -100.0;      // in dBW
-    private double maxGT = -100.0;        // in dB 1/K
+    public double MIN_EIRP = -100.0;
+    private double maxEIRP = MIN_EIRP;      // in dBW
+    private double maxGT = MIN_EIRP;        // in dB 1/K
 
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
-
-  
 
     public Hashtable<RfBand.Band, BandBeams> bandBeams;
 
@@ -89,9 +88,9 @@ public class Satellite extends Entity {
         public String name;
 
         public int position;
-        public double maxEIRP;      // maximum across all contours within a beam
+        public double maxEIRP = MIN_EIRP;      // maximum across all contours within a beam
         public Contour maxEIRPcontour;
-        public double maxGT;
+        public double maxGT = MIN_EIRP;
         public Contour maxGTcontour;
 
         public ArrayList<Point> points;  // one or more points (EIRP, GAIN)
@@ -106,8 +105,8 @@ public class Satellite extends Entity {
         public int color;
         public int width;
         public String name;
-        public double EIRP;
-        public double GT;
+        public double EIRP = MIN_EIRP;
+        public double GT = MIN_EIRP;
         public int position;
         public ContourType type;
         ArrayList<Line> lines;
@@ -245,20 +244,22 @@ public class Satellite extends Entity {
      */
     public double getMaxEIRPfromContours(RfBand.Band band) {
 
+        // if there are beam contours then use them else 
         if (bandBeams != null && bandBeams.get(band) != null) {
             return bandBeams.get(band).maxEIRP;
         }
-        return -100.0;
+        return getEIRP(band);
     }
 
     /**
      * @return the maxGTfromContours
      */
     public double getMaxGTfromContours(RfBand.Band band) {
+        // if contours use them else return band level value
         if (bandBeams != null && bandBeams.get(band) != null) {
             return bandBeams.get(band).maxGT;
         }
-        return -100.0;
+        return getGainTemp(band);
     }
 
     // gets beam contours from a file (already known that it exists)
@@ -631,16 +632,16 @@ public class Satellite extends Entity {
         satellite.bandBeams.get(band).rXantenna.setName("RxAnt" + band + satellite.name);
         satellite.bandBeams.get(band).rXantenna.setBand((band));
         satellite.bandBeams.get(band).rXantenna.
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findUl(band)));
+                setFrequency(RfBand.centerFrequency(
+                                RfBand.findUl(band)));
         satellite.bandBeams.get(band).rXantenna.addAffected(satellite);
 
         satellite.bandBeams.get(band).tXantenna = new Antenna();
         satellite.bandBeams.get(band).tXantenna.setDiameter(2.4);
         satellite.bandBeams.get(band).tXantenna.setBand((band));
         satellite.bandBeams.get(band).tXantenna.
-                        setFrequency(RfBand.centerFrequency(
-                                        RfBand.findDl(band)));
+                setFrequency(RfBand.centerFrequency(
+                                RfBand.findDl(band)));
         satellite.bandBeams.get(band).tXantenna.setName("TxAnt" + band + satellite.name);
         satellite.bandBeams.get(band).tXantenna.addAffected(satellite);
 
@@ -696,7 +697,7 @@ public class Satellite extends Entity {
             Satellite satellite, int index) {
 
         if (band == null) {
-            Log.p("Satellite: bad data " + Arrays.toString(fields), Log.WARNING);
+            Log.p("Satellite: processBand band is null " + Arrays.toString(fields), Log.WARNING);
         } else {
 
             // extract the band of the terminal
@@ -708,19 +709,18 @@ public class Satellite extends Entity {
             try {
                 num = Integer.parseInt(fields[index + 1]);
             } catch (Exception e) {
-                Log.p("Satellite: no number for transponders for satellite "
+                Log.p("Satellite: processBand no number for transponders for satellite "
                         + Arrays.toString(fields), Log.DEBUG);
             }
-         
 
             if (satellite.bandBeams.get(band) == null) {
-                
+
                 satellite.bandBeams.put(band, new BandBeams());
             }
-            satellite.bandBeams.get(band).EIRP = 
-                    (Double.parseDouble(fields[index+2]));
-            satellite.bandBeams.get(band).gainTemp = 
-                    (Double.parseDouble(fields[index+3]));
+            satellite.bandBeams.get(band).EIRP
+                    = (Double.parseDouble(fields[index + 2]));
+            satellite.bandBeams.get(band).gainTemp
+                    = (Double.parseDouble(fields[index + 3]));
 
             initAntAmp(satellite, band, num);
 
@@ -786,8 +786,6 @@ public class Satellite extends Entity {
         //Source2 30|Source3 31|Source4 32|Source5 33|Source6 34|BAND C 35|Transponders C 36|EIRP C 37|GT C 38|
         //BAND X 39|Transponders X 40|EIRP X 41|GT X 42|BAND Ku 43|Transponders Ku 44|
         //EIRP Ku 45|GT Ku 46|BAND Ka 47|Transponders Ka 48|EIRP Ka 49|GT Ka 50
-        
-
         // vector has already been created for semiMajor band, just add entries
         Satellite satellite = new Satellite();
         // race condition?
@@ -807,7 +805,6 @@ public class Satellite extends Entity {
 
         // put the band, number of transponders, EIRP, GT
         // process C, KU, and KA (they are in the order in all_satellites.txt
-        
         if (!(fields[34].equals("")) && RfBand.rFbandHash.get(
                 fields[34].toUpperCase()).getBand()
                 == RfBand.Band.C) {
@@ -871,16 +868,19 @@ public class Satellite extends Entity {
     public double getEIRPforTerminal(Terminal terminal) {
 
         return getMaxforTerminal(terminal, ContourType.EIRP);
+
     }
 
-    // common function to find the contour with max EIRP or GT containing the terminal
+    // common function to find the contour with max EIRP or GT 
+    // containing the terminal.  If terminal is not in any contour
+    // then MIN value is returned
     public double getMaxforTerminal(Terminal terminal, ContourType contourType) {
         RfBand.Band band;
-        double maxValue = -100.0;
-        double calcValue = -100.0;
+        double maxValue;
+        double calcValue;
+        double foundValue = MIN_EIRP;
 
         if (contourType == ContourType.EIRP) {
-            // don't change to _UL or _DL (just show the frequency)
             band = terminal.getBand();
             maxValue = this.getMaxEIRPfromContours(band);
             calcValue = bandBeams.get(band).EIRP;
@@ -890,8 +890,9 @@ public class Satellite extends Entity {
             calcValue = bandBeams.get(band).gainTemp;
         }
 
-        Log.p("Satellite: getEIRPforTerminal calculated " + contourType + " = "
-                + calcValue + " value from contours = " + maxValue, Log.DEBUG
+        Log.p("Satellite: getMaxforTerminal calculated for " + contourType + " = "
+                + calcValue + " value from contours = " + maxValue
+                + " and band " + band + " for satellite " + this, Log.DEBUG
         );
 
         Hashtable<String, Beam> beams = null;
@@ -900,82 +901,135 @@ public class Satellite extends Entity {
             beams = bandBeams.get(band).beams;
         }
         if (beams != null) {
-            // need to sort the contours by EIRP across all beams
-            ArrayList<Hierarchy> beamValue
+            // need to sort the contours by EIRP or GT across all beams
+            ArrayList<Hierarchy> beamEIRP
                     = new ArrayList<Hierarchy>();
-            // get all EIRP values for each beam and each contour
+            ArrayList<Hierarchy> beamGT
+                    = new ArrayList<Hierarchy>();
+            // get all values EIRP and GT for each beam and each contour
             for (Beam beam : beams.values()) {
                 for (Contour contour : beam.contours) {
                     // consier relevant contours
                     Hierarchy hier = new Hierarchy();
                     hier.beam = beam;
                     hier.contour = contour;
-                    beamValue.add(hier);
+
                     if (contour.type == ContourType.EIRP) {
                         hier.value = contour.EIRP;
+                        beamEIRP.add(hier);
                     } else {
                         hier.value = contour.GT;
+                        beamGT.add(hier);
                     }
                 }
 
             }
-            if (beamValue.size() == 0) {
-                Log.p("Satellite: getMaxforTerminal there are no " + contourType
-                        + " contours"
-                        + " for satellite " + this + " and band "
-                        + band, Log.DEBUG);
-            } else {
-                // now sort with descending EIRP.  
-                Collections.sort(beamValue, new Comparator<Hierarchy>() {
-                    @Override
-                    public int compare(Hierarchy one, Hierarchy two) {
 
-                        return (int) (two.value - one.value);
+            if (contourType == ContourType.EIRP) {
+                if (beamEIRP.size() > 0) {
+                    maxValue = findMax(terminal, beamEIRP, contourType);
+                } else {
+                    // have to be GT contours
+                    if (beamGT.size() > 0) {
+                        foundValue = findMax(terminal, beamGT, ContourType.GAIN_TEMP);
 
-                    }
-
-                });
-
-                // find the  EIRP/GT of contour, starting with higest, that contains terminal 
-                for (Hierarchy hier : beamValue) {
-                    // get the contour details first
-                    Contour contour = hier.contour;
-
-                    // consider all lines (
-                    for (Line line : contour.lines) {
-
-                        if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
-                                line.latitude.toArray(new Double[0]),
-                                line.longitude.toArray(new Double[0]))) {
-                            Log.p("Satellite getMaxforTerminal " + terminal
-                                    + " found in contour " + " for " + contourType
-                                    + " beam " + hier.beam.name + " contour "
-                                    + contour.name + " lines " + line.position, Log.DEBUG);
-                            if (contourType == ContourType.EIRP) {
-                                return contour.EIRP;
-                            } else {
-                                return contour.GT;
-                            }
-
+                        if (!Com.sameValue(foundValue, MIN_EIRP)) {
+                            maxValue = bandBeams.get(band).EIRP
+                                    - (getMaxGTfromContours(band)
+                                    - foundValue);
+                        } else {
+                            maxValue = MIN_EIRP;
                         }
-
                     }
+                    Log.p("Satellite: using GT contour to calculate EIRP foundValue = "
+                            + foundValue + " maxValue " + maxValue,
+                            Log.DEBUG);
+                }
+            } else {
+                if (beamGT.size() > 0) {
+                    maxValue = findMax(terminal, beamGT, contourType);
+                } else {
+                    // has to be EIRP contours
+                    if (beamEIRP.size() > 0) {
+                        foundValue = findMax(terminal, beamEIRP, ContourType.EIRP);
+
+                        if (!Com.sameValue(foundValue, MIN_EIRP)) {
+                            maxValue = bandBeams.get(band).gainTemp
+                                    - (getMaxEIRPfromContours(band)
+                                    - foundValue);
+                        } else {
+                            maxValue = MIN_EIRP;
+                        }
+                    }
+
+                    Log.p("Satellite: using EIRP contour to calculate EIRP foundValue = "
+                            + foundValue + " maxValue " + maxValue,
+                            Log.DEBUG);
+
+                }
+            }
+
+        } else {
+            Log.p("Satellite: getMaxForTerminal beams is null ", Log.WARNING);
+        }
+
+        return (maxValue);
+
+    }
+
+    private double findMax(Terminal terminal, ArrayList<Hierarchy> beamValue,
+            ContourType contourType) {
+
+        double foundValue = MIN_EIRP;
+
+        // now sort with descending value (EIRP or .  
+        Collections.sort(beamValue, new Comparator<Hierarchy>() {
+            @Override
+            public int compare(Hierarchy one, Hierarchy two) {
+
+                return (int) (two.value - one.value);
+
+            }
+
+        });
+
+        boolean found = false;
+        // find the  EIRP/GT of contour, starting with higest, that contains terminal 
+        for (Hierarchy hier : beamValue) {
+            // get the contour details first
+            Contour contour = hier.contour;
+
+            Log.p("    getMax in contour " + contour.name + " for "
+                    + contourType, Log.DEBUG);
+            // Find the first contour with terminal (has highest value)
+            for (Line line : contour.lines) {
+
+                Log.p("     getMax in Line " + line + " for "
+                        + contourType, Log.DEBUG);
+                if (pointInPolygon(terminal.getLatitude(), terminal.getLongitude(),
+                        line.latitude.toArray(new Double[0]),
+                        line.longitude.toArray(new Double[0]))) {
+                    Log.p("Satellite getMaxforTerminal " + terminal
+                            + " found " + " for " + contourType
+                            + " beam " + hier.beam.name + " contour "
+                            + contour.name + " lines " + line.position, Log.DEBUG);
+                    if (contourType == ContourType.EIRP) {
+                        foundValue = contour.EIRP;
+                    } else {
+                        foundValue = contour.GT;
+                    }
+                    found = true;
+                    break;
 
                 }
 
             }
-        }
+            if (found) {
+                break;
+            }
 
-        // could not find contours so return calculated value
-        // TODO see if there are GT contours available.  Then use that
-        // to determine the change from calculated EIRP value.  Similar
-        // logic in GT determination.
-        if (contourType == ContourType.EIRP) {
-            return getEIRP(band);
-        } else {
-            return getGainTemp(band);
         }
-
+        return foundValue;
     }
 
     public double maxCoverage() {
@@ -1155,8 +1209,8 @@ public class Satellite extends Entity {
         // EIRP depends on rXantenna and rXamplifier, but both need to exist
         // if beams are not present then calcEIRP is used
         for (RfBand.Band band : bandBeams.keySet()) {
-            if (bandBeams.get(band).rXamplifier != null && 
-                    bandBeams.get(band).rXantenna != null
+            if (bandBeams.get(band).rXamplifier != null
+                    && bandBeams.get(band).rXantenna != null
                     && bandBeams.get(band).tXantenna != null) {
                 bandBeams.get(band).EIRP = calcEIRP(band);
                 bandBeams.get(band).gainTemp = calcGainTemp(band);
