@@ -384,6 +384,7 @@ public class Terminal extends Entity {
             this.gainTemp = calcGainTemp();
         }
 
+        updateAffected();
         // avoid using set since that should be used to send updates down
     }
 

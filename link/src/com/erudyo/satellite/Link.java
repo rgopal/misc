@@ -136,7 +136,7 @@ public class Link {
 
     private void initViews(Selection selection) {
 
-        Log.p("Started application");
+        Log.p("Started application", Log.DEBUG);
 
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
@@ -164,8 +164,10 @@ public class Link {
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
-        // set the current Band and then satellite, terminal
+        // set the current Band and select satellite and tx, rx terminals
         initBands(main, selection);
+
+       
 
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
@@ -175,10 +177,32 @@ public class Link {
         TableLayout layout = new TableLayout(6, 4);
         cnt.setLayout(layout);
 
-        for (final View view : views) {
+  
+        // satellites are read from the txt file (and selected with band)
+        initViews(selection.getSatelliteView(), cnt, selection, layout);
 
-            initViews(view, cnt, selection, layout);
-        }
+        initViews(selection.getTxView(), cnt, selection, layout);
+         // now uplink, downlink paths and Comms can be created
+        
+        selection.setuLpath(new Path(selection.getSatellite(),
+                selection.gettXterminal()));
+        selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
+        
+        initViews(selection.getuLpathView(),cnt, selection, layout);
+
+        initViews(selection.getRxView(),cnt, selection, layout);
+        selection.setdLpath(new Path(selection.getSatellite(),
+                selection.getrXterminal()));
+        
+        // it is a bit late for the first logging message which says UL
+        selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
+        
+        initViews(selection.getdLpathView(), cnt, selection, layout);
+        
+        selection.setComms(new Comms(selection.getuLpath(), 
+                selection.getdLpath()));
+
+        initViews(selection.getCommsView(), cnt, selection, layout);
         Button bMap = new Button("Map");
 
         // get map form for selecting terminals and satellite
@@ -445,7 +469,6 @@ public class Link {
                                         new String[0])[position]));
 
                 // update band
-              
                 selection.getrXterminal().setBand(selection.getBand());
 
                 // update label 
@@ -500,7 +523,7 @@ public class Link {
 
                 // tX terminal will set UL and DL band/freq for antennas
                 selection.gettXterminal().setBand(selection.getBand());
-             
+
                 // update label 
                 // update label of Tx terminal
                 selection.getTxView().label.setText(

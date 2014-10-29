@@ -123,7 +123,7 @@ public class Path extends Entity {
             this.satellite = s;
 
             Log.p("Path: path " + this
-                    + " added satellite " + s + " in Affected list",
+                    + " in satellite " + s + "'s  Affected list",
                     Log.WARNING);
         } else {
             Log.p("Path: path " + this
@@ -348,6 +348,8 @@ public class Path extends Entity {
         this.pathLoss = calcPathLoss(this.distance,frequency);
         this.CNo = calcCNo();
         this.spectralDensity = calcSpecDens();
+        
+        updateAffected();   // update Comms
     }
 
     public double calcPathLoss(double distance, Double frequency) {
@@ -365,10 +367,6 @@ public class Path extends Entity {
         return p;
     }
     // called if there is any change in the child or sibling
-
-    public void updateAll() {
-        setAll();
-    }
 
     public void update(Entity e) {
 

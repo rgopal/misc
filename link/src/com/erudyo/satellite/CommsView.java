@@ -144,8 +144,6 @@ public class CommsView extends View {
         // basic selection is data rate (will be returned later)
         label = new Label();
 
-        // create a Comms object to hold specifics
-        selection.setComms(new Comms());
 
         final Slider sldrDataRate = new Slider();
         sldrDataRate.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
@@ -212,12 +210,19 @@ public class CommsView extends View {
         sub.addComponent(cntAllThree);
 
         // Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(2, 3);
+        TableLayout layout = new TableLayout(3, 3);
         cntAllThree.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setVerticalSpan(2);
         constraint.setWidthPercentage(20);
+        
+                Label lCNo01 = new Label("C/No");
+        Label lCNo02 = new Label(Com.text(selection.getComms().getCNo()));
+        Label lCNo03 = new Label("dBHz ");
+        cntAllThree.addComponent(lCNo01);
+        cntAllThree.addComponent(constraint, lCNo02);
+        cntAllThree.addComponent(lCNo03);
 
         // now go sequentially through the Tx terminal fields
         // final Terminal ter = selection.gettXterminal();

@@ -41,8 +41,10 @@ public class Entity {
             for (Entity a : affected.keySet()) {
                 //  call update function of each object affected by it
                 if (affected.get(a) > 0) {
-                    a.update(this);
-                    Log.p("Entity: Updating Object " + a + " because of " + this, Log.DEBUG);
+                     Log.p("Entity: Updating Object " + a + " because of " + this, Log.DEBUG);
+                     a.update(this);
+                   
+               
                 } else
                     Log.p("Entity: Reference count for " + a +
                             " is 0 so don't update because of " 

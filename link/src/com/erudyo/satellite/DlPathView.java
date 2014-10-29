@@ -56,13 +56,7 @@ public class DlPathView extends View {
             Log.p("DlPathView: Can't find satellite ", Log.DEBUG);
             return lName;
         }
-        // create  Path object to hold specific satellite and terminal
-        // Path get satellite and terminal (two ways to access it)
-        selection.setdLpath(new Path(selection.getSatellite(),
-                selection.getrXterminal()));
-        
-        // it is a bit late for the first logging message which says UL
-        selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
+    
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +

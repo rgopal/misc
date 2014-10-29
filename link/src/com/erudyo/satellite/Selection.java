@@ -35,12 +35,13 @@ public class Selection {
     private Path uLpath;
     private Path dLpath;
 
-    private SatelliteView satelliteView;
-    private TxView tXview;
-    private UlPathView uLpathView;
-    private RxView rXview;
-    private CommsView commsView;
-    private DlPathView dLpathView;
+    //  keep only one copy of views, shared by all isntances
+    static private SatelliteView satelliteView;
+    static private TxView tXview;
+    static private UlPathView uLpathView;
+    static private RxView rXview;
+    static private CommsView commsView;
+    static private DlPathView dLpathView;
 
     public enum VISIBLE {
 

@@ -68,11 +68,7 @@ public class UlPathView extends View {
             return lName;
         }
 
-        // create  Path object to hold specific satellite and terminal
-        // Path get satellite and terminal (two ways to access it)
-        selection.setuLpath(new Path(selection.getSatellite(),
-                selection.gettXterminal()));
-        selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
+   
 
         // terminal name and location
         lName.setText("Lng " + // selection.gettXterminal().getName() +

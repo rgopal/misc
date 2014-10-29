@@ -90,6 +90,20 @@ public class Comms extends Entity {
         // do optimation to find a good collection
     }
 
+    /**
+     * @return the CNo
+     */
+    public double getCNo() {
+        return CNo;
+    }
+
+    /**
+     * @param CNo the CNo to set
+     */
+    public void setCNo(double CNo) {
+        this.CNo = CNo;
+    }
+
     public enum CodeRate {
 
         FEC_1_9("1/9"),
@@ -129,10 +143,13 @@ public class Comms extends Entity {
         BPSK, QPSK, PSK8, PSK16
 
     };
+    private Path uLpath;
+    private Path dLpath;
     private double dataRate = 10.0;    // Mbps  
     private double rollOff = .30;
     private double bw = 5;      // MHz
     private double BEP = 1E-6;
+    private double CNo;
     private double eBno = 10;           // in dB
     private double codingGain = 0;      // in dB
     private CodeRate codeRate;
@@ -222,8 +239,36 @@ public class Comms extends Entity {
 
     }
 
+       public Comms(Path u, Path d) {
+        this.uLpath = u;
+        this.dLpath = d;
+        this.name = "Comms:" + u.getName() + "-" + d.getName();
+        
+        // include this Path in the Affected list of satellite and terminal
+        u.addAffected(this);
+        d.addAffected(this);
+
+        update();
+    }
+       
     public Comms(String s) {
         this.name = s;
+    }
+    
+    public void update() {
+        this.CNo = calcCNo();
+        // highest so no updateAffected
+    }
+
+    private double calcCNo() {
+        double value;
+        value = 10.0*MathUtil.log10(1.0
+                / ((1.0
+                / (MathUtil.pow(uLpath.getCNo() / 10.0, 10.0)))
+                + (1.0
+                / (MathUtil.pow(dLpath.getCNo() / 10.0, 10.0)))));
+
+        return value;
     }
 
     public double getDataRate() {
