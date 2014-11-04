@@ -18,7 +18,7 @@ public class RfBand extends Entity {
 
     public enum Band {
 
-        C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL
+        UK, C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL
     };
     public double lowFrequency;
     public double highFrequency;
@@ -54,9 +54,11 @@ public class RfBand extends Entity {
             case X:
                 u = Band.X_DL;
                 break;
-
+            case KA2:
+                u = Band.KA2_DL;
+                break;
             default:
-                u = Band.KA_DL;
+                u = Band.UK;
         }
         return u;
     }
@@ -76,9 +78,11 @@ public class RfBand extends Entity {
             case X:
                 u = Band.X_UL;
                 break;
-
+            case KA2:
+                u = Band.KA2_UL;
+                break;
             default:
-                u = Band.KA_UL;
+                u = Band.UK;
         }
         return u;
     }
@@ -136,6 +140,7 @@ public class RfBand extends Entity {
         r = new RfBand(Band.X, "X", X_LO, X_HI);
         r = new RfBand(Band.KU, "KU", KU_LO, KU_HI);
         r = new RfBand(Band.KA, "KA", KA_LO, KA_HI);
+        r = new RfBand(Band.KA, "KA_2", KA2_LO, KA2_HI);
     }
 
     

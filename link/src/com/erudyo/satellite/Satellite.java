@@ -42,7 +42,6 @@ public class Satellite extends Entity {
 
     public double MIN_EIRP = -100.0;
 
-
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
 
     public Hashtable<RfBand.Band, BandBeams> bandBeams;
@@ -703,26 +702,27 @@ public class Satellite extends Entity {
             if (bandSatellite.get(band) == null) {
                 bandSatellite.put(band, new ArrayList<Satellite>());
             }
+            // if band specific items are present
+            if (index > 0) {
+                int num = 0;
+                try {
+                    num = Integer.parseInt(fields[index + 1]);
+                } catch (Exception e) {
+                    Log.p("Satellite: processBand no number for transponders for satellite "
+                            + Arrays.toString(fields), Log.DEBUG);
+                }
 
-            int num = 0;
-            try {
-                num = Integer.parseInt(fields[index + 1]);
-            } catch (Exception e) {
-                Log.p("Satellite: processBand no number for transponders for satellite "
-                        + Arrays.toString(fields), Log.DEBUG);
+                if (satellite.bandBeams.get(band) == null) {
+
+                    satellite.bandBeams.put(band, new BandBeams());
+                }
+                satellite.bandBeams.get(band).EIRP
+                        = (Double.parseDouble(fields[index + 2]));
+                satellite.bandBeams.get(band).gainTemp
+                        = (Double.parseDouble(fields[index + 3]));
+
+                initAntAmp(satellite, band, num);
             }
-
-            if (satellite.bandBeams.get(band) == null) {
-
-                satellite.bandBeams.put(band, new BandBeams());
-            }
-            satellite.bandBeams.get(band).EIRP
-                    = (Double.parseDouble(fields[index + 2]));
-            satellite.bandBeams.get(band).gainTemp
-                    = (Double.parseDouble(fields[index + 3]));
-
-            initAntAmp(satellite, band, num);
-
             // add satellite to this band
             bandSatellite.get(band).add(satellite);
 
@@ -826,6 +826,8 @@ public class Satellite extends Entity {
                 == RfBand.Band.KA) {
             processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 46);
         }
+        // unknown band
+        processBand(fields, RfBand.Band.UK, bandSatellite, satellite, 0);
 
     }
 
