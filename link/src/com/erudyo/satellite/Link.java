@@ -185,14 +185,14 @@ public class Link {
          // now uplink, downlink paths and Comms can be created
         
         selection.setuLpath(new Path(selection.getSatellite(),
-                selection.gettXterminal()));
+                selection.gettXterminal(), Path.PATH_TYPE.UPLINK));
         selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
         
         initViews(selection.getuLpathView(),cnt, selection, layout);
 
         initViews(selection.getRxView(),cnt, selection, layout);
         selection.setdLpath(new Path(selection.getSatellite(),
-                selection.getrXterminal()));
+                selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
         
         // it is a bit late for the first logging message which says UL
         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);

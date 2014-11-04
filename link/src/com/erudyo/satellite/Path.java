@@ -92,11 +92,13 @@ public class Path extends Entity {
 
     }
 
-    public Path(Satellite s, Terminal t) {
+    public Path(Satellite s, Terminal t, PATH_TYPE pathType) {
         this.satellite = s;
         this.terminal = t;
+        if (pathType == PATH_TYPE.DOWNLINK)
         this.name = pathType + ":" + s.getName() + "-" + t.getName();
-        
+        else
+            this.name = pathType + ":" + t.getName() + "-" + s.getName();
         // include this Path in the Affected list of satellite and terminal
         s.addAffected(this);
         t.addAffected(this);

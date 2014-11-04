@@ -57,6 +57,8 @@ public class Entity {
     // called by child or sibling of an entity (see updateAffected) and customized
     public void update(Entity e) {
         // keep all local udpates (and possibly call your own updateAffected
+        Log.p("Entity: update not implemented for " + this, Log.DEBUG);
+                
 
     }
 
