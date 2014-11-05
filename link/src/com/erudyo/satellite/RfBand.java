@@ -8,6 +8,7 @@ package com.erudyo.satellite;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.Random;
+import com.codename1.io.Log;
 
 /**
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
@@ -18,7 +19,8 @@ public class RfBand extends Entity {
 
     public enum Band {
 
-        UK, C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL, KA_DL, KA_UL, KA2_DL, KA2_UL
+        UK, C, X, KU, KA, KA2, X_DL, X_UL, C_DL, C_UL, KU_DL, KU_UL,
+        KA_DL, KA_UL, KA2_DL, KA2_UL
     };
     public double lowFrequency;
     public double highFrequency;
@@ -38,8 +40,8 @@ public class RfBand extends Entity {
     public void setIndex(int index) {
         this.index = index;
     }
-    
-      public static Band findDl(Band band) {
+
+    public static Band findDl(Band band) {
         Band u;
         switch (band) {
             case KA:
@@ -96,6 +98,7 @@ public class RfBand extends Entity {
     final public static ArrayList<RfBand> indexRfBand
             = new ArrayList<RfBand>();
 
+    public final static double LO = 3.7E9;
     public final static double C_LO = 3.7E9;
     public final static double C_HI = 6.425E9;
     public final static double C_DL_LO = 3.7E9;
@@ -131,6 +134,8 @@ public class RfBand extends Entity {
     public final static double KA2_UL_LO = 29.5E9;
     public final static double KA2_UL_HI = 30.0E9;
 
+    public final static double HI = 30.0E9;
+
     // static block will execute once when the class is created
     static {
 
@@ -140,10 +145,10 @@ public class RfBand extends Entity {
         r = new RfBand(Band.X, "X", X_LO, X_HI);
         r = new RfBand(Band.KU, "KU", KU_LO, KU_HI);
         r = new RfBand(Band.KA, "KA", KA_LO, KA_HI);
-        r = new RfBand(Band.KA, "KA_2", KA2_LO, KA2_HI);
+        r = new RfBand(Band.KA, "KA2", KA2_LO, KA2_HI);
+        r = new RfBand(Band.UK, "UK", LO, HI);
     }
 
-    
     public RfBand(Band band, String name, double lo, double hi) {
 
         this.centerRfBand(lo, hi);
@@ -167,6 +172,7 @@ public class RfBand extends Entity {
     }
 
     public static Band findBand(double f) {
+        // does not handle Unknown band
         Band band = Band.C;
         if (f >= C_DL_LO && f <= C_DL_HI) {
             band = (Band.C_DL);
@@ -231,8 +237,12 @@ public class RfBand extends Entity {
             case KU:
                 f = (KU_HI + KU_LO) / 2.0;
                 break;
+            case UK:
+                f = (HI + LO) / 2.0;
+                break;
             default:
                 f = 0;
+                Log.p("RfBand: frequency not in the list", Log.DEBUG);
         }
         return f;
     }

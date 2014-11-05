@@ -97,13 +97,15 @@ public class SatelliteView extends View {
                 // update the UL path
                 selection.getuLpath().setSatellite(selection.getSatellite());
                 // update the DL path TODO
-                //selection.getdLpath().setSatellite(selection.getSatellite());
+                if (selection.getdLpath() != null) {
+                    selection.getdLpath().setSatellite(selection.getSatellite());
+                }
                 // change the subwidget, label, and sublabel etc.
                 selection.getSatelliteView().label.setText(
                         Satellite.satelliteHash.get(
                                 (String) combo.getSelectedItem()).getName());
 
-                // System.out.println(combo.getSelectedItem());
+             
             }
         });
 
@@ -149,7 +151,7 @@ public class SatelliteView extends View {
 
         final BandBeams bandBeams = satellite.bandBeams.get(selection.getBand());
         Form sub = new Form("Satellite: " + satellite.getName());
-final RfBand.Band band = selection.getBand();
+        final RfBand.Band band = selection.getBand();
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
 
@@ -163,8 +165,7 @@ final RfBand.Band band = selection.getBand();
 
         // now go sequentially through Satellite Receive Side
         Label L01 = new Label("Central Frequency");
-        Label lFrequency = new Label(Com.shortText(bandBeams.
-                rXantenna.getFrequency() / 1E9));
+        Label lFrequency = new Label(Com.shortText(bandBeams.rXantenna.getFrequency() / 1E9));
         Label L03 = new Label("GHz " + bandBeams.rXantenna.getBand());
         cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
@@ -195,15 +196,15 @@ final RfBand.Band band = selection.getBand();
         constraint.setHorizontalSpan(3);
         // constraint.setWidthPercentage(45);
         cnt.addComponent(constraint, sldrRxNoiseFigure);
-/*
-        Label lAntennaEfficiencyLabel = new Label("  Antenna Efficiency");
-        Label lEfficiency = new Label(Com.shortText(
-                satellite.getRxAntenna().getEfficiency()));
-        Label L2A3 = new Label(" ");
-        cnt.addComponent(lAntennaEfficiencyLabel);
-        cnt.addComponent(lEfficiency);
-        cnt.addComponent(L2A3);
-*/
+        /*
+         Label lAntennaEfficiencyLabel = new Label("  Antenna Efficiency");
+         Label lEfficiency = new Label(Com.shortText(
+         satellite.getRxAntenna().getEfficiency()));
+         Label L2A3 = new Label(" ");
+         cnt.addComponent(lAntennaEfficiencyLabel);
+         cnt.addComponent(lEfficiency);
+         cnt.addComponent(L2A3);
+         */
         Label lRxDiameterLabel = new Label("  Antenna Diameter");
         final Slider sldrRxDiameter = new Slider();
 
@@ -256,21 +257,21 @@ final RfBand.Band band = selection.getBand();
         // sliders
         Label lGainTemp = new Label("Satellite G/T");
         final Label valueRxGainTemp = new Label(Com.shortText(
-               bandBeams.gainTemp));
+                bandBeams.gainTemp));
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);
         cnt.addComponent(valueRxGainTemp);
         cnt.addComponent(unitGainTemp);
 
-   /*     // does not change so not in combo/sliders
-        Label lImpLoss = new Label(" LFRX");
-        final Label valueRxImpLoss = new Label(Com.shortText(
-                satellite.getRxAmplifier().getLFRX()));
-        Label unitImpLoss = new Label("dB");
-        cnt.addComponent(lImpLoss);
-        cnt.addComponent(valueRxImpLoss);
-        cnt.addComponent(unitImpLoss);
-*/
+        /*     // does not change so not in combo/sliders
+         Label lImpLoss = new Label(" LFRX");
+         final Label valueRxImpLoss = new Label(Com.shortText(
+         satellite.getRxAmplifier().getLFRX()));
+         Label unitImpLoss = new Label("dB");
+         cnt.addComponent(lImpLoss);
+         cnt.addComponent(valueRxImpLoss);
+         cnt.addComponent(unitImpLoss);
+         */
         // does not change so not in combo/sliders
         Label lsysTemp = new Label(" System Noise Temp");
         final Label valueRxsysTemp = new Label(Com.text(
@@ -412,8 +413,6 @@ final RfBand.Band band = selection.getBand();
         cnt.addComponent(valueTxEIRP);
         cnt.addComponent(unitEIRP);
 
-    
-
         // all actions at the end to update other fields
         sldrTxPower.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
@@ -449,8 +448,8 @@ final RfBand.Band band = selection.getBand();
                             bandBeams.tXantenna.getDepointingLoss()));
                     valueTxEIRP.setText(Com.shortText(bandBeams.EIRP));
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for diameter " + 
-                            sldrTxDiameter.getText(), Log.DEBUG);
+                    Log.p("SatelliteView: bad number for diameter "
+                            + sldrTxDiameter.getText(), Log.DEBUG);
 
                 }
 

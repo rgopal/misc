@@ -110,7 +110,7 @@ public class UlPathView extends View {
             return lNameGain;
         }
 
-        // terminal name and location
+        // satellite name and location
         lNameGain.setText( // selection.getSatellite().getName()
                 Com.toDMS(selection.getSatellite().getLongitude()));
 

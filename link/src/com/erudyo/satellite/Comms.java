@@ -44,6 +44,13 @@ public class Comms extends Entity {
     }
 
     /**
+     * @return the indexBER
+     */
+    public static ArrayList<BER> getIndexBER() {
+        return indexBER;
+    }
+
+    /**
      * @return the BEP
      */
     public double getBEP() {
@@ -104,6 +111,41 @@ public class Comms extends Entity {
         this.CNo = CNo;
     }
 
+    /**
+     * @return the BER
+     */
+    public BER getbER() {
+        return bER;
+    }
+
+    /**
+     * @param BER the BER to set
+     */
+    public enum BER {
+
+        BER_N("N/A"),
+        BER_7("1.0E-7"),
+        BER_6("1.0E-6"),
+        BER_5("1.0E-5"),
+        BER_4("1.0E-4"),
+        BER_3("1.0E-3"),
+        BER_2("1.0E-2"),
+        BER_1("1.0E-1"),
+        BER_0("1.0E-0");
+
+        private final String value;
+
+        private BER(final String text) {
+            this.value = text;
+        }
+
+        public String toString() {
+            return value;
+        }
+        // this is not working
+
+    };
+
     public enum CodeRate {
 
         FEC_1_9("1/9"),
@@ -149,12 +191,14 @@ public class Comms extends Entity {
     private double rollOff = .30;
     private double bw = 5;      // MHz
     private double BEP = 1E-6;
+    private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;
-    private double eBno = 10;           // in dB
+    private double eBno = -100.0;           // in dB
+    private double derivedEbNo = -100.0; // if BER is set then find
     private double codingGain = 0;      // in dB
-    private CodeRate codeRate;
-    private Code code;
-    private Modulation modulation;
+    private CodeRate codeRate = CodeRate.FEC_7_8;
+    private Code code = Code.BCH;
+    private Modulation modulation = Modulation.BPSK;
 
     final public static double DATA_RATE_LO = .1;
     final public static double DATA_RATE_HI = 100;
@@ -163,6 +207,10 @@ public class Comms extends Entity {
 
     final public static double BW_LO = .05;
     final public static double BW_HI = 100.0;
+
+    public double getDerivedEbNo() {
+        return derivedEbNo;
+    }
 
     public int getMaryFactor(Modulation m) {
 
@@ -206,6 +254,16 @@ public class Comms extends Entity {
 
     // lookup by String name with class level table
     // could be used to get an object by name
+    final public static Hashtable<String, BER> BERHash
+            = new Hashtable<String, BER>();
+
+    // lookup by index wifth class level vector to get
+    // object by index (may be ID or some sort of sorting)
+    final public static ArrayList<BER> indexBER
+            = new ArrayList<BER>();
+
+    // lookup by String name with class level table
+    // could be used to get an object by name
     final public static Hashtable<String, Code> codeHash
             = new Hashtable<String, Code>();
 
@@ -220,6 +278,12 @@ public class Comms extends Entity {
         for (Modulation m : Modulation.values()) {
             modulationHash.put(m.toString(), m);
             indexModulation.add(m);
+
+        }
+
+        for (BER m : BER.values()) {
+            BERHash.put(m.toString(), m);
+            indexBER.add(m);
 
         }
 
@@ -239,30 +303,48 @@ public class Comms extends Entity {
 
     }
 
-       public Comms(Path u, Path d) {
+    public Comms(Path u, Path d) {
         this.uLpath = u;
         this.dLpath = d;
         this.name = "Comms:" + u.getName() + "-" + d.getName();
-        
+
         // include this Path in the Affected list of satellite and terminal
         u.addAffected(this);
         d.addAffected(this);
 
-        update();
+        this.CNo = calcCNo();
+        this.eBno = calcEbNo();
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.eBno);
     }
-       
+
     public Comms(String s) {
         this.name = s;
     }
-    
-    public void update() {
+
+    public void update(Entity e) {
         this.CNo = calcCNo();
+        this.eBno = calcEbNo();
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.eBno);
+        // derive EbNo if a BER is explicitly set
+        if (this.bER != BER.BER_N) {
+            this.derivedEbNo = calcDerivedEbNo(this.modulation, this.code,
+                    this.codeRate, this.bER);
+        }
         // highest so no updateAffected
+    }
+
+    public double calcEbNo() {
+        double value = -100.0;
+        // all in dB
+        value = calcCNo() + 10.0 * MathUtil.log10(this.bw);
+        return value;
     }
 
     private double calcCNo() {
         double value;
-        value = 10.0*MathUtil.log10(1.0
+        value = 10.0 * MathUtil.log10(1.0
                 / ((1.0
                 / (MathUtil.pow(uLpath.getCNo() / 10.0, 10.0)))
                 + (1.0
@@ -373,11 +455,11 @@ public class Comms extends Entity {
     public static double calcCodeRate(CodeRate c) {
         double value = 0;
         // get the numerator and denominator from text string n/(n+r)
-        String text = c.name().toString();
+        String text = c.toString();
         Vector<String> parts = (Vector) StringUtil.tokenize(text, "/");
         try {
-            value = (Double.parseDouble(parts.get(0))
-                    / Double.parseDouble(parts.get(1)));
+            value = (Double.parseDouble(parts.get(0) + ".0")
+                    / Double.parseDouble(parts.get(1) + ".0"));
         } catch (java.lang.NumberFormatException e) {
             Log.p("Comms: bad number " + c.toString(), Log.WARNING);
 
@@ -419,9 +501,10 @@ public class Comms extends Entity {
     public void setCodeRate(CodeRate c) {
         this.codeRate = c;
 
+        // BER is generally not set and find the value
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
-        this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+        this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
         updateAffected();
     }
@@ -435,9 +518,38 @@ public class Comms extends Entity {
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.eBno);
 
-        this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
+        this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
         updateAffected();
+    }
+
+    // determines derivedEbNo if an explicit BER is set.  Else derives
+    // BEP value from all other parameters
+    public void setbER(BER ber) {
+        this.bER = ber;
+        if (ber != BER.BER_N) {
+            // if explict BER value then use that for BEP
+            this.BEP = Double.parseDouble(ber.toString());
+            Log.p("Comms: setbER set BEP value to " + this.BEP, Log.DEBUG);
+            // TODO try to find the right EbNo which will support this value
+            derivedEbNo = calcDerivedEbNo(this.modulation, this.code,
+                    this.codeRate, this.bER);
+        } else {
+            // else calculate BEP from the existing eBno
+            this.BEP = calcBEPmodCode(this.modulation, this.code,
+                    this.codeRate, this.eBno);
+        }
+
+        this.setCodingGain(calcCodingGain(this.modulation, this.code,
+                this.codeRate, this.BEP));
+        updateAffected();
+
+    }
+
+    // TODO find a value which can support the explicity BER
+    public double calcDerivedEbNo(Modulation m, Code c, CodeRate r, BER b) {
+        double e = -100.0;
+        return e;
     }
 
     /**

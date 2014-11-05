@@ -337,6 +337,7 @@ public class Path extends Entity {
         this.azimuth = calcAzimuth(this.satellite, this.terminal);
         this.elevation = calcElevation(this.satellite, this.terminal);
 
+        // not using the true/false 
         visible(satellite, terminal);
 
         // get center frequency of band used by terminal.  Note the _UL
@@ -345,7 +346,7 @@ public class Path extends Entity {
         if (pathType == PATH_TYPE.UPLINK)
             frequency = terminal.gettXantenna().getFrequency();
         else
-            frequency = terminal.gettXantenna().getFrequency();
+            frequency = terminal.getrXantenna().getFrequency();
         
         this.pathLoss = calcPathLoss(this.distance,frequency);
         this.CNo = calcCNo();

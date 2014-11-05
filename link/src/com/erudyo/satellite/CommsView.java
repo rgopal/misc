@@ -54,6 +54,13 @@ public class CommsView extends View {
     private ArrayList<String> codeRates
             = new ArrayList<String>();
 
+    private Hashtable<String, Integer> BERHash
+            = new Hashtable<String, Integer>();
+
+    // lookup by index with instance name vector 
+    private ArrayList<String> BERs
+            = new ArrayList<String>();
+
     public void initModulationHash() {
 
         int index = 0;
@@ -97,6 +104,20 @@ public class CommsView extends View {
 
     }
 
+    public void initBERHash() {
+
+        int index = 0;
+        // go through the hash to create positions and indexRfBand entries
+        for (Comms.BER key : Comms.indexBER) {
+            // add the position and increment for next item
+            BERHash.put(key.toString(), index++);
+
+            // create a simple array with object name (key)
+            BERs.add(key.toString());
+        }
+
+    }
+
     public Hashtable<String, Integer> getModulationHash() {
         return this.modulationHash;
     }
@@ -113,6 +134,10 @@ public class CommsView extends View {
         return this.codes;
     }
 
+    public ArrayList<String> getBERs() {
+        return this.BERs;
+    }
+
     public ArrayList<String> getCodeRates() {
         return this.codeRates;
     }
@@ -126,13 +151,14 @@ public class CommsView extends View {
         initModulationHash();
         initCodeHash();
         initCodeRateHash();
+        initBERHash();
 
     }
 
     public CommsView() {
         // this could initialize the needed data structures
         init();
-   
+
     }
 
     // returns a slider to show and select specific data rate (in Comms)
@@ -143,7 +169,6 @@ public class CommsView extends View {
 
         // basic selection is data rate (will be returned later)
         label = new Label();
-
 
         final Slider sldrDataRate = new Slider();
         sldrDataRate.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10)); // x10
@@ -206,32 +231,32 @@ public class CommsView extends View {
     public Form createView(final Selection selection) {
         Form sub = new Form("Common " + selection.getComms().getName());
 
-        Container cntAllThree = new Container(new BorderLayout());
-        sub.addComponent(cntAllThree);
+        Container cntAllFour = new Container(new BorderLayout());
+        sub.addComponent(cntAllFour);
 
         // Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(3, 3);
-        cntAllThree.setLayout(layout);
+        cntAllFour.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setVerticalSpan(2);
         constraint.setWidthPercentage(20);
-        
-                Label lCNo01 = new Label("C/No");
+
+        Label lCNo01 = new Label("C/No");
         Label lCNo02 = new Label(Com.text(selection.getComms().getCNo()));
         Label lCNo03 = new Label("dBHz ");
-        cntAllThree.addComponent(lCNo01);
-        cntAllThree.addComponent(constraint, lCNo02);
-        cntAllThree.addComponent(lCNo03);
+        cntAllFour.addComponent(lCNo01);
+        cntAllFour.addComponent(constraint, lCNo02);
+        cntAllFour.addComponent(lCNo03);
 
         // now go sequentially through the Tx terminal fields
         // final Terminal ter = selection.gettXterminal();
         Label lDataRate01 = new Label("Data Rate");
         Label lDataRate02 = new Label(Com.shortText(selection.getComms().getDataRate()));
         Label lDataRate03 = new Label("Mbps ");
-        cntAllThree.addComponent(lDataRate01);
-        cntAllThree.addComponent(constraint, lDataRate02);
-        cntAllThree.addComponent(lDataRate03);
+        cntAllFour.addComponent(lDataRate01);
+        cntAllFour.addComponent(constraint, lDataRate02);
+        cntAllFour.addComponent(lDataRate03);
 
         Label lDataRate = new Label("Data Rate");
         final Slider sldrDataRate = new Slider();
@@ -247,9 +272,9 @@ public class CommsView extends View {
 
         final Label lDataRateValue = new Label(Com.shortText(
                 selection.getComms().getDataRate()) + "Mbps");
-        cntAllThree.addComponent(lDataRate);
-        cntAllThree.addComponent(sldrDataRate);
-        cntAllThree.addComponent(lDataRateValue);
+        cntAllFour.addComponent(lDataRate);
+        cntAllFour.addComponent(sldrDataRate);
+        cntAllFour.addComponent(lDataRateValue);
 
         Label lBW = new Label("BW");
         final Slider sldrBW = new Slider();
@@ -264,30 +289,32 @@ public class CommsView extends View {
         sldrBW.setRenderValueOnTop(true);
 
         final Label lBWvalue = new Label(Com.shortText(selection.getComms().getBW()) + "MHz");
-        cntAllThree.addComponent(lBW);
-        cntAllThree.addComponent(sldrBW);
-        cntAllThree.addComponent(lBWvalue);
+        cntAllFour.addComponent(lBW);
+        cntAllFour.addComponent(sldrBW);
+        cntAllFour.addComponent(lBWvalue);
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
 
         // now vertical positioning
-        cntAllThree = new Container(new BorderLayout());
-        sub.addComponent(cntAllThree);
+        cntAllFour = new Container(new BorderLayout());
+        sub.addComponent(cntAllFour);
 
-        // Hardcoded table. Name, value, unit
-        layout = new TableLayout(2, 3);
-        cntAllThree.setLayout(layout);
+        // Table with 4 cloumns
+        layout = new TableLayout(2, 4);
+        cntAllFour.setLayout(layout);
 
         Label l1 = new Label("Modulation");
         Label l2 = new Label("Rate");
         Label l3 = new Label("Code");
-        cntAllThree.addComponent(l1);
-        cntAllThree.addComponent(l2);
-        cntAllThree.addComponent(l3);
+        Label l4 = new Label("BER");
+        cntAllFour.addComponent(l1);
+        cntAllFour.addComponent(l2);
+        cntAllFour.addComponent(l3);
+        cntAllFour.addComponent(l4);
 
         Container cntMod = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cntAllThree.addComponent(cntMod);
+        cntAllFour.addComponent(cntMod);
 
         final ButtonGroup bgMod = new ButtonGroup();
         // RadioButton bCode = new RadioButton(); // [Comms.modulationHash.size()];
@@ -323,12 +350,11 @@ public class CommsView extends View {
                 Comms.Modulation.BPSK.toString()));
         // set model defaul to the BPSK
         selection.getComms().setModulation(
-                Comms.indexModulation.toArray(new Comms.Modulation[0])
-                        [bgMod.getSelectedIndex()]);
+                Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
 
         // now bCode rate
         Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cntAllThree.addComponent(cntRate);
+        cntAllFour.addComponent(cntRate);
 
         final ButtonGroup bgRate = new ButtonGroup();
 
@@ -351,8 +377,7 @@ public class CommsView extends View {
                     Log.p("CommsView: selected Code Rate "
                             + bgRate.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCodeRate(
-                            Comms.indexCodeRate.toArray(new Comms.CodeRate[0])
-                                    [bgRate.getSelectedIndex()]);
+                            Comms.indexCodeRate.toArray(new Comms.CodeRate[0])[bgRate.getSelectedIndex()]);
                     if (selection.getComms().getCodeRate()
                             == Comms.CodeRate.FEC_1_1) {
                         selection.getComms().setCode(Comms.Code.NONE);
@@ -369,15 +394,14 @@ public class CommsView extends View {
         // set UI default to the 7/8
         bgRate.setSelected((int) codeRateHash.get(
                 Comms.CodeRate.FEC_7_8.toString()));
-       
+
         // model default to 7/8
         selection.getComms().setCodeRate(
-                            Comms.indexCodeRate.toArray(new Comms.CodeRate[0])
-                                    [bgRate.getSelectedIndex()]);
+                Comms.indexCodeRate.toArray(new Comms.CodeRate[0])[bgRate.getSelectedIndex()]);
 
         // now the bCode
         Container cntCode = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        cntAllThree.addComponent(cntCode);
+        cntAllFour.addComponent(cntCode);
 
         // RadioButton bCode = new RadioButton(); // [Comms.modulationHash.size()];
         /**
@@ -396,8 +420,7 @@ public class CommsView extends View {
                     Log.p("CommsView: selected Code "
                             + bgCode.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCode(
-                            Comms.indexCode.toArray(new Comms.Code[0])
-                                    [bgCode.getSelectedIndex()]);
+                            Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
                     // if no bCode then rate is 1/1
                     if (selection.getComms().getCode()
                             == Comms.Code.NONE) {
@@ -418,8 +441,41 @@ public class CommsView extends View {
                 Comms.Code.BCH.toString()));
         // model default to BCH
         selection.getComms().setCode(
-                            Comms.indexCode.toArray(new Comms.Code[0])
-                                    [bgCode.getSelectedIndex()]);
+                Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
+
+        // now BER
+        
+        final ButtonGroup bgBER = new ButtonGroup();
+           Container cntBER = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        cntAllFour.addComponent(cntBER);
+        
+        for (int i = 0; i < Comms.BERHash.size(); i++) {
+            final RadioButton bBER = new RadioButton();
+            bBER.setName(selection.getCommsView().getBERs().get(i));
+            bBER.setText(selection.getCommsView().getBERs().get(i));
+
+            //add to button group
+            bgBER.add(bBER);
+            bBER.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    Log.p("CommsView: selected BER "
+                            + bgBER.getSelectedIndex(), Log.DEBUG);
+                    selection.getComms().setbER(
+                            Comms.indexBER.toArray(new Comms.BER[0])[bgBER.
+                            getSelectedIndex()]);
+                  
+                }
+
+            });
+            cntBER.addComponent(bBER);
+        }
+
+        // set default to BCH
+        bgBER.setSelected((int) BERHash.get(
+                Comms.BER.BER_6.toString()));
+        // model default to BCH
+        selection.getComms().setbER(
+                Comms.indexBER.toArray(new Comms.BER[0])[bgBER.getSelectedIndex()]);
 
         sldrDataRate.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {

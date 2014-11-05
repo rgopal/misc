@@ -108,6 +108,7 @@ public class Selection {
         return this.rfBands;
     }
 
+    
     public Selection() {
         // use constructor with Selection instance as input
         satelliteView = new SatelliteView(this);
