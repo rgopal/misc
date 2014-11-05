@@ -187,9 +187,9 @@ public class Comms extends Entity {
     };
     private Path uLpath;
     private Path dLpath;
-    private double dataRate = 10.0;    // Mbps  
+    private double dataRate = 5000.0;    // bps  
     private double rollOff = .30;
-    private double bw = 5;      // MHz
+    private double bw = 5000.0;      // Hz
     private double BEP = 1E-6;
     private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;
@@ -200,13 +200,13 @@ public class Comms extends Entity {
     private Code code = Code.BCH;
     private Modulation modulation = Modulation.BPSK;
 
-    final public static double DATA_RATE_LO = .1;
-    final public static double DATA_RATE_HI = 100;
-    final public static double ROLL_OFF_LO = 0.05;
+    final public static double DATA_RATE_LO = .1*1E6;  // in bps
+    final public static double DATA_RATE_HI = 100.0*1E6; // in bps
+    final public static double ROLL_OFF_LO = .05;
     final public static double ROLL_OFF_HI = 0.45;
 
-    final public static double BW_LO = .05;
-    final public static double BW_HI = 100.0;
+    final public static double BW_LO = .1*1E6;
+    final public static double BW_HI = 100.0*1E6;   // in Hz
 
     public double getDerivedEbNo() {
         return derivedEbNo;
@@ -338,18 +338,23 @@ public class Comms extends Entity {
     public double calcEbNo() {
         double value = -100.0;
         // all in dB
-        value = calcCNo() + 10.0 * MathUtil.log10(this.bw);
+        value = calcCNo() - 10.0 * MathUtil.log10(this.dataRate);
         return value;
     }
 
     private double calcCNo() {
         double value;
-        value = 10.0 * MathUtil.log10(1.0
-                / ((1.0
-                / (MathUtil.pow(uLpath.getCNo() / 10.0, 10.0)))
-                + (1.0
-                / (MathUtil.pow(dLpath.getCNo() / 10.0, 10.0)))));
-
+        double first, second;
+       
+        
+        first = MathUtil.pow(10.0, uLpath.getCNo() / 10.0);
+        first = 1.0/first;
+               
+        second = MathUtil.pow(10.0, dLpath.getCNo() / 10.0);
+        second = 1.0/second;
+        
+        value = 10.0 * MathUtil.log10(1.0/(first + second));
+        
         return value;
     }
 
@@ -363,6 +368,12 @@ public class Comms extends Entity {
 
     public void setDataRate(double d) {
         this.dataRate = d;
+        this.eBno = calcCNo() + 10.0 * MathUtil.log10(this.dataRate);
+        // bandwidth will change because of data rate
+        this.bw = this.dataRate / (this.spectralEfficiency(this.modulation) *
+                this.calcCodeRate(this.codeRate));
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.eBno);
     }
 
     // BER for each modulation, ebno is in dB, and this is stateless
@@ -488,6 +499,9 @@ public class Comms extends Entity {
                 this.codeRate, this.geteBno());
         this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.BEP));
+        // change only bandwidth (and keep data rate fixed)
+          this.bw = this.dataRate / (this.spectralEfficiency(this.modulation) *
+                this.calcCodeRate(this.codeRate));
         updateAffected();
     }
 
@@ -506,6 +520,9 @@ public class Comms extends Entity {
                 this.codeRate, this.geteBno());
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
+                // change only bandwidth (and keep data rate fixed)
+          this.bw = this.dataRate / (this.spectralEfficiency(this.modulation) *
+                this.calcCodeRate(this.codeRate));
         updateAffected();
     }
 
@@ -520,6 +537,8 @@ public class Comms extends Entity {
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
+                // change only bandwidth (and keep data rate fixed)
+      
         updateAffected();
     }
 
@@ -538,6 +557,7 @@ public class Comms extends Entity {
             // else calculate BEP from the existing eBno
             this.BEP = calcBEPmodCode(this.modulation, this.code,
                     this.codeRate, this.eBno);
+            
         }
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
@@ -578,5 +598,19 @@ public class Comms extends Entity {
      */
     public void setBW(double bw) {
         this.bw = bw;
+        // bandwidth changes data rate (include code rate also)
+         this.dataRate = this.bw * spectralEfficiency(this.modulation) * 
+                 calcCodeRate(this.codeRate);
+         // which changes EbNo
+         this.eBno = calcEbNo();
+         // which affects bit error rate
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.eBno);
+
+        // TODO coding gain check 
+        // resulting in coding gain changes (circular because this changes ebno)
+        this.setCodingGain(calcCodingGain(this.modulation, this.code,
+                this.codeRate, this.BEP));
+       
     }
 }
