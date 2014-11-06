@@ -167,42 +167,39 @@ public class Link {
         // set the current Band and select satellite and tx, rx terminals
         initBands(main, selection);
 
-       
-
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
 
         // there are six items in Views.  Hardcoded table.
         // no sub-label
-        TableLayout layout = new TableLayout(6, 4);
+        TableLayout layout = new TableLayout(10, 4);
         cnt.setLayout(layout);
 
-  
         // satellites are read from the txt file (and selected with band)
-        initViews(selection.getSatelliteView(), cnt, selection, layout);
+        initViews(selection.getSatelliteView(), cnt, selection, layout, 3);
 
-        initViews(selection.getTxView(), cnt, selection, layout);
-         // now uplink, downlink paths and Comms can be created
-        
+        initViews(selection.getTxView(), cnt, selection, layout, 3);
+        // now uplink, downlink paths and Comms can be created
+
         selection.setuLpath(new Path(selection.getSatellite(),
                 selection.gettXterminal(), Path.PATH_TYPE.UPLINK));
         selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
-        
-        initViews(selection.getuLpathView(),cnt, selection, layout);
 
-        initViews(selection.getRxView(),cnt, selection, layout);
+        initViews(selection.getuLpathView(), cnt, selection, layout, 1);
+
+        initViews(selection.getRxView(), cnt, selection, layout, 3);
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
-        
+
         // it is a bit late for the first logging message which says UL
         selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
-        
-        initViews(selection.getdLpathView(), cnt, selection, layout);
-        
-        selection.setComms(new Comms(selection.getuLpath(), 
+
+        initViews(selection.getdLpathView(), cnt, selection, layout, 1);
+
+        selection.setComms(new Comms(selection.getuLpath(),
                 selection.getdLpath()));
 
-        initViews(selection.getCommsView(), cnt, selection, layout);
+        initViews(selection.getCommsView(), cnt, selection, layout, 1);
         Button bMap = new Button("Map");
 
         // get map form for selecting terminals and satellite
@@ -232,37 +229,64 @@ public class Link {
 
     }
 
-    public void initViews(final View view, Container cntLink, final Selection selection, TableLayout layout) {
+    public void initViews(final View view, Container cntLink,
+            final Selection selection, TableLayout layout, int span) {
 
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
             // create name, value, unit, and command components for each view
             // use fixed length for each column
-            Component n = view.getWidget(selection);
-            Component s = view.getSubWidget(selection);
+            Component widget = view.getWidget(selection);
+            Component subWidget = view.getSubWidget(selection);
 
             // all these widgets have to be remembered by respective views 
-            Component v = view.getLabel(selection);
-            Component u = view.getSubLabel(selection);
+            Component label = view.getLabel(selection);
+            Component subLabel = view.getSubLabel(selection);
 
             Button bSelectView = new Button("->"); //view.getName());
 
-            TableLayout.Constraint constraint = layout.createConstraint();
-            // constraint.setVerticalSpan(2);
-            constraint.setWidthPercentage(40);      // half of width
+            // if span is more than 1 then only widget and command are displayed
+            if (span > 1) {
 
-            cntLink.addComponent(constraint, n);
+                TableLayout.Constraint constraint = layout.createConstraint();
+                constraint.setHorizontalSpan(4);
+                cntLink.addComponent(constraint, widget);
 
-            constraint = layout.createConstraint(); // 30% of width
-            constraint.setWidthPercentage(25);
+                // add others in a new line
+                constraint = layout.createConstraint();
 
-            cntLink.addComponent(constraint, s);
-            cntLink.addComponent(v);
+                constraint.setWidthPercentage(40);
+
+                constraint = layout.createConstraint(); // 30% of width
+                constraint.setWidthPercentage(25);
+                cntLink.addComponent(constraint, subWidget);
+
+                constraint = layout.createConstraint();
+                constraint.setWidthPercentage(25);
+                cntLink.addComponent(constraint, label);
+                cntLink.addComponent(subLabel);
+                cntLink.addComponent(bSelectView);
+                bSelectView.setIcon(cmdIcon);
+
+            } else {
+                TableLayout.Constraint constraint = layout.createConstraint();
+
+                constraint.setWidthPercentage(40);
+                cntLink.addComponent(constraint, widget);
+
+                constraint = layout.createConstraint(); // 30% of width
+                constraint.setWidthPercentage(25);
+                cntLink.addComponent(constraint, subWidget);
+
+                constraint = layout.createConstraint(); // 30% of width
+                constraint.setWidthPercentage(25);
+                cntLink.addComponent(constraint, label);
+                cntLink.addComponent(subLabel);
+                cntLink.addComponent(bSelectView);
+                bSelectView.setIcon(cmdIcon);
+            }
             // cntLink.addComponent(u);  NO Sublabel
-            cntLink.addComponent(bSelectView);
-
-            bSelectView.setIcon(cmdIcon);
 
             bSelectView.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -425,9 +449,9 @@ public class Link {
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
 
-            // update label of satellite
-            selection.getSatelliteView().label.setText(
-                    selection.getSatellite().getName());
+            // update values for satellite
+            selection.getSatelliteView().updateValues(selection);
+           
         }
 
     }

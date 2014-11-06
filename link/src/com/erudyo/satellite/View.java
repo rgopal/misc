@@ -26,7 +26,12 @@ public abstract class View {
     protected String name;
     protected String summary;
     protected String value;
-    protected String unit;
+    protected String subValue;
+    
+    private Label widget = new Label();
+    private Label label = new Label();
+    private Label subLabel = new Label();
+    private Label subWidget = new Label();
     
     // store print ready items of a view
     protected ArrayList<ArrayList<String>> text;
@@ -39,21 +44,40 @@ public abstract class View {
     }
     // some could have no widget so just the name
     public  Component getWidget(Selection selection) {
-        return (new Label (getName()));
+        return widget;
     }
     
+    public void setName(String name) {
+        this.widget.setText(name);
+        this.name = name;
+    }
+    
+     public void setSummary(String name) {
+        this.subWidget.setText(name);
+        this.summary = name;
+    }
+     
+      public void setValue(String name) {
+        this.label.setText(name);
+        this.value = name;
+    }
+      
+       public void setSubValue(String name) {
+        this.subLabel.setText(name);
+        this.subValue = name;
+    }
     // some could have no second widget so just summary
     public Component getSubWidget(Selection selection) {
-        return (new Label (getSummary()));
+        return subWidget;
     }
     
-     public  Component getLabel(Selection selection) {
-        return (new Label (getValue()));
+    public  Component getLabel(Selection selection) {
+        return label;
     }
     
     // some could have no second widget so just summary (probably not used)
     public Component getSubLabel(Selection selection) {
-        return (new Label (getUnit()));
+        return subLabel;
     }
      
     public View(String name) {
@@ -105,25 +129,19 @@ public abstract class View {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
+  
     /**
      * @return the unit
      */
-    public String getUnit() {
-        return unit;
+    public String getSubValue() {
+        return subValue;
     }
 
     /**
      * @param unit the unit to set
      */
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.subValue = unit;
     }
 
     /**
@@ -133,11 +151,6 @@ public abstract class View {
         return summary;
     }
 
-    /**
-     * @param summary the summary to set
-     */
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+ 
     
 }

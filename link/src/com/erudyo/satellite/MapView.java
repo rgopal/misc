@@ -45,7 +45,7 @@ public class MapView extends View {
     public MapView(String name) {
         super(name);
         this.value = "map";
-        this.unit = "xx";
+        this.subValue = "xx";
     }
 
     private enum TERMINAL_CHOICE {

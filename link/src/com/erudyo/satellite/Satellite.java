@@ -1,7 +1,14 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * 
+ * OVERVIEW
+ * 
+ * Satellite class comprises location and if available band specific antenna
+ * and amplifier components.  Beam specific KML files can be read on demand
+ * if a satellite with available files is selected.  Satellites are grouped
+ * by their band capability and only a subset is shown (selected band) at a
+ * time.  If a terminal is located in the beam coverage area then that is used
+ * for G/T and EIRP numbers.  If KML files are not present then user can 
+ * change amplifier power and antenna size to get the desired values.
  */
 package com.erudyo.satellite;
 
@@ -852,6 +859,7 @@ public class Satellite extends Entity {
         return noiseTemp;
     }
 
+    // this is the calculated EIRP
     public double getEIRP(RfBand.Band band) {
         return bandBeams.get(band).EIRP;
     }

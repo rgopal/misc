@@ -1,6 +1,6 @@
 /*
  * OVERVIEW
- *. This was originally nested within Satellite but creating a BandBeams 
+ * This was originally nested within Satellite but creating a BandBeams 
  * object from within Satellite static method was not allowed.  So, this 
  * became its own class to get pass that static/non static problem.
  */
@@ -19,7 +19,7 @@ import java.util.Hashtable;
     public class BandBeams {
 
         RfBand.Band band;           // band of these beams
-        public double EIRP;       // they should be calculated
+        public double EIRP;       // calculated value
         public double gainTemp;       // they should be calculated dB 1/K
         public double maxEIRP;      // maximum across all beams of a band
         public double maxGT;

@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW
+ * 
+ * View shows the selected satellite and lets user interact with its model
+ *
  */
 package com.erudyo.satellite;
 
@@ -33,18 +34,15 @@ import java.util.Vector;
 
 public class SatelliteView extends View {
 
-    private Satellite satellite;
     public ComboBox spin;
-    public Label label;
-    public Label subLabel;
+ 
 
     public SatelliteView() {
 
     }
 
     public SatelliteView(Selection selection) {
-        this.satellite = selection.getSatellite();
-
+  
         // don't call update_values since SatelliteView is still being built
     }
 
@@ -64,7 +62,8 @@ public class SatelliteView extends View {
         }
 
         // create model for all satellites of selected band
-        ListModel model = new DefaultListModel(selection.getBandSatellite().get(band));
+        ListModel model = new DefaultListModel(
+                selection.getBandSatellite().get(band));
 
         // show the selected satellite
         int index = combo.getSelectedIndex();
@@ -79,6 +78,7 @@ public class SatelliteView extends View {
 
         String name = (String) combo.getSelectedItem();
 
+        updateValues(selection);
         //label does not exist yet, so this does not work
         //       Satellite sat = Satellite.satelliteHash.get(name);
         // selection.getSatelliteView().label.setText(sat.getName());
@@ -91,21 +91,16 @@ public class SatelliteView extends View {
                 selection.setSatellite(Satellite.satelliteHash.get(
                         (String) combo.getSelectedItem()));
 
-                // update other values dependent on this satellite
-                updateValues(selection);
-
                 // update the UL path
                 selection.getuLpath().setSatellite(selection.getSatellite());
                 // update the DL path TODO
                 if (selection.getdLpath() != null) {
                     selection.getdLpath().setSatellite(selection.getSatellite());
                 }
-                // change the subwidget, label, and sublabel etc.
-                selection.getSatelliteView().label.setText(
-                        Satellite.satelliteHash.get(
-                                (String) combo.getSelectedItem()).getName());
 
-             
+                // update other values dependent on this satellite
+                updateValues(selection);
+
             }
         });
 
@@ -113,32 +108,33 @@ public class SatelliteView extends View {
         return combo;
     }
 
-    public Component getLabel(final Selection selection) {
-        Label l = new Label(getValue());
-
-        // get selected band
-        RfBand.Band band = selection.getBand();
-
-        // satellite may be empty right now
-        final Label label = new Label(
-                (String) selection.getSatelliteView().spin.getSelectedItem());
-
-        //selection.getSatellite().getName()); since satellite is empty
-        // set the satellite view present in the selection
-        selection.getSatelliteView().label = label;
-
-        // combo box created so return it
-        return label;
-    }
 
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
-        selection.getSatelliteView().summary = Com.shortText(
-                selection.getSatellite().getLongitude());
-        selection.getSatelliteView().value = Com.shortText(
-                selection.getSatellite().bandBeams.get(selection.getBand()).EIRP);
-        selection.getSatelliteView().unit = Com.shortText(
-                selection.getSatellite().bandBeams.get(selection.getBand()).gainTemp);
+        
+        // all these lables are eventually not needed TODO
+
+        selection.getSatelliteView().setSummary (Com.toDMS(
+                selection.getSatellite().getLongitude()));
+   
+        // get maximum EIRP that is calculated or from contours
+        double max, calc, contour;
+        calc = selection.getSatellite().getEIRP(selection.getBand());
+
+        contour = selection.getSatellite().getMaxEIRPfromContours(
+                selection.getBand());
+        max = calc > contour ? calc : contour;
+
+        selection.getSatelliteView().setValue (Com.textN(max, 5));
+  
+        // get max G/T for sublabel
+        calc = selection.getSatellite().getGainTemp(selection.getBand());
+
+        contour = selection.getSatellite().getMaxGTfromContours(
+                selection.getBand());
+        max = calc > contour ? calc : contour;
+    
+        selection.getSatelliteView().setSubValue(Com.textN(max, 5));
     }
 
     public String getDisplayName() {
@@ -150,7 +146,7 @@ public class SatelliteView extends View {
         final Satellite satellite = selection.getuLpath().getSatellite();
 
         final BandBeams bandBeams = satellite.bandBeams.get(selection.getBand());
-        Form sub = new Form("Satellite: " + satellite.getName());
+        Form sub = new Form("SAT " + satellite.getName());
         final RfBand.Band band = selection.getBand();
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
