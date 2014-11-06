@@ -259,7 +259,7 @@ public class UlPathView extends View {
         // sliders
         Label lGainTemp = new Label("Satellite G/T");
         final Label valueGainTemp = new Label(Com.shortText(
-                selection.getuLpath().getSatellite().bandBeams.
+                selection.getuLpath().getSatellite().bandSpecificItems.
                         get(selection.getBand()).gainTemp));
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);

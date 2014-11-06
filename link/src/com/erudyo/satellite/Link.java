@@ -256,7 +256,7 @@ public class Link {
                 // add others in a new line
                 constraint = layout.createConstraint();
 
-                constraint.setWidthPercentage(40);
+                constraint.setWidthPercentage(30);
 
                 constraint = layout.createConstraint(); // 30% of width
                 constraint.setWidthPercentage(25);
@@ -272,7 +272,7 @@ public class Link {
             } else {
                 TableLayout.Constraint constraint = layout.createConstraint();
 
-                constraint.setWidthPercentage(40);
+                constraint.setWidthPercentage(30);
                 cntLink.addComponent(constraint, widget);
 
                 constraint = layout.createConstraint(); // 30% of width

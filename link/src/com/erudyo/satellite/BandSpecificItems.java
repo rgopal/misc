@@ -16,7 +16,7 @@ import java.util.Hashtable;
   // can have multiple bands and transponders;
     // in bandBeams private Hashtable<RfBand.Band, Integer> transponders;
     // each band would have its own beam items
-    public class BandBeams {
+    public class BandSpecificItems {
 
         RfBand.Band band;           // band of these beams
         public double EIRP;       // calculated value

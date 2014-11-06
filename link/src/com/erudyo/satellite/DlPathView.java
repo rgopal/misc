@@ -125,9 +125,9 @@ public class DlPathView extends View {
         final Satellite satellite = selection.getdLpath().getSatellite();
 
         Label L01 = new Label("Center Frequency");
-        Label lFrequency = new Label(Com.shortText(satellite.bandBeams.get(
+        Label lFrequency = new Label(Com.shortText(satellite.bandSpecificItems.get(
                 selection.getBand()).tXantenna.getFrequency() / 1E9));
-        Label L03 = new Label("GHz " + satellite.bandBeams.
+        Label L03 = new Label("GHz " + satellite.bandSpecificItems.
                 get(selection.getBand()).tXantenna.getBand());
         cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
@@ -136,7 +136,7 @@ public class DlPathView extends View {
         Label L61 = new Label("Sat"  + "@" + Com.shortText(selection.getuLpath().
                 getSatellite().getLongitude()*180.0/Com.PI) + Com.DEGREE   + " EIRP");
         final Label L62 = new Label(
-                Com.shortText(selection.getSatellite().bandBeams.get(selection.getBand()).EIRP));
+                Com.shortText(selection.getSatellite().bandSpecificItems.get(selection.getBand()).EIRP));
        
         Label L63 = new Label("dbW");
 

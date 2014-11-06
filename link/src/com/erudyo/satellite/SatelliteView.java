@@ -145,7 +145,7 @@ public class SatelliteView extends View {
 
         final Satellite satellite = selection.getuLpath().getSatellite();
 
-        final BandBeams bandBeams = satellite.bandBeams.get(selection.getBand());
+        final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(selection.getBand());
         Form sub = new Form("SAT " + satellite.getName());
         final RfBand.Band band = selection.getBand();
         Container cnt = new Container(new BorderLayout());
