@@ -145,17 +145,18 @@ public class UlPathView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Satellite: " + selection.getuLpath().
-                getSatellite());
-        final Label L62 = new Label(Com.toDMS(selection.getuLpath().
-                getSatellite().getLongitude()));
-        Label L63 = new Label("degree");
+        Label L61 = new Label("Sat"  
+                + "@" + Com.shortText(selection.getuLpath().
+                getSatellite().getLongitude()*180.0/Com.PI) + Com.DEGREE + " EIRP");
+        final Label L62 = new Label(
+                Com.shortText(selection.gettXterminal().getEIRP()));
+        Label L63 = new Label("dbW");
 
         cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
-        Label lLatitude = new Label("Terminal Latitude");
+        Label lLatitude = new Label("Term Latitude");
         Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
@@ -182,7 +183,7 @@ public class UlPathView extends View {
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrLatitude);
 
-        Label lLongitude = new Label("Terminal Longitude");
+        Label lLongitude = new Label("Term Longitude");
         Label lLongitudeUnit = new Label("degree");
         final Slider sldrLongitude = new Slider();
 
@@ -212,7 +213,7 @@ public class UlPathView extends View {
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrLongitude);
-        Label lElevation = new Label("Terminal Elevation");
+        Label lElevation = new Label("Term Elevation");
         final Label valueElevation = new Label(Com.toDMS(
                 selection.getuLpath().getElevation()));
         Label unitElevation = new Label(" ");
@@ -228,9 +229,9 @@ public class UlPathView extends View {
         cnt.addComponent(valueAzimuth);
         cnt.addComponent(unitAzimuth);
 
-        Label lDistance = new Label("    Distance from Sat");
-        final Label valueDistance = new Label(Com.text(selection.
-                getuLpath().getDistance() / 1E3));
+        Label lDistance = new Label("    Distance - Sat");
+        final Label valueDistance = new Label(Com.textN(selection.
+                getuLpath().getDistance() / 1E3,6));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
@@ -246,7 +247,7 @@ public class UlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lAttenuation = new Label("Atmospheric Atten");
+        Label lAttenuation = new Label("Atmos Atten");
         final Label valueAttenuation = new Label(Com.textN(
                 selection.getuLpath().getAttenuation(), 7));
         Label unitAttenuation = new Label("dB");
@@ -256,7 +257,7 @@ public class UlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lGainTemp = new Label("Satellite Gain/Temp");
+        Label lGainTemp = new Label("Satellite G/T");
         final Label valueGainTemp = new Label(Com.shortText(
                 selection.getuLpath().getSatellite().bandBeams.
                         get(selection.getBand()).gainTemp));
@@ -301,8 +302,8 @@ public class UlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
-                    valueDistance.setText(Com.text(selection.getuLpath().
-                            getDistance() / 1E3));
+                    valueDistance.setText(Com.textN(selection.getuLpath().
+                            getDistance() / 1E3,6));
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));
@@ -341,8 +342,8 @@ public class UlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
-                    valueDistance.setText(Com.text(selection.getuLpath().
-                            getDistance() / 1E3));      // convert to km
+                    valueDistance.setText(Com.textN(selection.getuLpath().
+                            getDistance() / 1E3,6));      // convert to km
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));            // already in dB

@@ -319,9 +319,9 @@ public class Satellite extends Entity {
                             getAsString("//name"));
 
                     point.color = Integer.parseInt(
-                            Result.fromContent(placeMark, Result.XML).
-                            getAsString("//Style/LabelStyle/color").
-                            substring(2, 7), 16);
+                            Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
+                            getAsString("//Style/LabelStyle/color")).
+                            substring(2, 8), 16);
 
                     String coords = Com.removeNonNum(Result.fromContent(placeMark, Result.XML).
                             getAsString("//Point/coordinates"));
@@ -389,8 +389,8 @@ public class Satellite extends Entity {
 
                     // this is 8 bytes long so get rid of firs FF.  And note 16
                     contour.color = Integer.parseInt(Com.SwapBlueRed(
-                            Result.fromContent(placeMark, Result.XML).
-                            getAsString("//Style/LineStyle/color").substring(2, 7)), 16);
+                            Com.removeQuoteEol(Result.fromContent(placeMark, Result.XML).
+                            getAsString("//Style/LineStyle/color")).substring(2, 8)), 16);
 
                     contour.width = Integer.parseInt(
                             Com.removeNonNum(Result.fromContent(placeMark, Result.XML).

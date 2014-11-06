@@ -126,24 +126,25 @@ public class DlPathView extends View {
 
         Label L01 = new Label("Center Frequency");
         Label lFrequency = new Label(Com.shortText(satellite.bandBeams.get(
-                selection.getBand()).rXantenna.getFrequency() / 1E9));
+                selection.getBand()).tXantenna.getFrequency() / 1E9));
         Label L03 = new Label("GHz " + satellite.bandBeams.
-                get(selection.getBand()).rXantenna.getBand());
+                get(selection.getBand()).tXantenna.getBand());
         cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Satellite: " + selection.getdLpath().
-                getSatellite());
-        final Label L62 = new Label(Com.toDMS(selection.getdLpath().
-                getSatellite().getLongitude()));
-        Label L63 = new Label("degree");
+        Label L61 = new Label("Sat"  + "@" + Com.shortText(selection.getuLpath().
+                getSatellite().getLongitude()*180.0/Com.PI) + Com.DEGREE   + " EIRP");
+        final Label L62 = new Label(
+                Com.shortText(selection.getSatellite().bandBeams.get(selection.getBand()).EIRP));
+       
+        Label L63 = new Label("dbW");
 
         cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
-        Label lLatitude = new Label("Terminal Latitude");
+        Label lLatitude = new Label("Term Latitude");
         Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
@@ -172,7 +173,7 @@ public class DlPathView extends View {
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrLatitude);
 
-        Label lLongitude = new Label("Terminal Longitude");
+        Label lLongitude = new Label("Term Longitude");
         Label lLongitudeUnit = new Label("degree");
         final Slider sldrLongitude = new Slider();
 
@@ -202,7 +203,7 @@ public class DlPathView extends View {
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrLongitude);
-        Label lElevation = new Label("Terminal Elevation");
+        Label lElevation = new Label("Term Elevation");
         final Label valueElevation = new Label(Com.toDMS(
                 selection.getdLpath().getElevation()));
         Label unitElevation = new Label(" ");
@@ -219,8 +220,8 @@ public class DlPathView extends View {
         cnt.addComponent(unitAzimuth);
 
         Label lDistance = new Label("    Distance");
-        final Label valueDistance = new Label(Com.text(selection.
-                getdLpath().getDistance() / 1E3));
+        final Label valueDistance = new Label(Com.textN(selection.
+                getdLpath().getDistance() / 1E3,6));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
@@ -236,7 +237,7 @@ public class DlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lAttenuation = new Label("Atmospheric Atten");
+        Label lAttenuation = new Label("Atmos Atten");
         final Label valueAttenuation = new Label(Com.shortText(
                 selection.getdLpath().getAttenuation()));
         Label unitAttenuation = new Label("dB");
@@ -292,8 +293,8 @@ public class DlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getdLpath().
                             getAzimuth()));
-                    valueDistance.setText(Com.text(selection.getdLpath().
-                            getDistance() / 1E3));
+                    valueDistance.setText(Com.textN(selection.getdLpath().
+                            getDistance() / 1E3,6));
 
                     valuePathLoss.setText(Com.shortText(selection.getdLpath().
                             getPathLoss()));
@@ -332,8 +333,8 @@ public class DlPathView extends View {
 
                     valueAzimuth.setText(Com.toDMS(selection.getdLpath().
                             getAzimuth()));
-                    valueDistance.setText(Com.text(selection.getdLpath().
-                            getDistance() / 1E3));      // convert to km
+                    valueDistance.setText(Com.textN(selection.getdLpath().
+                            getDistance() / 1E3,6));      // convert to km
 
                     valuePathLoss.setText(Com.text(selection.getdLpath().
                             getPathLoss()));            // already in dB

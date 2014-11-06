@@ -93,7 +93,7 @@ public class Com {
         if (s.length() > 6) {
             Log.p("Com: SwapBlueRed found larger than 6 color " + s, Log.WARNING);
         }
-        return (s.substring(4, 5) + s.substring(2, 3) + s.substring(0, 1));
+        return (s.substring(4, 6) + s.substring(2, 4) + s.substring(0, 2));
     }
 
     public static String removeQuoteEol(String s) {
