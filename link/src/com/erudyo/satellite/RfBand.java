@@ -237,12 +237,15 @@ public class RfBand extends Entity {
             case KU:
                 f = (KU_HI + KU_LO) / 2.0;
                 break;
+            case C:
+                f = (C_HI + C_LO)/ 2.0;
+                break;
             case UK:
                 f = (HI + LO) / 2.0;
                 break;
             default:
                 f = 0;
-                Log.p("RfBand: frequency not in the list", Log.DEBUG);
+                Log.p("RfBand: frequency not in the list for " + band, Log.DEBUG);
         }
         return f;
     }

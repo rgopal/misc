@@ -804,7 +804,7 @@ public class Satellite extends Entity {
 
         } catch (Exception e) {
             Log.p("Satellites: double error in Long,Lat,EIRP, or Gain "
-                    + fields, Log.WARNING);
+                    + fields.toString(), Log.WARNING);
         }
 
         // put the band, number of transponders, EIRP, GT
