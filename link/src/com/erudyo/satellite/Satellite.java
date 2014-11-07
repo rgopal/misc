@@ -716,13 +716,17 @@ public class Satellite extends Entity {
                     satellite.bandSpecificItems.put(band, new BandSpecificItems());
                 }
                 // these are read from txt files and can be calculated and changed
-                // unlike maxEIRP that is from contours
+                // unlike maxEIRP and maxGT that are from contours
                 satellite.bandSpecificItems.get(band).EIRP
                         = (Double.parseDouble(fields[index + 2]));
                 satellite.bandSpecificItems.get(band).gainTemp
                         = (Double.parseDouble(fields[index + 3]));
 
                 initAntAmp(satellite, band, num);
+                // Don't update EIRP and G/T based on antenna size etc. yet
+                // will be done interactively (satellite view)
+               
+                
             }
             // add satellite to this band
             bandSatellite.get(band).add(satellite);

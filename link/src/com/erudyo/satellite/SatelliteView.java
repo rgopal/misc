@@ -35,14 +35,13 @@ import java.util.Vector;
 public class SatelliteView extends View {
 
     public ComboBox spin;
- 
 
     public SatelliteView() {
 
     }
 
     public SatelliteView(Selection selection) {
-  
+
         // don't call update_values since SatelliteView is still being built
     }
 
@@ -79,7 +78,7 @@ public class SatelliteView extends View {
         String name = (String) combo.getSelectedItem();
 
         updateValues(selection);
-        
+
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 // set the selected satellite
@@ -101,13 +100,14 @@ public class SatelliteView extends View {
         return combo;
     }
 
-
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
-        
-        selection.getSatelliteView().setSummary (Com.toDMS(
+
+        selection.getSatelliteView().setName(selection.
+                getSatellite().getName());
+        selection.getSatelliteView().setSummary(Com.toDMS(
                 selection.getSatellite().getLongitude()));
-   
+
         // get maximum EIRP that is calculated or from contours
         double max, calc, contour;
         calc = selection.getSatellite().getEIRP(selection.getBand());
@@ -115,14 +115,14 @@ public class SatelliteView extends View {
                 selection.getBand());
         max = calc > contour ? calc : contour;
 
-        selection.getSatelliteView().setValue (Com.textN(max, 5));
-  
+        selection.getSatelliteView().setValue(Com.textN(max, 5));
+
         // get max G/T for sublabel
         calc = selection.getSatellite().getGainTemp(selection.getBand());
         contour = selection.getSatellite().getMaxGTfromContours(
                 selection.getBand());
         max = calc > contour ? calc : contour;
-    
+
         selection.getSatelliteView().setSubValue(Com.textN(max, 5));
     }
 
@@ -130,19 +130,27 @@ public class SatelliteView extends View {
         return name;
     }
 
-    public void displayContourValues (BandSpecificItems bandBeams,  Form sub,
+    public void displayContourValues(BandSpecificItems bandBeams, Form sub,
             Container cnt, TableLayout layout) {
-        
+
         TableLayout.Constraint constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-      
-        Label lHeading = new Label("Satellite has Contour information");
-        
-        cnt.addComponent(constraint,lHeading);
+
+        Label lHeading;
+
+        if (Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
+            // no contours for GT found
+            lHeading = new Label("G/T for terminal uses EIRP contours");
+
+        } else {
+            lHeading = new Label("G/T contours used for a terminal");
+        }
+        cnt.addComponent(constraint, lHeading);
+
         constraint = layout.createConstraint();
         // constraint.setVerticalSpan(3);
         constraint.setWidthPercentage(45);
-        
+
         Label lGainTemp = new Label("Sat Max G/T");
         final Label valueRxGainTemp = new Label(Com.shortText(
                 bandBeams.maxGT));
@@ -150,14 +158,27 @@ public class SatelliteView extends View {
         cnt.addComponent(lGainTemp);
         cnt.addComponent(valueRxGainTemp);
         cnt.addComponent(unitGainTemp);
-        
+
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        if (Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)) {
+            // no contours for GT found
+            lHeading = new Label("EIRP for terminal uses G/T contours");
+
+        } else {
+            lHeading = new Label("EIRP contours used for a terminal");
+        }
+        cnt.addComponent(constraint, lHeading);
+
         Label lEIRP = new Label("Satellite Max Tx EIRP");
         final Label valueTxEIRP = new Label(Com.shortText(bandBeams.maxEIRP));
         Label unitEIRP = new Label("dBW");
         cnt.addComponent(lEIRP);
         cnt.addComponent(valueTxEIRP);
         cnt.addComponent(unitEIRP);
+
     }
+
     public Form createView(final Selection selection) {
 
         final Satellite satellite = selection.getuLpath().getSatellite();
@@ -178,20 +199,20 @@ public class SatelliteView extends View {
         constraint.setWidthPercentage(45);
 
         // now go sequentially through Satellite Receive Side
-        Label L01 = new Label("Central Frequency");
-        Label lFrequency = new Label(Com.shortText(bandBeams.rXantenna.getFrequency() / 1E9));
+        Label L01 = new Label("Rx Central Frequency");
+        Label lFrequency = new Label(Com.shortText(
+                bandBeams.rXantenna.getFrequency() / 1E9));
         Label L03 = new Label("GHz " + bandBeams.rXantenna.getBand());
         cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
         // check if contours are present (then no calculations needed)
-        if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE) ||
-                !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE))
-                 {
+        if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)
+                || !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
             displayContourValues(bandBeams, sub, cnt, layout);
             return sub;
-        } 
+        }
         // now the Rx side of the satellite
         Label lNoiseFigureLabel = new Label("Rx Noise Figure");
         final Label lNoiseFigure = new Label(Com.shortText(bandBeams.rXamplifier.
@@ -232,7 +253,6 @@ public class SatelliteView extends View {
         sldrRxDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
         sldrRxDiameter.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
         sldrRxDiameter.setEditable(true);
-        //L22.setPreferredW(8);
         sldrRxDiameter.setIncrements(5); //
         sldrRxDiameter.setProgress((int) MathUtil.round(bandBeams.rXantenna.getDiameter() * 10));
 
@@ -249,6 +269,7 @@ public class SatelliteView extends View {
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrRxDiameter);
+
         Label L31 = new Label(" Gain");
         final Label lRxGain = new Label(Com.shortText(
                 bandBeams.rXantenna.getGain()));
@@ -301,26 +322,30 @@ public class SatelliteView extends View {
         cnt.addComponent(lsysTemp);
         cnt.addComponent(valueRxsysTemp);
         cnt.addComponent(unitsysTemp);
-
         sub.setScrollable(true);
 
         // all actions at the end to update other fields
         sldrRxNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("SatelliteView: selected noise figure " + sldrRxNoiseFigure.getText(), Log.DEBUG);
+                Log.p("SatelliteView: selected noise figure "
+                        + sldrRxNoiseFigure.getText(), Log.DEBUG);
                 try {
                     bandBeams.rXamplifier.
-                            setNoiseFigure(Double.parseDouble(sldrRxNoiseFigure.getText()) / 10.0);
+                            setNoiseFigure(Double.parseDouble(
+                                            sldrRxNoiseFigure.getText()) / 10.0);
                     // update EIRP
                     lNoiseFigure.setText(Com.shortText(bandBeams.rXamplifier.
-                            getNoiseFigure()) + "dB");
+                            getNoiseFigure()));
                     valueRxsysTemp.setText(Com.text(
                             satellite.calcSystemNoiseTemp(band)));
                     valueRxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+                    // update satellite specific name, summary, value, subValue
+                    // Here only the gain (which is subValue) changes
+                    selection.getSatelliteView().updateValues(selection);
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for Noise Figure "
+                    Log.p("SatelliteView: bad number for Rx Noise Figure "
                             + sldrRxNoiseFigure.getText(), Log.DEBUG);
                 }
             }
@@ -328,12 +353,14 @@ public class SatelliteView extends View {
 
         sldrRxDiameter.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("SatelliteView: selected diameter " + sldrRxDiameter.getText(), Log.DEBUG);
+                Log.p("SatelliteView: selected diameter "
+                        + sldrRxDiameter.getText(), Log.DEBUG);
                 try {
 
                     // convert from cm to m first
                     bandBeams.rXantenna.
-                            setDiameter(Double.parseDouble(sldrRxDiameter.getText()) / 10.0);
+                            setDiameter(Double.parseDouble(
+                                            sldrRxDiameter.getText()) / 10.0);
                     // update EIRP and three DB
                     lRxDiameter.setText(Com.shortText(bandBeams.rXantenna.getDiameter()));
                     lRxThreeDBangle.setText(Com.toDMS(bandBeams.rXantenna.getThreeDBangle()));
@@ -345,8 +372,9 @@ public class SatelliteView extends View {
                     // should not change
                     valueRxsysTemp.setText(Com.text(
                             satellite.calcSystemNoiseTemp(band)));
+                    selection.getSatelliteView().updateValues(selection);
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for diameter " + sldrRxDiameter.getText(), Log.DEBUG);
+                    Log.p("SatelliteView: bad number for Rx diameter " + sldrRxDiameter.getText(), Log.DEBUG);
 
                 }
 
@@ -354,7 +382,7 @@ public class SatelliteView extends View {
         });
 
         // now the Tx side of satellite
-        Label L11 = new Label("Amplifier Power");
+        Label L11 = new Label("Tx Amp Power");
         Label L13 = new Label("W");
 
         final Slider sldrTxPower = new Slider();
@@ -363,7 +391,8 @@ public class SatelliteView extends View {
         sldrTxPower.setEditable(true);
         // sldrTxPower.setPreferredW(8);
         sldrTxPower.setIncrements(5); //
-        sldrTxPower.setProgress((int) MathUtil.round(bandBeams.tXamplifier.getPower() * 10));
+        sldrTxPower.setProgress((int) MathUtil.round(
+                bandBeams.tXamplifier.getPower() * 10));
         sldrTxPower.setRenderValueOnTop(true);
         sldrTxPower.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
@@ -390,10 +419,12 @@ public class SatelliteView extends View {
         sldrTxDiameter.setEditable(true);
 
         sldrTxDiameter.setIncrements(5); //
-        sldrTxDiameter.setProgress((int) MathUtil.round(bandBeams.tXantenna.getDiameter() * 10));
+        sldrTxDiameter.setProgress((int) MathUtil.round(
+                bandBeams.tXantenna.getDiameter() * 10));
 
         sldrTxDiameter.setRenderValueOnTop(true);
-        final Label lTxDiameter = new Label(Com.shortText(bandBeams.tXantenna.getDiameter()) + "m");
+        final Label lTxDiameter = new Label(Com.shortText(
+                bandBeams.tXantenna.getDiameter()));
         cnt.addComponent(L21);
         cnt.addComponent(lTxDiameter);
         cnt.addComponent(lTxDiaUnit);
@@ -445,10 +476,11 @@ public class SatelliteView extends View {
                     lTxAmplifier.setText(Com.shortText(bandBeams.tXamplifier.
                             getPower()));
                     valueTxEIRP.setText(Com.shortText(bandBeams.EIRP));
+                    selection.getSatelliteView().updateValues(selection);
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for power " + sldrTxPower.getText(), Log.DEBUG);
+                    Log.p("SatelliteView: bad number for Tx power " + sldrTxPower.getText(), Log.DEBUG);
                 }
             }
         });
@@ -463,13 +495,15 @@ public class SatelliteView extends View {
                             setDiameter(Double.parseDouble(sldrTxDiameter.getText()) / 10.0);
                     // update EIRP and three DB
                     sldrTxDiameter.setText(Com.shortText(bandBeams.tXantenna.getDiameter()));
+                     lTxDiameter.setText(Com.shortText(bandBeams.tXantenna.getDiameter()));
                     lTx3dB.setText(Com.toDMS(bandBeams.tXantenna.getThreeDBangle()));
                     lTxGain.setText(Com.shortText(bandBeams.tXantenna.getGain()));
                     valueTxPointLoss.setText(Com.shortText(
                             bandBeams.tXantenna.getDepointingLoss()));
                     valueTxEIRP.setText(Com.shortText(bandBeams.EIRP));
+                    selection.getSatelliteView().updateValues(selection);
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for diameter "
+                    Log.p("SatelliteView: bad number for Tx diameter "
                             + sldrTxDiameter.getText(), Log.DEBUG);
 
                 }
