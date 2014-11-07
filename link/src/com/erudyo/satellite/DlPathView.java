@@ -63,16 +63,17 @@ public class DlPathView extends View {
         if (selection.getdLpath() != null) {
             selection.getdLpathView().setName("DL e");  // short
 
-            selection.getdLpathView().setSummary("" + Com.toDMS(
+            selection.getdLpathView().setValue("" + Com.toDMS(
                     selection.getdLpath().getElevation()).substring(0, 6));
 
-            selection.getdLpathView().setValue(Com.textN(selection.getdLpath().
+            selection.getdLpathView().setSummary(Com.textN(selection.getdLpath().
                     getCNo(), 5) + "dBHz");
 
             selection.getdLpathView().setSubValue(Com.textN(selection.getdLpath().
                     getSpectralDensity(), 5) + "dBHz");
         }
 
+        selection.getCommsView().updateValues(selection);
     }
 
     public Form createView(final Selection selection) {
@@ -108,9 +109,8 @@ public class DlPathView extends View {
         final Label L62 = new Label(
                 Com.shortText(selection.getSatellite().bandSpecificItems.
                         get(selection.getBand()).EIRP));
-        
-        // TODO check EIRP for satellite terminal
 
+        // TODO check EIRP for satellite terminal
         Label L63 = new Label("dbW");
 
         cnt.addComponent(L61);

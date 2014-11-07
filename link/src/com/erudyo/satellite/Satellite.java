@@ -1170,7 +1170,8 @@ public class Satellite extends Entity {
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-        if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
+        if (this.bandSpecificItems != null &&
+                this.bandSpecificItems.get(terminal.getBand()).beams != null) {
             return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
         } else {
             return bandSpecificItems.get(terminal.getBand()).gainTemp;

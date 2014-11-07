@@ -90,6 +90,9 @@ public class TxView extends View {
                     selection.gettXterminal().gettXamplifier().getPower(), 5) + "W");
         // update other view summaries in Link TODO Comms
             selection.getuLpathView().updateValues(selection);
+              
+         
+            selection.getCommsView().updateValues(selection);
         }
 
     }

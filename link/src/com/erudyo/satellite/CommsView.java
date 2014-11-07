@@ -30,7 +30,6 @@ import java.util.Hashtable;
 
 public class CommsView extends View {
 
-    public Label label;
     public Slider slider;
 
     private Hashtable<String, Integer> modulationHash
@@ -167,9 +166,6 @@ public class CommsView extends View {
     // for other fields such as modulation, coding, etc.
     public Component getWidget(final Selection selection) {
 
-        // basic selection is data rate (will be returned later)
-        label = new Label();
-
         final Slider sldrDataRate = new Slider();
         sldrDataRate.setMinValue((int) MathUtil.round(Comms.DATA_RATE_LO * 10 / 1E6)); // x10
         sldrDataRate.setMaxValue((int) MathUtil.round(Comms.DATA_RATE_HI * 10 / 1E6));
@@ -181,11 +177,11 @@ public class CommsView extends View {
                 selection.getComms().getDataRate() * 10 / 1E6)));
         sldrDataRate.setProgress((int) MathUtil.round(
                 selection.getComms().getDataRate() * 10 / 1E6));
-        label.setText(String.valueOf(Double.parseDouble(sldrDataRate.getText()) * 1E6 / 10.0)
-                + "Mbps");
+       
         sldrDataRate.setRenderValueOnTop(true);
 
         selection.getCommsView().slider = sldrDataRate;
+        updateValues(selection);
 
         // all actions at the end to update other fields
         sldrDataRate.addDataChangedListener(new DataChangedListener() {
@@ -195,8 +191,8 @@ public class CommsView extends View {
                     selection.getComms().
                             setDataRate(Double.parseDouble(sldrDataRate.getText()) * 1E6 / 10.0);
                     // update EIRP
-                    label.setText(String.valueOf(Double.parseDouble(sldrDataRate.getText()) / 10.0)
-                            + "Mbps");
+
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     System.out.println("TxView: bad number " + sldrDataRate.getText());
@@ -208,21 +204,21 @@ public class CommsView extends View {
         return sldrDataRate;
     }
 
-    public Component getLabel(final Selection selection) {
-        try {
+    public void updateValues(Selection selection) {
 
-            label.setText(
-                    Com.shortText(Double.parseDouble(
-                                    selection.getCommsView().slider.getText()) / 10) + "Mbps");
-        } catch (java.lang.NumberFormatException e) {
-            System.out.println("TxView: bad number " + label.getText());
+        if (selection.getComms() != null) {
+            selection.getCommsView().setName("CM");  // short
+
+            selection.getCommsView().setSummary("CNo " + Com.textN(
+                    selection.getComms().getCNo(),5) + "");
+
+            selection.getCommsView().setValue("ENo " + Com.textN(selection.getComms().
+                    geteBno(), 5) + "");
+
+            selection.getCommsView().setSubValue("Ber " + Com.textN(selection.getComms().
+                    getBEP(), 5));
         }
 
-        // set the tx view present in the selection
-        selection.getCommsView().label = label;
-
-        // combo box created so return it
-        return label;
     }
 
     public String getDisplayName() {
@@ -374,6 +370,7 @@ public class CommsView extends View {
                             Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
                     // update bit error probability
                     lBEP02.setText(Com.text(selection.getComms().getBEP()));
+                    updateValues(selection);
                 }
             });
             cntMod.addComponent(bModulation);
@@ -420,7 +417,7 @@ public class CommsView extends View {
                         bgCode.setSelected((int) codeHash.get(
                                 Comms.Code.NONE.toString()));
                     }
-
+                    updateValues(selection);
                 }
             });
             //add to container
@@ -467,6 +464,7 @@ public class CommsView extends View {
                                 Comms.CodeRate.FEC_1_1.toString()));
 
                     }
+                    updateValues(selection);
                 }
 
             });
@@ -499,6 +497,7 @@ public class CommsView extends View {
                     selection.getComms().setbER(
                             Comms.indexBER.toArray(new Comms.BER[0])[bgBER.
                             getSelectedIndex()]);
+                      updateValues(selection);
 
                 }
 
@@ -537,6 +536,7 @@ public class CommsView extends View {
                     sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
                             * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
+                      updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("CommsView: bad number for Data Rate " + sldrDataRate.getText());
@@ -556,6 +556,7 @@ public class CommsView extends View {
                     lBW02.setText(Com.text(selection.getComms().getBW() / 1E6));
                     // BW does not change data rate 
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
+                      updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("CommsView: bad number for BW " + sldrBW.getText(), Log.DEBUG);

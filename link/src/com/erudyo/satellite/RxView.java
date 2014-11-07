@@ -121,9 +121,9 @@ public class RxView extends View {
             selection.getRxView().setSubValue(Com.textN(
                     selection.getrXterminal().getrXamplifier().getNoiseFigure(), 5) + "dB");
         // update other view summaries in Link TODO
-
-            selection.getdLpathView().updateValues(selection);
         }
+            selection.getdLpathView().updateValues(selection);
+            selection.getCommsView().updateValues(selection);
 
     }
 

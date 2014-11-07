@@ -404,7 +404,10 @@ public class Link {
                         + " GHz");
                 Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
 
-                // update combos and labels
+                // update terminal bands first since Satellite uses that
+                
+                 selection.getrXterminal().setBand(selection.getBand());
+                  selection.gettXterminal().setBand(selection.getBand());
                 comboSatellite(selection, cbBand);
 
                 // it will select Tx terminal

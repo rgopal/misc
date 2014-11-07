@@ -78,15 +78,17 @@ public class UlPathView extends View {
         if (selection.getuLpath() != null) {
         selection.getuLpathView().setName("UL e");  // short
 
-        selection.getuLpathView().setSummary("" + Com.toDMS(
+        selection.getuLpathView().setValue("" + Com.toDMS(
                 selection.getuLpath().getElevation()).substring(0,6));
 
-        selection.getuLpathView().setValue(Com.textN(selection.getuLpath().
+        selection.getuLpathView().setSummary(Com.textN(selection.getuLpath().
                 getCNo(), 5) + "dBHz");
 
         selection.getuLpathView().setSubValue(Com.textN(selection.getuLpath().
                 getSpectralDensity(), 5) + "dBHz");
         }
+          
+            selection.getCommsView().updateValues(selection);
 
     }
 

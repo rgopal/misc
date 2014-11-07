@@ -140,6 +140,7 @@ public class SatelliteView extends View {
             selection.getTxView().updateValues(selection);
             selection.getuLpathView().updateValues(selection);
             selection.getRxView().updateValues(selection);
+            selection.getCommsView().updateValues(selection);
       
 
     }
