@@ -176,9 +176,9 @@ public class Link {
         cnt.setLayout(layout);
 
         // satellites are read from the txt file (and selected with band)
-        initViews(selection.getSatelliteView(), cnt, selection, layout, 3);
+        initViews(selection.getSatelliteView(), cnt, selection, layout, 4);
 
-        initViews(selection.getTxView(), cnt, selection, layout, 3);
+        initViews(selection.getTxView(), cnt, selection, layout, 4);
         // now uplink, downlink paths and Comms can be created
 
         selection.setuLpath(new Path(selection.getSatellite(),
@@ -187,7 +187,7 @@ public class Link {
 
         initViews(selection.getuLpathView(), cnt, selection, layout, 1);
 
-        initViews(selection.getRxView(), cnt, selection, layout, 3);
+        initViews(selection.getRxView(), cnt, selection, layout, 4);
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
 
@@ -246,11 +246,18 @@ public class Link {
 
             Button bSelectView = new Button("->"); //view.getName());
 
+            TableLayout.Constraint constraint;
             // if span is more than 1 then only widget and command are displayed
             if (span > 1) {
-
-                TableLayout.Constraint constraint = layout.createConstraint();
-                constraint.setHorizontalSpan(4);
+                constraint = layout.createConstraint();
+                constraint.setWidthPercentage(10);
+                Label name = new Label(view.getName());
+                
+                cntLink.addComponent(constraint, name);
+                
+                constraint = layout.createConstraint();
+                constraint.setHorizontalSpan(3);
+                
                 cntLink.addComponent(constraint, widget);
 
                 // add others in a new line
@@ -270,23 +277,22 @@ public class Link {
                 bSelectView.setIcon(cmdIcon);
 
             } else {
-                TableLayout.Constraint constraint = layout.createConstraint();
+                constraint = layout.createConstraint();
 
                 constraint.setWidthPercentage(30);
-                cntLink.addComponent(constraint, widget);
+                // cntLink.addComponent(constraint, widget);
 
-                constraint = layout.createConstraint(); // 30% of width
-                constraint.setWidthPercentage(25);
                 cntLink.addComponent(constraint, subWidget);
 
                 constraint = layout.createConstraint(); // 30% of width
-                constraint.setWidthPercentage(25);
+                constraint.setWidthPercentage(30);
                 cntLink.addComponent(constraint, label);
                 cntLink.addComponent(subLabel);
+                constraint = layout.createConstraint(); // 30% of width
+                constraint.setWidthPercentage(30);
                 cntLink.addComponent(bSelectView);
                 bSelectView.setIcon(cmdIcon);
             }
-            // cntLink.addComponent(u);  NO Sublabel
 
             bSelectView.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -449,9 +455,10 @@ public class Link {
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
 
-            // update values for satellite
+            // update values for satellite, UL path, DL path, Comms TODO
             selection.getSatelliteView().updateValues(selection);
-           
+            selection.getuLpathView().updateValues(selection);
+
         }
 
     }
@@ -549,6 +556,7 @@ public class Link {
                 selection.gettXterminal().setBand(selection.getBand());
 
                 selection.getTxView().updateValues(selection);
+                selection.getuLpathView().updateValues(selection);
             }
         }
 

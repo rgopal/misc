@@ -1,15 +1,14 @@
 /*
  * OVERVIEW
- * Manages an instance representing path between semiMajor satellite and semiMajor terminal, 
+ * Manages an instance representing path between satellite and terminal, 
  * including the distance, azimuth, and elevation angles (all stored in Radians).
  * Affected by satellite and terminal.  Includes attenuation (atmospheric, and 
  * rain).
- * Includes sky and grouond temperatures for calculating G/T values.
- * Currently does not affect anything else.  Antenna noise temperature can
+ * Includes sky and ground temperatures for calculating G/T values.
+ * Antenna noise temperature can
  * be calculated only here (and not in terminal) since the terminal needs to
  * be involved in a path.  Unlike EIRP which was in terminal.
- * TODO:  check if it will affect the final Data Rate or Link Marging 
- * (may be in selection)
+ * TODO
  * Expand attenuation as a function of frequency (now use _DL and _UL)
  * THis class may be superfluous!   See RxView and TxView for duplication
  */
@@ -28,14 +27,14 @@ import java.lang.Math;
 public class Path extends Entity {
 
     private Satellite satellite;
-    private RfBand.Band band;
+    // NOT USED private RfBand.Band band;
     private Terminal terminal;
     private double pathLoss = 200.0;        // in dB
     private double attenuation = 0.3;         // in dB (varies on frequency)
     private double azimuth;
     private double elevation;
-    private double CNo;
-    private double spectralDensity;
+    private double CNo = Satellite.NEGLIGIBLE;
+    private double spectralDensity = Satellite.NEGLIGIBLE;
 
     /**
      * @return the CNo
@@ -45,7 +44,7 @@ public class Path extends Entity {
     }
 
     /**
-     * @param CNo the CNo to set
+     * @param CNo the CNo to set. TODO in constraint based optimization
      */
     public void setCNo(double CNo) {
         this.CNo = CNo;
@@ -86,7 +85,7 @@ public class Path extends Entity {
     private PATH_TYPE pathType = PATH_TYPE.UPLINK;
     private double distance;     //distance of satellite from terminal
 
-    private double rainAttenuation = 7.0;  // for .01
+    private double rainAttenuation = 7.0;  // TODO
 
     public Path() {
 
@@ -95,10 +94,11 @@ public class Path extends Entity {
     public Path(Satellite s, Terminal t, PATH_TYPE pathType) {
         this.satellite = s;
         this.terminal = t;
-        if (pathType == PATH_TYPE.DOWNLINK)
-        this.name = pathType + ":" + s.getName() + "-" + t.getName();
-        else
+        if (pathType == PATH_TYPE.DOWNLINK) {
+            this.name = pathType + ":" + s.getName() + "-" + t.getName();
+        } else {
             this.name = pathType + ":" + t.getName() + "-" + s.getName();
+        }
         // include this Path in the Affected list of satellite and terminal
         s.addAffected(this);
         t.addAffected(this);
@@ -120,7 +120,12 @@ public class Path extends Entity {
         // check if the satellite is new
         if (s != this.satellite) {
             this.satellite.removeAffected(this);
-            this.name = pathType + ":" + s.getName() + "-" + terminal.getName();
+            if (pathType == PATH_TYPE.DOWNLINK) {
+                this.name = pathType + ":" + s.getName() + "-" + terminal.getName();
+            } else {
+                this.name = pathType + ":" + terminal.getName() + "-"
+                        + s.getName();
+            }
             s.addAffected(this);
             this.satellite = s;
 
@@ -148,7 +153,11 @@ public class Path extends Entity {
     public void setTerminal(Terminal t) {
         if (this.terminal != t) {
             this.terminal.removeAffected(this);
-            this.name = pathType + ":" + satellite.getName() + "-" + t.getName();
+            if (pathType == PATH_TYPE.DOWNLINK) {
+                this.name = pathType + ":" + satellite.getName() + "-" + t.getName();
+            } else {
+                this.name = pathType + "-" + t.getName() + satellite.getName();
+            }
             t.addAffected(this);
             this.terminal = t;
             Log.p("Path: path " + this
@@ -253,19 +262,6 @@ public class Path extends Entity {
         this.elevation = elevation;
     }
 
-    /**
-     * @return the band. Would affect rain attenuation
-     */
-    public RfBand.Band getBand() {
-        return band;
-    }
-
-    /**
-     * @param band the band to set
-     */
-    public void setBand(RfBand.Band band) {
-        this.band = band;
-    }
 
     /**
      * @return the pathLoss
@@ -343,15 +339,16 @@ public class Path extends Entity {
         // get center frequency of band used by terminal.  Note the _UL
         // and _DL at this time
         double frequency;
-        if (pathType == PATH_TYPE.UPLINK)
+        if (pathType == PATH_TYPE.UPLINK) {
             frequency = terminal.gettXantenna().getFrequency();
-        else
+        } else {
             frequency = terminal.getrXantenna().getFrequency();
-        
-        this.pathLoss = calcPathLoss(this.distance,frequency);
+        }
+
+        this.pathLoss = calcPathLoss(this.distance, frequency);
         this.CNo = calcCNo();
         this.spectralDensity = calcSpecDens();
-        
+
         updateAffected();   // update Comms
     }
 
@@ -359,8 +356,8 @@ public class Path extends Entity {
 
         double p;
         if (Com.sameValue(frequency, 0.0)) {
-            Log.p("Path: frequency is zero in calcPathLoss", Log.ERROR);
-            return (200);
+            Log.p("Path: frequency is zero in calcPathLoss. Using 200.0", Log.ERROR);
+            return (200.0);
         } else {
             p = 10.0 * MathUtil.log10(
                     MathUtil.pow(4.0 * Com.PI * distance
@@ -404,7 +401,7 @@ public class Path extends Entity {
 
     public static double calcBigPhi(Satellite satellite, Terminal terminal) {
         if (satellite == null || terminal == null) {
-            Log.p("Path: satellite or terminal is null " + satellite + terminal,
+            Log.p("Path: satellite or terminal is null " + satellite + " "+ terminal,
                     Log.WARNING);
         }
         double Phi;
@@ -442,7 +439,8 @@ public class Path extends Entity {
         if (Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI / 2.0);
         }
-        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / (Com.RE + satellite.getAltitude())))
+        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / 
+                (Com.RE + satellite.getAltitude())))
                 / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
         return elev;
 

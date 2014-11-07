@@ -61,9 +61,9 @@ public class Selection {
     // first hash has band as key and the second satellite name
     private Hashtable<RfBand.Band, Hashtable<String, Integer>> bandSatelliteHash
             = new Hashtable<RfBand.Band, Hashtable<String, Integer>>();
+    
     private Hashtable<VISIBLE, ArrayList<String>> visibleTerminal
             = new Hashtable<VISIBLE, ArrayList<String>>();
-
     // first hash has band as key and the second terminal name
     private Hashtable<VISIBLE, Hashtable<String, Integer>> visibleTerminalHash
             = new Hashtable<VISIBLE, Hashtable<String, Integer>>();
@@ -174,6 +174,7 @@ public class Selection {
         // after init
         if (getuLpath() != null) {
             getuLpath().setTerminal(gettXterminal());
+            // uLpath will update other objects
         }
 
     }
@@ -259,14 +260,14 @@ public class Selection {
 
     // selection of satellites relevant for this instance of Selection
     // In future, it could be a filtered version (based on location, e.g.)
-    public void setBandSatellite(Hashtable<RfBand.Band, ArrayList<Satellite>> s) {
+    public void setBandSatellite(Hashtable<RfBand.Band, ArrayList<Satellite>> sats) {
 
         // go over all bands
         for (RfBand band : RfBand.indexRfBand) {
             int index = 0;
             // go through all satellites of this band
-            if (s.get(band.getBand()) != null) {
-                for (Satellite sat : s.get(band.getBand())) {
+            if (sats.get(band.getBand()) != null) {
+                for (Satellite sat : sats.get(band.getBand())) {
 
                     // check if the array exists
                     if (bandSatellite.get(band.getBand()) == null) {
@@ -340,7 +341,7 @@ public class Selection {
                 // add the name of the terminal in the array list
                 visibleTerminal.get(VISIBLE.YES).add(term.getName());
 
-                // check if Hashtable entry for the band exists
+                // check if Hashtable entry exists
                 if (visibleTerminalHash.get(VISIBLE.YES) == null) {
                     visibleTerminalHash.put(VISIBLE.YES,
                             new Hashtable<String, Integer>());
@@ -363,7 +364,7 @@ public class Selection {
                 // add the name of the terminal in the array list
                 visibleTerminal.get(VISIBLE.NO).add(term.getName());
 
-                // check if Hashtable entry for the band exists
+                // check if Hashtable entry exists
                 if (visibleTerminalHash.get(VISIBLE.NO) == null) {
                     visibleTerminalHash.put(VISIBLE.NO,
                             new Hashtable<String, Integer>());
@@ -389,9 +390,10 @@ public class Selection {
                         Log.p("Selection: satellite is null in initVisible YES so alpha sort ", Log.WARNING);
                         return one.compareTo(two);
                     } else {
-
-                        return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
-                                - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                        return (int) Math.round(Path.calcDistance(satellite, 
+                                Terminal.terminalHash.get(one))
+                                - Path.calcDistance(satellite, 
+                                        Terminal.terminalHash.get(two)));
                     }
 
                 }
@@ -409,8 +411,10 @@ public class Selection {
                     return one.compareTo(two);
                 } else {
 
-                    return (int) Math.round(Path.calcDistance(satellite, Terminal.terminalHash.get(one))
-                            - Path.calcDistance(satellite, Terminal.terminalHash.get(two)));
+                    return (int) Math.round(Path.calcDistance(satellite, 
+                            Terminal.terminalHash.get(one))
+                            - Path.calcDistance(satellite, 
+                                    Terminal.terminalHash.get(two)));
                 }
 
             }

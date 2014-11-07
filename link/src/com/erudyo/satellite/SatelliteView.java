@@ -103,8 +103,8 @@ public class SatelliteView extends View {
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
 
-        selection.getSatelliteView().setName(selection.
-                getSatellite().getName());
+        selection.getSatelliteView().setName("ST");
+        
         selection.getSatelliteView().setSummary(Com.toDMS(
                 selection.getSatellite().getLongitude()));
 
@@ -113,27 +113,36 @@ public class SatelliteView extends View {
         calc = selection.getSatellite().getEIRP(selection.getBand());
         contour = selection.getSatellite().getMaxEIRPfromContours(
                 selection.getBand());
-        
-        if (Com.sameValue(contour, Satellite.NEGLIGIBLE))
-            display = calc;
-        else
-            display = contour;
-        
 
-        selection.getSatelliteView().setValue(Com.textN(display, 5));
+        if (Com.sameValue(contour, Satellite.NEGLIGIBLE)) {
+            display = calc;
+        } else {
+            display = contour;
+        }
+
+        selection.getSatelliteView().setValue(Com.textN(display, 5) + "dbW");
 
         // get max G/T for sublabel
         calc = selection.getSatellite().getGainTemp(selection.getBand());
         contour = selection.getSatellite().getMaxGTfromContours(
                 selection.getBand());
-        
-         if (Com.sameValue(contour, Satellite.NEGLIGIBLE))
-            display = calc;
-        else
-            display = contour;
-       
 
-        selection.getSatelliteView().setSubValue(Com.textN(display, 5));
+        if (Com.sameValue(contour, Satellite.NEGLIGIBLE)) {
+            display = calc;
+        } else {
+            display = contour;
+        }
+
+        selection.getSatelliteView().setSubValue(Com.textN(display, 5) + "dB/K");
+
+        // update other view summaries in Link form
+     
+            selection.getTxView().updateValues(selection);
+        
+       
+            selection.getuLpathView().updateValues(selection);
+      
+
     }
 
     public String getDisplayName() {
@@ -505,7 +514,7 @@ public class SatelliteView extends View {
                             setDiameter(Double.parseDouble(sldrTxDiameter.getText()) / 10.0);
                     // update EIRP and three DB
                     sldrTxDiameter.setText(Com.shortText(bandBeams.tXantenna.getDiameter()));
-                     lTxDiameter.setText(Com.shortText(bandBeams.tXantenna.getDiameter()));
+                    lTxDiameter.setText(Com.shortText(bandBeams.tXantenna.getDiameter()));
                     lTx3dB.setText(Com.toDMS(bandBeams.tXantenna.getThreeDBangle()));
                     lTxGain.setText(Com.shortText(bandBeams.tXantenna.getGain()));
                     valueTxPointLoss.setText(Com.shortText(

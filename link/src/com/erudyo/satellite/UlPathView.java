@@ -36,9 +36,6 @@ import com.codename1.util.MathUtil;
 
 public class UlPathView extends View {
 
-    public Label label;
-    public Label subLabel;
-
     public UlPathView() {
 
     }
@@ -68,54 +65,29 @@ public class UlPathView extends View {
             return lName;
         }
 
-   
 
-        // terminal name and location
-        lName.setText("Lng " + // selection.gettXterminal().getName() +
-                Com.toDMS(selection.gettXterminal().getLongitude()) + " "
-        );
-
-        // don't use this, have to find through selection 
-        selection.getuLpathView().label = lName;
+        updateValues(selection);
+        // actually lName is not used (since it is not a combo)
         return lName;
     }
 
-    // this is simple so return terminal's name and location
-    public Component getSubWidget(final Selection selection) {
-        Label lName = new Label(getName());
+    // update from the current selection of the terminal
 
-        // indexSatellite has all satellites, so get the band specific list
-        if (selection.gettXterminal() == null) {
-            Log.p("UlPathView: Can't find Tx terminal for band ", Log.DEBUG);
-            return lName;
+    public void updateValues(Selection selection) {
+
+        if (selection.getuLpath() != null) {
+        selection.getuLpathView().setName("UL");  // short
+
+        selection.getuLpathView().setSummary("" + Com.toDMS(
+                selection.getuLpath().getElevation()).substring(0,6));
+
+        selection.getuLpathView().setValue(Com.textN(selection.getuLpath().
+                getCNo(), 5) + "dBHz");
+
+        selection.getuLpathView().setSubValue(Com.textN(selection.getuLpath().
+                getSpectralDensity(), 5) + "dBHz");
         }
 
-        // terminal name and latitude
-        lName.setText(// "Lat " +   // selection.gettXterminal().getName() +
-
-                Com.toDMS(selection.gettXterminal().getLatitude()));
-
-        // don't use this, have to find through selection 
-        selection.getuLpathView().subLabel = lName;
-        return lName;
-    }
-
-    // return satellite longitude and gain
-    public Component getLabel(final Selection selection) {
-        Label lNameGain = new Label(getValue());
-
-        // indexSatellite has all satellites, so get the band specific list
-        if (selection.getSatellite() == null) {
-            Log.p("UlPathView: Can't find satellite ", Log.DEBUG);
-            return lNameGain;
-        }
-
-        // satellite name and location
-        lNameGain.setText( // selection.getSatellite().getName()
-                Com.toDMS(selection.getSatellite().getLongitude()));
-
-        // + Com.toDMS(selection.getSatellite().getGainTemp()) + " x");
-        return lNameGain;
     }
 
     public Form createView(final Selection selection) {
@@ -145,9 +117,9 @@ public class UlPathView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Sat"  
+        Label L61 = new Label("Sat"
                 + "@" + Com.shortText(selection.getuLpath().
-                getSatellite().getLongitude()*180.0/Com.PI) + Com.DEGREE + " EIRP");
+                        getSatellite().getLongitude() * 180.0 / Com.PI) + Com.DEGREE + " EIRP");
         final Label L62 = new Label(
                 Com.shortText(selection.gettXterminal().getEIRP()));
         Label L63 = new Label("dbW");
@@ -231,7 +203,7 @@ public class UlPathView extends View {
 
         Label lDistance = new Label("    Distance - Sat");
         final Label valueDistance = new Label(Com.textN(selection.
-                getuLpath().getDistance() / 1E3,6));
+                getuLpath().getDistance() / 1E3, 6));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
@@ -260,7 +232,7 @@ public class UlPathView extends View {
         Label lGainTemp = new Label("Satellite G/T");
         final Label valueGainTemp = new Label(Com.shortText(
                 selection.getuLpath().getSatellite().bandSpecificItems.
-                        get(selection.getBand()).gainTemp));
+                get(selection.getBand()).gainTemp));
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);
         cnt.addComponent(valueGainTemp);
@@ -303,7 +275,7 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getuLpath().
-                            getDistance() / 1E3,6));
+                            getDistance() / 1E3, 6));
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));
@@ -343,7 +315,7 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getuLpath().
-                            getDistance() / 1E3,6));      // convert to km
+                            getDistance() / 1E3, 6));      // convert to km
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));            // already in dB

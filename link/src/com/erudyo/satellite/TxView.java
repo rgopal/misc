@@ -76,17 +76,23 @@ public class TxView extends View {
     // update from the current selection of the terminal
     public void updateValues(Selection selection) {
 
-        selection.getTxView().setName(selection.
-                gettXterminal().getName());
+        // may not exist at initialization time
+        if (selection.gettXterminal() != null) {
+            selection.getTxView().setName("Tx");
 
-        selection.getTxView().setSummary(Com.textN(
-                selection.gettXterminal().getEIRP(), 5));
+            selection.getTxView().setSummary(Com.textN(
+                    selection.gettXterminal().getEIRP(), 5) + "dBW");
 
-        selection.getTxView().setValue(Com.textN(selection.gettXterminal().
-                gettXantenna().getDiameter(), 5));
+            selection.getTxView().setValue(Com.textN(selection.gettXterminal().
+                    gettXantenna().getDiameter(), 5) + "m");
 
-        selection.getTxView().setSubValue(Com.textN(
-                selection.gettXterminal().gettXamplifier().getPower(), 5));
+            selection.getTxView().setSubValue(Com.textN(
+                    selection.gettXterminal().gettXamplifier().getPower(), 5) + "W");
+        // update other view summaries in Link TODO
+
+            selection.getuLpathView().updateValues(selection);
+        }
+
     }
 
     public Component getWidget(final Selection selection) {
