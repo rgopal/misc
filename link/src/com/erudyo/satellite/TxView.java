@@ -88,8 +88,7 @@ public class TxView extends View {
 
             selection.getTxView().setSubValue(Com.textN(
                     selection.gettXterminal().gettXamplifier().getPower(), 5) + "W");
-        // update other view summaries in Link TODO
-
+        // update other view summaries in Link TODO Comms
             selection.getuLpathView().updateValues(selection);
         }
 

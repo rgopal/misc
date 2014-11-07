@@ -32,7 +32,7 @@ public class RxView extends View {
 
     private Terminal terminal;
     public ComboBox spin;
-    public Label label;
+   
 
     public RxView() {
 
@@ -92,12 +92,7 @@ public class RxView extends View {
                         setFrequency(RfBand.centerFrequency(
                                         RfBand.findDl(selection.getBand())));
 
-                // update other values dependent on this satellite
-                // updateValues(selection);
-                // change the subwidget, label, and sublabel etc.
-                selection.getRxView().label.setText(
-                        Terminal.terminalHash.get(
-                                (String) combo.getSelectedItem()).getName());
+                updateValues(selection);
                 Log.p("RxView: Terminal selection "
                         + combo.getSelectedItem(), Log.DEBUG);
 
@@ -105,23 +100,33 @@ public class RxView extends View {
             }
         });
 
+        updateValues(selection);
         // combo box created so return it
         return combo;
     }
 
-    public Component getLabel(final Selection selection) {
-        Label l = new Label(getValue());
+     // update from the current selection of the terminal
+    public void updateValues(Selection selection) {
 
-        // does not work final Label label = new Label(selection.getrXterminal().getName()); 
-        final Label label = new Label((String) selection.getRxView().spin.getSelectedItem());
-        // terminal is not set yet selection.gettXterminal().getName());      
+        // may not exist at initialization time
+        if (selection.getrXterminal() != null) {
+            selection.getRxView().setName("Rx");
 
-        // set the Rx view present in the selection
-        selection.getRxView().label = label;
+            selection.getRxView().setSummary(Com.textN(
+                    selection.getrXterminal().getGainTemp(), 5) + "dB/K");
 
-        // combo box created so return it
-        return label;
+            selection.getRxView().setValue(Com.textN(selection.getrXterminal().
+                    getrXantenna().getDiameter(), 5) + "m");
+
+            selection.getRxView().setSubValue(Com.textN(
+                    selection.getrXterminal().getrXamplifier().getNoiseFigure(), 5) + "dB");
+        // update other view summaries in Link TODO
+
+            selection.getdLpathView().updateValues(selection);
+        }
+
     }
+
 
     public String getDisplayName() {
         return name;
@@ -157,7 +162,7 @@ public class RxView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Termianl Longitude");
+        Label L61 = new Label("Terminal Longitude");
         final Label lLongitude = new Label(Com.toDMS(rxTerm.getLongitude()));
         Label L63 = new Label("deg");
 
@@ -275,7 +280,6 @@ public class RxView extends View {
         cnt.addComponent(unitGainTemp);
 
         sub.setScrollable(true);
-
         // all actions at the end to update other fields
         sldrNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
@@ -290,6 +294,7 @@ public class RxView extends View {
                             rxTerm.calcSystemNoiseTemp(),6));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // does not change depointing
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("RxView: bad number for Noise Figure "
@@ -316,6 +321,7 @@ public class RxView extends View {
                     // should not change
                     valuesysTemp.setText(Com.textN(
                             rxTerm.calcSystemNoiseTemp(),6));
+                    updateValues(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + sldrDiameter.getText(), Log.DEBUG);
 

@@ -26,9 +26,6 @@ import com.codename1.util.MathUtil;
 
 public class DlPathView extends View {
 
-    public Label label;
-    public Label subLabel;
-
     public DlPathView() {
 
     }
@@ -56,58 +53,31 @@ public class DlPathView extends View {
             Log.p("DlPathView: Can't find satellite ", Log.DEBUG);
             return lName;
         }
-    
 
-        // terminal name and location
-        lName.setText("Lng " + // selection.gettXterminal().getName() +
-                Com.toDMS(selection.getrXterminal().getLongitude()) + " "
-        );
-
-        // don't use this, have to find through selection 
-        selection.getdLpathView().label = lName;
+        updateValues(selection);
         return lName;
     }
 
-    // this is simple so return terminal's name and location
-    public Component getSubWidget(final Selection selection) {
-        Label lName = new Label(getName());
+    public void updateValues(Selection selection) {
 
-        // indexSatellite has all satellites, so get the band specific list
-        if (selection.getrXterminal() == null) {
-            Log.p("DlPathView: Can't find Tx terminal ", Log.DEBUG);
-            return lName;
+        if (selection.getdLpath() != null) {
+            selection.getdLpathView().setName("DL e");  // short
+
+            selection.getdLpathView().setSummary("" + Com.toDMS(
+                    selection.getdLpath().getElevation()).substring(0, 6));
+
+            selection.getdLpathView().setValue(Com.textN(selection.getdLpath().
+                    getCNo(), 5) + "dBHz");
+
+            selection.getdLpathView().setSubValue(Com.textN(selection.getdLpath().
+                    getSpectralDensity(), 5) + "dBHz");
         }
 
-        // terminal name and latitude
-        lName.setText(// "Lat " +   // selection.gettXterminal().getName() +
-
-                Com.toDMS(selection.gettXterminal().getLatitude()));
-
-        // don't use this, have to find through selection 
-        selection.getdLpathView().subLabel = lName;
-        return lName;
-    }
-
-    public Component getLabel(final Selection selection) {
-        Label lNameGain = new Label(getValue());
-
-        // indexSatellite has all satellites, so get the band specific list
-        if (selection.getSatellite() == null) {
-            Log.p("DlPathView: Can't find satellite ", Log.DEBUG);
-            return lNameGain;
-        }
-
-        // terminal name and location
-        lNameGain.setText( // selection.getSatellite().getName()
-                Com.toDMS(selection.getSatellite().getLongitude()));
-
-        // + Com.toDMS(selection.getSatellite().getGainTemp()) + " x");
-        return lNameGain;
     }
 
     public Form createView(final Selection selection) {
 
-        Form sub = new Form("Tx Satellite: " + selection.getSatellite().getName());
+        Form sub = new Form("Tx SAT: " + selection.getSatellite().getName());
 
         Container cnt = new Container(new BorderLayout());
         sub.addComponent(cnt);
@@ -133,11 +103,14 @@ public class DlPathView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Sat"  + "@" + Com.shortText(selection.getuLpath().
-                getSatellite().getLongitude()*180.0/Com.PI) + Com.DEGREE   + " EIRP");
+        Label L61 = new Label("Sat" + "@" + Com.shortText(selection.getuLpath().
+                getSatellite().getLongitude() * 180.0 / Com.PI) + Com.DEGREE + " EIRP");
         final Label L62 = new Label(
-                Com.shortText(selection.getSatellite().bandSpecificItems.get(selection.getBand()).EIRP));
-       
+                Com.shortText(selection.getSatellite().bandSpecificItems.
+                        get(selection.getBand()).EIRP));
+        
+        // TODO check EIRP for satellite terminal
+
         Label L63 = new Label("dbW");
 
         cnt.addComponent(L61);
@@ -221,7 +194,7 @@ public class DlPathView extends View {
 
         Label lDistance = new Label("    Distance");
         final Label valueDistance = new Label(Com.textN(selection.
-                getdLpath().getDistance() / 1E3,6));
+                getdLpath().getDistance() / 1E3, 6));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
@@ -294,7 +267,7 @@ public class DlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getdLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getdLpath().
-                            getDistance() / 1E3,6));
+                            getDistance() / 1E3, 6));
 
                     valuePathLoss.setText(Com.shortText(selection.getdLpath().
                             getPathLoss()));
@@ -303,6 +276,7 @@ public class DlPathView extends View {
                             selection.getdLpath().getCNo(), 7));
                     valueSpecDensity.setText(Com.textN(
                             selection.getdLpath().getSpectralDensity(), 7));
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("DlPathView: bad number for Latitude "
@@ -334,7 +308,7 @@ public class DlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getdLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getdLpath().
-                            getDistance() / 1E3,6));      // convert to km
+                            getDistance() / 1E3, 6));      // convert to km
 
                     valuePathLoss.setText(Com.text(selection.getdLpath().
                             getPathLoss()));            // already in dB
@@ -343,6 +317,7 @@ public class DlPathView extends View {
                             selection.getdLpath().getCNo(), 7));
                     valueSpecDensity.setText(Com.textN(
                             selection.getdLpath().getSpectralDensity(), 7));
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("DlPathView: bad number for diameter " + sldrLongitude.getText(), Log.DEBUG);

@@ -138,9 +138,8 @@ public class SatelliteView extends View {
         // update other view summaries in Link form
      
             selection.getTxView().updateValues(selection);
-        
-       
             selection.getuLpathView().updateValues(selection);
+            selection.getRxView().updateValues(selection);
       
 
     }

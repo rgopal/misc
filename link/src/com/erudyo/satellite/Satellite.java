@@ -725,8 +725,7 @@ public class Satellite extends Entity {
                 initAntAmp(satellite, band, num);
                 // Don't update EIRP and G/T based on antenna size etc. yet
                 // will be done interactively (satellite view)
-               
-                
+
             }
             // add satellite to this band
             bandSatellite.get(band).add(satellite);
@@ -868,7 +867,11 @@ public class Satellite extends Entity {
     // satellite EIRP contours have same value in the whole footprint
     public double getEIRPforTerminal(Terminal terminal) {
 
-        return getMaxforTerminal(terminal, ContourType.EIRP);
+        if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
+            return getMaxforTerminal(terminal, ContourType.EIRP);
+        } else {
+            return bandSpecificItems.get(terminal.getBand()).EIRP;
+        }
 
     }
 
@@ -1167,7 +1170,11 @@ public class Satellite extends Entity {
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-        return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
+        if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
+            return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
+        } else {
+            return bandSpecificItems.get(terminal.getBand()).gainTemp;
+        }
     }
 
     /**

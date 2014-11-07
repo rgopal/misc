@@ -76,7 +76,7 @@ public class UlPathView extends View {
     public void updateValues(Selection selection) {
 
         if (selection.getuLpath() != null) {
-        selection.getuLpathView().setName("UL");  // short
+        selection.getuLpathView().setName("UL e");  // short
 
         selection.getuLpathView().setSummary("" + Com.toDMS(
                 selection.getuLpath().getElevation()).substring(0,6));

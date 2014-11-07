@@ -176,6 +176,7 @@ public class Path extends Entity {
 
     private double calcCNo() {
         double result;
+       
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
         if (getPathType() == PATH_TYPE.UPLINK) {

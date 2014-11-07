@@ -191,9 +191,6 @@ public class Link {
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
 
-        // it is a bit late for the first logging message which says UL
-        selection.getdLpath().setPathType(Path.PATH_TYPE.DOWNLINK);
-
         initViews(selection.getdLpathView(), cnt, selection, layout, 1);
 
         selection.setComms(new Comms(selection.getuLpath(),
@@ -252,12 +249,12 @@ public class Link {
                 constraint = layout.createConstraint();
                 constraint.setWidthPercentage(10);
                 Label name = new Label(view.getName());
-                
+
                 cntLink.addComponent(constraint, name);
-                
+
                 constraint = layout.createConstraint();
                 constraint.setHorizontalSpan(3);
-                
+
                 cntLink.addComponent(constraint, widget);
 
                 // add others in a new line
@@ -457,7 +454,7 @@ public class Link {
 
             // update values for satellite, UL path, DL path, Comms TODO
             selection.getSatelliteView().updateValues(selection);
-            selection.getuLpathView().updateValues(selection);
+         
 
         }
 
@@ -503,16 +500,8 @@ public class Link {
                 selection.getrXterminal().setBand(selection.getBand());
 
                 // update label 
-                selection.getRxView().label.setText(
-                        selection.getrXterminal().getName());
-
-                // update its lat/long (comes from DlPath)
-                selection.getdLpathView().label.setText(
-                        Com.toDMS(selection.getrXterminal().getLongitude()));
-                // update label of Rx terminal
-
-                selection.getdLpathView().subLabel.setText(
-                        Com.toDMS(selection.getrXterminal().getLatitude()));
+                selection.getRxView().updateValues(selection);
+                selection.getdLpathView().updateValues(selection);
 
             }
         }
