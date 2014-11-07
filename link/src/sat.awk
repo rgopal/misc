@@ -85,8 +85,7 @@ $6 ~ /GEO/ || NR < 2 {
        printf getBand("Ka",$25,55,40)
         }
     }
-    
-
+   
     printf "\n"
 }
 

@@ -19,10 +19,10 @@ import java.util.Hashtable;
     public class BandSpecificItems {
 
         RfBand.Band band;           // band of these beams
-        public double EIRP;       // calculated value
-        public double gainTemp;       // they should be calculated dB 1/K
-        public double maxEIRP;      // maximum across all beams of a band
-        public double maxGT;
+        public double EIRP = Satellite.NEGLIGIBLE;       // calculated value
+        public double gainTemp = Satellite.NEGLIGIBLE;       // they should be calculated dB 1/K
+        public double maxEIRP = Satellite.NEGLIGIBLE;      // maximum across all beams of a band
+        public double maxGT = Satellite.NEGLIGIBLE;
         public int transponders;    // number of transponders (same across beams)
         public Antenna rXantenna;  // assumed same chars across beams (for same band)
         public Antenna tXantenna;

@@ -229,11 +229,9 @@ public class Antenna extends Entity {
     public void setBand(RfBand.Band band) {
 
         this.band = band;
-        double f = RfBand.centerFrequency(band);
-
-        this.frequency = f;
-        this.gain = calcGain(diameter, f, efficiency);
-        this.threeDBangle = calcThreeDB(diameter, f);
+   
+        this.gain = calcGain(diameter, this.frequency, efficiency);
+        this.threeDBangle = calcThreeDB(diameter, this.frequency);
         updateAffected();
     }
 

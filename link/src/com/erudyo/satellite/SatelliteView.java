@@ -79,25 +79,18 @@ public class SatelliteView extends View {
         String name = (String) combo.getSelectedItem();
 
         updateValues(selection);
-        //label does not exist yet, so this does not work
-        //       Satellite sat = Satellite.satelliteHash.get(name);
-        // selection.getSatelliteView().label.setText(sat.getName());
-        // selection.setSatelliteView (spin);
-        // fires when the list is changed (by user)
+        
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-
                 // set the selected satellite
                 selection.setSatellite(Satellite.satelliteHash.get(
                         (String) combo.getSelectedItem()));
-
                 // update the UL path
                 selection.getuLpath().setSatellite(selection.getSatellite());
-                // update the DL path TODO
+                // update the DL path 
                 if (selection.getdLpath() != null) {
                     selection.getdLpath().setSatellite(selection.getSatellite());
                 }
-
                 // update other values dependent on this satellite
                 updateValues(selection);
 
@@ -112,15 +105,12 @@ public class SatelliteView extends View {
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
         
-        // all these lables are eventually not needed TODO
-
         selection.getSatelliteView().setSummary (Com.toDMS(
                 selection.getSatellite().getLongitude()));
    
         // get maximum EIRP that is calculated or from contours
         double max, calc, contour;
         calc = selection.getSatellite().getEIRP(selection.getBand());
-
         contour = selection.getSatellite().getMaxEIRPfromContours(
                 selection.getBand());
         max = calc > contour ? calc : contour;
@@ -129,7 +119,6 @@ public class SatelliteView extends View {
   
         // get max G/T for sublabel
         calc = selection.getSatellite().getGainTemp(selection.getBand());
-
         contour = selection.getSatellite().getMaxGTfromContours(
                 selection.getBand());
         max = calc > contour ? calc : contour;
@@ -141,11 +130,40 @@ public class SatelliteView extends View {
         return name;
     }
 
+    public void displayContourValues (BandSpecificItems bandBeams,  Form sub,
+            Container cnt, TableLayout layout) {
+        
+        TableLayout.Constraint constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+      
+        Label lHeading = new Label("Satellite has Contour information");
+        
+        cnt.addComponent(constraint,lHeading);
+        constraint = layout.createConstraint();
+        // constraint.setVerticalSpan(3);
+        constraint.setWidthPercentage(45);
+        
+        Label lGainTemp = new Label("Sat Max G/T");
+        final Label valueRxGainTemp = new Label(Com.shortText(
+                bandBeams.maxGT));
+        Label unitGainTemp = new Label("dB 1/K");
+        cnt.addComponent(lGainTemp);
+        cnt.addComponent(valueRxGainTemp);
+        cnt.addComponent(unitGainTemp);
+        
+        Label lEIRP = new Label("Satellite Max Tx EIRP");
+        final Label valueTxEIRP = new Label(Com.shortText(bandBeams.maxEIRP));
+        Label unitEIRP = new Label("dBW");
+        cnt.addComponent(lEIRP);
+        cnt.addComponent(valueTxEIRP);
+        cnt.addComponent(unitEIRP);
+    }
     public Form createView(final Selection selection) {
 
         final Satellite satellite = selection.getuLpath().getSatellite();
 
-        final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(selection.getBand());
+        final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(
+                selection.getBand());
         Form sub = new Form("SAT " + satellite.getName());
         final RfBand.Band band = selection.getBand();
         Container cnt = new Container(new BorderLayout());
@@ -167,6 +185,13 @@ public class SatelliteView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
+        // check if contours are present (then no calculations needed)
+        if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE) ||
+                !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE))
+                 {
+            displayContourValues(bandBeams, sub, cnt, layout);
+            return sub;
+        } 
         // now the Rx side of the satellite
         Label lNoiseFigureLabel = new Label("Rx Noise Figure");
         final Label lNoiseFigure = new Label(Com.shortText(bandBeams.rXamplifier.
