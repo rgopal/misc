@@ -109,21 +109,31 @@ public class SatelliteView extends View {
                 selection.getSatellite().getLongitude()));
 
         // get maximum EIRP that is calculated or from contours
-        double max, calc, contour;
+        double display, calc, contour;
         calc = selection.getSatellite().getEIRP(selection.getBand());
         contour = selection.getSatellite().getMaxEIRPfromContours(
                 selection.getBand());
-        max = calc > contour ? calc : contour;
+        
+        if (Com.sameValue(contour, Satellite.NEGLIGIBLE))
+            display = calc;
+        else
+            display = contour;
+        
 
-        selection.getSatelliteView().setValue(Com.textN(max, 5));
+        selection.getSatelliteView().setValue(Com.textN(display, 5));
 
         // get max G/T for sublabel
         calc = selection.getSatellite().getGainTemp(selection.getBand());
         contour = selection.getSatellite().getMaxGTfromContours(
                 selection.getBand());
-        max = calc > contour ? calc : contour;
+        
+         if (Com.sameValue(contour, Satellite.NEGLIGIBLE))
+            display = calc;
+        else
+            display = contour;
+       
 
-        selection.getSatelliteView().setSubValue(Com.textN(max, 5));
+        selection.getSatelliteView().setSubValue(Com.textN(display, 5));
     }
 
     public String getDisplayName() {

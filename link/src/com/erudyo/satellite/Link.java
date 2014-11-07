@@ -548,16 +548,7 @@ public class Link {
                 // tX terminal will set UL and DL band/freq for antennas
                 selection.gettXterminal().setBand(selection.getBand());
 
-                // update label 
-                // update label of Tx terminal
-       
-                // update its lat/long (comes from UlPath)
-                selection.getuLpathView().label.setText(
-                        Com.toDMS(selection.gettXterminal().getLongitude()));
-                // update label of Tx terminal
-
-                selection.getuLpathView().subLabel.setText(
-                        Com.toDMS(selection.gettXterminal().getLatitude()));
+                selection.getTxView().updateValues(selection);
             }
         }
 

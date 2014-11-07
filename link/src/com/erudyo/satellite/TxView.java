@@ -76,13 +76,16 @@ public class TxView extends View {
     // update from the current selection of the terminal
     public void updateValues(Selection selection) {
 
-        selection.getTxView().setSummary(Com.toDMS(
-                selection.gettXterminal().getEIRP()));
+        selection.getTxView().setName(selection.
+                gettXterminal().getName());
+
+        selection.getTxView().setSummary(Com.textN(
+                selection.gettXterminal().getEIRP(), 5));
 
         selection.getTxView().setValue(Com.textN(selection.gettXterminal().
-                gettXantenna().getDiameter(),5));
+                gettXantenna().getDiameter(), 5));
 
-        selection.getSatelliteView().setSubValue(Com.textN(
+        selection.getTxView().setSubValue(Com.textN(
                 selection.gettXterminal().gettXamplifier().getPower(), 5));
     }
 
@@ -134,7 +137,6 @@ public class TxView extends View {
                 selection.settXterminal(Terminal.terminalHash.get(
                         (String) combo.getSelectedItem()));
 
-         
                 selection.gettXterminal().setBand(
                         (selection.getBand()));
 
@@ -148,7 +150,6 @@ public class TxView extends View {
         // combo box created so return it
         return combo;
     }
-
 
     public String getDisplayName() {
         return name;
@@ -182,7 +183,7 @@ public class TxView extends View {
         final Label L62 = new Label(Com.toDMS(tXterminal.getLongitude()));
         Label L63 = new Label("deg");
 
-          cnt.addComponent(L61);
+        cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
@@ -304,6 +305,7 @@ public class TxView extends View {
                             getPower()) + "W");
                     valueEIRP.setText(Com.shortText(tXterminal.getEIRP()));
                     // does not change depointing
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for power " + sldrPower.getText(), Log.DEBUG);
@@ -326,6 +328,7 @@ public class TxView extends View {
                     valuePointLoss.setText(Com.shortText(
                             tXterminal.gettXantenna().getDepointingLoss()));
                     valueEIRP.setText(Com.shortText(tXterminal.getEIRP()));
+                    updateValues(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + sldrDiameter.getText(), Log.DEBUG);
 
