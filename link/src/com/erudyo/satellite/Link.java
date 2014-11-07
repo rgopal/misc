@@ -550,8 +550,7 @@ public class Link {
 
                 // update label 
                 // update label of Tx terminal
-                selection.getTxView().label.setText(
-                        selection.gettXterminal().getName());
+       
                 // update its lat/long (comes from UlPath)
                 selection.getuLpathView().label.setText(
                         Com.toDMS(selection.gettXterminal().getLongitude()));

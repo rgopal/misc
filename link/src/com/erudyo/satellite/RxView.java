@@ -181,10 +181,10 @@ public class RxView extends View {
         sldrNoiseFigure.setEditable(true);
         // sldrNoiseFigure.setPreferredW(8);
         sldrNoiseFigure.setIncrements(5); //
-        sldrNoiseFigure.setProgress((int) MathUtil.round(rxTerm.getAmplifier().getNoiseFigure() * 10));
+        sldrNoiseFigure.setProgress((int) MathUtil.round(rxTerm.getrXamplifier().getNoiseFigure() * 10));
         sldrNoiseFigure.setRenderValueOnTop(true);
 
-        final Label lNoiseFigure = new Label(Com.shortText(rxTerm.getAmplifier().
+        final Label lNoiseFigure = new Label(Com.shortText(rxTerm.getrXamplifier().
                 getNoiseFigure()));
         cnt.addComponent(lNoiseFigureLabel);
       cnt.addComponent(lNoiseFigure);
@@ -249,7 +249,7 @@ public class RxView extends View {
         // does not change so not in combo/sliders
         Label lImpLoss = new Label("    LFRX");
         final Label valueImpLoss = new Label(Com.shortText(
-                rxTerm.getAmplifier().getLFRX()));
+                rxTerm.getrXamplifier().getLFRX()));
         Label unitImpLoss = new Label("dB");
         cnt.addComponent(lImpLoss);
         cnt.addComponent(valueImpLoss);
@@ -281,10 +281,10 @@ public class RxView extends View {
             public void dataChanged(int type, int index) {
                 Log.p("RxView: selected noise figure " + sldrNoiseFigure.getText(), Log.DEBUG);
                 try {
-                    selection.getrXterminal().getAmplifier().
+                    selection.getrXterminal().getrXamplifier().
                             setNoiseFigure(Double.parseDouble(sldrNoiseFigure.getText()) / 10.0);
                     // update EIRP
-                    lNoiseFigure.setText(Com.shortText(rxTerm.getAmplifier().
+                    lNoiseFigure.setText(Com.shortText(rxTerm.getrXamplifier().
                             getNoiseFigure()) + "dB");
                     valuesysTemp.setText(Com.textN(
                             rxTerm.calcSystemNoiseTemp(),6));

@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW
+ * Terminal instances are read from a txt file to bootstrap user interaction.
+ * An instance can be used for any band (so there are changes/calcs as a new
+ * band is selected for a link.
  */
 package com.erudyo.satellite;
 
@@ -34,18 +35,19 @@ public class Terminal extends Entity {
 
     private Antenna tXantenna;
     private Antenna rXantenna;
-    private Amplifier amplifier;
+    private Amplifier tXamplifier;
+    private Amplifier rXamplifier;
 
     private double tempGround = 45.0;
     private double tempSky = 20.0;  // in K, depends on frequency
 
     // eventually calculate these things
-    private double EIRP;        // somewhere this has to be updated
+    private double EIRP = Satellite.NEGLIGIBLE;        // somewhere this has to be updated
 
     private int index;
 
     // for receiver
-    private double gainTemp;
+    private double gainTemp = Satellite.NEGLIGIBLE;
     private double polarizationLoss = 0.0;
     private double systemTemp;
 
@@ -93,7 +95,6 @@ public class Terminal extends Entity {
         }
     }
 
-    // TODO treat amplifers for band specific changes
     // RxAntenna and TxAntenna bands are set from here
     public void setBand(RfBand.Band band) {
         this.band = band;
@@ -122,9 +123,9 @@ public class Terminal extends Entity {
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
 
-            Log.p("Terminal: Processing terminal #" + String.valueOf(i) + " "
+            Log.p("Terminal: Reading from txt file terminal #" + String.valueOf(i) + " "
                     + Arrays.toString(terminals[i]), Log.INFO);
-            RfBand.Band band = RfBand.rFbandHash.get(terminals[i][5]).getBand();
+            RfBand.Band band = RfBand.rFbandHash.get(terminals[i][7]).getBand();
 
             // need to key on a correct band
             if (band == null) {
@@ -153,10 +154,10 @@ public class Terminal extends Entity {
         // vector has already been created for a band, just add entries
         Terminal terminal = new Terminal(fields[0]);
 
-        // terminals in format name, longitude, latitude, antenna size, amplifier
+        // terminals in format name, longitude, latitude, antenna size rx tx, amplifier rx tx
         //  and band
         // get the band first
-        terminal.setBand(RfBand.rFbandHash.get(fields[5]).getBand());
+        terminal.setBand(RfBand.rFbandHash.get(fields[7]).getBand());
 
         // set uplin and downlink bands for respective antenna.  use
         // findUL and findDL only when doing calculations with antenna.   
@@ -170,17 +171,19 @@ public class Terminal extends Entity {
         terminal.getrXantenna().setFrequency(RfBand.centerFrequency(
                 RfBand.findDl(terminal.getBand())));
         */
+        // these override values in constructor
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
 
         // set individually diameters for tx and rx (even though they should
         // be same in a physical antenna (fine for the link budget tool)
         terminal.getrXantenna().setDiameter(Double.parseDouble(fields[3]));
-        terminal.gettXantenna().setDiameter(Double.parseDouble(fields[3]));
+        terminal.gettXantenna().setDiameter(Double.parseDouble(fields[4]));
 
-        terminal.getAmplifier().setPower(Double.parseDouble(fields[4]));
+        terminal.getrXamplifier().setPower(Double.parseDouble(fields[5]));
+        terminal.gettXamplifier().setPower(Double.parseDouble(fields[6]));
 
-        // where do we update terminal EIRP.  Now automatic with "update"
+        // where do we update terminal EIRP.  Now automatic with "update" TODO
         vector.add(terminal);
 
     }
@@ -209,12 +212,18 @@ public class Terminal extends Entity {
         rXantenna.addAffected(this);
         rXantenna.setDiameter(1.0);
 
-        amplifier = new Amplifier();
-        amplifier.setName("amp" + this.name);
-        amplifier.setPower(10.0);
-        amplifier.addAffected(this);
+        // 
+        tXamplifier = new Amplifier();
+        tXamplifier.setName("tXamp" + this.name);
+        tXamplifier.setPower(20.0);
+        tXamplifier.addAffected(this);
+        
+        rXamplifier = new Amplifier();
+        rXamplifier.setName("rXamp" + this.name);
+        rXamplifier.setPower(10.0);
+        rXamplifier.addAffected(this);
 
-        // get current location
+        // get current location TODO remove this?
         try {
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
             latitude = loc.getLatitude();
@@ -256,10 +265,12 @@ public class Terminal extends Entity {
 
     public void setLongitude(double d, double m, double s) {
         this.longitude = Com.toRadian(d, m, s);
+        updateAffected();
     }
 
     public void setLatitude(double d, double m, double s) {
         this.latitude = Com.toRadian(d, m, s);
+        updateAffected();
     }
 
     /**
@@ -305,10 +316,13 @@ public class Terminal extends Entity {
         this.tXantenna = antenna;
     }
 
-    public Amplifier getAmplifier() {
-        return amplifier;
+    public Amplifier gettXamplifier() {
+        return tXamplifier;
     }
 
+     public Amplifier getrXamplifier() {
+        return rXamplifier;
+    }
     /**
      * @return the EIRP
      */
@@ -331,10 +345,10 @@ public class Terminal extends Entity {
 
     private double calcEIRP() {
         double eirp = (10 * MathUtil.log10(
-                this.getAmplifier().getPower())) // was in W
+                this.gettXamplifier().getPower())) // was in W
                 + this.gettXantenna().getGain() // in dB
                 - this.gettXantenna().getDepointingLoss()
-                - this.getAmplifier().getLFTX(); // in dB
+                - this.gettXamplifier().getLFTX(); // in dB
         return eirp;
     }
 
@@ -345,7 +359,7 @@ public class Terminal extends Entity {
         // antenna gain is already in dB
         gain = this.getrXantenna().getGain()
                 - this.getrXantenna().calcDepointingLoss()
-                - this.getAmplifier().getLFRX()
+                - this.getrXamplifier().getLFRX()
                 - this.polarizationLoss
                 - 10.0 * MathUtil.log10(calcSystemNoiseTemp());
         return gain;
@@ -357,16 +371,16 @@ public class Terminal extends Entity {
         double noiseTemp;
         double teRX;
         // noise figure is in dB
-        teRX = (MathUtil.pow(10.0, this.amplifier.getNoiseFigure() / 10.0)
+        teRX = (MathUtil.pow(10.0, this.rXamplifier.getNoiseFigure() / 10.0)
                 - 1.0) * Com.T0;
         tA = this.getTempSky(getrXantenna().getBand())
                 + this.getTempGround();
 
         // LFRX is in dB so change
-        double lfrx = MathUtil.pow(10.0, this.getAmplifier().getLFRX() / 10.0);
+        double lfrx = MathUtil.pow(10.0, this.getrXamplifier().getLFRX() / 10.0);
 
         noiseTemp = tA / lfrx
-                + this.getAmplifier().getFeederTemp()
+                + this.getrXamplifier().getFeederTemp()
                 * (1.0 - 1.0 / lfrx) + teRX;
 
         return noiseTemp;
@@ -377,13 +391,16 @@ public class Terminal extends Entity {
 
         // update everything that could be affected
         // EIRP depends on antenna and amplifier, but both need to exist 
-        if (this.getAmplifier() != null && this.gettXantenna() != null
+        if (this.gettXamplifier() != null && this.gettXantenna() != null
                 && this.getrXantenna() != null) {
             this.EIRP = calcEIRP();
 
-            this.gainTemp = calcGainTemp();
         }
 
+         if (this.getrXamplifier() != null && this.getrXantenna() != null
+                && this.getrXantenna() != null) {           
+            this.gainTemp = calcGainTemp();
+        }
         updateAffected();
         // avoid using set since that should be used to send updates down
     }

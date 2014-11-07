@@ -36,14 +36,13 @@ import java.util.ArrayList;
 public class TxView extends View {
 
     public ComboBox spin;
-    public Label label;
 
     public TxView() {
 
     }
 
     public TxView(Selection selection) {
-        super.name = "Tx Terminal";
+        // don't call since it is being built
     }
 
     // create the text part fresh when called
@@ -72,6 +71,19 @@ public class TxView extends View {
         outer.add(inner);
 
         return outer;
+    }
+
+    // update from the current selection of the terminal
+    public void updateValues(Selection selection) {
+
+        selection.getTxView().setSummary(Com.toDMS(
+                selection.gettXterminal().getEIRP()));
+
+        selection.getTxView().setValue(Com.textN(selection.gettXterminal().
+                gettXantenna().getDiameter(),5));
+
+        selection.getSatelliteView().setSubValue(Com.textN(
+                selection.gettXterminal().gettXamplifier().getPower(), 5));
     }
 
     public Component getWidget(final Selection selection) {
@@ -113,6 +125,8 @@ public class TxView extends View {
         // Band combobox should be able to change this
         selection.getTxView().spin = combo;
 
+        updateValues(selection);
+
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
@@ -120,17 +134,12 @@ public class TxView extends View {
                 selection.settXterminal(Terminal.terminalHash.get(
                         (String) combo.getSelectedItem()));
 
-                // update other values dependent on this satellite
-                // updateValues(selection);
-                // change the subwidget, label, and sublabel etc.
-                selection.getTxView().label.setText(
-                        Terminal.terminalHash.get(
-                                (String) combo.getSelectedItem()).getName());
-
-                 selection.gettXterminal().setBand(
+         
+                selection.gettXterminal().setBand(
                         (selection.getBand()));
-                 
-            
+
+                updateValues(selection);
+
                 Log.p("TxView: Terminal selection "
                         + combo.getSelectedItem(), Log.DEBUG);
             }
@@ -140,18 +149,6 @@ public class TxView extends View {
         return combo;
     }
 
-    public Component getLabel(final Selection selection) {
-        Label l = new Label(getValue());
-
-        final Label label = new Label((String) selection.getTxView().spin.getSelectedItem());
- // terminal is not set yet               selection.gettXterminal().getName());      
-
-        // set the tx view present in the selection. Don't use this
-        selection.getTxView().label = label;
-
-        // combo box created so return it
-        return label;
-    }
 
     public String getDisplayName() {
         return name;
@@ -185,7 +182,7 @@ public class TxView extends View {
         final Label L62 = new Label(Com.toDMS(tXterminal.getLongitude()));
         Label L63 = new Label("deg");
 
-        cnt.addComponent(L61);
+          cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
@@ -197,29 +194,29 @@ public class TxView extends View {
         cnt.addComponent(L72);
         cnt.addComponent(L73);
 
-        Label L11 = new Label("Amplifier Power");
+        Label L11 = new Label("  Ampl Power");
         Label lPowerUnit = new Label("W");
 
         final Slider sldrPower = new Slider();
         sldrPower.setMinValue((int) MathUtil.round(Amplifier.POWER_LO * 10)); // x10
         sldrPower.setMaxValue((int) MathUtil.round(Amplifier.POWER_HI * 10));
         sldrPower.setEditable(true);
-    
+
         sldrPower.setIncrements(5); //
-        sldrPower.setProgress((int) MathUtil.round(tXterminal.getAmplifier().getPower() * 10));
+        sldrPower.setProgress((int) MathUtil.round(tXterminal.gettXamplifier().getPower() * 10));
         sldrPower.setRenderValueOnTop(true);
         sldrPower.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
-        final Label L13 = new Label(Com.shortText(tXterminal.getAmplifier().
+        final Label L13 = new Label(Com.shortText(tXterminal.gettXamplifier().
                 getPower()));
         cnt.addComponent(L11);
         cnt.addComponent(L13);
         cnt.addComponent(lPowerUnit);
-        
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-         cnt.addComponent(constraint,sldrPower);
+        cnt.addComponent(constraint, sldrPower);
 
         Label L2A1 = new Label("Antenna Efficiency");
         Label L2A2 = new Label(Com.shortText(tXterminal.gettXantenna().getEfficiency()));
@@ -229,9 +226,9 @@ public class TxView extends View {
         cnt.addComponent(L2A3);
 
         Label L21 = new Label("    Diameter");
-        Label lDiameterUnit = new Label ("m");
+        Label lDiameterUnit = new Label("m");
         final Slider sldrDiameter = new Slider();
-        sldrDiameter.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM, 
+        sldrDiameter.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM,
                 Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
         sldrDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
@@ -244,12 +241,12 @@ public class TxView extends View {
         sldrDiameter.setRenderValueOnTop(true);
         final Label lDiameterValue = new Label(Com.shortText(tXterminal.gettXantenna().getDiameter()));
         cnt.addComponent(L21);
-       cnt.addComponent(lDiameterValue);
+        cnt.addComponent(lDiameterValue);
         cnt.addComponent(lDiameterUnit);
-        
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-         cnt.addComponent(constraint, sldrDiameter);
+        cnt.addComponent(constraint, sldrDiameter);
 
         Label L31 = new Label("Antenna Gain");
         final Label L32 = new Label(Com.shortText(tXterminal.gettXantenna().getGain()));
@@ -277,7 +274,7 @@ public class TxView extends View {
         // does not change so not in combo/sliders
         Label lImpLoss = new Label("    Imp Loss");
         final Label valueImpLoss = new Label(Com.shortText(
-                tXterminal.getAmplifier().getLFTX()));
+                tXterminal.gettXamplifier().getLFTX()));
         Label unitImpLoss = new Label("dB");
         cnt.addComponent(lImpLoss);
         cnt.addComponent(valueImpLoss);
@@ -285,7 +282,6 @@ public class TxView extends View {
 
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);        // whole row
-
 
         Label lEIRP = new Label("Tx Terminal EIRP");
         final Label valueEIRP = new Label(Com.shortText(tXterminal.getEIRP()));
@@ -301,10 +297,10 @@ public class TxView extends View {
             public void dataChanged(int type, int index) {
                 Log.p("TxView: selected power " + sldrPower.getText(), Log.DEBUG);
                 try {
-                    selection.gettXterminal().getAmplifier().
+                    selection.gettXterminal().gettXamplifier().
                             setPower(Double.parseDouble(sldrPower.getText()) / 10.0);
                     // update EIRP
-                    L13.setText(Com.shortText(tXterminal.getAmplifier().
+                    L13.setText(Com.shortText(tXterminal.gettXamplifier().
                             getPower()) + "W");
                     valueEIRP.setText(Com.shortText(tXterminal.getEIRP()));
                     // does not change depointing
