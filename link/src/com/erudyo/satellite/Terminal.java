@@ -154,7 +154,8 @@ public class Terminal extends Entity {
         // vector has already been created for a band, just add entries
         Terminal terminal = new Terminal(fields[0]);
 
-        // terminals in format name, longitude, latitude, antenna size rx tx, amplifier rx tx
+        // terminals in format name, longitude, latitude, antenna size rx tx, 
+        // rx noise figure, amplifier tx
         //  and band
         // get the band first
         terminal.setBand(RfBand.rFbandHash.get(fields[7]).getBand());
@@ -180,7 +181,7 @@ public class Terminal extends Entity {
         terminal.getrXantenna().setDiameter(Double.parseDouble(fields[3]));
         terminal.gettXantenna().setDiameter(Double.parseDouble(fields[4]));
 
-        terminal.getrXamplifier().setPower(Double.parseDouble(fields[5]));
+        terminal.getrXamplifier().setNoiseFigure(Double.parseDouble(fields[5]));
         terminal.gettXamplifier().setPower(Double.parseDouble(fields[6]));
 
         // where do we update terminal EIRP.  Now automatic with "update" TODO

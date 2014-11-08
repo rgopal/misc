@@ -100,6 +100,7 @@ public class Path extends Entity {
             this.name = pathType + ":" + t.getName() + "-" + s.getName();
         }
         // include this Path in the Affected list of satellite and terminal
+        this.pathType = pathType;
         s.addAffected(this);
         t.addAffected(this);
 
@@ -137,6 +138,7 @@ public class Path extends Entity {
                     + " already in affected list of satellite " + s,
                     Log.WARNING);
         }
+      
         setAll();
     }
 

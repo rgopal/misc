@@ -16,6 +16,7 @@
 package com.erudyo.satellite;
 
 import com.codename1.io.Log;
+import com.codename1.ui.list.DefaultListModel;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -61,7 +62,7 @@ public class Selection {
     // first hash has band as key and the second satellite name
     private Hashtable<RfBand.Band, Hashtable<String, Integer>> bandSatelliteHash
             = new Hashtable<RfBand.Band, Hashtable<String, Integer>>();
-    
+
     private Hashtable<VISIBLE, ArrayList<String>> visibleTerminal
             = new Hashtable<VISIBLE, ArrayList<String>>();
     // first hash has band as key and the second terminal name
@@ -108,7 +109,6 @@ public class Selection {
         return this.rfBands;
     }
 
-    
     public Selection() {
         // use constructor with Selection instance as input
         satelliteView = new SatelliteView(this);
@@ -170,13 +170,17 @@ public class Selection {
      */
     public void settXterminal(Terminal tXterminal) {
         this.tXterminal = tXterminal;
+        tXterminal.setBand(this.getBand());
 
         // after init
         if (getuLpath() != null) {
             getuLpath().setTerminal(gettXterminal());
             // uLpath will update other objects
         }
-
+        if (comms != null) {
+            comms.changeDLname(dLpath.name);
+            comms.changeULname(uLpath.name);
+        }
     }
 
     /**
@@ -194,11 +198,15 @@ public class Selection {
     public void setrXterminal(Terminal rXterminal) {
         // why is terminal being changed
         this.rXterminal = rXterminal;
+        rXterminal.setBand(this.getBand());
 
         if (getdLpath() != null) {
             getdLpath().setTerminal(getrXterminal());
         }
-
+        if (comms != null) {
+            comms.changeDLname(dLpath.name);
+            comms.changeULname(uLpath.name);
+        }
     }
 
     /**
@@ -227,7 +235,139 @@ public class Selection {
         if (dLpath != null) {
             dLpath.setSatellite(satellite);
         }
+        if (comms != null) {
+            comms.changeDLname(dLpath.name);
+            comms.changeULname(uLpath.name);
+        }
+    }
 
+    public void comboRx(final Selection selection) {
+        // use global variable to change ListModel of satellite combo
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
+
+            Log.p("Link: no visible terminal for satellite "
+                    + selection.getSatellite(), Log.WARNING);
+        } else {
+
+            selection.initVisibleTerminal();
+            DefaultListModel model = new DefaultListModel(
+                    (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
+                            new String[0])));
+
+            if (model == null) {
+                Log.p("Link: Can't create DefaultListModel for Rx terminal "
+                        + selection.getSatellite(), Log.DEBUG);
+            } else {
+
+                // let RxView do this again.   TODO Delete this
+                selection.getRxView().spin.setModel(model);
+
+                int position;
+                // update selected receive terminal  TODO check for 0 terminals
+                if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).size() < 2) {
+                    // get the first terminal (only 1)
+                    position = 0;
+                } else {
+                    position = 1;
+                }
+                // set the selected receive terminal
+                // band is selected in setrX/settX (circular conditions)
+                selection.setrXterminal(Terminal.terminalHash.
+                        get(selection.getVisibleTerminal().
+                                get(Selection.VISIBLE.YES).toArray(
+                                        new String[0])[position]));
+
+                model.setSelectedIndex(position);
+                // update label 
+                selection.getRxView().updateValues(selection);
+                selection.getdLpathView().updateValues(selection);
+
+            }
+        }
+    }
+
+    // resets the Tx terminal combo and finds the nearest terminal for
+    // the specific satellite
+    public void comboTx(final Selection selection) {
+        // use global variable to change ListModel of satellite combo
+        if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
+
+            Log.p("Link: Visible terminal list is empty for "
+                    + selection.getSatellite(), Log.ERROR);
+            // change the current Combobox entry
+            // cbBand.setSelectedIndex(i);
+        } else {
+
+            selection.initVisibleTerminal();
+            DefaultListModel model = new DefaultListModel(
+                    (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
+                            new String[0])));
+
+            if (model == null) {
+                Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal for sat "
+                        + selection.getSatellite(), Log.ERROR);
+            } else {
+                selection.getTxView().spin.setModel(model);
+                // update visible terminals 
+
+                if (selection.getVisibleTerminal().get(
+                        Selection.VISIBLE.YES).size() < 1) // get the first terminal (only 1)
+                {
+                    Log.p("Link: no visible terminal for tx  for satellite " + selection.getSatellite(),
+                            Log.WARNING);
+                }
+
+                // tX terminal will set UL and DL band/freq for antennas
+                // set the selected Tx terminal
+                selection.settXterminal(Terminal.terminalHash.
+                        get(selection.getVisibleTerminal().
+                                get(Selection.VISIBLE.YES).toArray(
+                                        new String[0])[0]));
+
+                model.setSelectedIndex(0);
+                selection.getTxView().updateValues(selection);
+                selection.getuLpathView().updateValues(selection);
+            }
+        }
+
+    }
+
+    public boolean comboSatellite(final Selection selection) {
+        // use global variable to change ListModel of satellite combo
+        if (selection.getBandSatellite().get(selection.getBand()) == null) {
+
+            Log.p("link: Can't get bandSatellite for band "
+                    + selection.getBand(), Log.WARNING);
+            // Force it to KA which hopefully works
+            selection.setBand(RfBand.Band.KA);
+
+            return false;
+        }
+        DefaultListModel model = new DefaultListModel(
+                (selection.getBandSatellite().get(selection.getBand()).toArray(
+                        new String[0])));
+
+        if (model == null) {
+            Log.p("Link: Can't create DefaultListModel for satellite band "
+                    + selection.getBand(), Log.DEBUG);
+        } else {
+            // use the list of satellites for select band 
+            selection.getSatelliteView().spin.setModel(model);
+            String name = (String) selection.getSatelliteView().spin.getSelectedItem();
+
+            // update selected satellite
+            selection.setSatellite(Satellite.satelliteHash.get(name));
+
+            // Satellite Band processed on its own
+            // now create visible lists for this satellite
+            selection.initVisibleTerminal();
+
+            // update values for satellite, UL path, DL path, Comms TODO
+            selection.getSatelliteView().updateValues(selection);
+
+        }
+
+        return true;
     }
 
     /**
@@ -390,9 +530,9 @@ public class Selection {
                         Log.p("Selection: satellite is null in initVisible YES so alpha sort ", Log.WARNING);
                         return one.compareTo(two);
                     } else {
-                        return (int) Math.round(Path.calcDistance(satellite, 
+                        return (int) Math.round(Path.calcDistance(satellite,
                                 Terminal.terminalHash.get(one))
-                                - Path.calcDistance(satellite, 
+                                - Path.calcDistance(satellite,
                                         Terminal.terminalHash.get(two)));
                     }
 
@@ -411,9 +551,9 @@ public class Selection {
                     return one.compareTo(two);
                 } else {
 
-                    return (int) Math.round(Path.calcDistance(satellite, 
+                    return (int) Math.round(Path.calcDistance(satellite,
                             Terminal.terminalHash.get(one))
-                            - Path.calcDistance(satellite, 
+                            - Path.calcDistance(satellite,
                                     Terminal.terminalHash.get(two)));
                 }
 

@@ -84,12 +84,20 @@ public class SatelliteView extends View {
                 // set the selected satellite
                 selection.setSatellite(Satellite.satelliteHash.get(
                         (String) combo.getSelectedItem()));
+                // select new terminals based on which terminals are nearest
+                selection.comboRx(selection);
+                selection.comboTx(selection);
+                
                 // update the UL path
-                selection.getuLpath().setSatellite(selection.getSatellite());
+                if (selection.getuLpath() != null) {
+                    selection.getuLpath().setSatellite(selection.getSatellite());
+                }
                 // update the DL path 
                 if (selection.getdLpath() != null) {
                     selection.getdLpath().setSatellite(selection.getSatellite());
                 }
+                // update list of visible terminals
+                
                 // update other values dependent on this satellite
                 updateValues(selection);
 
@@ -104,7 +112,7 @@ public class SatelliteView extends View {
     public void updateValues(Selection selection) {
 
         selection.getSatelliteView().setName("ST");
-        
+
         selection.getSatelliteView().setSummary(Com.toDMS(
                 selection.getSatellite().getLongitude()));
 
@@ -136,12 +144,10 @@ public class SatelliteView extends View {
         selection.getSatelliteView().setSubValue(Com.textN(display, 5) + "dB/K");
 
         // update other view summaries in Link form
-     
-            selection.getTxView().updateValues(selection);
-            selection.getuLpathView().updateValues(selection);
-            selection.getRxView().updateValues(selection);
-            selection.getCommsView().updateValues(selection);
-      
+        selection.getTxView().updateValues(selection);
+        selection.getuLpathView().updateValues(selection);
+        selection.getRxView().updateValues(selection);
+        selection.getCommsView().updateValues(selection);
 
     }
 

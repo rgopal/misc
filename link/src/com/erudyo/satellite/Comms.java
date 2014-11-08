@@ -302,7 +302,15 @@ public class Comms extends Entity {
     public Comms() {
 
     }
+    public void changeULname(String s) {
+        this.name = s + "-" + this.dLpath.name;
+    }
+      public void changeDLname(String s) {
+        this.name = this.uLpath.name + "-"+ s;
+    }
 
+    // note that unlike satellite/terminal path UL/DL and Comms have the same
+    // object for each selection
     public Comms(Path u, Path d) {
         this.uLpath = u;
         this.dLpath = d;

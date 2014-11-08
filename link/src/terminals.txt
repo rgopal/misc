@@ -1,7 +1,7 @@
-name,  longitude (degree), latitude (degree), antennaSize, amplifierPower, band
-Gtown,-77.2667,39.1833,4,5,40,80,KA
-Potomac,-77.2167,39.0167,1,2,4,8,KU
-NY,-75.2167,41.0167,5,4,20,40,C
-LAX,-90.2167,40.0167,3,2,30,60,X
-DEL,93.2167,40.0167,4,3,35,65,C
-BOM,90.2167,34.0167,5,4,40,70,C
+name,  longitude (degree), latitude (degree), antennaSize, rx NF, Tx amplifierPower, band
+Germantown-MD,-77.2667,39.1833,4,5,4,80,KA,2
+Potomac-MD,-77.2167,39.0167,1,2,4,8,KU,2
+NYC-NY,-75.2167,41.0167,5,4,2,40,C,2
+LAX-CA,-90.2167,40.0167,3,2,3,60,X,2
+Delhi-IN,93.2167,40.0167,4,3,3,65,C,2
+Bombay-IN,90.2167,34.0167,5,4,4,70,C,2
