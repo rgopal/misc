@@ -132,8 +132,11 @@ public class Selection {
         try {
 
             Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            
             bandSatelliteSort(loc.getLongitude() * Com.PI / 180.0);
-
+            Log.p("Selection: current location is Long|Lat " + loc.getLongitude() + "|" +
+                   (loc.getLatitude()), Log.DEBUG);
+           
         } catch (Exception d) {
             Log.p("Selection:  can't get current location", Log.WARNING);
         }
@@ -456,8 +459,10 @@ public class Selection {
             Log.p("sortBandSatellite: processing band " + band, Log.DEBUG);
             if (bandSatellite == null
                     || bandSatellite.get(band.getBand()) == null) {
-                Log.p("sortBandSatellite: bandSatellite is null", Log.DEBUG);
-                return;
+                Log.p("sortBandSatellite: bandSatellite is null for band " + 
+                        band.getBand(), Log.DEBUG);
+                // don't return, just go to next satellite
+                continue;
             }
 
             Collections.sort(bandSatellite.get(band.getBand()),
