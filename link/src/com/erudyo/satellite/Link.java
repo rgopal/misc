@@ -97,7 +97,7 @@ public class Link {
     public void init(Object context) {
 
         // create semiMajor new instance to keep track of all other objects for UI
-        Log.setLevel(Log.INFO);
+        Log.setLevel(Log.DEBUG);
 
         // this creates View objects
         selection = new Selection();
