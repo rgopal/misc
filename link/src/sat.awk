@@ -1,10 +1,10 @@
 
 # return number of transponders and specific band in str
 # separated by |
-function getBand(band,str,eirp,gt)
+function getBand(band,str,txAnt, txPower, rxAnt, rxNF)
 {
     reg = "[0-9]+ " band "[\- ][Bb]and"
-    string = "||||"
+    string = "||||||"
     if (match(str,reg) != 0)
     {
        found=substr(str,RSTART,RLENGTH)
@@ -14,9 +14,21 @@ function getBand(band,str,eirp,gt)
        sub("[ ]*[0-9]+[ ]*","",band)
        sub("-[Bb]and","",band)
       
-       string = "|" band "|" number "|" eirp "|" gt
+       string = "|" band "|" number "|" txAnt "|" txPower "|" rxAnt "|" rxNF
+    } else {
+    # just look for band (no transponders)
+      reg =  band "[\- ][Bb]and"
+      if (match(str,reg) != 0)
+      {
+         found=substr(str,RSTART,RLENGTH)
+         band = found 
+         sub("[\- ][Bb]and","",band)
+      
+         string = "|" band "|" number "|" txAnt "|" txPower "|" rxAnt "|" rxNF
+      }
     }
-        return string
+
+    return string
 }
 
 BEGIN {
@@ -67,22 +79,27 @@ $6 ~ /GEO/ || NR < 2 {
     # end of line
     if (NR < 2)
     {
-       printf "|BAND C %s|Transponders C %s|EIRP C %s|GT C %s", FIELDS+2, FIELDS+3, FIELDS+4,FIELDS+5
-       printf "|BAND X %s|Transponders X %s|EIRP X %s|GT X %s", FIELDS+6, FIELDS+7, FIELDS+8, FIELDS+9
-       printf "|BAND Ku %s|Transponders Ku %s|EIRP Ku %s|GT Ku %s", FIELDS+10, FIELDS+11, FIELDS+12, FIELDS+13
-       printf "|BAND Ka %s|Transponders Ka %s|EIRP Ka %s|GT Ka %s", FIELDS+14, FIELDS+15, FIELDS+16, FIELDS+17
+       printf "|BAND C %s|Transponders C %s|TxAnt C %s|TxPower C %s|RxAnt C %s|RxNF C %s", FIELDS+2, FIELDS+3, FIELDS+4,FIELDS+5,FIELDS+6,FIELDS+7
+       printf "|BAND X %s|Transponders X %s|TxAnt X %s|TxPower X %s|RxAnt X %s|RxNF X %s", FIELDS+8, FIELDS+9, FIELDS+10, FIELDS+11, FIELDS+12, FIELDS+13
+       printf "|BAND Ku %s|Transponders Ku %s|TxAnt Ku %s|TxPower Ku %s|RxAnt Ku %s|RxNF Ku %s", FIELDS+14, FIELDS+15, FIELDS+16, FIELDS+17, FIELDS+18, FIELDS+19
+       printf "|BAND Ka %s|Transponders Ka %s|TxAnt Ka %s|TxPower Ka %s|RxAnt Ka %s|RxNF Ka %s", FIELDS+20, FIELDS+21, FIELDS+22, FIELDS+23, FIELDS+24, FIELDS+25
     } else
     {
 
-        if (match($25,"Hybrid Ku-Ka") != 0)
-            printf "|||||||||Ku|0|50|35|Ka|0|55|40"
-        else
+        # for AMC-15 on line 25 and Amos 3
+        if (match($25,"Hybrid Ku-Ka") != 0 ||
+             match($25,"Ku and Ka band") != 0 )
+            printf "|||||||||||||Ku|0|3.8|50|3|2.2|Ka|0|3.7|44|2.5|2.3"
+        else if (match($1,"Spaceway") != 0) 
+        { 
+            printf "|||||||||||||||||||Ka|100|3.7|44|2.5|2.3"
+        } else
         {
 
-       printf getBand("C",$25,40,25)
-       printf getBand("X",$25,45,30)
-       printf getBand("Ku",$25,50,35)
-       printf getBand("Ka",$25,55,40)
+          printf getBand("C",$25,4,40,4,2)
+          printf getBand("X",$25,3.9,45,3.5,2.1)
+          printf getBand("Ku",$25,3.8,50,3,2.2)
+          printf getBand("Ka",$25,3.7,55,2.5,2.3)
         }
     }
    

@@ -97,7 +97,7 @@ public class Link {
     public void init(Object context) {
 
         // create semiMajor new instance to keep track of all other objects for UI
-        Log.setLevel(Log.DEBUG);
+        Log.setLevel(Log.INFO);
 
         // this creates View objects
         selection = new Selection();
@@ -404,9 +404,7 @@ public class Link {
                         + " GHz");
                 Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
 
-                // update terminal bands first since Satellite uses that
-                selection.getrXterminal().setBand(selection.getBand());
-                selection.gettXterminal().setBand(selection.getBand());
+              
                 if (!selection.comboSatellite(selection)) {
                     // get index of KA in case no satellites were found
                     int i = selection.getRfBandHash().get("KA");

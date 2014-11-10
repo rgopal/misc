@@ -455,16 +455,19 @@ public class Selection {
 
         // go over all bands
         for (RfBand band : RfBand.indexRfBand) {
+            if (band.getBand() == RfBand.Band.UK)
+                continue;
 
             Log.p("sortBandSatellite: processing band " + band, Log.DEBUG);
             if (bandSatellite == null
                     || bandSatellite.get(band.getBand()) == null) {
                 Log.p("sortBandSatellite: bandSatellite is null for band " + 
                         band.getBand(), Log.DEBUG);
-                // don't return, just go to next satellite
+                // don't return, just go to next band
                 continue;
             }
 
+         
             Collections.sort(bandSatellite.get(band.getBand()),
                     new Comparator<String>() {
                         @Override

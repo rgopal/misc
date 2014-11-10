@@ -669,6 +669,7 @@ public class Satellite extends Entity {
         setVelocity(3075E3);        // GEO satellite velocity
         setAltitude(35786.1E3);       // height of GEO satellite
         setLatitude(0.0);         // latitude is zero
+        setLongitude(0.0);      // some satellites in txt don't have longitude MUOS
 
         orbit = Com.Orbit.GEO;
 
@@ -717,14 +718,17 @@ public class Satellite extends Entity {
                 }
                 // these are read from txt files and can be calculated and changed
                 // unlike maxEIRP and maxGT that are from contours
-                satellite.bandSpecificItems.get(band).EIRP
-                        = (Double.parseDouble(fields[index + 2]));
-                satellite.bandSpecificItems.get(band).gainTemp
-                        = (Double.parseDouble(fields[index + 3]));
-
                 initAntAmp(satellite, band, num);
-                // Don't update EIRP and G/T based on antenna size etc. yet
-                // will be done interactively (satellite view)
+
+                satellite.bandSpecificItems.get(band).tXantenna.setDiameter(
+                        (Double.parseDouble(fields[index + 2])));
+                satellite.bandSpecificItems.get(band).tXamplifier.setPower(
+                        (Double.parseDouble(fields[index + 3])));
+
+                satellite.bandSpecificItems.get(band).rXantenna.setDiameter(
+                        (Double.parseDouble(fields[index + 4])));
+                satellite.bandSpecificItems.get(band).rXamplifier.setNoiseFigure(
+                        (Double.parseDouble(fields[index + 5])));
 
             }
             // add satellite to this band
@@ -774,17 +778,18 @@ public class Satellite extends Entity {
 
     public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
 
-        //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|
+       //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|
         //Operator/Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|
         //Longitude of GEO (degrees) 9|Perigee (km) 10|Apogee (km) 11|Eccentricity 12|
-        //Inclination (degrees) 13|Period (minutes) 14|Launch Mass (kg.) 15|Dry Mass (kg.) 16|
-        //Power (watts) 17|Date of Launch 18|Expected Lifetime 19|Contractor 20|
-        //Country of Contractor 21|Launch Site 22|Launch Vehicle 23|COSPAR Number 24|
-        //NORAD Number 25|Comments 26| 27|Source Used for Orbital Data 28|Source1 29|
-        //Source2 30|Source3 31|Source4 32|Source5 33|Source6 34|BAND C 35|Transponders C 36|EIRP C 37|GT C 38|
-        //BAND X 39|Transponders X 40|EIRP X 41|GT X 42|BAND Ku 43|Transponders Ku 44|
-        //EIRP Ku 45|GT Ku 46|BAND Ka 47|Transponders Ka 48|EIRP Ka 49|GT Ka 50
-        // vector has already been created for semiMajor band, just add entries
+        //Inclination (degrees) 13|Period (minutes) 14|Launch Mass (kg.) 15|
+        //Dry Mass (kg.) 16|Power (watts) 17|Date of Launch 18|Expected Lifetime 19|
+        //Contractor 20|Country of Contractor 21|Launch Site 22|Launch Vehicle 23|
+        //COSPAR Number 24|NORAD Number 25|Comments 26| 27|Source Used for Orbital Data 28|
+        //Source1 29|Source2 30|Source3 31|Source4 32|Source5 33|Source6 34|BAND C 35|
+        //Transponders C 36|TxAnt C 37|TxPower C 38|RxAnt C 39|RxNF C 40|BAND X 41|
+        //Transponders X 42|TxAnt X 43|TxPower X 44|RxAnt X 45|RxNF X 46|BAND Ku 47|
+        //Transponders Ku 48|TxAnt Ku 49|TxPower Ku 50|RxAnt Ku 51|RxNF Ku 52|BAND Ka 53|
+        // Transponders Ka 54|TxAnt Ka 55|TxPower Ka 56|RxAnt Ka 57|RxNF Ka 58
         Satellite satellite = new Satellite();
         // race condition?
         satellite.init(fields[0]);
@@ -795,38 +800,48 @@ public class Satellite extends Entity {
 
             // select only GEO satellites
             satellite.setLatitude(0.0);
+            
 
         } catch (Exception e) {
-            Log.p("Satellites: double error in Long,Lat,EIRP, or Gain "
-                    + fields.toString(), Log.WARNING);
+            Log.p("Satellites: double error in Longitude " + fields[0] + " value" 
+                    + fields, Log.WARNING);
+            // depend on default Longitude
+           
         }
 
-        // put the band, number of transponders, EIRP, GT
+        boolean bandFound = false;
+
+        // put the band, number of transponders, tx antenna, amp power, rx ant,NF
         // process C, KU, and KA (they are in the order in all_satellites.txt
         if (!(fields[34].equals("")) && RfBand.rFbandHash.get(
                 fields[34].toUpperCase()).getBand()
                 == RfBand.Band.C) {
 
             processBand(fields, RfBand.Band.C, bandSatellite, satellite, 34);
+            bandFound = true;
         }
-        if (!(fields[38].equals("")) && RfBand.rFbandHash.get(
-                fields[38].toUpperCase()).getBand()
+        if (!(fields[40].equals("")) && RfBand.rFbandHash.get(
+                fields[40].toUpperCase()).getBand()
                 == RfBand.Band.X) {
 
-            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 38);
-        }
-        if (!(fields[42].equals("")) && RfBand.rFbandHash.get(
-                fields[42].toUpperCase()).getBand()
-                == RfBand.Band.KU) {
-            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 42);
+            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 40);
+            bandFound = true;
         }
         if (!(fields[46].equals("")) && RfBand.rFbandHash.get(
                 fields[46].toUpperCase()).getBand()
-                == RfBand.Band.KA) {
-            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 46);
+                == RfBand.Band.KU) {
+            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 46);
+            bandFound = true;
         }
-        // unknown band
-        processBand(fields, RfBand.Band.UK, bandSatellite, satellite, 0);
+        if (!(fields[52].equals("")) && RfBand.rFbandHash.get(
+                fields[52].toUpperCase()).getBand()
+                == RfBand.Band.KA) {
+            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 52);
+            bandFound = true;
+        }
+        if (!bandFound) {
+            processBand(fields, RfBand.Band.UK, bandSatellite, satellite, 0);
+        }
 
     }
 
@@ -1170,8 +1185,8 @@ public class Satellite extends Entity {
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-        if (this.bandSpecificItems != null &&
-                this.bandSpecificItems.get(terminal.getBand()).beams != null) {
+        if (this.bandSpecificItems != null
+                && this.bandSpecificItems.get(terminal.getBand()).beams != null) {
             return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
         } else {
             return bandSpecificItems.get(terminal.getBand()).gainTemp;
