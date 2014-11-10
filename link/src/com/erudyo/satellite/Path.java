@@ -387,21 +387,21 @@ public class Path extends Entity {
         super(n);
     }
 
-    public static double calcRelativeLongitude(Satellite satellite,
-            Terminal terminal) {
+    public static double calcRelativeLongitude(double satellite,
+            double terminal) {
 
         double relativeLong, term, sat;
         // make both angles 0 to 360.
-        if (terminal.getLongitude() < 0.0) {
-            term = terminal.getLongitude() + 2 * Com.PI;
+        if (terminal < 0.0) {
+            term = terminal + 2 * Com.PI;
         } else {
-            term = terminal.getLongitude();
+            term = terminal;
         }
 
-        if (satellite.getLongitude() < 0.0) {
-            sat = satellite.getLongitude() + 2 * Com.PI;
+        if (satellite < 0.0) {
+            sat = satellite + 2 * Com.PI;
         } else {
-            sat = satellite.getLongitude();
+            sat = satellite;
         }
 
         relativeLong = Math.abs(term - sat);
@@ -425,7 +425,8 @@ public class Path extends Entity {
         }
         double Phi;
         double relativeLong;
-        relativeLong = calcRelativeLongitude(satellite, terminal);
+        relativeLong = calcRelativeLongitude(satellite.getLongitude(), 
+                terminal.getLongitude());
         Phi = MathUtil.acos(Math.cos(relativeLong)
                 * Math.cos(terminal.getLatitude())
                 * Math.cos(satellite.getLatitude())
@@ -470,7 +471,8 @@ public class Path extends Entity {
         double a;
         relativePosition rel;
         double relLong, bigPhi;
-        relLong = calcRelativeLongitude(satellite, terminal);
+        relLong = calcRelativeLongitude(satellite.getLongitude(), 
+                terminal.getLongitude());
         bigPhi = calcBigPhi(satellite, terminal);
 
         // if terminal and satellite are on the same longitude

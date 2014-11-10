@@ -16,7 +16,12 @@
 package com.erudyo.satellite;
 
 import com.codename1.io.Log;
+import com.codename1.maps.Coord;
+import com.codename1.maps.MapComponent;
+import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.list.DefaultListModel;
+import com.codename1.location.Location;
+import com.codename1.location.LocationManager;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -123,6 +128,15 @@ public class Selection {
         // get the list of satellites read from the .txt file
         setBandSatellite(Satellite.getBandSatellite());
         // initialize visible terminals for selected satellite (use Affected)
+
+        try {
+
+            Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            bandSatelliteSort(loc.getLongitude() * Com.PI / 180.0);
+
+        } catch (Exception d) {
+            Log.p("Selection:  can't get current location", Log.WARNING);
+        }
 
     }
 
@@ -428,8 +442,57 @@ public class Selection {
                             put(sat.getName(), index++);
 
                 }
+
             }
         }
+    }
+
+    // sort the satellites in some specific order (distance from current location)
+    public void bandSatelliteSort(final double longitude) {
+
+        // go over all bands
+        for (RfBand band : RfBand.indexRfBand) {
+
+            Log.p("sortBandSatellite: processing band " + band, Log.DEBUG);
+            if (bandSatellite == null
+                    || bandSatellite.get(band.getBand()) == null) {
+                Log.p("sortBandSatellite: bandSatellite is null", Log.DEBUG);
+                return;
+            }
+
+            Collections.sort(bandSatellite.get(band.getBand()),
+                    new Comparator<String>() {
+                        @Override
+                        public int compare(String one, String two) {
+
+                            return (int) Math.round(Path.calcRelativeLongitude(longitude,
+                                            Satellite.satelliteHash.get(one).getLongitude())
+                                    - Path.calcRelativeLongitude(longitude,
+                                            Satellite.satelliteHash.get(two).getLongitude()));
+
+                        }
+
+                    }
+            );
+
+            // remove old values for the band
+            bandSatelliteHash.get(band.getBand()).clear();
+            for (int i = 0; i < bandSatellite.get(band.getBand()).size(); i++) {
+
+                // check if Hashtable entry for the band exists
+                if (bandSatelliteHash.get(band.getBand()) == null) {
+                    bandSatelliteHash.put(band.getBand(),
+                            new Hashtable<String, Integer>());
+                }
+                // now add new satellite position for this satellite
+                bandSatelliteHash.get(band.getBand()).
+                        put(bandSatellite.get(band.getBand()).get(i), i);
+                Log.p("sortBandSatellite adding satellite "
+                        + bandSatellite.get(band.getBand()).get(i), Log.DEBUG);
+            }
+
+        }
+
     }
 
     public Hashtable<VISIBLE, ArrayList<String>> getVisibleTerminal() {
