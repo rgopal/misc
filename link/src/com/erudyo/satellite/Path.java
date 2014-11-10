@@ -138,7 +138,7 @@ public class Path extends Entity {
                     + " already in affected list of satellite " + s,
                     Log.WARNING);
         }
-      
+
         setAll();
     }
 
@@ -178,7 +178,7 @@ public class Path extends Entity {
 
     private double calcCNo() {
         double result;
-       
+
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
         if (getPathType() == PATH_TYPE.UPLINK) {
@@ -264,7 +264,6 @@ public class Path extends Entity {
     public void setElevation(double elevation) {
         this.elevation = elevation;
     }
-
 
     /**
      * @return the pathLoss
@@ -391,20 +390,37 @@ public class Path extends Entity {
     public static double calcRelativeLongitude(Satellite satellite,
             Terminal terminal) {
 
-        double relativeLong;
-        // get relative longitdue between satellite and terminal
-        if (satellite.longitude > terminal.getLongitude()) {
-            relativeLong = satellite.getLongitude() - terminal.getLongitude();
+        double relativeLong, term, sat;
+        // make both angles 0 to 360.
+        if (terminal.getLongitude() < 0.0) {
+            term = terminal.getLongitude() + 2 * Com.PI;
         } else {
-            relativeLong = terminal.getLongitude() - satellite.getLongitude();
+            term = terminal.getLongitude();
+        }
+
+        if (satellite.getLongitude() < 0.0) {
+            sat = satellite.getLongitude() + 2 * Com.PI;
+        } else {
+            sat = satellite.getLongitude();
+        }
+
+        relativeLong = Math.abs(term - sat);
+
+        if (relativeLong > Com.PI) {
+            relativeLong = 2.0 * Com.PI - relativeLong;
         }
         // return absolute value of difference.  Above is not needed
+
+        if (relativeLong > Com.PI)
+            Log.p("relativeLong: realative long is more than 180 degree " + 
+                    relativeLong, Log.DEBUG);
+            
         return Math.abs(relativeLong);
     }
 
     public static double calcBigPhi(Satellite satellite, Terminal terminal) {
         if (satellite == null || terminal == null) {
-            Log.p("Path: satellite or terminal is null " + satellite + " "+ terminal,
+            Log.p("Path: satellite or terminal is null " + satellite + " " + terminal,
                     Log.WARNING);
         }
         double Phi;
@@ -442,8 +458,8 @@ public class Path extends Entity {
         if (Com.sameValue(bigPhi, 0.0)) {
             return (Com.PI / 2.0);
         }
-        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE / 
-                (Com.RE + satellite.getAltitude())))
+        elev = MathUtil.atan((Math.cos(bigPhi) - (Com.RE
+                / (Com.RE + satellite.getAltitude())))
                 / MathUtil.pow((1.0 - Math.cos(bigPhi) * Math.cos(bigPhi)), 0.5));
         return elev;
 
