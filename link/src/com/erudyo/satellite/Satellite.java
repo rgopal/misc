@@ -508,7 +508,8 @@ public class Satellite extends Entity {
             }
             // read the beam files and populate beams member
             // a check for null would not work so had to use size()
-            if (satBandBeamFile.get(this.name).get(band).size() == 0) {
+            if (satBandBeamFile.get(this.name).get(band) == null ||
+                    satBandBeamFile.get(this.name).get(band).size() == 0) {
                 Log.p("Satellite: readBeams no beam files for " + this
                         + " and band " + band,
                         Log.WARNING);
@@ -778,7 +779,7 @@ public class Satellite extends Entity {
 
     public static void satelliteFields(String[] fields, Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite) {
 
-       //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|
+        //Name 1|Name of Satellite, Alternate Names 2|Country of Operator/Owner 3|
         //Operator/Owner 4|Users 5|Purpose 6|Class of Orbit 7|Type of Orbit 8|
         //Longitude of GEO (degrees) 9|Perigee (km) 10|Apogee (km) 11|Eccentricity 12|
         //Inclination (degrees) 13|Period (minutes) 14|Launch Mass (kg.) 15|
@@ -800,13 +801,12 @@ public class Satellite extends Entity {
 
             // select only GEO satellites
             satellite.setLatitude(0.0);
-            
 
         } catch (Exception e) {
-            Log.p("Satellites: double error in Longitude " + fields[0] + " value" 
+            Log.p("Satellites: double error in Longitude " + fields[0] + " value"
                     + fields, Log.WARNING);
             // depend on default Longitude
-           
+
         }
 
         boolean bandFound = false;
@@ -882,6 +882,14 @@ public class Satellite extends Entity {
     // satellite EIRP contours have same value in the whole footprint
     public double getEIRPforTerminal(Terminal terminal) {
 
+        // when band/satellite changes then old terminal may not have the right
+        // band.  But eventually this will get called again when the right
+        // terminal is selected for the new band/satellite
+        if (this.bandSpecificItems == null
+                || this.bandSpecificItems.get(terminal.getBand()) == null) {
+            Log.p("Satellite: getEIRPforTerminal can't get satellite for terminal band", Log.DEBUG);
+            return Satellite.NEGLIGIBLE;
+        }
         if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
             return getMaxforTerminal(terminal, ContourType.EIRP);
         } else {
@@ -1185,8 +1193,15 @@ public class Satellite extends Entity {
     }
 
     public double getGainTempForTerminal(Terminal terminal) {
-        if (this.bandSpecificItems != null
-                && this.bandSpecificItems.get(terminal.getBand()).beams != null) {
+        // check also if the band is there for the satellite (circular condition)
+        // when band/satellite changes which will eventually change terminals
+        // TODO check this
+        if (this.bandSpecificItems == null
+                || this.bandSpecificItems.get(terminal.getBand()) == null) {
+            Log.p("Satellite: getGainTempForTerminal can't get terminal band", Log.DEBUG);
+            return Satellite.NEGLIGIBLE;
+        }
+        if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
             return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
         } else {
             return bandSpecificItems.get(terminal.getBand()).gainTemp;

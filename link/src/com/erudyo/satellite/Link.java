@@ -382,6 +382,9 @@ public class Link {
         RfBand rFband = RfBand.rFbandHash.get(item);
         
         selection.setBand(rFband.getBand());
+        
+        selection.bandSatelliteSort(selection.getCurrentLocation().
+                getLongitude() * Com.PI / 180.0);
 
         // note that only semiMajor String has substring functions
         lBand.setText((Com.shortText(rFband.lowFrequency / 1E9))

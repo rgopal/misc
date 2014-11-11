@@ -207,9 +207,9 @@ public class MapView extends View {
                             prevSat.satellite = selection.getSatellite();
                             prevSat.pointLayer = plSelSat;
                             prevSat.pointsLayer = plSat;
-                            
-                               selection.getSatelliteView().spin.
-                            setSelectedItem(selection.getSatellite().getName());
+
+                            selection.getSatelliteView().spin.
+                                    setSelectedItem(selection.getSatellite().getName());
 
                             drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
 
@@ -262,18 +262,17 @@ public class MapView extends View {
     public void drawBeams(Selection selection, ArrayList<PointsLayer> pointsSat,
             ArrayList<LinesLayer> linesSat, MapComponent mc) {
         Hashtable<String, Satellite.Beam> beams;
-              beams  = selection.getSatellite().getBeams(selection);
-        
+        beams = selection.getSatellite().getBeams(selection);
+
         // they will be emptied (not nulled, not recreated).  Also, even if the beams is null, these 
         // could have been non empty because of previous satellite
-        
         pointsSat.clear();
         linesSat.clear();
-            
+
         if (beams == null) {
             Log.p("MapView: no beams found for satellite nulling older"
                     + selection.getSatellite(), Log.DEBUG);
-   
+
             return;
         } else {
             try {
@@ -450,7 +449,34 @@ public class MapView extends View {
 
         map = new Form(getName()) {
             @Override
-            // long press creates a new Terminal
+            // just press changes current location. TODO but deactivates BACK
+            /*public void pointerPressed(int x, int y) {
+                try {
+                    Image blue_pin = Image.createImage("/blue_pin.png");
+                    Image red_pin = Image.createImage("/red_pin.png");
+                    Log.p("Map: press your location in x|y " + x + "|" + y, Log.DEBUG);
+                    Coord coord = mc.getCoordFromPosition(x, y);
+
+                    selection.getCurrentLocation().setLongitude(
+                            coord.getLongitude() * Com.PI / 180.0);
+                    selection.getCurrentLocation().setLatitude(
+                            coord.getLatitude() * Com.PI / 180.0);
+
+                    // this is not correct in the model
+                    PointsLayer pslNewTerm = new PointsLayer();
+                    pslNewTerm.setPointIcon(blue_pin);
+                    String name;
+
+                        // dc.setProjected(true);  // WRONG
+                    mc.addLayer(pslNewTerm);
+                    // Google coordinatges are in degrees (no minutes, seconds)
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+            */
+
             public void longPointerPress(int x, int y) {
                 try {
                     Image blue_pin = Image.createImage("/blue_pin.png");
@@ -572,35 +598,28 @@ public class MapView extends View {
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
 
                 if (currentChoice == TERMINAL_CHOICE.TX) {
-                    
+
                     selection.gettXterminal().
                             setBand(selection.getBand());
-                      
+
                     selection.settXterminal(terminal);
                     // update the selection of TxView 
 
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
-                    
-                  
-                 
 
                     currentChoice = TERMINAL_CHOICE.RX;
                     Log.p("MapView: changeterminal() has select TX "
                             + terminal.getName(), Log.DEBUG);
 
                 } else {
-                         selection.getrXterminal().
+                    selection.getrXterminal().
                             setBand(selection.getBand());
-                         
+
                     selection.setrXterminal(terminal);
                     // update the model and selection of TxView 
                     selection.getRxView().spin.
                             setSelectedItem(terminal.getName());
-                    
-                  
-                       
-                    
 
                     Log.p("MapView: changeterminal() has select RX "
                             + terminal.getName(), Log.DEBUG);

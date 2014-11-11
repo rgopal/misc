@@ -40,6 +40,7 @@ public class Selection {
     private Satellite satellite;
     private Path uLpath;
     private Path dLpath;
+    private Location currentLocation;
 
     //  keep only one copy of views, shared by all isntances
     static private SatelliteView satelliteView;
@@ -48,6 +49,20 @@ public class Selection {
     static private RxView rXview;
     static private CommsView commsView;
     static private DlPathView dLpathView;
+
+    /**
+     * @return the currentLocation
+     */
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    /**
+     * @param currentLocation the currentLocation to set
+     */
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
 
     public enum VISIBLE {
 
@@ -131,15 +146,19 @@ public class Selection {
 
         try {
 
-            Location loc = LocationManager.getLocationManager().getCurrentLocation();
+            currentLocation = 
+                    LocationManager.getLocationManager().getCurrentLocation();
 
-            bandSatelliteSort(loc.getLongitude() * Com.PI / 180.0);
-            Log.p("Selection: current location is Long|Lat " + loc.getLongitude() + "|"
-                    + (loc.getLatitude()), Log.DEBUG);
+            Log.p("Selection: current location is Long|Lat " + 
+                    currentLocation.getLongitude() + "|"
+                    + (currentLocation.getLatitude()), Log.DEBUG);           
 
         } catch (Exception d) {
+            currentLocation = new Location();
+            currentLocation.setLongitude(0.0);
+            currentLocation.setLatitude(0.0);
             Log.p("Selection:  can't get current location.  Using 0.0", Log.WARNING);
-            bandSatelliteSort(0.0);
+            
         }
 
     }
@@ -362,6 +381,9 @@ public class Selection {
 
             return false;
         }
+        // sort the satellite for current location (sorts bandSatellite, bandSatelliteHash
+        bandSatelliteSort(getCurrentLocation().getLongitude() * Com.PI / 180.0);
+           
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new String[0])));
