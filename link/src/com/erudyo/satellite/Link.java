@@ -404,6 +404,7 @@ public class Link {
                         + " GHz");
                 Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
 
+          
               
                 if (!selection.comboSatellite(selection)) {
                     // get index of KA in case no satellites were found

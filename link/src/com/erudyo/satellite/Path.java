@@ -139,6 +139,8 @@ public class Path extends Entity {
                     Log.WARNING);
         }
 
+        // satellite has been set, band is set so change it for terminal
+        
         setAll();
     }
 
