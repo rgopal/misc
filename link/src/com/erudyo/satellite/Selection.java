@@ -354,7 +354,7 @@ public class Selection {
                             new String[0])));
 
             if (model == null) {
-                Log.p("Link: Can't create DefaultListModel for Rx terminal "
+                Log.p("Selection: comboRx Can't create DefaultListModel for Rx terminal "
                         + selection.getSatellite(), Log.DEBUG);
             } else {
 
@@ -371,12 +371,20 @@ public class Selection {
                 }
                 // set the selected receive terminal
                 // band is selected in setrX/settX (circular conditions)
-                selection.setrXterminal(Terminal.terminalHash.
-                        get(selection.getVisibleTerminal().
-                                get(Selection.VISIBLE.YES).toArray(
-                                        new String[0])[position]));
 
-                model.setSelectedIndex(position);
+                if (selection.getrXterminal() == null) {
+                    // select the top terminal in sorted list
+                    selection.setrXterminal(Terminal.terminalHash.
+                            get(selection.getVisibleTerminal().
+                                    get(Selection.VISIBLE.YES).toArray(
+                                            new String[0])[position]));
+
+                    model.setSelectedIndex(position);
+                } else {
+                   // select what is already set
+                    selection.getRxView().spin.setSelectedItem(
+                            selection.getrXterminal().getName());
+                }
                 // update label 
                 selection.getRxView().updateValues(selection);
                 selection.getdLpathView().updateValues(selection);
@@ -391,19 +399,20 @@ public class Selection {
         // use global variable to change ListModel of satellite combo
         if (selection.getVisibleTerminal().get(Selection.VISIBLE.YES) == null) {
 
-            Log.p("Link: Visible terminal list is empty for "
+            Log.p("Selection: comboTx Visible terminal list is empty for "
                     + selection.getSatellite(), Log.ERROR);
             // change the current Combobox entry
             // cbBand.setSelectedIndex(i);
         } else {
 
+            // may be duplicated (comboSatellite does that)
             selection.initVisibleTerminal();
             DefaultListModel model = new DefaultListModel(
                     (selection.getVisibleTerminal().get(Selection.VISIBLE.YES).toArray(
                             new String[0])));
 
             if (model == null) {
-                Log.p("Link: Can't create DefaultListModel for VISIBLE Tx terminal for sat "
+                Log.p("Selection: comboTx Can't create DefaultListModel for VISIBLE Tx terminal for sat "
                         + selection.getSatellite(), Log.ERROR);
             } else {
                 selection.getTxView().spin.setModel(model);
@@ -418,12 +427,18 @@ public class Selection {
 
                 // tX terminal will set UL and DL band/freq for antennas
                 // set the selected Tx terminal
-                selection.settXterminal(Terminal.terminalHash.
-                        get(selection.getVisibleTerminal().
-                                get(Selection.VISIBLE.YES).toArray(
-                                        new String[0])[0]));
+                if (selection.gettXterminal() == null) {
+                    selection.settXterminal(Terminal.terminalHash.
+                            get(selection.getVisibleTerminal().
+                                    get(Selection.VISIBLE.YES).toArray(
+                                            new String[0])[0]));
 
-                model.setSelectedIndex(0);
+                    model.setSelectedIndex(0);
+                } else {
+                    selection.getTxView().spin.setSelectedItem(
+                            selection.gettXterminal().getName());
+                }
+
                 selection.getTxView().updateValues(selection);
                 selection.getuLpathView().updateValues(selection);
             }
@@ -460,7 +475,8 @@ public class Selection {
                 selection.setSatellite(Satellite.satelliteHash.
                         get(selection.getSatelliteView().spin.getSelectedItem()));
             }
-            
+
+            // show the satellite selected elsewhere (map)
             selection.getSatelliteView().spin.setSelectedItem(
                     selection.getSatellite().getName());
 
@@ -469,6 +485,7 @@ public class Selection {
             selection.initVisibleTerminal();
 
             // update values for satellite, UL path, DL path, Comms TODO
+            
             selection.getSatelliteView().updateValues(selection);
 
         }

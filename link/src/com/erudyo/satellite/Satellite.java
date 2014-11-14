@@ -867,6 +867,12 @@ public class Satellite extends Entity {
 
     // this is the calculated EIRP for a band
     public double getEIRP(RfBand.Band band) {
+        if (bandSpecificItems.get(band) == null)
+        {
+            // this can happen beceause of circular conditions
+            Log.p("Satellite: getEIRP band is not present " + band, Log.DEBUG);
+            return Satellite.NEGLIGIBLE;
+        }
         return bandSpecificItems.get(band).EIRP;
     }
 
@@ -1189,6 +1195,12 @@ public class Satellite extends Entity {
      * @return the gainTemp without any specific terminal
      */
     public double getGainTemp(RfBand.Band band) {
+         if (bandSpecificItems.get(band) == null)
+        {
+            // this can happen beceause of circular conditions
+            Log.p("Satellite: getGainTemp band is not present " + band, Log.DEBUG);
+            return Satellite.NEGLIGIBLE;
+        }
         return bandSpecificItems.get(band).gainTemp;
     }
 

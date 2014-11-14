@@ -244,8 +244,9 @@ public class MapView extends View {
                         // there are no bands in this satellite so newBand is UK
                         Boolean ans = Dialog.show(dialogText,
                                 "Select this Satellite", "Yes", "No");
-                        if (!ans)
+                        if (!ans) {
                             doNothing = true;
+                        }
                     }
                     if (!doNothing) {
                         Satellite satellite = Satellite.satelliteHash.get(
@@ -258,9 +259,10 @@ public class MapView extends View {
                             Log.p("Mapview: selecting satellite "
                                     + plSelSat.getName(), Log.DEBUG);
                             selection.setBand(newBand);
+                            selection.setSatellite(satellite);
                             
                             selection.comboBand(selection);
-                            
+
                             // remove beams of old satellite
                             if (prevSat != null) {
                                 removeBeams(prevSat.satellite, prevSat.pointsSat,
@@ -270,7 +272,7 @@ public class MapView extends View {
                                 prevSat.pointsLayer.setPointIcon(blue_pin);
 
                             }
-                            selection.setSatellite(satellite);
+
                             plSat.setPointIcon(red_pin);
                             plSelSat.setIcon(red_pin);
                             prevSat.satellite = selection.getSatellite();
@@ -656,16 +658,30 @@ public class MapView extends View {
     public void changeTerminal(Selection selection, MapComponent mc,
             PointLayer pnew, Coord m) {
 
-        Boolean ans = Dialog.show("Terminal", pnew.getName() + " at Long|Lat "
+        String dialogText = "Terminal " + pnew.getName() + " at Long|Lat "
                 + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
                 + Com.toDMS(Math.toRadians(m.getLatitude()))
-                + "\nSelect this terminal as " + currentChoice + "?", "Yes", "No");
+                + "\nSelect this terminal as";
 
-        if (ans) {
+        Command dlCmds[] = {new Command("TX"), new Command("RX"), new Command("Cancel")};
+
+        Command cmd = Dialog.show("Terminal Selection", dialogText,
+                dlCmds, 0, null, 0);
+
+        if (cmd.getCommandName().equalsIgnoreCase("TX")) {
+            currentChoice = TERMINAL_CHOICE.TX;
+        } else if (cmd.getCommandName().equalsIgnoreCase("RX")) {
+            currentChoice = TERMINAL_CHOICE.RX;
+        }
+
+        if (cmd.getCommandName().equalsIgnoreCase("Cancel")) {
+            Log.p("MapView: terminal is not selected "
+                    + pnew.getName(), Log.DEBUG);
+        } else {
             Terminal terminal = Terminal.terminalHash.get(pnew.getName());
             if (terminal == null) {
                 Log.p("Mapview: can't find terminal " + pnew.getName() + " for "
-                        + currentChoice, Log.DEBUG);
+                        + currentChoice, Log.WARNING);
             } else {
                 // change terminal and update linesSat
                 Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
@@ -681,7 +697,6 @@ public class MapView extends View {
                     selection.getTxView().spin.
                             setSelectedItem(terminal.getName());
 
-                    currentChoice = TERMINAL_CHOICE.RX;
                     Log.p("MapView: changeterminal() has select TX "
                             + terminal.getName(), Log.DEBUG);
 
@@ -696,16 +711,13 @@ public class MapView extends View {
 
                     Log.p("MapView: changeterminal() has select RX "
                             + terminal.getName(), Log.DEBUG);
-                    currentChoice = TERMINAL_CHOICE.TX;
+
                 }
 
                 showLines(selection, mc);
 
             }
 
-        } else {
-            Log.p("MapView: terminal is not selected "
-                    + pnew.getName(), Log.DEBUG);
         }
     }
 }

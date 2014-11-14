@@ -401,6 +401,8 @@ public class Link {
         cbBand.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
+                selection.setBand(RfBand.rFbandHash.get(
+                        cbBand.getSelectedItem()).getBand());
                 selection.comboBand(selection);
             }
         });
