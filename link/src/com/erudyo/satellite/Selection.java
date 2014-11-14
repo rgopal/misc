@@ -22,6 +22,8 @@ import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.list.DefaultListModel;
 import com.codename1.location.Location;
 import com.codename1.location.LocationManager;
+import com.codename1.ui.ComboBox;
+import com.codename1.ui.Label;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -34,6 +36,34 @@ import java.util.ArrayList;
  */
 public class Selection {
 
+    /**
+     * @return the cbBand
+     */
+    public static ComboBox getCbBand() {
+        return cbBand;
+    }
+
+    /**
+     * @param aCbBand the cbBand to set
+     */
+    public static void setCbBand(ComboBox aCbBand) {
+        cbBand = aCbBand;
+    }
+
+    /**
+     * @return the lBand
+     */
+    public static Label getlBand() {
+        return lBand;
+    }
+
+    /**
+     * @param alBand the lBand to set
+     */
+    public static void setlBand(Label alBand) {
+        lBand = alBand;
+    }
+
     private Comms comms;                // basic comms parameters
     private Terminal tXterminal;        // created in tXview (getWidget)
     private Terminal rXterminal;
@@ -43,6 +73,8 @@ public class Selection {
     private Location currentLocation;
 
     //  keep only one copy of views, shared by all isntances
+    static private ComboBox cbBand;       // could have had its own view
+    static private Label lBand;
     static private SatelliteView satelliteView;
     static private TxView tXview;
     static private UlPathView uLpathView;
@@ -131,6 +163,7 @@ public class Selection {
 
     public Selection() {
         // use constructor with Selection instance as input
+        cbBand = new ComboBox();
         satelliteView = new SatelliteView(this);
         tXview = new TxView(this);
         uLpathView = new UlPathView(this);
@@ -146,19 +179,19 @@ public class Selection {
 
         try {
 
-            currentLocation = 
-                    LocationManager.getLocationManager().getCurrentLocation();
+            currentLocation
+                    = LocationManager.getLocationManager().getCurrentLocation();
 
-            Log.p("Selection: current location is Long|Lat " + 
-                    currentLocation.getLongitude() + "|"
-                    + (currentLocation.getLatitude()), Log.DEBUG);           
+            Log.p("Selection: current location is Long|Lat "
+                    + currentLocation.getLongitude() + "|"
+                    + (currentLocation.getLatitude()), Log.DEBUG);
 
         } catch (Exception d) {
             currentLocation = new Location();
             currentLocation.setLongitude(0.0);
             currentLocation.setLatitude(0.0);
             Log.p("Selection:  can't get current location.  Using 0.0", Log.WARNING);
-            
+
         }
 
     }
@@ -265,7 +298,6 @@ public class Selection {
 
         initVisibleTerminal();  // they are both here in this class
 
- 
         // update the UL and DL paths
         if (uLpath != null) {
             uLpath.setSatellite(satellite);
@@ -277,6 +309,35 @@ public class Selection {
             comms.changeDLname(dLpath.name);
             comms.changeULname(uLpath.name);
         }
+    }
+
+    public void comboBand(final Selection selection) {
+
+        ComboBox cbBand = selection.getCbBand();
+
+        cbBand.setSelectedItem(selection.getBand());
+        RfBand rFband = RfBand.rFbandHash.get(selection.
+                getBand().toString());
+
+        selection.getlBand().setText(Com.shortText((rFband.lowFrequency / 1E9))
+                + " - " + (Com.shortText(rFband.highFrequency / 1E9))
+                + " GHz");
+        Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
+
+        if (!selection.comboSatellite(selection)) {
+            // get index of KA in case no satellites were found
+            int i = selection.getRfBandHash().get("KA");
+            // change the current Combobox entry to KA
+            cbBand.setSelectedIndex(i);
+            selection.setBand(RfBand.Band.KA);
+            selection.getrXterminal().setBand(selection.getBand());
+            selection.gettXterminal().setBand(selection.getBand());
+        }
+
+        // it will select Tx terminal
+        selection.comboTx(selection);
+        // will select Rx terminal
+        selection.comboRx(selection);
     }
 
     public void comboRx(final Selection selection) {
@@ -383,7 +444,7 @@ public class Selection {
         }
         // sort the satellite for current location (sorts bandSatellite, bandSatelliteHash
         bandSatelliteSort(getCurrentLocation().getLongitude() * Com.PI / 180.0);
-           
+
         DefaultListModel model = new DefaultListModel(
                 (selection.getBandSatellite().get(selection.getBand()).toArray(
                         new String[0])));
@@ -394,10 +455,14 @@ public class Selection {
         } else {
             // use the list of satellites for select band 
             selection.getSatelliteView().spin.setModel(model);
-            String name = (String) selection.getSatelliteView().spin.getSelectedItem();
 
-            // update selected satellite
-            selection.setSatellite(Satellite.satelliteHash.get(name));
+            if (selection.getSatellite() == null) {
+                selection.setSatellite(Satellite.satelliteHash.
+                        get(selection.getSatelliteView().spin.getSelectedItem()));
+            }
+            
+            selection.getSatelliteView().spin.setSelectedItem(
+                    selection.getSatellite().getName());
 
             // Satellite Band processed on its own
             // now create visible lists for this satellite
@@ -498,26 +563,26 @@ public class Selection {
                         public int compare(String one, String two) {
 
                             try {
-                             //   Log.p("bandSortSatellite: one|two|band" + one
-                               //         + "|" + two + "|" + band.getBand(),
-                                 //       Log.DEBUG);
+                                //   Log.p("bandSortSatellite: one|two|band" + one
+                                //         + "|" + two + "|" + band.getBand(),
+                                //       Log.DEBUG);
                                 Double first, second;
 
                                 first = Path.calcRelativeLongitude(longitude,
                                         Satellite.satelliteHash.get(one).getLongitude());
                                 second = Path.calcRelativeLongitude(longitude,
                                         Satellite.satelliteHash.get(two).getLongitude());
-                                
+
                                 // this is elaborate, and 0, -1, 1 need to be 
                                 // addressed, per contract for TimSort (Java 7)
-                                if (first == second)
+                                if (first == second) {
                                     return 0;
-                                else if (first < second)
+                                } else if (first < second) {
                                     return -1;
-                                else
+                                } else {
                                     return 1;
-                              
-                                
+                                }
+
                             } catch (Exception e) {
                                 Log.p("Satellite: sort one|two" + one + "|"
                                         + two, Log.DEBUG);

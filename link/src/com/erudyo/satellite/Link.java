@@ -81,19 +81,19 @@ import java.util.List;
 import java.util.Vector;
 
 public class Link {
-    
+
     private Form main;
     private Form current;
     private RfBand.Band band = RfBand.Band.KA;
     private RfBand.Band dLband = RfBand.Band.KA_DL;
     private RfBand.Band uLband = RfBand.Band.KA_UL;
     private Com.Orbit orbit = Com.Orbit.GEO;
-    
+
     private Selection selection;
 
     // Each band has semiMajor vector of terminals and satellites read from files
     private View[] views;
-    
+
     public void init(Object context) {
 
         // create semiMajor new instance to keep track of all other objects for UI
@@ -117,7 +117,7 @@ public class Link {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         initViews(selection);
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
@@ -133,11 +133,11 @@ public class Link {
             }
         });
     }
-    
+
     private void initViews(Selection selection) {
-        
+
         Log.p("Started application", Log.DEBUG);
-        
+
         views = new View[6];
         // selection contains current selection of atellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage
@@ -145,28 +145,28 @@ public class Link {
 
         // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
         views[0] = selection.getSatelliteView();
-        
+
         views[1] = selection.getTxView();
         views[2] = selection.getuLpathView();
-        
+
         views[3] = selection.getRxView();
         views[4] = selection.getdLpathView();
         views[5] = selection.getCommsView();
-        
+
     }
-    
+
     public void start() {
         if (current != null) {
             current.show();
             return;
         }
-        
+
         main = new Form("Satellite Link");
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         // set the current Band and select satellite and tx, rx terminals
         initBands(main, selection);
-        
+
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
 
@@ -177,25 +177,25 @@ public class Link {
 
         // satellites are read from the txt file (and selected with band)
         initViews(selection.getSatelliteView(), cnt, selection, layout, 4);
-        
+
         initViews(selection.getTxView(), cnt, selection, layout, 4);
         // now uplink, downlink paths and Comms can be created
 
         selection.setuLpath(new Path(selection.getSatellite(),
                 selection.gettXterminal(), Path.PATH_TYPE.UPLINK));
         selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
-        
+
         initViews(selection.getuLpathView(), cnt, selection, layout, 1);
-        
+
         initViews(selection.getRxView(), cnt, selection, layout, 4);
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
-        
+
         initViews(selection.getdLpathView(), cnt, selection, layout, 1);
-        
+
         selection.setComms(new Comms(selection.getuLpath(),
                 selection.getdLpath()));
-        
+
         initViews(selection.getCommsView(), cnt, selection, layout, 1);
         Button bMap = new Button("Map");
 
@@ -211,24 +211,24 @@ public class Link {
                 form.show();
             }
         });
-        
+
         LikeButton like = new LikeButton();
-        
+
         main.addComponent(like);
-        
+
         ShareButton s = new ShareButton();
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
         like.setUIID("Button");
-        
+
         main.show();
-        
+
     }
-    
+
     public void initViews(final View view, Container cntLink,
             final Selection selection, TableLayout layout, int span) {
-        
+
         try {
             Image cmdIcon = Image.createImage("/blue_pin.png");
 
@@ -240,7 +240,7 @@ public class Link {
             // all these widgets have to be remembered by respective views 
             Component label = view.getLabel(selection);
             Component subLabel = view.getSubLabel(selection);
-            
+
             Button bSelectView = new Button("->"); //view.getName());
 
             TableLayout.Constraint constraint;
@@ -249,38 +249,38 @@ public class Link {
                 constraint = layout.createConstraint();
                 constraint.setWidthPercentage(10);
                 Label name = new Label(view.getName());
-                
+
                 cntLink.addComponent(constraint, name);
-                
+
                 constraint = layout.createConstraint();
                 constraint.setHorizontalSpan(3);
-                
+
                 cntLink.addComponent(constraint, widget);
 
                 // add others in a new line
                 constraint = layout.createConstraint();
-                
+
                 constraint.setWidthPercentage(30);
-                
+
                 constraint = layout.createConstraint(); // 30% of width
                 constraint.setWidthPercentage(25);
                 cntLink.addComponent(constraint, subWidget);
-                
+
                 constraint = layout.createConstraint();
                 constraint.setWidthPercentage(25);
                 cntLink.addComponent(constraint, label);
                 cntLink.addComponent(subLabel);
                 cntLink.addComponent(bSelectView);
                 bSelectView.setIcon(cmdIcon);
-                
+
             } else {
                 constraint = layout.createConstraint();
-                
+
                 constraint.setWidthPercentage(30);
                 // cntLink.addComponent(constraint, widget);
 
                 cntLink.addComponent(constraint, subWidget);
-                
+
                 constraint = layout.createConstraint(); // 30% of width
                 constraint.setWidthPercentage(30);
                 cntLink.addComponent(constraint, label);
@@ -290,14 +290,14 @@ public class Link {
                 cntLink.addComponent(bSelectView);
                 bSelectView.setIcon(cmdIcon);
             }
-            
+
             bSelectView.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     final Form form = view.createView(selection);
                     BackCommand bc = new BackCommand();
                     form.addCommand(bc);
                     form.setBackCommand(bc);
-                    
+
                     final Command cmd1 = new Command("Command1");
                     final Command cmd2 = new Command("Command2");
                     Command cmd = new Command("Command3") {
@@ -305,18 +305,18 @@ public class Link {
                             // create a new form with its own back.  In future
                             // add home (back to home)
                             final Form text = new Form(form.getName());
-                            
+
                             TextArea taTable = new TextArea();
-                            
+
                             ArrayList<ArrayList<String>> table
                                     = view.getText(selection);
-                            
+
                             String string = new String();
                             for (ArrayList<String> line : table) {
-                                
+
                                 for (String item : line) {
                                     if (item != null) {
-                                        
+
                                         string = string + item;
                                         // put empty spaces
                                         string = string + "\t\t"; // "                   ".
@@ -326,15 +326,15 @@ public class Link {
                                     }
                                 }
                                 string = string + "\n";
-                                
+
                             }
-                            
+
                             taTable.setText(string);
                             taTable.setEditable(false);
                             taTable.setFocusable(false);
                             taTable.setUIID("Label");
                             text.addComponent(taTable);
-                            
+
                             Command bc = new Command("Back to " + form.getName()) {
                                 public void actionPerformed(ActionEvent ev) {
                                     form.showBack();
@@ -343,7 +343,7 @@ public class Link {
                             text.addCommand(bc);
                             text.setBackCommand(bc);
                             text.show();
-                            
+
                             Log.p("Link: menu command " + cmd1.getId(), Log.DEBUG);
                         }
                     };
@@ -357,32 +357,36 @@ public class Link {
             });
         } catch (IOException ex) {
             ex.printStackTrace();
-            
+
         }
-        
+
     }
-    
+
     public void initBands(Form main, final Selection selection) {
         // band selection
 
         Container cntBand = new Container();
         cntBand.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(cntBand);
-        
+
         final Label lBand = new Label();
-        final ComboBox cbBand = new ComboBox();
+        selection.setlBand(lBand);
+        selection.setCbBand(new ComboBox());
+       
+        final ComboBox cbBand = selection.getCbBand();
+
         cntBand.addComponent(cbBand);
         cntBand.addComponent(lBand);
-        
+
         ListModel model = new DefaultListModel(selection.getRfBands());
         cbBand.setModel(model);
-        
+
         String item = (String) cbBand.getSelectedItem();
-        
+
         RfBand rFband = RfBand.rFbandHash.get(item);
-        
+
         selection.setBand(rFband.getBand());
-        
+
         selection.bandSatelliteSort(selection.getCurrentLocation().
                 getLongitude() * Com.PI / 180.0);
 
@@ -396,58 +400,32 @@ public class Link {
         // then again in respective satellite and terminal change
         cbBand.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                
-                String item = (String) cbBand.getSelectedItem();
-                RfBand rFband = RfBand.rFbandHash.get(item);
-                
-                selection.setBand(rFband.getBand());
-                
-                lBand.setText(Com.shortText((rFband.lowFrequency / 1E9))
-                        + " - " + (Com.shortText(rFband.highFrequency / 1E9))
-                        + " GHz");
-                Log.p("Link: band selection " + cbBand.getSelectedItem().toString(), Log.DEBUG);
 
-          
-              
-                if (!selection.comboSatellite(selection)) {
-                    // get index of KA in case no satellites were found
-                    int i = selection.getRfBandHash().get("KA");
-                    // change the current Combobox entry to KA
-                    cbBand.setSelectedIndex(i);
-                    selection.setBand(RfBand.Band.KA);
-                    selection.getrXterminal().setBand(selection.getBand());
-                    selection.gettXterminal().setBand(selection.getBand());
-                }
-
-                // it will select Tx terminal
-                selection.comboTx(selection);
-                // will select Rx terminal
-                selection.comboRx(selection);
-                
+                selection.comboBand(selection);
             }
         });
-        
+
     }
+
     
- 
-    
+
     class BackCommand extends Command {
-        
+
         public BackCommand() {
-            
+
             super("Back");
         }
-        
+
         public void actionPerformed(ActionEvent evt) {
             main.showBack();
         }
     }
-    
+
     public void stop() {
         current = Display.getInstance().getCurrent();
     }
-    
+
     public void destroy() {
     }
-    
+
 }

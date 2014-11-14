@@ -16,6 +16,8 @@ import com.codename1.maps.layers.PointLayer;
 import com.codename1.maps.layers.PointsLayer;
 import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.Button;
+import com.codename1.ui.Command;
+import com.codename1.ui.Component;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
@@ -65,14 +67,15 @@ public class MapView extends View {
             final MapComponent mc, String termName, final LinesLayer tXline,
             final LinesLayer rXline) {
         try {
-            Log.p("MapView: displaying terminal " + termName
+            Log.p("MapView:  showTerminal " + termName
                     + " for " + selection.getBand() + " band.", Log.DEBUG);
             Image blue_pin = Image.createImage("/blue_pin.png");
             Image red_pin = Image.createImage("/red_pin.png");
 
             Terminal terminal = Terminal.terminalHash.get(termName);
             if (terminal == null) {
-                Log.p("MapView: terminal is null " + termName, Log.DEBUG);
+                Log.p("MapView: showTerminal terminal is null " + termName,
+                        Log.WARNING);
             }
 
             PointsLayer pl = new PointsLayer();
@@ -140,7 +143,7 @@ public class MapView extends View {
 
             Satellite satellite = Satellite.satelliteHash.get(satName);
             if (satellite == null) {
-                Log.p("MapView: satellite is null " + satName, Log.DEBUG);
+                Log.p("MapView: satellite is null " + satName, Log.WARNING);
             }
 
             final PointsLayer plSat = new PointsLayer();
@@ -181,17 +184,83 @@ public class MapView extends View {
                     Coord coordSelSat = Mercator.inverseMercator(plSelSat.getLatitude(),
                             plSelSat.getLongitude());
                     // get the point in this point layer to print 
-                    Boolean ans = Dialog.show("GEO_Satellite", plSelSat.getName() + " at Long|Lat "
+                    // get all bands info for the satellite
+                    Satellite newSat = Satellite.satelliteHash.get(plSelSat.getName());
+                    String bands = "";
+                    ArrayList<RfBand.Band> alBands = new ArrayList<RfBand.Band>();
+                    ArrayList<Command> alCmds = new ArrayList<Command>();
+                    if (newSat != null) {
+                        for (final RfBand band : RfBand.indexRfBand) {
+                            if (band.getBand() == RfBand.Band.UK) {
+                                continue;
+                            }
+
+                            if (newSat.bandSpecificItems == null
+                                    || newSat.bandSpecificItems.get(band.getBand()) == null) {
+                                Log.p("MapView: bandSatellite is null for band "
+                                        + band.getBand(), Log.DEBUG);
+                                // don't return, just go to next band
+                                continue;
+                            }
+                            bands = bands + " " + band.getBand();
+                            alBands.add(band.getBand());
+                            alCmds.add(new Command(band.getBand().toString()));
+
+                        }
+                        if (bands.length() != 0) {
+                            bands = " and bands " + bands + " ";
+                        }
+                    } else {
+                        Log.p("MapView: showSatellite newSat is null", Log.WARNING);
+                    }
+                    // offer band selection as well
+                    RfBand.Band oldBand = selection.getBand();
+                    RfBand.Band newBand = RfBand.Band.UK;
+
+                    String dialogText = new String("GEO_Satellite"
+                            + plSelSat.getName() + " at Long|Lat "
                             + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
                             + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
-                            + "Select this satellite?", "Yes", "No");
-                    if (ans) {
-                        Satellite satellite = Satellite.satelliteHash.get(plSelSat.getName());
+                            + bands
+                    );
+
+                    Boolean doNothing = false;
+                    if (alBands.size() > 0) {
+
+                        alCmds.add(new Command("Cancel"));
+                        Command cmd = Dialog.show("Satellite Selection", dialogText,
+                                alCmds.toArray(new Command[0]), 0, null, 0);
+
+                        // check what was returned
+                        if (cmd.getCommandName().equalsIgnoreCase("UK")) {
+                            doNothing = true;
+                        } else {
+                            newBand = RfBand.rFbandHash.get(cmd.getCommandName()).
+                                    getBand();
+                            Log.p("MapView: selecting band " + newBand, Log.DEBUG);
+                        }
+
+                    } else {
+                        // there are no bands in this satellite so newBand is UK
+                        Boolean ans = Dialog.show(dialogText,
+                                "Select this Satellite", "Yes", "No");
+                        if (!ans)
+                            doNothing = true;
+                    }
+                    if (!doNothing) {
+                        Satellite satellite = Satellite.satelliteHash.get(
+                                plSelSat.getName());
                         if (satellite == null) {
-                            Log.p("Mapview: can't find satellite " + plSelSat.getName(), Log.DEBUG);
+                            Log.p("Mapview: can't find satellite "
+                                    + plSelSat.getName(), Log.WARNING);
                         } else {
                             // change satellite and update linesSat
-                            Log.p("Mapview: selecting satellite " + plSelSat.getName(), Log.DEBUG);
+                            Log.p("Mapview: selecting satellite "
+                                    + plSelSat.getName(), Log.DEBUG);
+                            selection.setBand(newBand);
+                            
+                            selection.comboBand(selection);
+                            
                             // remove beams of old satellite
                             if (prevSat != null) {
                                 removeBeams(prevSat.satellite, prevSat.pointsSat,
@@ -225,7 +294,8 @@ public class MapView extends View {
                             + coordSelSat.getLatitude(), Log.DEBUG);
 
                 }
-            });
+            }
+            );
             mc.addLayer(plSat);
             // Google coordinatges are in degrees (no minutes, seconds)
         } catch (IOException ex) {
@@ -415,12 +485,43 @@ public class MapView extends View {
             // this would not work if longPointerPress was overriden in MapComponent
             mcLoc = new MapComponent(
                     new GoogleMapsProvider("AIzaSyBEUsbb2NkrYxdQSG-kUgjZCoaLY0QhYmk"),
-                    satLocation, 5);
+                    satLocation, 5) {
+                        @Override
+                        // just press changes current location. TODO but deactivates BACK
+                        public void pointerPressed(int x, int y) {
+                            try {
+                                Component cmp = this.getComponentAt(x, y);
+                                Image blue_pin = Image.createImage("/blue_pin.png");
+                                Image red_pin = Image.createImage("/red_pin.png");
+                                Log.p("Map: press your location in x|y " + x + "|" + y, Log.DEBUG);
+                                Coord coord = getCoordFromPosition(x, y);
+
+                                selection.getCurrentLocation().setLongitude(
+                                        coord.getLongitude() * Com.PI / 180.0);
+                                selection.getCurrentLocation().setLatitude(
+                                        coord.getLatitude() * Com.PI / 180.0);
+
+                                // this is not correct in the model
+                                PointsLayer pslNewTerm = new PointsLayer();
+                                pslNewTerm.setPointIcon(blue_pin);
+                                String name;
+
+                                // dc.setProjected(true);  // WRONG
+                                addLayer(pslNewTerm);
+                                // Google coordinatges are in degrees (no minutes, seconds)
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        }
+
+                    };
         } catch (Exception d) {
             Log.p("MapView: CreateView can't get current location", Log.WARNING);
         }
 
         final MapComponent mc = mcLoc;
+
         // initialize static tx and rx linesSat
         rXline = null;
         tXline = null;
@@ -448,34 +549,6 @@ public class MapView extends View {
         }
 
         map = new Form(getName()) {
-            @Override
-            // just press changes current location. TODO but deactivates BACK
-            /*public void pointerPressed(int x, int y) {
-                try {
-                    Image blue_pin = Image.createImage("/blue_pin.png");
-                    Image red_pin = Image.createImage("/red_pin.png");
-                    Log.p("Map: press your location in x|y " + x + "|" + y, Log.DEBUG);
-                    Coord coord = mc.getCoordFromPosition(x, y);
-
-                    selection.getCurrentLocation().setLongitude(
-                            coord.getLongitude() * Com.PI / 180.0);
-                    selection.getCurrentLocation().setLatitude(
-                            coord.getLatitude() * Com.PI / 180.0);
-
-                    // this is not correct in the model
-                    PointsLayer pslNewTerm = new PointsLayer();
-                    pslNewTerm.setPointIcon(blue_pin);
-                    String name;
-
-                        // dc.setProjected(true);  // WRONG
-                    mc.addLayer(pslNewTerm);
-                    // Google coordinatges are in degrees (no minutes, seconds)
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
-            }
-            */
 
             public void longPointerPress(int x, int y) {
                 try {
