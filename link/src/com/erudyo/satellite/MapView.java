@@ -203,6 +203,11 @@ public class MapView extends View {
                                 continue;
                             }
                             bands = bands + " " + band.getBand();
+                            // number of transponders
+                            bands = bands + "T" + newSat.bandSpecificItems.
+                                    get(band.getBand()).transponders;
+                            if (newSat.bandSpecificItems.get(band.getBand()).beams != null)
+                                bands = bands + "*";
                             alBands.add(band.getBand());
                             alCmds.add(new Command(band.getBand().toString()));
 

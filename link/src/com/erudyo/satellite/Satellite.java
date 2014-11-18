@@ -552,6 +552,7 @@ public class Satellite extends Entity {
     }
 
     static {
+        int i = 0;
         try {
             CSVParser parser = new CSVParser('|');
 
@@ -575,11 +576,13 @@ public class Satellite extends Entity {
             String satBeams[][] = parser.parse(new InputStreamReader(is));
 
             String oldSat = "", oldBand = "", sat, beam, file, band;
-            for (int i = 0; i < satBeams.length; i++) {
+           
+            for (i = 0; i < satBeams.length; i++) {
                 sat = satBeams[i][0];
                 beam = satBeams[i][1];
                 file = satBeams[i][2];
                 band = satBeams[i][3];
+              
 
                 // assume this is sorted by satellite and band
                 if (!sat.equalsIgnoreCase(oldSat)) {
@@ -610,10 +613,11 @@ public class Satellite extends Entity {
                         get(band.toUpperCase()).getBand()).add(file);  // add the file
 
                 Log.p("Satellite: static{} added file " + file + " for sat|beam|band "
-                        + sat + "|" + beam + "|" + band, Log.DEBUG);
+                        + sat + "|" + beam + "|" + file + "|" + band, Log.DEBUG);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
+            Log.p("Satellite: beam_text file, error at index " + i, Log.WARNING);
             e.printStackTrace();
         }
 

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Folder id = "Satellite">
+<name><![CDATA[Spaceway 3 95W]]></name>
+<open>1</open>
+<Document>
+<name><![CDATA[Spaceway 3 95W SPD7 Los Angeles]]></name>
+<Folder id ="SatelliteBeam">
+<name>Contours/Markers</name>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>1</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[SPD7 63.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-117.9,34.243]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[61.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -119,35.098 -119.113,35 -119.296,34.5 -119.141,34 -119,33.766 -118.792,33.5 -118.5,33.234 -118,33.117 -117.5,33.011 -117.214,33.5 -117.183,34 -117.454,34.5 -117.5,34.547 -117.941,35 -118,35.037 -118.5,35.157 -119,35.098</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>FFFFFFFF
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[61.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-118.5,35.157]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[59.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -119.5,35.523 -119.521,35.5 -119.749,35 -119.833,34.5 -119.619,34 -119.5,33.741 -119.354,33.5 -119,33.198 -118.788,33 -118.5,32.775 -118,32.597 -117.5,32.513 -117,32.83 -116.834,33 -116.661,33.5 -116.689,34 -116.881,34.5 -117,34.678 -117.319,35 -117.5,35.14 -118,35.466 -118.075,35.5 -118.5,35.692 -119,35.665 -119.5,35.523</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>fff9d690
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[59.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-119,35.665]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[57.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -120,35.534 -120.025,35.5 -120.17,35 -120.192,34.5 -120.006,34 -120,33.988 -119.722,33.5 -119.5,33.229 -119.237,33 -119,32.812 -118.608,32.5 -118.5,32.44 -118,32.236 -117.5,32.149 -117,32.256 -116.693,32.5 -116.5,32.698 -116.361,33 -116.281,33.5 -116.31,34 -116.5,34.421 -116.535,34.5 -116.869,35 -117,35.114 -117.467,35.5 -117.5,35.527 -118,35.797 -118.346,36 -118.5,36.084 -119,36.091 -119.5,36.058 -119.576,36 -120,35.534</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>FF80FF80
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[57.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-118,35.797]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[55.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -120,36.087 -120.077,36 -120.439,35.5 -120.497,35 -120.47,34.5 -120.281,34 -120.03,33.5 -120,33.468 -119.599,33 -119.5,32.894 -119.031,32.5 -119,32.479 -118.5,32.197 -118.129,32 -118,31.921 -117.5,31.82 -117,31.794 -116.679,32 -116.5,32.141 -116.3,32.5 -116.067,33 -116,33.312 -115.948,33.5 -115.953,34 -116,34.081 -116.188,34.5 -116.5,34.96 -116.527,35 -117,35.414 -117.104,35.5 -117.5,35.832 -117.799,36 -118,36.108 -118.5,36.384 -119,36.483 -119.5,36.446 -120,36.087</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>ffebd7ff
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[55.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-117.5,35.832]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[53.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -120.5,36.049 -120.523,36 -120.714,35.5 -120.765,35 -120.752,34.5 -120.565,34 -120.5,33.889 -120.303,33.5 -120,33.174 -119.851,33 -119.5,32.627 -119.349,32.5 -119,32.267 -118.565,32 -118.5,31.961 -118,31.642 -117.5,31.514 -117.433,31.5 -117,31.325 -116.779,31.5 -116.5,31.671 -116.251,32 -116.012,32.5 -116,32.525 -115.756,33 -115.569,33.5 -115.507,34 -115.758,34.5 -116,34.792 -116.131,35 -116.5,35.244 -116.787,35.5 -117,35.666 -117.381,36 -117.5,36.094 -118,36.396 -118.185,36.5 -118.5,36.67 -119,36.847 -119.5,36.803 -120,36.609 -120.1,36.5 -120.5,36.049</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>FF00FFFF
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[53.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-117,35.666]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[48.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -121.5,35.168 -121.602,35 -121.705,34.5 -121.5,34.033 -121.486,34 -121.213,33.5 -121,33.336 -120.503,33 -120.5,32.998 -120,32.526 -119.975,32.5 -119.5,32.214 -119.225,32 -119,31.79 -118.565,31.5 -118.5,31.413 -118.141,31 -118,30.829 -117.645,30.5 -117.5,30.324 -117,30.005 -116.987,30 -116.5,29.779 -116,29.961 -115.963,30 -115.648,30.5 -115.734,31 -115.765,31.5 -115.605,32 -115.5,32.256 -115.301,32.5 -115,32.749 -114.659,33 -114.5,33.284 -114.383,33.5 -114.284,34 -114.5,34.5 -114.5,34.5 -114.794,35 -115,35.156 -115.5,35.493 -115.517,35.5 -116,35.668 -116.5,35.822 -116.721,36 -117,36.168 -117.394,36.5 -117.5,36.59 -117.949,37 -118,37.124 -118.407,37.5 -118.5,37.744 -118.662,38 -119,38.262 -119.326,38.5 -119.5,38.587 -119.916,38.5 -120,38.458 -120.494,38 -120.431,37.5 -120.5,37.393 -120.7,37 -120.952,36.5 -121,36.36 -121.092,36 -121.381,35.5 -121.5,35.168</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>ff00aeff
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[48.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-121.381,35.5]]></coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name><![CDATA[43.68 dBw]]></name>
+<MultiGeometry>
+<LineString>
+<altitudeMode>clampToGround</altitudeMode>
+<tessellate>1</tessellate>
+<coordinates> -122.5,35.634 -122.665,35.5 -122.814,35 -122.953,34.5 -122.588,34 -122.5,33.749 -122.355,33.5 -122,33.24 -121.72,33 -121.5,32.817 -121.062,32.5 -121,32.472 -120.5,32.378 -120,32.242 -119.652,32 -119.5,31.889 -119.093,31.5 -119,31.293 -118.767,31 -118.5,30.547 -118.461,30.5 -118.032,30 -118,29.97 -117.548,29.5 -117.5,29.466 -117,29.233 -116.5,29.005 -116.441,29 -116,28.922 -115.664,29 -115.5,29.03 -115.257,29.5 -115.081,30 -115,30.226 -114.96,30.5 -115,30.664 -115.166,31 -115.264,31.5 -115,31.966 -114.969,32 -114.5,32.326 -114.061,32.5 -114,32.543 -113.5,32.98 -113.484,33 -113.361,33.5 -113.306,34 -113.48,34.5 -113.5,34.539 -113.703,35 -114,35.284 -114.272,35.5 -114.5,35.656 -114.983,36 -115,36.005 -115.5,36.203 -116,36.263 -116.5,36.27 -116.892,36.5 -117,36.547 -117.5,36.986 -117.516,37 -117.748,37.5 -117.813,38 -118,38.285 -118.151,38.5 -118.5,38.874 -118.689,39 -119,39.296 -119.412,39.5 -119.5,39.54 -120,39.734 -120.5,39.636 -120.945,39.5 -121,39.468 -121.219,39 -121.5,38.637 -121.594,38.5 -121.532,38 -121.5,37.934 -121.276,37.5 -121.34,37 -121.442,36.5 -121.5,36.327 -121.794,36 -122,35.875 -122.5,35.634</coordinates>
+</LineString>
+</MultiGeometry>
+<Style>
+<LineStyle>
+<color>FF0000FF
+</color>
+<width>4</width>
+</LineStyle>
+</Style>
+</Placemark>
+<Placemark>
+<Style id = "dbwlabel">
+<IconStyle>
+<scale>0</scale>
+</IconStyle>
+<LabelStyle>
+<color>FFFFFFFF</color>
+<scale>1</scale>
+</LabelStyle>
+</Style>
+<name><![CDATA[43.68 dBw]]></name>
+<Point>
+<coordinates><![CDATA[-114.5,35.656]]></coordinates>
+</Point>
+</Placemark>
+<open>0</open>
+<visibility>1</visibility>
+</Folder>
+<Snippet><![CDATA[created by <A href="http://sites.google.com/site/satellitefootprints/?ref=ge">SatelliteFootPrints</A>]]></Snippet>
+<open>0</open>
+<visibility>1</visibility>
+</Document>
+<LookAt>
+<latitude><![CDATA[34.243]]></latitude>
+<longitude><![CDATA[-117.9]]></longitude>
+<tilt></tilt>
+<range>16000000</range>
+</LookAt>
+</Folder>
+</kml>
