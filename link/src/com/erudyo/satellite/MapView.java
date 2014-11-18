@@ -174,6 +174,7 @@ public class MapView extends View {
                 prevSat.pointsLayer = plSat;
                 prevSat.satellite = satellite;
             }
+           
 
             plSat.addActionListener(new ActionListener() {
 
