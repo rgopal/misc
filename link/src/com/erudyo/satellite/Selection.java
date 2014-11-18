@@ -561,9 +561,7 @@ public class Selection {
 
         // go over all bands
         for (final RfBand band : RfBand.indexRfBand) {
-            if (band.getBand() == RfBand.Band.UK) {
-                continue;
-            }
+            // include UK band also
 
             Log.p("sortBandSatellite: processing band " + band, Log.DEBUG);
             if (bandSatellite == null

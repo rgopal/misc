@@ -145,7 +145,7 @@ public class RfBand extends Entity {
         r = new RfBand(Band.X, "X", X_LO, X_HI);
         r = new RfBand(Band.KU, "KU", KU_LO, KU_HI);
         r = new RfBand(Band.KA, "KA", KA_LO, KA_HI);
-        r = new RfBand(Band.KA, "KA2", KA2_LO, KA2_HI);
+        r = new RfBand(Band.KA2, "KA2", KA2_LO, KA2_HI);
         r = new RfBand(Band.UK, "UK", LO, HI);
     }
 

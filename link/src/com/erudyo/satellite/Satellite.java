@@ -577,7 +577,8 @@ public class Satellite extends Entity {
 
             String oldSat = "", oldBand = "", sat, beam, file, band;
            
-            for (i = 0; i < satBeams.length; i++) {
+            // for some reason 666 is showing up instead of 365
+            for (i = 0; i < satBeams.length -1 ; i++) {
                 sat = satBeams[i][0];
                 beam = satBeams[i][1];
                 file = satBeams[i][2];

@@ -5,7 +5,7 @@
 <open>1</open>
 <Document>
 <name><![CDATA[AMC 18 105W CDH Conus]]></name>
-<Folder id ="SatelliteBeam">
+<Folder id ="SatelliteBeam"> 
 <name>Contours/Markers</name>
 <Placemark>
 <Style id = "dbwlabel">

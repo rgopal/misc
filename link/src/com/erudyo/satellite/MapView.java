@@ -174,6 +174,7 @@ public class MapView extends View {
                 prevSat.pointsLayer = plSat;
                 prevSat.satellite = satellite;
             }
+
             plSat.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
@@ -204,10 +205,11 @@ public class MapView extends View {
                             }
                             bands = bands + " " + band.getBand();
                             // number of transponders
-                            bands = bands + "T" + newSat.bandSpecificItems.
+                            bands = bands + " T" + newSat.bandSpecificItems.
                                     get(band.getBand()).transponders;
-                            if (newSat.bandSpecificItems.get(band.getBand()).beams != null)
+                            if (newSat.bandSpecificItems.get(band.getBand()).beams != null) {
                                 bands = bands + "*";
+                            }
                             alBands.add(band.getBand());
                             alCmds.add(new Command(band.getBand().toString()));
 
@@ -226,14 +228,14 @@ public class MapView extends View {
                             + plSelSat.getName() + " at Long|Lat "
                             + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
                             + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
-                            + bands
+                            + bands + "\nSelect?"
                     );
 
                     Boolean doNothing = false;
                     if (alBands.size() > 0) {
 
                         alCmds.add(new Command("Cancel"));
-                        Command cmd = Dialog.show("Satellite Selection", dialogText,
+                        Command cmd = Dialog.show("Satellite Selection ", dialogText,
                                 alCmds.toArray(new Command[0]), 0, null, 0);
 
                         // check what was returned
@@ -265,7 +267,7 @@ public class MapView extends View {
                                     + plSelSat.getName(), Log.DEBUG);
                             selection.setBand(newBand);
                             selection.setSatellite(satellite);
-                            
+
                             selection.comboBand(selection);
 
                             // remove beams of old satellite
@@ -503,11 +505,13 @@ public class MapView extends View {
                                 Log.p("Map: press your location in x|y " + x + "|" + y, Log.DEBUG);
                                 Coord coord = getCoordFromPosition(x, y);
 
+                                
                                 selection.getCurrentLocation().setLongitude(
                                         coord.getLongitude() * Com.PI / 180.0);
                                 selection.getCurrentLocation().setLatitude(
                                         coord.getLatitude() * Com.PI / 180.0);
 
+                                
                                 // this is not correct in the model
                                 PointsLayer pslNewTerm = new PointsLayer();
                                 pslNewTerm.setPointIcon(blue_pin);

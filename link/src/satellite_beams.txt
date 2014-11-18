@@ -1,16 +1,16 @@
-Amazonas-1|1|Amazonas161WCTHAmericas.kml|Ku
-Amazonas-1|2|Amazonas161WCTVAmericas.kml|Ku
+Amazonas-1|1|Amazonas161WCTHAmericas.kml|C
+Amazonas-1|2|Amazonas161WCTVAmericas.kml|C
 Amazonas-1|3|Amazonas161WKUTHNAmerica.kml|Ku
 Amazonas-1|4|Amazonas161WKUTVNAmerica.kml|Ku
 Amazonas-2|1|Amazonas261WKUTVNorthAmerica.kml|Ku
 AMC-15|1|AMC15105WKDLConus.kml|Ku
 AMC-15|2|AMC15105WKDRConus.kml|Ku
-AMC-18|1|AMC18105WCDHConus.kml|Ku
-AMC-18|2|AMC18105WCDVConus.kml|Ku
+AMC-18|1|AMC18105WCDHConus.kml|C
+AMC-18|2|AMC18105WCDVConus.kml|C
 AMC-2|1|AMC20105.5WNG1TLConusPlus.kml|Ku
 AMC-2|2|AMC20105.5WNG1TRConusPlus.kml|Ku
-AMC-2|3|AMC2101WCTHConus.kml|Ku
-AMC-2|4|AMC2101WCTVConus.kml|Ku
+AMC-2|3|AMC2101WCTHConus.kml|C
+AMC-2|4|AMC2101WCTVConus.kml|C
 AMC-2|5|AMC2101WKTHConus.kml|Ku
 AMC-2|6|AMC2101WKTVConus.kml|Ku
 AMC-2|7|AMC2267.5WKDRConus.kml|Ku
@@ -624,42 +624,42 @@ QuetzSat-1|1|Quetzsat177WTELNorthAmerica.kml|Ku
 QuetzSat-1|2|Quetzsat177WTERNorthAmerica.kml|Ku
 QuetzSat-1|3|Quetzsat177WTWLNorthAmerica.kml|Ku
 QuetzSat-1|4|Quetzsat177WTWRNorthAmerica.kml|Ku
-Spaceway 3|1|Spaceway395WCONRConus.kml|Ku
-Spaceway 3|2|Spaceway395WRD10Ozarks.kml|Ku
-Spaceway 3|3|Spaceway395WRD11Smokies.kml|Ku
-Spaceway 3|4|Spaceway395WRD12ChesapeakeBay.kml|Ku
-Spaceway 3|5|Spaceway395WRD13BajaCalifornia.kml|Ku
-Spaceway 3|6|Spaceway395WRD14Chihuahua.kml|Ku
-Spaceway 3|7|Spaceway395WRD15SouthEastTexas.kml|Ku
-Spaceway 3|8|Spaceway395WRD16Louisiana.kml|Ku
-Spaceway 3|9|Spaceway395WRD17NorthFlorida.kml|Ku
-Spaceway 3|10|Spaceway395WRD1Northwest.kml|Ku
-Spaceway 3|11|Spaceway395WRD2NorthernMountains.kml|Ku
-Spaceway 3|12|Spaceway395WRD3NorthernPlains.kml|Ku
-Spaceway 3|13|Spaceway395WRD4WesternGreatLakes.kml|Ku
-Spaceway 3|14|Spaceway395WRD5EasternGreatLakes.kml|Ku
-Spaceway 3|15|Spaceway395WRD6Northeast.kml|Ku
-Spaceway 3|16|Spaceway395WRD7CentralCalifornia.kml|Ku
-Spaceway 3|17|Spaceway395WRD8SaltLake.kml|Ku
-Spaceway 3|18|Spaceway395WRD9CentralPlains.kml|Ku
-Spaceway 3|19|Spaceway395WSPD10KansasCity.kml|Ku
-Spaceway 3|20|Spaceway395WSPD11Nashville.kml|Ku
-Spaceway 3|21|Spaceway395WSPD12Baltimore.kml|Ku
-Spaceway 3|22|Spaceway395WSPD13Phoenix.kml|Ku
-Spaceway 3|23|Spaceway395WSPD14ElPaso.kml|Ku
-Spaceway 3|24|Spaceway395WSPD15Houston.kml|Ku
-Spaceway 3|25|Spaceway395WSPD16NewOrleans.kml|Ku
-Spaceway 3|26|Spaceway395WSPD17Maimi.kml|Ku
-Spaceway 3|27|Spaceway395WSPD18Jacksonville.kml|Ku
-Spaceway 3|28|Spaceway395WSPD19LittleRock.kml|Ku
-Spaceway 3|29|Spaceway395WSPD1Portland.kml|Ku
-Spaceway 3|30|Spaceway395WSPD20OklahomaCity.kml|Ku
-Spaceway 3|31|Spaceway395WSPD21Charlotte.kml|Ku
-Spaceway 3|32|Spaceway395WSPD2Spokane.kml|Ku
-Spaceway 3|33|Spaceway395WSPD3Minneapolis.kml|Ku
-Spaceway 3|34|Spaceway395WSPD4Chicago.kml|Ku
-Spaceway 3|35|Spaceway395WSPD5Cleveland.kml|Ku
-Spaceway 3|36|Spaceway395WSPD6Boston.kml|Ku
-Spaceway 3|37|Spaceway395WSPD7LosAngeles.kml|Ku
-Spaceway 3|38|Spaceway395WSPD8SaltLakeCity.kml|Ku
-Spaceway 3|39|Spaceway395WSPD9Denver.kml|Ku
+Spaceway 3|1|Spaceway395WCONRConus.kml|Ka
+Spaceway 3|2|Spaceway395WRD10Ozarks.kml|Ka
+Spaceway 3|3|Spaceway395WRD11Smokies.kml|Ka
+Spaceway 3|4|Spaceway395WRD12ChesapeakeBay.kml|Ka
+Spaceway 3|5|Spaceway395WRD13BajaCalifornia.kml|Ka
+Spaceway 3|6|Spaceway395WRD14Chihuahua.kml|Ka
+Spaceway 3|7|Spaceway395WRD15SouthEastTexas.kml|Ka
+Spaceway 3|8|Spaceway395WRD16Louisiana.kml|Ka
+Spaceway 3|9|Spaceway395WRD17NorthFlorida.kml|Ka
+Spaceway 3|10|Spaceway395WRD1Northwest.kml|Ka
+Spaceway 3|11|Spaceway395WRD2NorthernMountains.kml|Ka
+Spaceway 3|12|Spaceway395WRD3NorthernPlains.kml|Ka
+Spaceway 3|13|Spaceway395WRD4WesternGreatLakes.kml|Ka
+Spaceway 3|14|Spaceway395WRD5EasternGreatLakes.kml|Ka
+Spaceway 3|15|Spaceway395WRD6Northeast.kml|Ka
+Spaceway 3|16|Spaceway395WRD7CentralCalifornia.kml|Ka
+Spaceway 3|17|Spaceway395WRD8SaltLake.kml|Ka
+Spaceway 3|18|Spaceway395WRD9CentralPlains.kml|Ka
+Spaceway 3|19|Spaceway395WSPD10KansasCity.kml|Ka
+Spaceway 3|20|Spaceway395WSPD11Nashville.kml|Ka
+Spaceway 3|21|Spaceway395WSPD12Baltimore.kml|Ka
+Spaceway 3|22|Spaceway395WSPD13Phoenix.kml|Ka
+Spaceway 3|23|Spaceway395WSPD14ElPaso.kml|Ka
+Spaceway 3|24|Spaceway395WSPD15Houston.kml|Ka
+Spaceway 3|25|Spaceway395WSPD16NewOrleans.kml|Ka
+Spaceway 3|26|Spaceway395WSPD17Maimi.kml|Ka
+Spaceway 3|27|Spaceway395WSPD18Jacksonville.kml|Ka
+Spaceway 3|28|Spaceway395WSPD19LittleRock.kml|Ka
+Spaceway 3|29|Spaceway395WSPD1Portland.kml|Ka
+Spaceway 3|30|Spaceway395WSPD20OklahomaCity.kml|Ka
+Spaceway 3|31|Spaceway395WSPD21Charlotte.kml|Ka
+Spaceway 3|32|Spaceway395WSPD2Spokane.kml|Ka
+Spaceway 3|33|Spaceway395WSPD3Minneapolis.kml|Ka
+Spaceway 3|34|Spaceway395WSPD4Chicago.kml|Ka
+Spaceway 3|35|Spaceway395WSPD5Cleveland.kml|Ka
+Spaceway 3|36|Spaceway395WSPD6Boston.kml|Ka
+Spaceway 3|37|Spaceway395WSPD7LosAngeles.kml|Ka
+Spaceway 3|38|Spaceway395WSPD8SaltLakeCity.kml|Ka
+Spaceway 3|39|Spaceway395WSPD9Denver.kml|Ka
