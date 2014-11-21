@@ -53,6 +53,7 @@ public class TxView extends View {
         // first row
         inner.add("Transmit Terminal");
         inner.add(selection.gettXterminal().getName());
+        inner.add(" ");
         outer.add(inner);
 
         // get a new row

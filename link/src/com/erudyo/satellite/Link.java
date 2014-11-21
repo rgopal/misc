@@ -69,6 +69,7 @@ import com.codename1.ui.table.Table;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.io.Log;
+import com.codename1.ui.Font;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -111,6 +112,7 @@ public class Link {
             UIManager.getInstance().setThemeProps(theme.getTheme(
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
+            // not here since no Form setFonts();
             // refreshTheme(parentForm);
 
             // also read terminals and the current Tx and Rx terminal
@@ -132,6 +134,40 @@ public class Link {
                 // Log.sendLog(); only for pro
             }
         });
+    }
+
+    private void setFonts(Form c) {
+        Hashtable themeAddition = new Hashtable();
+        Font defaultFont = Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
+                Font.SIZE_SMALL);
+        Font mediumFont = Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
+                Font.SIZE_MEDIUM);
+        Font mono = Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_PLAIN,
+                Font.SIZE_SMALL);
+
+        themeAddition.put("Title.font", mediumFont);
+        themeAddition.put("font", defaultFont);
+        themeAddition.put("sel#font", defaultFont);
+        themeAddition.put("press#font", defaultFont);
+        themeAddition.put("Label.font", defaultFont);
+        themeAddition.put("Button.font", defaultFont);
+        themeAddition.put("ComboBox.font", defaultFont);
+        
+        themeAddition.put("Button.sel#font", defaultFont);
+        themeAddition.put("Button.press#font", defaultFont);
+        themeAddition.put("ButtonGroupOnly.font", defaultFont);
+        themeAddition.put("ButtonGroupOnly.sel#font", defaultFont);
+        themeAddition.put("ButtonGroupOnly.press#font", defaultFont);
+        themeAddition.put("ButtonGroup.font", defaultFont);
+        themeAddition.put("ButtonGroup.sel#font", defaultFont);
+        themeAddition.put("ButtonGroup.press#font", defaultFont);
+
+        themeAddition.put("TextArea.font", mono);
+
+        UIManager.getInstance().addThemeProps(themeAddition);
+        // Form c = Display.getInstance().getCurrent();
+        c.refreshTheme();
+
     }
 
     private void initViews(Selection selection) {
@@ -162,6 +198,7 @@ public class Link {
         }
 
         main = new Form("Satellite Link");
+        setFonts(main);
         main.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 
         // set the current Band and select satellite and tx, rx terminals
@@ -297,45 +334,73 @@ public class Link {
                     BackCommand bc = new BackCommand();
                     form.addCommand(bc);
                     form.setBackCommand(bc);
+                    final String spaces = "                  ";
 
-                    final Command cmd1 = new Command("Command1");
-                    final Command cmd2 = new Command("Command2");
-                    Command cmd = new Command("Command3") {
+                    final Command cHome = new Command("Home");
+                    final Command cPrev = new Command("Prev");
+
+                    Command cInfo = new Command("Info") {
                         public void actionPerformed(ActionEvent ev) {
                             // create a new form with its own back.  In future
                             // add home (back to home)
-                            final Form text = new Form(form.getName());
+                            final Form text = new Form(view.getName());
 
-                            TextArea taTable = new TextArea();
-
+                            
                             ArrayList<ArrayList<String>> table
                                     = view.getText(selection);
 
-                            String string = new String();
-                            for (ArrayList<String> line : table) {
+                            //TextArea taTable = new TextArea();
+                            TableLayout layout = new TableLayout(table.size() + 2, 3);
 
+                            Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+
+                            text.addComponent(cnt);
+                            cnt.setLayout(layout);
+
+                            TableLayout.Constraint constraint = layout.createConstraint();
+
+                            constraint.setWidthPercentage(40);
+
+                            Label lFirst = new Label("Item      ");
+                            Label lSecond = new Label("Value   ");
+                            Label lThird = new Label("Unit ");
+
+                            cnt.addComponent(constraint, lFirst);
+                            constraint = layout.createConstraint();
+                            constraint.setWidthPercentage(35);
+                            cnt.addComponent(constraint,lSecond);
+                            constraint = layout.createConstraint();
+                            constraint.setWidthPercentage(25);
+                            cnt.addComponent(constraint,lThird);
+
+                            for (ArrayList<String> line : table) {
+                                // check the number of items in this line (max 3)
+                                constraint = layout.createConstraint();
+                                constraint.setHorizontalSpan(4 - line.size());
+                                int index = 0;
+                                // either one item or exactly three items
                                 for (String item : line) {
                                     if (item != null) {
+                                        Label lItem = new Label(item);
+                                        if (index++ == 0) {
+                                            cnt.addComponent(constraint, lItem);
+                                        } else {
+                                            cnt.addComponent(lItem);
+                                        }
 
-                                        string = string + item;
-                                        // put empty spaces
-                                        string = string + "\t\t"; // "                   ".
-                                        //   substring(0,20 - item.length());
                                     } else {
                                         Log.p("Link: null item in all " + line, Log.WARNING);
                                     }
                                 }
-                                string = string + "\n";
 
                             }
 
-                            taTable.setText(string);
-                            taTable.setEditable(false);
-                            taTable.setFocusable(false);
-                            taTable.setUIID("Label");
-                            text.addComponent(taTable);
+                            //taTable.setText(string);
+                            //taTable.setEditable(false);
+                            //taTable.setFocusable(false);
+                        
 
-                            Command bc = new Command("Back to " + form.getName()) {
+                            Command bc = new Command("Back") {
                                 public void actionPerformed(ActionEvent ev) {
                                     form.showBack();
                                 }
@@ -344,14 +409,18 @@ public class Link {
                             text.setBackCommand(bc);
                             text.show();
 
-                            Log.p("Link: menu command " + cmd1.getId(), Log.DEBUG);
+                            Log.p("Link: menu command " + cHome.getId(), Log.DEBUG);
                         }
                     };
-                    cmd.putClientProperty(SideMenuBar.COMMAND_PLACEMENT_KEY,
+                    cInfo.putClientProperty(SideMenuBar.COMMAND_PLACEMENT_KEY,
                             SideMenuBar.COMMAND_PLACEMENT_VALUE_RIGHT);
-                    form.addCommand(cmd);
-                    form.addCommand(cmd1);
-                    form.addCommand(cmd2);
+
+                    final Command cNext = new Command("Next");
+                    form.addCommand(cNext);
+                    form.addCommand(cInfo);
+                    form.addCommand(cPrev);
+                    form.addCommand(cHome);
+
                     form.show();
                 }
             });
@@ -372,7 +441,7 @@ public class Link {
         final Label lBand = new Label();
         selection.setlBand(lBand);
         selection.setCbBand(new ComboBox());
-       
+
         final ComboBox cbBand = selection.getCbBand();
 
         cntBand.addComponent(cbBand);
@@ -408,8 +477,6 @@ public class Link {
         });
 
     }
-
-    
 
     class BackCommand extends Command {
 
