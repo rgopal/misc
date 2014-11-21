@@ -24,62 +24,32 @@ package com.erudyo.satellite;
 // this is main
 
 import com.codename1.ui.SideMenuBar;
-import com.codename1.ui.TextArea;
-import com.codename1.components.InfiniteProgress;
-import com.codename1.ui.Slider;
 import com.codename1.components.ShareButton;
-import com.codename1.components.WebBrowser;
 import com.codename1.facebook.ui.LikeButton;
-import com.codename1.io.CSVParser;
-import com.codename1.io.ConnectionRequest;
-import com.codename1.io.JSONParser;
-import com.codename1.io.NetworkManager;
-import com.codename1.io.Util;
-import com.codename1.location.Location;
-import com.codename1.location.LocationManager;
-import com.codename1.maps.Coord;
-import com.codename1.maps.MapComponent;
-import com.codename1.maps.MapComponent;
-import com.codename1.maps.layers.ArrowLinesLayer;
-import com.codename1.maps.layers.LinesLayer;
-import com.codename1.maps.layers.PointLayer;
-import com.codename1.maps.layers.PointsLayer;
-import com.codename1.maps.providers.GoogleMapsProvider;
 import com.codename1.ui.Button;
 import com.codename1.ui.ComboBox;
 import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
-import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
-import com.codename1.ui.events.DataChangedListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.list.DefaultListModel;
 import com.codename1.ui.list.ListModel;
 import com.codename1.ui.plaf.UIManager;
-import com.codename1.ui.spinner.GenericSpinner;
-import com.codename1.ui.table.DefaultTableModel;
-import com.codename1.ui.table.Table;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.io.Log;
 import com.codename1.ui.Font;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 public class Link {
 
@@ -152,7 +122,10 @@ public class Link {
         themeAddition.put("Label.font", defaultFont);
         themeAddition.put("Button.font", defaultFont);
         themeAddition.put("ComboBox.font", defaultFont);
-        
+        themeAddition.put("ComboBox.sel#font", defaultFont);
+        themeAddition.put("ComboBox.press#font", defaultFont);
+        themeAddition.put("ComboBox.unsel#font", defaultFont);
+
         themeAddition.put("Button.sel#font", defaultFont);
         themeAddition.put("Button.press#font", defaultFont);
         themeAddition.put("ButtonGroupOnly.font", defaultFont);
@@ -345,7 +318,6 @@ public class Link {
                             // add home (back to home)
                             final Form text = new Form(view.getName());
 
-                            
                             ArrayList<ArrayList<String>> table
                                     = view.getText(selection);
 
@@ -368,10 +340,10 @@ public class Link {
                             cnt.addComponent(constraint, lFirst);
                             constraint = layout.createConstraint();
                             constraint.setWidthPercentage(35);
-                            cnt.addComponent(constraint,lSecond);
+                            cnt.addComponent(constraint, lSecond);
                             constraint = layout.createConstraint();
                             constraint.setWidthPercentage(25);
-                            cnt.addComponent(constraint,lThird);
+                            cnt.addComponent(constraint, lThird);
 
                             for (ArrayList<String> line : table) {
                                 // check the number of items in this line (max 3)
@@ -398,8 +370,6 @@ public class Link {
                             //taTable.setText(string);
                             //taTable.setEditable(false);
                             //taTable.setFocusable(false);
-                        
-
                             Command bc = new Command("Back") {
                                 public void actionPerformed(ActionEvent ev) {
                                     form.showBack();
