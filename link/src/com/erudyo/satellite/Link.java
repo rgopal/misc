@@ -110,21 +110,38 @@ public class Link {
         Hashtable themeAddition = new Hashtable();
         Font defaultFont = Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
                 Font.SIZE_SMALL);
-        Font mediumFont = Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
-                Font.SIZE_MEDIUM);
+        Font mediumFont = Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_BOLD,
+                Font.SIZE_SMALL);
         Font mono = Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_PLAIN,
                 Font.SIZE_SMALL);
 
+        /*
+         /   if(installedTheme == null || !installedTheme.containsKey("TouchCommand.derive")) {
+         themeProps.put("TouchCommand.border", Border.getDefaultBorder());
+         themeProps.put("TouchCommand.padding", "10,10,10,10");
+         themeProps.put("TouchCommand.margin", "0,0,0,0");
+         themeProps.put("TouchCommand.align", centerAlign);
+         */
         themeAddition.put("Title.font", mediumFont);
         themeAddition.put("font", defaultFont);
+
         themeAddition.put("sel#font", defaultFont);
         themeAddition.put("press#font", defaultFont);
         themeAddition.put("Label.font", defaultFont);
+        // transparency 0 looks regular, F0 looks grey/black for blue font, FF black
+        themeAddition.put("Label.transparency", "FF");
+        themeAddition.put("Label.fgColor", "FFFFFF"); // default black folor
+        //themeAddition.put("Label.fgColor", "00FF00");
         themeAddition.put("Button.font", defaultFont);
         themeAddition.put("ComboBox.font", defaultFont);
         themeAddition.put("ComboBox.sel#font", defaultFont);
         themeAddition.put("ComboBox.press#font", defaultFont);
         themeAddition.put("ComboBox.unsel#font", defaultFont);
+
+        themeAddition.put("ComboBoxItem.font", defaultFont);
+        themeAddition.put("ComboBoxItem.sel#font", mediumFont);
+        themeAddition.put("ComboBoxItem.press#font", defaultFont);
+        themeAddition.put("ComboBoxItem.unsel#font", defaultFont);
 
         themeAddition.put("Button.sel#font", defaultFont);
         themeAddition.put("Button.press#font", defaultFont);
@@ -249,7 +266,9 @@ public class Link {
 
             // all these widgets have to be remembered by respective views 
             Component label = view.getLabel(selection);
+            label.getStyle().setFgColor(Integer.valueOf("00FF00",16));  // green
             Component subLabel = view.getSubLabel(selection);
+            subLabel.getStyle().setFgColor(Integer.valueOf("0000FF",16));  // blue
 
             Button bSelectView = new Button("->"); //view.getName());
 
