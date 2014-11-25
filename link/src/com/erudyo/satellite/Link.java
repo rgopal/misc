@@ -129,14 +129,26 @@ public class Link {
         themeAddition.put("press#font", defaultFont);
         themeAddition.put("Label.font", defaultFont);
         // transparency 0 looks regular, F0 looks grey/black for blue font, FF black
-        themeAddition.put("Label.transparency", "FF");
-        themeAddition.put("Label.fgColor", "FFFFFF"); // default black folor
+        // FF generates error, has to be 255
+        themeAddition.put("Label.transparency", "255");
+        // fonts are just 4 colors, tried mixing colors does not work
+        themeAddition.put("Label.fgColor", "0"); // default  folor
+        themeAddition.put("Label.padding", "4,4,4,4");
+        themeAddition.put("Label.margin", "0,0,0,0");
+        
         //themeAddition.put("Label.fgColor", "00FF00");
         themeAddition.put("Button.font", defaultFont);
         themeAddition.put("ComboBox.font", defaultFont);
         themeAddition.put("ComboBox.sel#font", defaultFont);
         themeAddition.put("ComboBox.press#font", defaultFont);
         themeAddition.put("ComboBox.unsel#font", defaultFont);
+        
+        themeAddition.put("Slider.bgColor","FF");
+         themeAddition.put("Slider.fgColor","00");
+        themeAddition.put("SliderFull.bgColor","FF");
+        themeAddition.put("SliderFull.fgColor","00");
+        themeAddition.put("Slider.padding", "1,1,1,1");
+         themeAddition.put("SliderFull.padding", "1,1,1,1");
 
         themeAddition.put("ComboBoxItem.font", defaultFont);
         themeAddition.put("ComboBoxItem.sel#font", mediumFont);
@@ -264,6 +276,7 @@ public class Link {
             Component widget = view.getWidget(selection);
             Component subWidget = view.getSubWidget(selection);
 
+         
             // all these widgets have to be remembered by respective views 
             Component label = view.getLabel(selection);
             label.getStyle().setFgColor(Integer.valueOf("00FF00",16));  // green
