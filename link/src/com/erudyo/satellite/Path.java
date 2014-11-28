@@ -324,7 +324,7 @@ public class Path extends Entity {
         if (radian > Com.VISIBLE_ANGLE) {
             Log.p("Path: terminal and satellite are far apart with " + degree
                     + " satellite at " + Com.toDMS(satellite.getLongitude())
-                    + " terminal at " + Com.toDMS(terminal.getLongitude()), Log.WARNING);
+                    + " terminal at " + Com.toDMS(terminal.getLongitude()), Log.DEBUG);
             return false;
         } else {
             return true;

@@ -225,11 +225,22 @@ public class MapView extends View {
                     RfBand.Band oldBand = selection.getBand();
                     RfBand.Band newBand = RfBand.Band.UK;
 
+                    Boolean tXvisible = Path.visible(newSat, selection.gettXterminal());
+                    Boolean rXvisible = Path.visible(newSat,selection.getrXterminal());
+                    String visible = "\nVisible selected terminals - ";
+                    if (tXvisible)
+                        visible = visible + "\nTx: " + selection.gettXterminal();
+                    if (rXvisible)
+                        visible = visible + "\nRx:" + selection.getrXterminal();
+                    if (!tXvisible && !rXvisible)
+                        visible = visible + " NONE";
+                    
                     String dialogText = new String("GEO_Satellite"
                             + plSelSat.getName() + " at Long|Lat "
                             + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
                             + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
-                            + bands + "\nSelect?"
+                            + visible + "\n"
+                            + bands
                     );
 
                     Boolean doNothing = false;
@@ -668,9 +679,19 @@ public class MapView extends View {
     public void changeTerminal(Selection selection, MapComponent mc,
             PointLayer pnew, Coord m) {
 
+        Boolean satVisible = Path.visible(selection.getSatellite(), 
+                Terminal.terminalHash.get(pnew.getName()) );
+        String visible = "\nCurrent Satellite " + selection.getSatellite();
+        if (!satVisible)
+            visible = visible + " is NOT visible";
+        else
+            visible = visible + " is VISIBLE";
+            
+        visible = visible + "";
         String dialogText = "Terminal " + pnew.getName() + " at Long|Lat "
                 + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
                 + Com.toDMS(Math.toRadians(m.getLatitude()))
+                + visible
                 + "\nSelect this terminal as";
 
         Command dlCmds[] = {new Command("TX"), new Command("RX"), new Command("Cancel")};
