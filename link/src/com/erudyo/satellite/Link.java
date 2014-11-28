@@ -82,6 +82,10 @@ public class Link {
             UIManager.getInstance().setThemeProps(theme.getTheme(
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
+           
+            Com.blue_pin = Image.createImage("/blue_pin.png");
+            Com.red_pin = Image.createImage("/red_pin.png");
+            
             // not here since no Form setFonts();
             // refreshTheme(parentForm);
 
@@ -126,7 +130,8 @@ public class Link {
         themeAddition.put("font", defaultFont);
 
         themeAddition.put("sel#font", defaultFont);
-        themeAddition.put("press#font", defaultFont);
+        themeAddition.put("unsel#font", defaultFont);
+     themeAddition.put("press#font", defaultFont);
         themeAddition.put("Label.font", defaultFont);
         // transparency 0 looks regular, F0 looks grey/black for blue font, FF black
         themeAddition.put("Label.transparency", "FF");

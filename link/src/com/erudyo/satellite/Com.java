@@ -7,12 +7,14 @@ package com.erudyo.satellite;
 
 import com.codename1.io.Log;
 import com.codename1.processing.Result;
-import java.text.Format;
-import java.lang.Math;
-import java.util.Hashtable;
+import com.codename1.ui.Image;
+import com.codename1.ui.Slider;
 import com.codename1.util.MathUtil;
 import com.codename1.util.StringUtil;
+import java.lang.Math;
+import java.text.Format;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  *
@@ -35,6 +37,8 @@ public class Com {
         LEO, MEO, GEO
     };
 
+    public static Image blue_pin;
+    public static Image red_pin;
     public final static double PI = Math.PI;
     public final static double K = 1.379E-23;       // Boltzmann constant, W/HzK
     public final static double KdB = -228.6;        // dBW/HzK
@@ -57,6 +61,12 @@ public class Com {
     }
 
     
+    static void formatSlider(Slider sldr) {
+           sldr.setThumbImage(Com.red_pin);
+         sldr.getStyle().setBgColor(0x000011);
+         sldr.getStyle().setBgTransparency(100);
+         sldr.setPreferredH(40);
+    }
 
     static String text(double num) {
         String s = String.valueOf(num);

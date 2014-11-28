@@ -26,6 +26,7 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.events.DataChangedListener;
 import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.list.DefaultListModel;
 import com.codename1.ui.list.ListModel;
 import com.codename1.ui.table.TableLayout;
@@ -167,11 +168,11 @@ public class TxView extends View {
     public Form createView(final Selection selection) {
         Form sub = new Form("Tx " + selection.gettXterminal().getName());
 
-        Container cnt = new Container(new BorderLayout());
+        Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         sub.addComponent(cnt);
 
-        // there are six items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(15, 3);
+       
+        TableLayout layout = new TableLayout(14, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -185,7 +186,9 @@ public class TxView extends View {
         Label L02 = new Label(Com.shortText(tXterminal.gettXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + tXterminal.gettXantenna().getBand());
         cnt.addComponent(constraint, L01);
-        cnt.addComponent(L03);
+        constraint = layout.createConstraint();
+        constraint.setWidthPercentage(25);
+        cnt.addComponent(constraint,L03);
         cnt.addComponent(L02);
 
         Label L61 = new Label("Terminal Longitude");
@@ -208,13 +211,17 @@ public class TxView extends View {
         Label lPowerUnit = new Label("W");
 
         final Slider sldrPower = new Slider();
-        sldrPower.setMinValue((int) MathUtil.round(Amplifier.POWER_LO * 10)); // x10
+        Com.formatSlider(sldrPower);
+      
+         sldrPower.setMinValue((int) MathUtil.round(Amplifier.POWER_LO * 10)); // x10
         sldrPower.setMaxValue((int) MathUtil.round(Amplifier.POWER_HI * 10));
         sldrPower.setEditable(true);
 
         sldrPower.setIncrements(5); //
         sldrPower.setProgress((int) MathUtil.round(tXterminal.gettXamplifier().getPower() * 10));
         sldrPower.setRenderValueOnTop(true);
+       
+       
         sldrPower.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
