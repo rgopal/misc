@@ -17,14 +17,14 @@ import com.codename1.util.MathUtil;
 public class Antenna extends Entity {
 
     private double diameter = 1;
-    private double efficiency = 0.6;
+    private double efficiency = 0.6;    // default for earth terminals, sat .55
     private RfBand.Band band = RfBand.Band.KA;
 
     private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
 
     private double depointingLoss = 0.5;
     private double depointingError = 0.1 * Com.PI / 180.0;      // in Radian
-    private double temperature = 290;
+    private double temperature = 290.0;
 
     // the following are calculated, but can be set individually
     private double threeDBangle;

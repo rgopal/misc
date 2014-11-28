@@ -34,6 +34,7 @@ public class Path extends Entity {
     private double azimuth;
     private double elevation;
     private double CNo = Satellite.NEGLIGIBLE;
+    private double powerReceived = Satellite.NEGLIGIBLE;
     private double spectralDensity = Satellite.NEGLIGIBLE;
 
     /**
@@ -76,6 +77,20 @@ public class Path extends Entity {
      */
     public void setPathType(PATH_TYPE pathType) {
         this.pathType = pathType;
+    }
+
+    /**
+     * @return the powerReceived
+     */
+    public double getPowerReceived() {
+        return powerReceived;
+    }
+
+    /**
+     * @param powerReceived the powerReceived to set
+     */
+    public void setPowerReceived(double powerReceived) {
+        this.powerReceived = powerReceived;
     }
 
     public enum PATH_TYPE {
@@ -178,7 +193,7 @@ public class Path extends Entity {
         setAll();
     }
 
-    private double calcCNo() {
+      private double calcCNo() {
         double result;
 
         // CNo depends on Tx and receive of satellite, here EIRP, loss
@@ -196,6 +211,30 @@ public class Path extends Entity {
                     - getAttenuation()
                     + terminal.getGainTemp()
                     - Com.KdB;
+        }
+        return result;
+    }
+      
+      // just the power received
+    private double calcPowerReceived() {
+        double result;
+
+        // CNo depends on Tx and receive of satellite, here EIRP, loss
+        // and gain are all in dBHz
+        if (getPathType() == PATH_TYPE.UPLINK) {
+            result
+                    = terminal.getEIRP()
+                    - getPathLoss()
+                    - getAttenuation()
+                    + satellite.bandSpecificItems.get(terminal.getBand()).rXantenna.getGain();
+               
+                    
+        } else {
+            result = satellite.getEIRPforTerminal(terminal)
+                    - getPathLoss()
+                    - getAttenuation()
+                    + terminal.getrXantenna().getGain();
+                    
         }
         return result;
     }
@@ -351,6 +390,7 @@ public class Path extends Entity {
 
         this.pathLoss = calcPathLoss(this.distance, frequency);
         this.CNo = calcCNo();
+        this.powerReceived = calcPowerReceived();
         this.spectralDensity = calcSpecDens();
 
         updateAffected();   // update Comms

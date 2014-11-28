@@ -207,7 +207,7 @@ public class SatelliteView extends View {
 
     public Form createView(final Selection selection) {
 
-        final Satellite satellite = selection.getuLpath().getSatellite();
+        final Satellite satellite = selection.getSatellite();
 
         final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(
                 selection.getBand());
@@ -217,7 +217,7 @@ public class SatelliteView extends View {
         // sub.addComponent(cnt);
 
         // there are several items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(24, 3);
+        TableLayout layout = new TableLayout(25, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -323,6 +323,15 @@ public class SatelliteView extends View {
         cnt.addComponent(valueRxPointLoss);
         cnt.addComponent(unitPointLoss);
 
+          Label lsysTemp = new Label(" System Noise Temp");
+        final Label valueRxsysTemp = new Label(Com.text(
+                satellite.calcSystemNoiseTemp(band)));
+        Label unitsysTemp = new Label("K");
+        cnt.addComponent(lsysTemp);
+        cnt.addComponent(valueRxsysTemp);
+        cnt.addComponent(unitsysTemp);
+        cnt.setScrollable(true);
+        
         // attenuation does not depend on anything so not incouded in
         // sliders
         Label lGainTemp = new Label("Satellite G/T");
@@ -343,14 +352,7 @@ public class SatelliteView extends View {
          cnt.addComponent(unitImpLoss);
          */
         // does not change so not in combo/sliders
-        Label lsysTemp = new Label(" System Noise Temp");
-        final Label valueRxsysTemp = new Label(Com.text(
-                satellite.calcSystemNoiseTemp(band)));
-        Label unitsysTemp = new Label("K");
-        cnt.addComponent(lsysTemp);
-        cnt.addComponent(valueRxsysTemp);
-        cnt.addComponent(unitsysTemp);
-        cnt.setScrollable(true);
+      
 
         // all actions at the end to update other fields
         sldrRxNoiseFigure.addDataChangedListener(new DataChangedListener() {
@@ -409,6 +411,11 @@ public class SatelliteView extends View {
             }
         });
 
+        Label filler = new Label (" ");
+         constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        cnt.addComponent(constraint, filler);
+        
         // now the Tx side of satellite
         Label L11 = new Label("Tx Amp Power");
         Label L13 = new Label("W");

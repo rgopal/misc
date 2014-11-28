@@ -220,8 +220,8 @@ public class TxView extends View {
         sldrPower.setProgress((int) MathUtil.round(tXterminal.gettXamplifier().getPower() * 10));
         sldrPower.setRenderValueOnTop(true);
         
-        final Label L13 = new Label(Com.shortText(tXterminal.gettXamplifier().
-                getPower()));
+        final Label L13 = new Label(Com.textN(tXterminal.gettXamplifier().
+                getPower(),6));
         cnt.addComponent(L11);
         cnt.addComponent(L13);
         cnt.addComponent(lPowerUnit);
@@ -295,7 +295,7 @@ public class TxView extends View {
         constraint.setHorizontalSpan(3);        // whole row
 
         Label lEIRP = new Label("Tx Terminal EIRP");
-        final Label valueEIRP = new Label(Com.shortText(tXterminal.getEIRP()));
+        final Label valueEIRP = new Label(Com.textN(tXterminal.getEIRP(),6));
         Label unitEIRP = new Label("dBW");
         cnt.addComponent(lEIRP);
         cnt.addComponent(valueEIRP);
@@ -311,9 +311,9 @@ public class TxView extends View {
                     selection.gettXterminal().gettXamplifier().
                             setPower(Double.parseDouble(sldrPower.getText()) / 10.0);
                     // update EIRP
-                    L13.setText(Com.shortText(tXterminal.gettXamplifier().
-                            getPower()) + "W");
-                    valueEIRP.setText(Com.shortText(tXterminal.getEIRP()));
+                    L13.setText(Com.textN(tXterminal.gettXamplifier().
+                            getPower(),6));
+                    valueEIRP.setText(Com.textN(tXterminal.getEIRP(),6));
                     // does not change depointing
                     updateValues(selection);
                     

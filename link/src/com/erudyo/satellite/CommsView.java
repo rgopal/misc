@@ -208,15 +208,15 @@ public class CommsView extends View {
 
         if (selection.getComms() != null) {
             selection.getCommsView().setShortName("Cm");
-            selection.getCommsView().setName("CM");  // short
+            selection.getCommsView().setName("Comms");  // short
 
-            selection.getCommsView().setSummary("CNo " + Com.textN(
+            selection.getCommsView().setSummary("C/No " + Com.textN(
                     selection.getComms().getCNo(), 5) + "");
 
-            selection.getCommsView().setValue("ENo " + Com.textN(selection.getComms().
+            selection.getCommsView().setValue("EbNo " + Com.textN(selection.getComms().
                     geteBno(), 5) + "");
 
-            selection.getCommsView().setSubValue("Ber " + Com.textN(selection.getComms().
+            selection.getCommsView().setSubValue("BER " + Com.textN(selection.getComms().
                     getBEP(), 5));
         }
 

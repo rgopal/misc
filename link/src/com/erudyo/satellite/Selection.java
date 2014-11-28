@@ -315,6 +315,8 @@ public class Selection {
 
         ComboBox cbBand = selection.getCbBand();
 
+        // since it can also be called from MapView, redundant if called
+        // from action listner of the UI 
         cbBand.setSelectedItem(selection.getBand());
         RfBand rFband = RfBand.rFbandHash.get(selection.
                 getBand().toString());
@@ -381,9 +383,11 @@ public class Selection {
 
                     model.setSelectedIndex(position);
                 } else {
-                   // select what is already set
+                    // select what is already set
                     selection.getRxView().spin.setSelectedItem(
                             selection.getrXterminal().getName());
+                    // update band
+                    selection.getrXterminal().setBand(selection.getBand());
                 }
                 // update label 
                 selection.getRxView().updateValues(selection);
@@ -437,6 +441,7 @@ public class Selection {
                 } else {
                     selection.getTxView().spin.setSelectedItem(
                             selection.gettXterminal().getName());
+                    selection.gettXterminal().setBand(selection.getBand());
                 }
 
                 selection.getTxView().updateValues(selection);
@@ -474,18 +479,22 @@ public class Selection {
             if (selection.getSatellite() == null) {
                 selection.setSatellite(Satellite.satelliteHash.
                         get(selection.getSatelliteView().spin.getSelectedItem()));
+            } else if (selection.getBandSatelliteHash().
+                    get(selection.getBand()).contains(
+                            selection.getSatellite().getName())) {
+              
+                selection.getSatelliteView().spin.setSelectedItem(
+                        selection.getSatellite().getName());
+            } else {
+                // select what UI has as the selected item
+                selection.setSatellite(Satellite.satelliteHash.
+                        get(selection.getSatelliteView().spin.getSelectedItem()));
             }
-
-            // show the satellite selected elsewhere (map)
-            selection.getSatelliteView().spin.setSelectedItem(
-                    selection.getSatellite().getName());
-
             // Satellite Band processed on its own
             // now create visible lists for this satellite
             selection.initVisibleTerminal();
 
             // update values for satellite, UL path, DL path, Comms TODO
-            
             selection.getSatelliteView().updateValues(selection);
 
         }

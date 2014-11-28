@@ -681,6 +681,8 @@ public class MapView extends View {
 
         Boolean satVisible = Path.visible(selection.getSatellite(), 
                 Terminal.terminalHash.get(pnew.getName()) );
+        
+        // let the user know if the satellite will be visible from new terminal
         String visible = "\nCurrent Satellite " + selection.getSatellite();
         if (!satVisible)
             visible = visible + " is NOT visible";

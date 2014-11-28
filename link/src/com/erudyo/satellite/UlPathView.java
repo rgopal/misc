@@ -65,31 +65,29 @@ public class UlPathView extends View {
             return lName;
         }
 
-
         updateValues(selection);
         // actually lName is not used (since it is not a combo)
         return lName;
     }
 
     // update from the current selection of the terminal
-
     public void updateValues(Selection selection) {
 
         if (selection.getuLpath() != null) {
             selection.getuLpathView().setShortName("UL");
-        selection.getuLpathView().setName("UL ");  // short
+            selection.getuLpathView().setName("UL ");  // short
 
-        selection.getuLpathView().setValue("" + Com.toDMS(
-                selection.getuLpath().getElevation()).substring(0,6));
+            selection.getuLpathView().setValue("" + Com.toDMS(
+                    selection.getuLpath().getElevation()).substring(0, 6));
 
-        selection.getuLpathView().setSummary(Com.textN(selection.getuLpath().
-                getCNo(), 5) + "dBHz");
+            selection.getuLpathView().setSummary(Com.textN(selection.getuLpath().
+                    getCNo(), 5) + "dBHz");
 
-        selection.getuLpathView().setSubValue(Com.textN(selection.getuLpath().
-                getSpectralDensity(), 5) + "dBHz");
+            selection.getuLpathView().setSubValue(Com.textN(selection.getuLpath().
+                    getSpectralDensity(), 5) + "dBHz");
         }
-          
-            selection.getCommsView().updateValues(selection);
+
+        selection.getCommsView().updateValues(selection);
 
     }
 
@@ -99,9 +97,8 @@ public class UlPathView extends View {
 
         Form cnt = new Form("Tx Terminal: " + selection.gettXterminal().getName());
 
-
         // there are six items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(13, 3);
+        TableLayout layout = new TableLayout(15, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -117,7 +114,7 @@ public class UlPathView extends View {
         cnt.addComponent(constraint, L01);
         constraint = layout.createConstraint();
         constraint.setWidthPercentage(30);
-        cnt.addComponent(constraint,lFrequency);
+        cnt.addComponent(constraint, lFrequency);
         cnt.addComponent(L03);
 
         Label L61 = new Label("Sat"
@@ -208,7 +205,7 @@ public class UlPathView extends View {
 
         Label lDistance = new Label("    Distance - Sat");
         final Label valueDistance = new Label(Com.textN(selection.
-                getuLpath().getDistance() / 1E3, 6));
+                getuLpath().getDistance() / 1E3, 8));
         Label unitDistance = new Label("km");
         cnt.addComponent(lDistance);
         cnt.addComponent(valueDistance);
@@ -234,6 +231,22 @@ public class UlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
+        Label lPowerRx = new Label("Power Received at Sat");
+        final Label valuePowerRx = new Label(Com.textN(
+                selection.getuLpath().getPowerReceived(), 6));
+        Label unitPowerRx = new Label("dBW");
+        cnt.addComponent(lPowerRx);
+        cnt.addComponent(valuePowerRx);
+        cnt.addComponent(unitPowerRx);
+
+        Label lSpecDensity = new Label("Spectral Densisty at Sat.");
+        final Label valueSpecDensity = new Label(Com.textN(
+                selection.getuLpath().getSpectralDensity(), 6));
+        Label unitSpecDensity = new Label("dBW/m2");
+        cnt.addComponent(lSpecDensity);
+        cnt.addComponent(valueSpecDensity);
+        cnt.addComponent(unitSpecDensity);
+
         Label lGainTemp = new Label("Satellite G/T");
         final Label valueGainTemp = new Label(Com.shortText(
                 selection.getuLpath().getSatellite().bandSpecificItems.
@@ -244,7 +257,7 @@ public class UlPathView extends View {
         cnt.addComponent(unitGainTemp);
 
         // C/No depends on Tx EIRP and the path loss
-        Label lCNo = new Label("C/No");
+        Label lCNo = new Label("UL C/No");
         final Label valueCNo = new Label(Com.textN(
                 selection.getuLpath().getCNo(), 7));
 
@@ -252,14 +265,6 @@ public class UlPathView extends View {
         cnt.addComponent(lCNo);
         cnt.addComponent(valueCNo);
         cnt.addComponent(unitCNo);
-
-        Label lSpecDensity = new Label("Spectral Densisty at Sat.");
-        final Label valueSpecDensity = new Label(Com.shortText(
-                selection.getuLpath().getSpectralDensity()));
-        Label unitSpecDensity = new Label("dBW/m2");
-        cnt.addComponent(lSpecDensity);
-        cnt.addComponent(valueSpecDensity);
-        cnt.addComponent(unitSpecDensity);
 
         // all actions at the end to update other fields
         sldrLatitude.addDataChangedListener(new DataChangedListener() {
@@ -287,8 +292,8 @@ public class UlPathView extends View {
 
                     valueCNo.setText(Com.textN(
                             selection.getuLpath().getCNo(), 7));
-                    valueSpecDensity.setText(Com.shortText(
-                            selection.getuLpath().getSpectralDensity()));
+                    valueSpecDensity.setText(Com.textN(
+                            selection.getuLpath().getSpectralDensity(), 6));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("UlPathView: bad number for Latitude "

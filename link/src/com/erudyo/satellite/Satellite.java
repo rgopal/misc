@@ -632,6 +632,7 @@ public class Satellite extends Entity {
 
         satellite.bandSpecificItems.get(band).rXantenna = new Antenna();
         satellite.bandSpecificItems.get(band).rXantenna.setDiameter(1.2);
+        satellite.bandSpecificItems.get(band).rXantenna.setEfficiency(.55);
         satellite.bandSpecificItems.get(band).rXantenna.setName(
                 "RxAnt" + band + satellite.name);
         satellite.bandSpecificItems.get(band).rXantenna.setBand(RfBand.findUl(band));
@@ -642,6 +643,7 @@ public class Satellite extends Entity {
 
         satellite.bandSpecificItems.get(band).tXantenna = new Antenna();
         satellite.bandSpecificItems.get(band).tXantenna.setDiameter(2.4);
+        satellite.bandSpecificItems.get(band).tXantenna.setEfficiency(.55);
         satellite.bandSpecificItems.get(band).tXantenna.setBand(RfBand.findDl(band));
         satellite.bandSpecificItems.get(band).tXantenna.
                 setFrequency(RfBand.centerFrequency(
@@ -856,12 +858,15 @@ public class Satellite extends Entity {
         double noiseTemp;
         double teRX;
         // noise figure is in dB
-        teRX = (MathUtil.pow(10.0, bandSpecificItems.get(band).rXamplifier.getNoiseFigure() / 10.0) - 1.0) * Com.T0;
+        teRX = (MathUtil.pow(10.0, 
+                bandSpecificItems.get(band).rXamplifier.getNoiseFigure()
+                        / 10.0) - 1.0) * Com.T0;
         tA = this.getTempSky(bandSpecificItems.get(band).rXantenna.getBand())
                 + this.getTempGround();
 
         // LFRX is in dB so change
-        double lfrx = MathUtil.pow(10.0, bandSpecificItems.get(band).rXamplifier.getLFRX() / 10.0);
+        double lfrx = MathUtil.pow(10.0, 
+                bandSpecificItems.get(band).rXamplifier.getLFRX() / 10.0);
 
         noiseTemp = tA / lfrx
                 + bandSpecificItems.get(band).rXamplifier.getFeederTemp()
