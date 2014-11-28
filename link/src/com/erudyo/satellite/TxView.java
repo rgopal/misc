@@ -224,6 +224,12 @@ public class TxView extends View {
        
         sldrPower.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
+         sldrPower.getStyle().setFgColor(Integer.valueOf("00FF00",16));
+          sldrPower.getStyle().setBgColor(Integer.valueOf("0000FF",16));
+          sldrPower.getStyle().setBgTransparency(30);
+          sldrPower.setPreferredH(30);
+   
+          
 
         final Label L13 = new Label(Com.shortText(tXterminal.gettXamplifier().
                 getPower()));
