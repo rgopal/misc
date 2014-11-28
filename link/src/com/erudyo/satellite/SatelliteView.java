@@ -111,7 +111,8 @@ public class SatelliteView extends View {
     // update from the current selection of the Satellite
     public void updateValues(Selection selection) {
 
-        selection.getSatelliteView().setName("ST");
+        selection.getSatelliteView().setShortName("ST");
+        selection.getSatelliteView().setName("Satellite");
 
         selection.getSatelliteView().setSummary(Com.toDMS(
                 selection.getSatellite().getLongitude()));
@@ -155,8 +156,8 @@ public class SatelliteView extends View {
         return name;
     }
 
-    public void displayContourValues(BandSpecificItems bandBeams, Form sub,
-            Container cnt, TableLayout layout) {
+    public void displayContourValues(BandSpecificItems bandBeams, 
+            Form cnt, TableLayout layout) {
 
         TableLayout.Constraint constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
@@ -210,10 +211,10 @@ public class SatelliteView extends View {
 
         final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(
                 selection.getBand());
-        Form sub = new Form("SAT " + satellite.getName());
+        Form cnt = new Form("SAT " + satellite.getName());
         final RfBand.Band band = selection.getBand();
-        Container cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
+        // Container cnt = new Container(new BorderLayout());
+        // sub.addComponent(cnt);
 
         // there are several items in Views.  Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(24, 3);
@@ -235,8 +236,8 @@ public class SatelliteView extends View {
         // check if contours are present (then no calculations needed)
         if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)
                 || !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
-            displayContourValues(bandBeams, sub, cnt, layout);
-            return sub;
+            displayContourValues(bandBeams, cnt, layout);
+            return cnt;
         }
         // now the Rx side of the satellite
         Label lNoiseFigureLabel = new Label("Rx Noise Figure");
@@ -245,6 +246,7 @@ public class SatelliteView extends View {
         Label lNoiseFigureUnit = new Label("dB");
 
         final Slider sldrRxNoiseFigure = new Slider();
+        Com.formatSlider(sldrRxNoiseFigure);
         sldrRxNoiseFigure.setMinValue((int) MathUtil.round(
                 Amplifier.NOISE_FIG_LO * 10)); // x10
         sldrRxNoiseFigure.setMaxValue((int) MathUtil.round(
@@ -274,6 +276,7 @@ public class SatelliteView extends View {
          */
         Label lRxDiameterLabel = new Label("  Antenna Diameter");
         final Slider sldrRxDiameter = new Slider();
+        Com.formatSlider(sldrRxDiameter);
 
         sldrRxDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
         sldrRxDiameter.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
@@ -347,7 +350,7 @@ public class SatelliteView extends View {
         cnt.addComponent(lsysTemp);
         cnt.addComponent(valueRxsysTemp);
         cnt.addComponent(unitsysTemp);
-        sub.setScrollable(true);
+        cnt.setScrollable(true);
 
         // all actions at the end to update other fields
         sldrRxNoiseFigure.addDataChangedListener(new DataChangedListener() {
@@ -411,6 +414,7 @@ public class SatelliteView extends View {
         Label L13 = new Label("W");
 
         final Slider sldrTxPower = new Slider();
+        Com.formatSlider(sldrTxPower);
         sldrTxPower.setMinValue((int) MathUtil.round(Amplifier.POWER_LO * 10)); // x10
         sldrTxPower.setMaxValue((int) MathUtil.round(Amplifier.POWER_HI * 10));
         sldrTxPower.setEditable(true);
@@ -436,6 +440,8 @@ public class SatelliteView extends View {
         Label L21 = new Label("Tx  Diameter");
         Label lTxDiaUnit = new Label("m");
         final Slider sldrTxDiameter = new Slider();
+        
+        Com.formatSlider(sldrTxDiameter);
         sldrRxDiameter.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM,
                 Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
@@ -536,8 +542,8 @@ public class SatelliteView extends View {
             }
         });
 
-        sub.setScrollable(true);
+        cnt.setScrollable(true);
         // have a multi-row table layout and dump the transmit terminal values
-        return sub;
+        return cnt;
     }
 }

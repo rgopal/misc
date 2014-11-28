@@ -132,6 +132,7 @@ public class Link {
         themeAddition.put("sel#font", defaultFont);
         themeAddition.put("unsel#font", defaultFont);
      themeAddition.put("press#font", defaultFont);
+     
         themeAddition.put("Label.font", defaultFont);
         // transparency 0 looks regular, F0 looks grey/black for blue font, FF black
         // FF generates error, has to be 255
@@ -139,7 +140,7 @@ public class Link {
         // fonts are just 4 colors, tried mixing colors does not work
         themeAddition.put("Label.fgColor", "0"); // default  folor
         themeAddition.put("Label.padding", "4,4,4,4");
-        themeAddition.put("Label.margin", "0,0,0,0");
+        themeAddition.put("Label.margin", "2,2,2,2");
         
         //themeAddition.put("Label.fgColor", "00FF00");
         themeAddition.put("Button.font", defaultFont);
@@ -288,7 +289,7 @@ public class Link {
             Component subLabel = view.getSubLabel(selection);
             subLabel.getStyle().setFgColor(Integer.valueOf("0000FF",16));  // blue
 
-            Button bSelectView = new Button("->"); //view.getName());
+            Button bSelectView = new Button(view.getShortName()); //view.getName());
 
             TableLayout.Constraint constraint;
             // if span is more than 1 then only widget and command are displayed

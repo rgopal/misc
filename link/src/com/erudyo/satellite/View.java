@@ -24,6 +24,7 @@ public abstract class View {
     private Resources res;
     protected Image icon;
     protected String name;
+    private String shortName;
     protected String summary;
     protected String value;
     protected String subValue;
@@ -149,6 +150,20 @@ public abstract class View {
      */
     public String getSummary() {
         return summary;
+    }
+
+    /**
+     * @return the shortName
+     */
+    public String getShortName() {
+        return shortName;
+    }
+
+    /**
+     * @param shortName the shortName to set
+     */
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 
  

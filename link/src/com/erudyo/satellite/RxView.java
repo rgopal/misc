@@ -110,7 +110,8 @@ public class RxView extends View {
 
         // may not exist at initialization time
         if (selection.getrXterminal() != null) {
-            selection.getRxView().setName("Rx");
+            selection.getRxView().setShortName("Rx");
+            selection.getRxView().setName("Rx Terminal");
 
             selection.getRxView().setSummary(Com.textN(
                     selection.getrXterminal().getGainTemp(), 5) + "dB/K");
@@ -138,10 +139,9 @@ public class RxView extends View {
     }
 
     public Form createView(final Selection selection) {
-        Form sub = new Form("Rx " + selection.getrXterminal().getName());
+        Form cnt = new Form("Rx " + selection.getrXterminal().getName());
 
-        Container cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
+     
 
         // there are six items in Views.  Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(13, 3);
@@ -149,7 +149,7 @@ public class RxView extends View {
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setHorizontalSpan(3);
-        constraint.setWidthPercentage(45);
+        constraint.setWidthPercentage(40);
 
         // now go sequentially through the Tx terminal fields
         final Terminal rxTerm = selection.getrXterminal();
@@ -181,6 +181,7 @@ public class RxView extends View {
         Label lNoiseFigureLabel = new Label("LNA Noise Figure");
    Label lNoiseFigureUnit = new Label("dB");
         final Slider sldrNoiseFigure = new Slider();
+        Com.formatSlider(sldrNoiseFigure);
         sldrNoiseFigure.setMinValue((int) MathUtil.round(Amplifier.NOISE_FIG_LO * 10)); // x10
         sldrNoiseFigure.setMaxValue((int) MathUtil.round(Amplifier.NOISE_FIG_HI * 10));
         sldrNoiseFigure.setEditable(true);
@@ -209,6 +210,7 @@ public class RxView extends View {
         Label lDiameterLabel = new Label("    Diameter");
            Label lDiameterUnit = new Label("m");
         final Slider sldrDiameter = new Slider();
+        Com.formatSlider(sldrDiameter);
 
         sldrDiameter.setMinValue((int) MathUtil.round(Antenna.DIAMETER_LO * 10)); // x10
         sldrDiameter.setMaxValue((int) MathUtil.round(Antenna.DIAMETER_HI * 10));
@@ -279,7 +281,7 @@ public class RxView extends View {
         cnt.addComponent(valueGainTemp);
         cnt.addComponent(unitGainTemp);
 
-        sub.setScrollable(true);
+        cnt.setScrollable(true);
         // all actions at the end to update other fields
         sldrNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
@@ -331,7 +333,7 @@ public class RxView extends View {
         });
 
         // have a multi-row table layout and dump the transmit terminal values
-        return sub;
+        return cnt;
     }
 
 }

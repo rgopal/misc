@@ -177,7 +177,7 @@ public class CommsView extends View {
                 selection.getComms().getDataRate() * 10 / 1E6)));
         sldrDataRate.setProgress((int) MathUtil.round(
                 selection.getComms().getDataRate() * 10 / 1E6));
-       
+
         sldrDataRate.setRenderValueOnTop(true);
 
         selection.getCommsView().slider = sldrDataRate;
@@ -207,10 +207,11 @@ public class CommsView extends View {
     public void updateValues(Selection selection) {
 
         if (selection.getComms() != null) {
+            selection.getCommsView().setShortName("Cm");
             selection.getCommsView().setName("CM");  // short
 
             selection.getCommsView().setSummary("CNo " + Com.textN(
-                    selection.getComms().getCNo(),5) + "");
+                    selection.getComms().getCNo(), 5) + "");
 
             selection.getCommsView().setValue("ENo " + Com.textN(selection.getComms().
                     geteBno(), 5) + "");
@@ -227,17 +228,15 @@ public class CommsView extends View {
 
     // do bandwidth, rollOff, modulation, coding
     public Form createView(final Selection selection) {
-        Form sub = new Form("Common " + selection.getComms().getName());
+        Form sub = new Form(selection.getComms().getName());
 
-        Container cntMany = new Container(new BorderLayout());
-
-        sub.addComponent(cntMany);
-
-        // Hardcoded table. Name, value, unit
+        Container cntMany = new Container();
         TableLayout layout = new TableLayout(8, 3);
 
         cntMany.setLayout(layout);
+        sub.addComponent(cntMany);
 
+        // Hardcoded table. Name, value, unit
         TableLayout.Constraint constraint;
 
         constraint = layout.createConstraint();
@@ -254,6 +253,7 @@ public class CommsView extends View {
         cntMany.addComponent(lDataRate03);
 
         final Slider sldrDataRate = new Slider();
+        Com.formatSlider(sldrDataRate);
 
         sldrDataRate.setMinValue((int) MathUtil.round(
                 Comms.DATA_RATE_LO * 10 / 1E6)); // x10
@@ -280,6 +280,7 @@ public class CommsView extends View {
         cntMany.addComponent(lBW03);
 
         final Slider sldrBW = new Slider();
+        Com.formatSlider(sldrBW);
 
         sldrBW.setMinValue((int) MathUtil.round(Comms.BW_LO * 10.0 / 1E6)); // x10
         sldrBW.setMaxValue((int) MathUtil.round(Comms.BW_HI * 10.0 / 1E6));
@@ -325,12 +326,17 @@ public class CommsView extends View {
         cntMany.addComponent(lBEP03);
 
         // now vertical positioning
-        cntMany = new Container(new BorderLayout());
+        cntMany = new Container();
         sub.addComponent(cntMany);
 
         // Table with 4 cloumns
-        layout = new TableLayout(2, 4);
+        layout = new TableLayout(3, 4);
         cntMany.setLayout(layout);
+
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(4);
+        Label filler = new Label(" ");
+        cntMany.addComponent(constraint, filler);
 
         Label l1 = new Label("Modulation");
         Label l2 = new Label("Rate");
@@ -497,7 +503,7 @@ public class CommsView extends View {
                     selection.getComms().setbER(
                             Comms.indexBER.toArray(new Comms.BER[0])[bgBER.
                             getSelectedIndex()]);
-                      updateValues(selection);
+                    updateValues(selection);
 
                 }
 
@@ -536,7 +542,7 @@ public class CommsView extends View {
                     sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
                             * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
-                      updateValues(selection);
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("CommsView: bad number for Data Rate " + sldrDataRate.getText());
@@ -556,7 +562,7 @@ public class CommsView extends View {
                     lBW02.setText(Com.text(selection.getComms().getBW() / 1E6));
                     // BW does not change data rate 
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
-                      updateValues(selection);
+                    updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("CommsView: bad number for BW " + sldrBW.getText(), Log.DEBUG);

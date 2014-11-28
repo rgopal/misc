@@ -61,7 +61,8 @@ public class DlPathView extends View {
     public void updateValues(Selection selection) {
 
         if (selection.getdLpath() != null) {
-            selection.getdLpathView().setName("DL e");  // short
+            selection.getdLpathView().setShortName("DL");
+            selection.getdLpathView().setName("DL ");  // short
 
             selection.getdLpathView().setValue("" + Com.toDMS(
                     selection.getdLpath().getElevation()).substring(0, 6));
@@ -78,10 +79,9 @@ public class DlPathView extends View {
 
     public Form createView(final Selection selection) {
 
-        Form sub = new Form("Tx SAT: " + selection.getSatellite().getName());
+        Form cnt = new Form("Tx SAT: " + selection.getSatellite().getName());
 
-        Container cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
+    
 
         // there are six items in Views.  Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(13, 3);
@@ -101,7 +101,10 @@ public class DlPathView extends View {
         Label L03 = new Label("GHz " + satellite.bandSpecificItems.
                 get(selection.getBand()).tXantenna.getBand());
         cnt.addComponent(constraint, L01);
-        cnt.addComponent(lFrequency);
+        constraint = layout.createConstraint();
+ 
+        constraint.setWidthPercentage(30);
+        cnt.addComponent(constraint,lFrequency);
         cnt.addComponent(L03);
 
         Label L61 = new Label("Sat" + "@" + Com.shortText(selection.getuLpath().
@@ -120,6 +123,7 @@ public class DlPathView extends View {
         Label lLatitude = new Label("Term Latitude");
         Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
+        Com.formatSlider(sldrLatitude);
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
@@ -149,6 +153,7 @@ public class DlPathView extends View {
         Label lLongitude = new Label("Term Longitude");
         Label lLongitudeUnit = new Label("degree");
         final Slider sldrLongitude = new Slider();
+        Com.formatSlider(sldrLongitude);
 
         // longitude should be around the satellite longitude (still -81.3 to +81.3
         sldrLongitude.setMinValue((int) MathUtil.round(0.0));
@@ -326,9 +331,9 @@ public class DlPathView extends View {
 
             }
         });
-        sub.setScrollable(false);
+        cnt.setScrollable(false);
         // have a multi-row table layout and dump the transmit terminal values
-        return sub;
+        return cnt;
     }
 
     // this is downlink

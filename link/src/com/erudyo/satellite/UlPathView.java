@@ -76,7 +76,8 @@ public class UlPathView extends View {
     public void updateValues(Selection selection) {
 
         if (selection.getuLpath() != null) {
-        selection.getuLpathView().setName("UL e");  // short
+            selection.getuLpathView().setShortName("UL");
+        selection.getuLpathView().setName("UL ");  // short
 
         selection.getuLpathView().setValue("" + Com.toDMS(
                 selection.getuLpath().getElevation()).substring(0,6));
@@ -96,10 +97,8 @@ public class UlPathView extends View {
 
         Form path = new Form(this.getName());
 
-        Form sub = new Form("Tx Terminal: " + selection.gettXterminal().getName());
+        Form cnt = new Form("Tx Terminal: " + selection.gettXterminal().getName());
 
-        Container cnt = new Container(new BorderLayout());
-        sub.addComponent(cnt);
 
         // there are six items in Views.  Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(13, 3);
@@ -107,7 +106,7 @@ public class UlPathView extends View {
 
         TableLayout.Constraint constraint = layout.createConstraint();
         // constraint.setHorizontalSpan(2);
-        constraint.setWidthPercentage(45);
+        constraint.setWidthPercentage(40);
 
         // now go sequentially through the Uplink path fields
         final Terminal txTerm = selection.gettXterminal();
@@ -116,7 +115,9 @@ public class UlPathView extends View {
         Label lFrequency = new Label(Com.shortText(txTerm.gettXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + txTerm.getBand());
         cnt.addComponent(constraint, L01);
-        cnt.addComponent(lFrequency);
+        constraint = layout.createConstraint();
+        constraint.setWidthPercentage(30);
+        cnt.addComponent(constraint,lFrequency);
         cnt.addComponent(L03);
 
         Label L61 = new Label("Sat"
@@ -133,6 +134,7 @@ public class UlPathView extends View {
         Label lLatitude = new Label("Term Latitude");
         Label lLatitudeUnit = new Label("degree");
         final Slider sldrLatitude = new Slider();
+        Com.formatSlider(sldrLatitude);
         sldrLatitude.getStyle().setFont(Font.createSystemFont(
                 Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL));
 
@@ -160,6 +162,7 @@ public class UlPathView extends View {
         Label lLongitude = new Label("Term Longitude");
         Label lLongitudeUnit = new Label("degree");
         final Slider sldrLongitude = new Slider();
+        Com.formatSlider(sldrLongitude);
 
         // longitude should be around the satellite longitude (still -81.3 to +81.3
         sldrLongitude.setMinValue((int) MathUtil.round(0.0));
@@ -336,7 +339,7 @@ public class UlPathView extends View {
         });
 
         // have a multi-row table layout and dump the transmit terminal values
-        return sub;
+        return cnt;
     }
 
 }
