@@ -71,6 +71,10 @@ public class Comms extends Entity {
         return eBno;
     }
 
+     public double geteSno() {
+        return eBno+10*MathUtil.log10(spectralEfficiency(this.modulation))
+                + 10*MathUtil.log10(calcCodeRate(codeRate));
+    }
     /**
      * @param eBno the eBno to set
      */
@@ -182,19 +186,19 @@ public class Comms extends Entity {
 
     public enum Modulation {
 
-        BPSK, QPSK, PSK8, PSK16
+        BPSK, QPSK, PSK8, QAM16, APSK16, APSK32, APSK64
 
     };
     private Path uLpath;
     private Path dLpath;
-    private double dataRate = 1000000.0;    // bps  
+    private double dataRate = 1E6;    // bps  
     private double rollOff = .30;
-    private double bw = 1000000.0;      // Hz
+    private double bw = 1E6;      // Hz
     private double BEP = 1E-6;
     private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;
-    private double eBno = -100.0;           // in dB
-    private double derivedEbNo = -100.0; // if BER is set then find
+    private double eBno = Satellite.NEGLIGIBLE;           // in dB
+    private double derivedEbNo = Satellite.NEGLIGIBLE; // if BER is set then find
     private double codingGain = 0;      // in dB
     private CodeRate codeRate = CodeRate.FEC_7_8;
     private Code code = Code.BCH;
@@ -221,8 +225,13 @@ public class Comms extends Entity {
                 return 2;
             case PSK8:
                 return 3;
-            case PSK16:
+            case APSK16:
+            case QAM16:
                 return 4;
+            case APSK32:
+                return 5;
+            case APSK64:
+                return 6;    
             default:
                 return 1;
         }

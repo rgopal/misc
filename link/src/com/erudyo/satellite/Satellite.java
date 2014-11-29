@@ -48,7 +48,7 @@ import java.util.Vector;
 // A beam also has multiple transponders.   
 public class Satellite extends Entity {
 
-    public final static double NEGLIGIBLE = -100.0;
+    public final static double NEGLIGIBLE = -200.0;
 
     // names of files containing KML info for some satellites
     private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;

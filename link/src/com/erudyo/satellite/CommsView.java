@@ -231,7 +231,7 @@ public class CommsView extends View {
         Form sub = new Form(selection.getComms().getName());
 
         Container cntMany = new Container();
-        TableLayout layout = new TableLayout(8, 3);
+        TableLayout layout = new TableLayout(9, 3);
 
         cntMany.setLayout(layout);
         sub.addComponent(cntMany);
@@ -309,6 +309,13 @@ public class CommsView extends View {
         cntMany.addComponent(lEbNo01);
         cntMany.addComponent(lEbNo02);
         cntMany.addComponent(lEbNo03);
+        
+           Label lEsNo01 = new Label("Es/No");
+        final Label lEsNo02 = new Label(Com.text(selection.getComms().geteSno()));
+        Label lEsNo03 = new Label("dB ");
+        cntMany.addComponent(lEsNo01);
+        cntMany.addComponent(lEsNo02);
+        cntMany.addComponent(lEsNo03);
 
         Label lderivedEbNo01 = new Label("Derived Eb/No");
         Label lderivedEbNo02 = new Label(Com.text(selection.getComms().
@@ -542,6 +549,7 @@ public class CommsView extends View {
                     sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
                             * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
+                    lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
@@ -562,6 +570,7 @@ public class CommsView extends View {
                     lBW02.setText(Com.text(selection.getComms().getBW() / 1E6));
                     // BW does not change data rate 
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
+                    lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
