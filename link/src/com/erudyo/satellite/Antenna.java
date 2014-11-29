@@ -35,6 +35,8 @@ public class Antenna extends Entity {
     private static double GAIN_HI = - 10;
     public static final double DIAMETER_LO = .10;  // in m
     public static final double DIAMETER_HI = 12;
+     public static final double DEPOINTING_LO = .1*Com.PI/180.0;  // in 
+    public static final double DEPOINTING_HI = 5.0*Com.PI/180.0;   // in radian
     private static final double EFFICIENCY_LO = 0.01;
     private static final double EFFICIENCY_HI = 1.0;
 
@@ -191,12 +193,12 @@ public class Antenna extends Entity {
     public double calcDepointingLoss() {
         double l;
         // This formula is already in dB
-        l = 12.0 * MathUtil.pow(depointingError / threeDBangle, 2.0);
+        l = 12.0 * MathUtil.pow(getDepointingError() / threeDBangle, 2.0);
         return l;
     }
 
     public void setDepointingLoss(double depointingLoss) {
-        this.depointingLoss = calcDepointingLoss();
+        this.depointingLoss = depointingLoss;
         updateAffected();
     }
 
@@ -282,6 +284,22 @@ public class Antenna extends Entity {
         } else {
             return true;
         }
+    }
+
+    /**
+     * @return the depointingError
+     */
+    public double getDepointingError() {
+        return depointingError;
+    }
+
+    /**
+     * @param depointingError the depointingError to set
+     */
+    public void setDepointingError(double depointingError) {
+        this.depointingError = depointingError;
+        this.depointingLoss = calcDepointingLoss();
+        updateAffected();
     }
 
 }

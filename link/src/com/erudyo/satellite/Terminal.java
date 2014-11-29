@@ -38,8 +38,8 @@ public class Terminal extends Entity {
     private Amplifier tXamplifier;
     private Amplifier rXamplifier;
 
-    private double tempGround = 45.0;
-    private double tempSky = 20.0;  // in K, depends on frequency
+    private double tempGround = 45.0; // estimate TODO editable
+    private double tempSky = 20.0;  // in K, depends on frequency.
 
     // eventually calculate these things
     private double EIRP = Satellite.NEGLIGIBLE;        // somewhere this has to be updated
@@ -474,9 +474,7 @@ public class Terminal extends Entity {
      */
     public double getTempSky(RfBand.Band band) {
         double temp = tempSky;
-        if (band != RfBand.Band.C) {
-            Log.p("Terminal: no tempSky for band " + band, Log.WARNING);
-        }
+     
         return temp;
     }
 }

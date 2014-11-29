@@ -285,7 +285,7 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getuLpath().
-                            getDistance() / 1E3, 6));
+                            getDistance() / 1E3, 8));
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));
@@ -293,7 +293,9 @@ public class UlPathView extends View {
                     valueCNo.setText(Com.textN(
                             selection.getuLpath().getCNo(), 7));
                     valueSpecDensity.setText(Com.textN(
-                            selection.getuLpath().getSpectralDensity(), 6));
+                            selection.getuLpath().getSpectralDensity(), 7));
+                    valuePowerRx.setText(Com.textN(
+                            selection.getuLpath().getPowerReceived(),7));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("UlPathView: bad number for Latitude "
@@ -325,15 +327,17 @@ public class UlPathView extends View {
                     valueAzimuth.setText(Com.toDMS(selection.getuLpath().
                             getAzimuth()));
                     valueDistance.setText(Com.textN(selection.getuLpath().
-                            getDistance() / 1E3, 6));      // convert to km
+                            getDistance() / 1E3, 8));      // convert to km
 
                     valuePathLoss.setText(Com.textN(selection.getuLpath().
                             getPathLoss(), 7));            // already in dB
 
                     valueCNo.setText(Com.shortText(
                             selection.getuLpath().getCNo()));
-                    valueSpecDensity.setText(Com.shortText(
-                            selection.getuLpath().getSpectralDensity()));
+                    valueSpecDensity.setText(Com.textN(
+                            selection.getuLpath().getSpectralDensity(),7));
+                    valuePowerRx.setText(Com.textN(
+                            selection.getuLpath().getPowerReceived(),7));
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("UlPathView: bad number for diameter " + sldrLongitude.getText(), Log.DEBUG);

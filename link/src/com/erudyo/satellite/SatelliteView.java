@@ -217,7 +217,7 @@ public class SatelliteView extends View {
         // sub.addComponent(cnt);
 
         // there are several items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(25, 3);
+        TableLayout layout = new TableLayout(27, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -314,12 +314,39 @@ public class SatelliteView extends View {
         cnt.addComponent(lRxThreeDBangle);
         cnt.addComponent(L43);
 
+                Label lRxDepointingErrorLabel = new Label("  Depointing Error");
+        final Slider sldrRxDepointingError = new Slider();
+        Com.formatSlider(sldrRxDepointingError);
+
+        sldrRxDepointingError.setMinValue((int) MathUtil.round(
+                Antenna.DEPOINTING_LO * 10*180.0/Com.PI)); // x10
+        sldrRxDepointingError.setMaxValue((int) MathUtil.round(
+                Antenna.DEPOINTING_HI * 10*180.0/Com.PI));
+        sldrRxDepointingError.setEditable(true);
+        sldrRxDepointingError.setIncrements(5); //
+        sldrRxDepointingError.setProgress((int) MathUtil.round(
+                bandBeams.rXantenna.getDepointingError() * 10*180/Com.PI));
+
+        sldrRxDepointingError.setRenderValueOnTop(true);
+        constraint = layout.createConstraint();
+
+        final Label lRxDepointingError = new Label(Com.toDMS(
+                bandBeams.rXantenna.getDepointingError()));
+        Label lDepointingErrorUnit = new Label("degree");
+
+        cnt.addComponent(lRxDepointingErrorLabel);
+        cnt.addComponent(lRxDepointingError);
+        cnt.addComponent(lDepointingErrorUnit);
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        cnt.addComponent(constraint, sldrRxDepointingError);
+        
         // does change so not in combo/sliders
-        Label lPointLoss = new Label(" Point Loss");
+        Label lRxPointLoss = new Label(" Depointing Loss");
         final Label valueRxPointLoss = new Label(Com.shortText(
                 bandBeams.rXantenna.getDepointingLoss()));
         Label unitPointLoss = new Label("dB");
-        cnt.addComponent(lPointLoss);
+        cnt.addComponent(lRxPointLoss);
         cnt.addComponent(valueRxPointLoss);
         cnt.addComponent(unitPointLoss);
 
@@ -380,6 +407,37 @@ public class SatelliteView extends View {
                 }
             }
         });
+        
+        sldrRxDepointingError.addDataChangedListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                Log.p("SatelliteView: selected depointingError "
+                        + sldrRxDepointingError.getText(), Log.DEBUG);
+                try {
+
+                    bandBeams.rXantenna.
+                            setDepointingError(Double.parseDouble(
+                                            sldrRxDepointingError.getText())*(Com.PI/180) / (10.0));
+                    // update EIRP and three DB
+                    lRxDepointingError.setText(Com.toDMS(bandBeams.
+                            rXantenna.getDepointingError()));
+                 
+                    lRxGain.setText(Com.shortText(bandBeams.rXantenna.getGain()));
+                    valueRxPointLoss.setText(Com.shortText(
+                            bandBeams.rXantenna.getDepointingLoss()));
+                    valueRxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+
+                    // should not change
+                    valueRxsysTemp.setText(Com.text(
+                            satellite.calcSystemNoiseTemp(band)));
+                    selection.getSatelliteView().updateValues(selection);
+                } catch (java.lang.NumberFormatException e) {
+                    Log.p("SatelliteView: bad number for Rx Depointing Error " 
+                            + sldrRxDiameter.getText(), Log.DEBUG);
+
+                }
+
+            }
+        });
 
         sldrRxDiameter.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
@@ -412,7 +470,15 @@ public class SatelliteView extends View {
         });
 
         Label filler = new Label (" ");
-         constraint = layout.createConstraint();
+        Label LTx01 = new Label("Rx Central Frequency");
+        Label lTxFrequency = new Label(Com.shortText(
+                bandBeams.tXantenna.getFrequency() / 1E9));
+        Label LTx03 = new Label("GHz " + bandBeams.tXantenna.getBand());
+        cnt.addComponent(constraint, LTx01);
+        cnt.addComponent(lTxFrequency);
+        cnt.addComponent(LTx03);
+        
+        constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, filler);
         

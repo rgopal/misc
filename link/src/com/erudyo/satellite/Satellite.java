@@ -74,7 +74,7 @@ public class Satellite extends Entity {
     protected Com.Orbit orbit;
     // protected RfBand.Band band; // now multiple bands in Beam
 
-    private double tempGround = 45.0;
+    private double tempGround = 270.0; // total is 290, smaller over ocean
     private double tempSky = 20.0;  // in K, depends on frequency
     private double polarizationLoss;
 
@@ -177,9 +177,13 @@ public class Satellite extends Entity {
      */
     public double getTempSky(RfBand.Band band) {
         double temp = tempSky;
-        if (band != RfBand.Band.C) {
+       /* 
+        * TODO: make it band specific but probably 290 is a good conservative
+        * estimate for antenna temperature.
+        *if (band != RfBand.Band.C) {
             Log.p("Satellite: no tempSky for band " + band, Log.WARNING);
         }
+        */
         return temp;
     }
 
@@ -633,6 +637,11 @@ public class Satellite extends Entity {
         satellite.bandSpecificItems.get(band).rXantenna = new Antenna();
         satellite.bandSpecificItems.get(band).rXantenna.setDiameter(1.2);
         satellite.bandSpecificItems.get(band).rXantenna.setEfficiency(.55);
+        // use edge of beam value, assuming typical beam is 2 degree
+        // can't directly use DepointingLoss since it is recalculated when
+        // antenna diameter is changed.
+        satellite.bandSpecificItems.get(band).rXantenna.
+                setDepointingError(1.0*Com.PI/180.0);
         satellite.bandSpecificItems.get(band).rXantenna.setName(
                 "RxAnt" + band + satellite.name);
         satellite.bandSpecificItems.get(band).rXantenna.setBand(RfBand.findUl(band));
@@ -654,6 +663,7 @@ public class Satellite extends Entity {
         satellite.bandSpecificItems.get(band).rXamplifier = new Amplifier();
         satellite.bandSpecificItems.get(band).rXamplifier.setName("RxAmp" + band + satellite.name);
         satellite.bandSpecificItems.get(band).rXamplifier.setPower(50.0);
+        satellite.bandSpecificItems.get(band).rXamplifier.setLFRX(1.0);
 
         // set the power prior to caling affected (most objects are empty)
         satellite.bandSpecificItems.get(band).rXamplifier.addAffected(satellite);
@@ -1254,6 +1264,7 @@ public class Satellite extends Entity {
                 - bandSpecificItems.get(band).tXantenna.getDepointingLoss()
                 - bandSpecificItems.get(band).tXamplifier.getLFTX();
         return eirp;
+        // satellite Rx depointing loss is 3 dB (set in Satellite())
     }
 
     // users receive antenna.  TODO check band here 
