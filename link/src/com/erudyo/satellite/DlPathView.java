@@ -215,7 +215,7 @@ public class DlPathView extends View {
 
         // attenuation does not depend on anything so not incouded in
         // sliders
-        Label lAttenuation = new Label("Atmos Atten");
+        Label lAttenuation = new Label("Atmospheric Attenuation");
         final Label valueAttenuation = new Label(Com.shortText(
                 selection.getdLpath().getAttenuation()));
         Label unitAttenuation = new Label("dB");
@@ -227,7 +227,7 @@ public class DlPathView extends View {
         // sliders
                 Label lPowerRx = new Label("Power Received at Term");
         final Label valuePowerRx = new Label(Com.textN(
-                selection.getdLpath().getPowerReceived(), 6));
+                selection.getdLpath().getPowerReceived(), 8));
         Label unitPowerRx = new Label("dBW");
         cnt.addComponent(lPowerRx);
         cnt.addComponent(valuePowerRx);
@@ -235,7 +235,7 @@ public class DlPathView extends View {
 
         Label lSpecDensity = new Label("Spectral Densisty at Term");
         final Label valueSpecDensity = new Label(Com.textN(
-                selection.getdLpath().getSpectralDensity(), 6));
+                selection.getdLpath().getSpectralDensity(), 8));
         Label unitSpecDensity = new Label("dBW/m2");
         cnt.addComponent(lSpecDensity);
         cnt.addComponent(valueSpecDensity);
@@ -288,11 +288,11 @@ public class DlPathView extends View {
                             getPathLoss()));
 
                     valueCNo.setText(Com.textN(
-                            selection.getdLpath().getCNo(), 7));
+                            selection.getdLpath().getCNo(), 8));
                     valueSpecDensity.setText(Com.textN(
-                            selection.getdLpath().getSpectralDensity(), 7));
+                            selection.getdLpath().getSpectralDensity(), 8));
                     valuePowerRx.setText(Com.textN(
-                            selection.getuLpath().getPowerReceived(),7));
+                            selection.getdLpath().getPowerReceived(),8));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
@@ -331,11 +331,11 @@ public class DlPathView extends View {
                             getPathLoss()));            // already in dB
 
                     valueCNo.setText(Com.textN(
-                            selection.getdLpath().getCNo(), 7));
+                            selection.getdLpath().getCNo(), 8));
                     valueSpecDensity.setText(Com.textN(
-                            selection.getdLpath().getSpectralDensity(), 7));
+                            selection.getdLpath().getSpectralDensity(), 8));
                     valuePowerRx.setText(Com.textN(
-                            selection.getuLpath().getPowerReceived(),7));
+                            selection.getdLpath().getPowerReceived(),8));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {

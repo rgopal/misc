@@ -640,11 +640,12 @@ public class Satellite extends Entity {
         // use edge of beam value, assuming typical beam is 2 degree
         // can't directly use DepointingLoss since it is recalculated when
         // antenna diameter is changed.
+        satellite.bandSpecificItems.get(band).rXantenna.setBand(RfBand.findUl(band));
         satellite.bandSpecificItems.get(band).rXantenna.
                 setDepointingError(1.0*Com.PI/180.0);
         satellite.bandSpecificItems.get(band).rXantenna.setName(
                 "RxAnt" + band + satellite.name);
-        satellite.bandSpecificItems.get(band).rXantenna.setBand(RfBand.findUl(band));
+        
         satellite.bandSpecificItems.get(band).rXantenna.
                 setFrequency(RfBand.centerFrequency(
                                 RfBand.findUl(band)));
@@ -657,6 +658,8 @@ public class Satellite extends Entity {
         satellite.bandSpecificItems.get(band).tXantenna.
                 setFrequency(RfBand.centerFrequency(
                                 RfBand.findDl(band)));
+        satellite.bandSpecificItems.get(band).tXantenna.
+                setDepointingError(1.0*Com.PI/180.0);
         satellite.bandSpecificItems.get(band).tXantenna.setName("TxAnt" + band + satellite.name);
         satellite.bandSpecificItems.get(band).tXantenna.addAffected(satellite);
 

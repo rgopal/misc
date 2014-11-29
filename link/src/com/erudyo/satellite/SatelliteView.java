@@ -87,7 +87,7 @@ public class SatelliteView extends View {
                 // select new terminals based on which terminals are nearest
                 selection.comboRx(selection);
                 selection.comboTx(selection);
-                
+
                 // update the UL path
                 if (selection.getuLpath() != null) {
                     selection.getuLpath().setSatellite(selection.getSatellite());
@@ -97,7 +97,7 @@ public class SatelliteView extends View {
                     selection.getdLpath().setSatellite(selection.getSatellite());
                 }
                 // update list of visible terminals
-                
+
                 // update other values dependent on this satellite
                 updateValues(selection);
 
@@ -156,7 +156,7 @@ public class SatelliteView extends View {
         return name;
     }
 
-    public void displayContourValues(BandSpecificItems bandBeams, 
+    public void displayContourValues(BandSpecificItems bandBeams,
             Form cnt, TableLayout layout) {
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -217,7 +217,7 @@ public class SatelliteView extends View {
         // sub.addComponent(cnt);
 
         // there are several items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(27, 3);
+        TableLayout layout = new TableLayout(30, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
@@ -314,21 +314,19 @@ public class SatelliteView extends View {
         cnt.addComponent(lRxThreeDBangle);
         cnt.addComponent(L43);
 
-                Label lRxDepointingErrorLabel = new Label("  Depointing Error");
+        Label lRxDepointingErrorLabel = new Label("  Depointing Error");
         final Slider sldrRxDepointingError = new Slider();
         Com.formatSlider(sldrRxDepointingError);
 
         sldrRxDepointingError.setMinValue((int) MathUtil.round(
-                Antenna.DEPOINTING_LO * 10*180.0/Com.PI)); // x10
+                Antenna.DEPOINTING_LO * 10 * 180.0 / Com.PI)); // x10
         sldrRxDepointingError.setMaxValue((int) MathUtil.round(
-                Antenna.DEPOINTING_HI * 10*180.0/Com.PI));
+                Antenna.DEPOINTING_HI * 10 * 180.0 / Com.PI));
         sldrRxDepointingError.setEditable(true);
         sldrRxDepointingError.setIncrements(5); //
         sldrRxDepointingError.setProgress((int) MathUtil.round(
-                bandBeams.rXantenna.getDepointingError() * 10*180/Com.PI));
-
+                bandBeams.rXantenna.getDepointingError() * 10 * 180 / Com.PI));
         sldrRxDepointingError.setRenderValueOnTop(true);
-        constraint = layout.createConstraint();
 
         final Label lRxDepointingError = new Label(Com.toDMS(
                 bandBeams.rXantenna.getDepointingError()));
@@ -337,10 +335,13 @@ public class SatelliteView extends View {
         cnt.addComponent(lRxDepointingErrorLabel);
         cnt.addComponent(lRxDepointingError);
         cnt.addComponent(lDepointingErrorUnit);
+
+        constraint = layout.createConstraint();
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrRxDepointingError);
-        
+
         // does change so not in combo/sliders
         Label lRxPointLoss = new Label(" Depointing Loss");
         final Label valueRxPointLoss = new Label(Com.shortText(
@@ -350,7 +351,7 @@ public class SatelliteView extends View {
         cnt.addComponent(valueRxPointLoss);
         cnt.addComponent(unitPointLoss);
 
-          Label lsysTemp = new Label(" System Noise Temp");
+        Label lsysTemp = new Label(" System Noise Temp");
         final Label valueRxsysTemp = new Label(Com.text(
                 satellite.calcSystemNoiseTemp(band)));
         Label unitsysTemp = new Label("K");
@@ -358,7 +359,7 @@ public class SatelliteView extends View {
         cnt.addComponent(valueRxsysTemp);
         cnt.addComponent(unitsysTemp);
         cnt.setScrollable(true);
-        
+
         // attenuation does not depend on anything so not incouded in
         // sliders
         Label lGainTemp = new Label("Satellite G/T");
@@ -379,8 +380,6 @@ public class SatelliteView extends View {
          cnt.addComponent(unitImpLoss);
          */
         // does not change so not in combo/sliders
-      
-
         // all actions at the end to update other fields
         sldrRxNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
@@ -407,7 +406,7 @@ public class SatelliteView extends View {
                 }
             }
         });
-        
+
         sldrRxDepointingError.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
                 Log.p("SatelliteView: selected depointingError "
@@ -416,11 +415,10 @@ public class SatelliteView extends View {
 
                     bandBeams.rXantenna.
                             setDepointingError(Double.parseDouble(
-                                            sldrRxDepointingError.getText())*(Com.PI/180) / (10.0));
+                                            sldrRxDepointingError.getText()) * (Com.PI / 180) / (10.0));
                     // update EIRP and three DB
-                    lRxDepointingError.setText(Com.toDMS(bandBeams.
-                            rXantenna.getDepointingError()));
-                 
+                    lRxDepointingError.setText(Com.toDMS(bandBeams.rXantenna.getDepointingError()));
+
                     lRxGain.setText(Com.shortText(bandBeams.rXantenna.getGain()));
                     valueRxPointLoss.setText(Com.shortText(
                             bandBeams.rXantenna.getDepointingLoss()));
@@ -431,7 +429,7 @@ public class SatelliteView extends View {
                             satellite.calcSystemNoiseTemp(band)));
                     selection.getSatelliteView().updateValues(selection);
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("SatelliteView: bad number for Rx Depointing Error " 
+                    Log.p("SatelliteView: bad number for Rx Depointing Error "
                             + sldrRxDiameter.getText(), Log.DEBUG);
 
                 }
@@ -469,7 +467,7 @@ public class SatelliteView extends View {
             }
         });
 
-        Label filler = new Label (" ");
+        Label filler = new Label(" ");
         Label LTx01 = new Label("Rx Central Frequency");
         Label lTxFrequency = new Label(Com.shortText(
                 bandBeams.tXantenna.getFrequency() / 1E9));
@@ -477,11 +475,11 @@ public class SatelliteView extends View {
         cnt.addComponent(constraint, LTx01);
         cnt.addComponent(lTxFrequency);
         cnt.addComponent(LTx03);
-        
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, filler);
-        
+
         // now the Tx side of satellite
         Label L11 = new Label("Tx Amp Power");
         Label L13 = new Label("W");
@@ -513,7 +511,7 @@ public class SatelliteView extends View {
         Label L21 = new Label("Tx  Diameter");
         Label lTxDiaUnit = new Label("m");
         final Slider sldrTxDiameter = new Slider();
-        
+
         Com.formatSlider(sldrTxDiameter);
         sldrRxDiameter.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM,
                 Font.STYLE_PLAIN, Font.SIZE_SMALL));
@@ -553,6 +551,35 @@ public class SatelliteView extends View {
         cnt.addComponent(lTx3dB);
         cnt.addComponent(lTx3dBUnit);
 
+              Label lTxDepointingErrorLabel = new Label("  Depointing Error");
+              Label lTxDepointingErrorUnit = new Label("degree");
+        final Slider sldrTxDepointingError = new Slider();
+        Com.formatSlider(sldrTxDepointingError);
+
+        sldrTxDepointingError.setMinValue((int) MathUtil.round(
+                Antenna.DEPOINTING_LO * 10 * 180.0 / Com.PI)); // x10
+        sldrTxDepointingError.setMaxValue((int) MathUtil.round(
+                Antenna.DEPOINTING_HI * 10 * 180.0 / Com.PI));
+        sldrTxDepointingError.setEditable(true);
+        sldrTxDepointingError.setIncrements(5); //
+        sldrTxDepointingError.setProgress((int) MathUtil.round(
+                bandBeams.tXantenna.getDepointingError() * 10 * 180 / Com.PI));
+        sldrTxDepointingError.setRenderValueOnTop(true);
+
+        final Label lTxDepointingError = new Label(Com.toDMS(
+                bandBeams.tXantenna.getDepointingError()));
+       
+
+        cnt.addComponent(lTxDepointingErrorLabel);
+        cnt.addComponent(lTxDepointingError);
+        cnt.addComponent(lTxDepointingErrorUnit);
+
+        constraint = layout.createConstraint();
+
+        constraint = layout.createConstraint();
+        constraint.setHorizontalSpan(3);
+        cnt.addComponent(constraint, sldrTxDepointingError);
+        
         // does change so not in combo/sliders
         Label lTxPointLoss = new Label(" Pointing Loss");
         final Label valueTxPointLoss = new Label(Com.shortText(
@@ -615,6 +642,34 @@ public class SatelliteView extends View {
             }
         });
 
+         sldrTxDepointingError.addDataChangedListener(new DataChangedListener() {
+            public void dataChanged(int type, int index) {
+                Log.p("SatelliteView: selected Tx depointingError "
+                        + sldrTxDepointingError.getText(), Log.DEBUG);
+                try {
+
+                    bandBeams.tXantenna.
+                            setDepointingError(Double.parseDouble(
+                                            sldrTxDepointingError.getText()) * (Com.PI / 180) / (10.0));
+                    // update EIRP and three DB
+                    lTxDepointingError.setText(Com.toDMS(bandBeams.tXantenna.getDepointingError()));
+
+                    lTxGain.setText(Com.shortText(bandBeams.tXantenna.getGain()));
+                    valueTxPointLoss.setText(Com.shortText(
+                            bandBeams.tXantenna.getDepointingLoss()));
+                    // valueTxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+
+                    // should not change
+                    //valueTxsysTemp.setText(Com.text(      satellite.calcSystemNoiseTemp(band)));
+                    selection.getSatelliteView().updateValues(selection);
+                } catch (java.lang.NumberFormatException e) {
+                    Log.p("SatelliteView: bad number for Tx Depointing Error "
+                            + sldrRxDiameter.getText(), Log.DEBUG);
+
+                }
+
+            }
+        });
         cnt.setScrollable(true);
         // have a multi-row table layout and dump the transmit terminal values
         return cnt;

@@ -305,7 +305,7 @@ public class CommsView extends View {
 
         Label lEbNo01 = new Label("Eb/No");
         final Label lEbNo02 = new Label(Com.text(selection.getComms().geteBno()));
-        Label lEbNo03 = new Label("dBHz ");
+        Label lEbNo03 = new Label("dB ");
         cntMany.addComponent(lEbNo01);
         cntMany.addComponent(lEbNo02);
         cntMany.addComponent(lEbNo03);

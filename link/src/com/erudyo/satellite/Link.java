@@ -142,6 +142,9 @@ public class Link {
         themeAddition.put("Label.padding", "4,4,4,4");
         themeAddition.put("Label.margin", "2,2,2,2");
         
+          themeAddition.put("RadioButton.padding", "2,1,1,2");
+        themeAddition.put("RadioButton.margin", "2,1,1,2");
+        
         //themeAddition.put("Label.fgColor", "00FF00");
         themeAddition.put("Button.font", defaultFont);
         themeAddition.put("ComboBox.font", defaultFont);

@@ -187,9 +187,9 @@ public class Comms extends Entity {
     };
     private Path uLpath;
     private Path dLpath;
-    private double dataRate = 5000.0;    // bps  
+    private double dataRate = 1000000.0;    // bps  
     private double rollOff = .30;
-    private double bw = 5000.0;      // Hz
+    private double bw = 1000000.0;      // Hz
     private double BEP = 1E-6;
     private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;

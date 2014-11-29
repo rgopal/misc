@@ -155,7 +155,6 @@ public class Path extends Entity {
         }
 
         // satellite has been set, band is set so change it for terminal
-        
         setAll();
     }
 
@@ -193,7 +192,7 @@ public class Path extends Entity {
         setAll();
     }
 
-      private double calcCNo() {
+    private double calcCNo() {
         double result;
 
         // CNo depends on Tx and receive of satellite, here EIRP, loss
@@ -214,27 +213,28 @@ public class Path extends Entity {
         }
         return result;
     }
-      
-      // just the power received
+
+    // just the power received
     private double calcPowerReceived() {
-        double result;
+        double result = Satellite.NEGLIGIBLE;
 
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
         if (getPathType() == PATH_TYPE.UPLINK) {
-            result
-                    = terminal.getEIRP()
-                    - getPathLoss()
-                    - getAttenuation()
-                    + satellite.bandSpecificItems.get(terminal.getBand()).rXantenna.getGain();
-               
-                    
+            if (satellite.bandSpecificItems.get(terminal.getBand()) != null) {
+                result
+                        = terminal.getEIRP()
+                        - getPathLoss()
+                        - getAttenuation()
+                        + satellite.bandSpecificItems.get(terminal.getBand()).rXantenna.getGain();
+            }
+
         } else {
             result = satellite.getEIRPforTerminal(terminal)
                     - getPathLoss()
                     - getAttenuation()
                     + terminal.getrXantenna().getGain();
-                    
+
         }
         return result;
     }
@@ -453,10 +453,11 @@ public class Path extends Entity {
         }
         // return absolute value of difference.  Above is not needed
 
-        if (relativeLong > Com.PI)
-            Log.p("relativeLong: realative long is more than 180 degree " + 
-                    relativeLong, Log.WARNING);
-            
+        if (relativeLong > Com.PI) {
+            Log.p("relativeLong: realative long is more than 180 degree "
+                    + relativeLong, Log.WARNING);
+        }
+
         return Math.abs(relativeLong);
     }
 
@@ -467,7 +468,7 @@ public class Path extends Entity {
         }
         double Phi;
         double relativeLong;
-        relativeLong = calcRelativeLongitude(satellite.getLongitude(), 
+        relativeLong = calcRelativeLongitude(satellite.getLongitude(),
                 terminal.getLongitude());
         Phi = MathUtil.acos(Math.cos(relativeLong)
                 * Math.cos(terminal.getLatitude())
@@ -513,7 +514,7 @@ public class Path extends Entity {
         double a;
         relativePosition rel;
         double relLong, bigPhi;
-        relLong = calcRelativeLongitude(satellite.getLongitude(), 
+        relLong = calcRelativeLongitude(satellite.getLongitude(),
                 terminal.getLongitude());
         bigPhi = calcBigPhi(satellite, terminal);
 

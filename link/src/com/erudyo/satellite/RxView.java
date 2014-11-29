@@ -144,7 +144,7 @@ public class RxView extends View {
      
 
         // there are six items in Views.  Hardcoded table. Name, value, unit
-        TableLayout layout = new TableLayout(13, 3);
+        TableLayout layout = new TableLayout(15, 3);
         cnt.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
