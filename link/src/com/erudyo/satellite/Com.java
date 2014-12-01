@@ -59,20 +59,30 @@ public class Com {
         }
         return s.substring(0, len);
     }
-
-    
-    static void formatSlider(Slider sldr) {
+    public static long Combinatorial(int n, int k) {
+        long b = 1;
+        if (k > n-k)
+            k = n-k;
         
-           sldr.setThumbImage(Com.red_pin);
-         sldr.getUnselectedStyle().setBgColor(0x0000FF);
-         sldr.getUnselectedStyle().setFgColor(0x0000FF);
-         sldr.getUnselectedStyle().setBgTransparency(30);
-           sldr.getSelectedStyle().setBgColor(0x0000FF);
-           sldr.getSelectedStyle().setFgColor(0x0000FF);
-         sldr.getSelectedStyle().setBgTransparency(30);
-         sldr.setPreferredH(40);
+        for (int i=1, m=n; i<=k; m--)
+            b = b*m/i;
+        
+        return b;
     }
 
+    static void formatSlider(Slider sldr) {
+
+        sldr.setThumbImage(Com.red_pin);
+        sldr.getUnselectedStyle().setBgColor(0x0000FF);
+        sldr.getUnselectedStyle().setFgColor(0x0000FF);
+        sldr.getUnselectedStyle().setBgTransparency(30);
+        sldr.getSelectedStyle().setBgColor(0x0000FF);
+        sldr.getSelectedStyle().setFgColor(0x0000FF);
+        sldr.getSelectedStyle().setBgTransparency(30);
+        sldr.setPreferredH(40);
+    }
+
+    
     static String text(double num) {
         String s = String.valueOf(num);
         int len = s.length();
@@ -118,6 +128,14 @@ public class Com {
     }
     // from picmath site
 
+    public static double erfc(double x) {
+        return (1 - erf(x));
+    }
+
+    public static double Q(double x) {
+        return (erfc(x / MathUtil.pow(2, 0.5)) / 2.0);
+    }
+
     public static double erf(double x) {
         // constants
         final double a1 = 0.254829592;
@@ -136,7 +154,8 @@ public class Com {
 
         // A&S formula 7.1.26
         double t = 1.0 / (1.0 + p * x);
-        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * MathUtil.exp(-x * x);
+        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1)
+                * t * MathUtil.exp(-x * x);
 
         return sign * y;
     }
@@ -206,7 +225,5 @@ public class Com {
             return false;
         }
     }
-
-  
 
 }
