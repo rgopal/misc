@@ -185,6 +185,7 @@ public class Comms extends Entity {
         BHLC        // concatenated in DVB-S2
     };
 
+    // can include DE-BPSK and DE-QPSK (closed form available) TODO
     public enum Modulation {
 
         BAM, BPSK, QPSK, QAM, PSK8, QAM16, APSK16, APSK32, APSK64
@@ -423,6 +424,7 @@ public class Comms extends Entity {
     }
 
     // symbol error probably for M-ary Amplitude Modulation
+    // Simon, Digital Communications, 8.3 full range
     public static double sepMAM(Modulation m, double EsNo) {
         double value;
         int M = getMaryFactor(m);
@@ -431,6 +433,7 @@ public class Comms extends Entity {
         return value;
 
     }
+    // Simon, Digital Comms, 8.14. better for for large EbNo
     public static double bepQAM(Modulation m, double EbNo) {
         double value = 0.0;
         int M = getMaryFactor(m);
@@ -441,6 +444,7 @@ public class Comms extends Entity {
         return value;
     }
 
+    // Simon, Digital Comms, eqn 8.25, approximation (upper bound)
     public static double sepPSK(Modulation m, double EsNo) {
         double value=0.0;
         int M = getMaryFactor(m);
@@ -463,7 +467,7 @@ public class Comms extends Entity {
         value = value/N;
         return value;
     }
-    
+    // Simon, Digital Comms, eqn 8.32, for large EbNo and M .4, approximation
     public static double bepPSK(Modulation m, double EbNo) {
         double value=0.0;
         double sum = 0.0;
@@ -497,6 +501,8 @@ public class Comms extends Entity {
                 SEP = sepPSK(m,EsNo);
                 break;
             case QAM:
+                // Simon, Digital Comms eqn 8.11 for 4-QAM actually
+                // M=4 for eqn 8.10 (general M-ary case)
                 SEP = 2*Com.Q(MathUtil.pow(EsNo,0.5)) - 
                         MathUtil.pow(Com.Q(MathUtil.pow(EsNo,0.5)), 2.0);
                 break;
@@ -513,9 +519,10 @@ public class Comms extends Entity {
         double ber=0.0;
         switch (m) {
             case BAM:
-                ber = calcSEPmod(m,EbNo);  // log2M is 1
+                ber = calcSEPmod(m,EbNo);  // log2M 
                 break;
             case BPSK:
+                // dont' use the general bepPSK (M=2,4)
             case QPSK:
                 ber = (1 - Com.erf(MathUtil.pow(
                         MathUtil.pow(10.0, EbNo / 10.0), 0.5)))
