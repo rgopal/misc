@@ -231,7 +231,7 @@ public class CommsView extends View {
         Form sub = new Form(selection.getComms().getName());
 
         Container cntMany = new Container();
-        TableLayout layout = new TableLayout(9, 3);
+        TableLayout layout = new TableLayout(10, 3);
 
         cntMany.setLayout(layout);
         sub.addComponent(cntMany);
@@ -249,7 +249,9 @@ public class CommsView extends View {
                 selection.getComms().getDataRate() / 1E6));
         Label lDataRate03 = new Label("Mbps ");
         cntMany.addComponent(constraint, lDataRate01);
-        cntMany.addComponent(lDataRate02);
+        constraint = layout.createConstraint();
+        constraint.setWidthPercentage(30);
+        cntMany.addComponent(constraint,lDataRate02);
         cntMany.addComponent(lDataRate03);
 
         final Slider sldrDataRate = new Slider();
@@ -297,25 +299,41 @@ public class CommsView extends View {
         cntMany.addComponent(constraint, sldrBW);
 
         Label lCNo01 = new Label("C/No");
-        Label lCNo02 = new Label(Com.text(selection.getComms().getCNo()));
+        // BEP and SEP vary field so padd some
+        Label lCNo02 = new Label(Com.text(selection.getComms().getCNo()) + "     "
+                + "  ");
         Label lCNo03 = new Label("dBHz ");
         cntMany.addComponent(lCNo01);
         cntMany.addComponent(lCNo02);
         cntMany.addComponent(lCNo03);
 
         Label lEbNo01 = new Label("Eb/No");
-        final Label lEbNo02 = new Label(Com.text(selection.getComms().geteBno()));
+        final Label lEbNo02 = new Label(Com.text(selection.getComms().geteBno() ));
         Label lEbNo03 = new Label("dB ");
         cntMany.addComponent(lEbNo01);
         cntMany.addComponent(lEbNo02);
         cntMany.addComponent(lEbNo03);
-        
-           Label lEsNo01 = new Label("Es/No");
+
+        Label lEsNo01 = new Label("Es/No");
         final Label lEsNo02 = new Label(Com.text(selection.getComms().geteSno()));
         Label lEsNo03 = new Label("dB ");
         cntMany.addComponent(lEsNo01);
         cntMany.addComponent(lEsNo02);
         cntMany.addComponent(lEsNo03);
+
+        Label lBEP01 = new Label("Derived BEP");
+        final Label lBEP02 = new Label(Com.textD(selection.getComms().getBEP()));
+        Label lBEP03 = new Label(" ");
+        cntMany.addComponent(lBEP01);
+        cntMany.addComponent(lBEP02);
+        cntMany.addComponent(lBEP03);
+
+        Label lSEP01 = new Label("Derived SEP");
+        final Label lSEP02 = new Label(Com.textD(selection.getComms().getSEP()));
+        Label lSEP03 = new Label(" ");
+        cntMany.addComponent(lSEP01);
+        cntMany.addComponent(lSEP02);
+        cntMany.addComponent(lSEP03);
 
         Label lderivedEbNo01 = new Label("Derived Eb/No");
         Label lderivedEbNo02 = new Label(Com.text(selection.getComms().
@@ -324,14 +342,6 @@ public class CommsView extends View {
         cntMany.addComponent(lderivedEbNo01);
         cntMany.addComponent(lderivedEbNo02);
         cntMany.addComponent(lderivedEbNo03);
-
-        Label lBEP01 = new Label("Derived BEP");
-        final Label lBEP02 = new Label(Com.text(selection.getComms().getBEP()));
-        Label lBEP03 = new Label(" ");
-        cntMany.addComponent(lBEP01);
-        cntMany.addComponent(lBEP02);
-        cntMany.addComponent(lBEP03);
-
         // now vertical positioning
         cntMany = new Container();
         sub.addComponent(cntMany);
@@ -382,7 +392,10 @@ public class CommsView extends View {
                     selection.getComms().setModulation(
                             Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
                     // update bit error probability
-                    lBEP02.setText(Com.text(selection.getComms().getBEP()));
+                    lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
+                    // EbNo won't change
+                    lBEP02.setText(Com.textD(selection.getComms().getBEP()));
+                    lSEP02.setText(Com.textD(selection.getComms().getSEP()));
                     updateValues(selection);
                 }
             });
@@ -430,6 +443,9 @@ public class CommsView extends View {
                         bgCode.setSelected((int) codeHash.get(
                                 Comms.Code.NONE.toString()));
                     }
+                    lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
+                    lBEP02.setText(Com.textD(selection.getComms().getBEP()));
+                    lSEP02.setText(Com.textD(selection.getComms().getSEP()));
                     updateValues(selection);
                 }
             });
@@ -465,9 +481,14 @@ public class CommsView extends View {
                     Log.p("CommsView: selected Code "
                             + bgCode.getSelectedIndex(), Log.DEBUG);
                     selection.getComms().setCode(
-                            Comms.indexCode.toArray(new Comms.Code[0])[bgCode.getSelectedIndex()]);
+                            Comms.indexCode.toArray(new Comms.Code[0])
+                                    [bgCode.getSelectedIndex()]);
+                    
+                    lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
+                    // EbNo won't change because of Code
                     // update bit error probability
-                    lBEP02.setText(Com.text(selection.getComms().getBEP()));
+                    lBEP02.setText(Com.textD(selection.getComms().getBEP()));
+                    lSEP02.setText(Com.textD(selection.getComms().getSEP()));
                     // if no bCode then rate is 1/1
                     if (selection.getComms().getCode()
                             == Comms.Code.NONE) {
@@ -550,6 +571,8 @@ public class CommsView extends View {
                             * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
                     lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
+                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
+                    lSEP02.setText(Com.textD(selection.getComms().getSEP()));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {
@@ -571,6 +594,9 @@ public class CommsView extends View {
                     // BW does not change data rate 
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
                     lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
+                    
+                    lBEP02.setText(Com.textD(selection.getComms().getBEP()));
+                    lSEP02.setText(Com.textD(selection.getComms().getSEP()));
                     updateValues(selection);
 
                 } catch (java.lang.NumberFormatException e) {

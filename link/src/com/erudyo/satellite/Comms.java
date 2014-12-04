@@ -68,21 +68,33 @@ public class Comms extends Entity {
      * @return the eBno
      */
     public double geteBno() {
-        return eBno;
+        return EbNo;
     }
 
     public double geteSno() {
-        return eBno + 10 * MathUtil.log10(spectralEfficiency(this.modulation))
-                + 10 * MathUtil.log10(calcCodeRate(codeRate));
+        return EsNo;
     }
 
     /**
      * @param eBno the eBno to set
      */
+    public double calcEsNo() {
+        double value;
+        // not so sure about spectral efficiency, so use Mary factor
+        // value = eBno + 10 * MathUtil.log10(spectralEfficiency(this.modulation))
+        value = this.EbNo + 10 * MathUtil.log10(getMaryFactor(this.modulation))
+                + 10 * MathUtil.log10(calcCodeRate(codeRate));
+        return value;
+    }
+
     public void seteBno(double eBno) {
-        this.eBno = eBno;
+        this.EbNo = eBno;
+
+        this.EsNo = calcEsNo();
 
         this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.geteBno());
+        this.SEP = calcSEPmodCode(this.modulation, this.code,
                 this.codeRate, this.geteBno());
         updateAffected();
     }
@@ -121,6 +133,20 @@ public class Comms extends Entity {
      */
     public BER getbER() {
         return bER;
+    }
+
+    /**
+     * @return the SEP
+     */
+    public double getSEP() {
+        return SEP;
+    }
+
+    /**
+     * @param SEP the SEP to set
+     */
+    public void setSEP(double SEP) {
+        this.SEP = SEP;
     }
 
     /**
@@ -188,7 +214,7 @@ public class Comms extends Entity {
     // can include DE-BPSK and DE-QPSK (closed form available) TODO
     public enum Modulation {
 
-        BAM, BPSK, QPSK, QAM, PSK8, QAM16, APSK16, APSK32, APSK64
+        BAM, BPSK, QPSK, QAM4, PSK8, QAM16, APSK16, APSK32, APSK64
 
     };
     private Path uLpath;
@@ -198,9 +224,11 @@ public class Comms extends Entity {
     private double rollOff = .30;
     private double bw = 1E6;      // Hz
     private double BEP = 1E-6;
+    private double SEP = 1E-6;
     private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;
-    private double eBno = Satellite.NEGLIGIBLE;           // in dB
+    private double EbNo = Satellite.NEGLIGIBLE;           // in dB
+    private double EsNo = Satellite.NEGLIGIBLE;
     private double derivedEbNo = Satellite.NEGLIGIBLE; // if BER is set then find
     private double codingGain = 0;      // in dB
     private CodeRate codeRate = CodeRate.FEC_7_8;
@@ -226,7 +254,7 @@ public class Comms extends Entity {
             case BPSK:
                 return 1;
             case QPSK:
-            case QAM:
+            case QAM4:
                 return 2;
             case PSK8:
                 return 3;
@@ -336,10 +364,8 @@ public class Comms extends Entity {
         u.addAffected(this);
         d.addAffected(this);
 
-        this.CNo = calcCNo();
-        this.eBno = calcEbNo();
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.eBno);
+        update(this);
+
     }
 
     public Comms(String s) {
@@ -348,9 +374,12 @@ public class Comms extends Entity {
 
     public void update(Entity e) {
         this.CNo = calcCNo();
-        this.eBno = calcEbNo();
+        this.EbNo = calcEbNo();
+        this.EsNo = calcEsNo();
         this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.eBno);
+                this.codeRate, this.EbNo);
+        this.SEP = calcSEPmodCode(this.modulation, this.code,
+                this.codeRate, this.EsNo);
         // derive EbNo if a BER is explicitly set
         if (this.bER != BER.BER_N) {
             this.derivedEbNo = calcDerivedEbNo(this.modulation, this.code,
@@ -360,7 +389,7 @@ public class Comms extends Entity {
     }
 
     public double calcEbNo() {
-        double value = -100.0;
+        double value;
         // all in dB
         value = calcCNo() - 10.0 * MathUtil.log10(this.dataRate);
         return value;
@@ -391,67 +420,99 @@ public class Comms extends Entity {
 
     public void setDataRate(double d) {
         this.dataRate = d;
-        this.eBno = calcCNo() + 10.0 * MathUtil.log10(this.dataRate);
+
         // bandwidth will change because of data rate
         this.bw = this.dataRate / (this.spectralEfficiency(this.modulation)
                 * this.calcCodeRate(this.codeRate));
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.eBno);
+        update(this);
+    }
+
+    public static double calcSEPmodCode(Modulation m, Code code,
+            CodeRate rate, double esNo) {
+        return calcSEPmod(m, esNo);
     }
 
     // BER for each modulation, ebno is in dB, and this is stateless
     public static double calcBEPmodCode(Modulation m, Code code,
             CodeRate rate, Double ebno) {
         double ber;
-        switch (m) {
-            case BPSK:
-            case QPSK:
-                //
-                ber = (1 - Com.erf(MathUtil.pow(
-                        MathUtil.pow(10.0, ebno / 10.0), 0.5)))
-                        / 2.0;
-                break;
 
-            default:
-                ber = (1 - Com.erf(MathUtil.pow(
-                        MathUtil.pow(10.0, ebno / 10.0), 0.5)
-                ));
-
-                break;
-
-        }
-        return ber;
+        // TODO
+        return calcBEPmod(m, ebno);
     }
 
     // symbol error probably for M-ary Amplitude Modulation
     // Simon, Digital Communications, 8.3 full range
     public static double sepMAM(Modulation m, double EsNo) {
         double value;
-        int M = getMaryFactor(m);
-        value = 2.0 * ((M - 1) / M)
-                * Com.Q(MathUtil.pow(6 * EsNo / (M * M - 1), 0.5));
+        int M = calcM(m);
+        // make sure it is 1.0 or else it will be integer arithmatic
+        value = 2.0 * ((M - 1.0) / M);
+        value = value
+                * Com.Q(MathUtil.pow(6 * Com.reverseDB(EsNo) / (M * M - 1.0), 0.5));
+        return value;
+
+    }
+
+    // Simon, eqn 8.10, general value
+    public static double sepQAM(Modulation m, double EsNo) {
+        double value;
+        int M = calcM(m);
+
+        double first = (MathUtil.pow(M, 0.5) - 1) / MathUtil.pow(M, 0.5);
+        double second = Com.Q(MathUtil.pow(
+                3 * Com.reverseDB(EsNo) / (M - 1), 0.5));
+
+        value = 4 * first * second - 4 * first * first * second * second;
+
+        return value;
+
+    }
+
+    public static double bepQAM(Modulation m, double EbNo) {
+        double value;
+        int M = calcM(m);
+
+        double first = (MathUtil.pow(M, 0.5) - 1) / MathUtil.pow(M, 0.5);
+
+        double sum = 0.0;
+
+        int max;
+        max = (int) MathUtil.pow(M, 0.5)/2;
+        
+        for (int i = 1; i <= max; i++) {
+            sum = sum + (2.0 * i - 1.0) * Com.Q(
+                    MathUtil.pow(
+                            3 * Com.reverseDB(EbNo) / (M - 1), 0.5));
+        }
+
+        value = 4.0 * first / (MathUtil.log(M) / MathUtil.log(2.0)) * sum;
+
         return value;
 
     }
 
     // Simon, Digital Comms, 8.14. better for for large EbNo
-    public static double bepQAM(Modulation m, double EbNo) {
+    public static double bepQAM4(Modulation m, double EbNo) {
         double value = 0.0;
-        int M = getMaryFactor(m);
+        int M = calcM(m);
         value = 4 * (MathUtil.pow(M, 0.5) - 1.0) / MathUtil.pow(M, 0.5);
-        value = value * (1 / (MathUtil.log(M) / MathUtil.log(2.0)));
+        value = value * (1.0 / (MathUtil.log(M) / MathUtil.log(2.0)));
         value = value * Com.Q(MathUtil.pow(
-                3 * EbNo * MathUtil.log(M) / MathUtil.log(2.0), 0.5));
+                3 * Com.reverseDB(EbNo)
+                * (MathUtil.log(M) / MathUtil.log(2.0))
+                / (M - 1.0), 0.5));
         return value;
     }
 
     // Simon, Digital Comms, eqn 8.25, approximation (upper bound)
     public static double sepPSK(Modulation m, double EsNo) {
         double value = 0.0;
-        int M = getMaryFactor(m);
+        int M = calcM(m);
 
-        value = ((M - 1) / M) * MathUtil.exp(
-                -EsNo * MathUtil.pow(Math.sin(Com.PI / M), 2.0));
+        // make sure it is 1.0 or else int arithmetic
+        value = ((M - 1.0) / M) * MathUtil.exp(
+                -Com.reverseDB(EsNo) * MathUtil.pow(Math.sin(Com.PI / M), 2.0));
 
         return value;
     }
@@ -460,7 +521,7 @@ public class Comms extends Entity {
     // equation 8.2
     public static double sepAPSK(Modulation m, double EsNo) {
         double value = 0.0;
-        int M = getMaryFactor(m);
+        int M = calcM(m);
 
         double out = 0.0;
         for (int i = 1; i <= M; i++) {
@@ -480,7 +541,7 @@ public class Comms extends Entity {
                 }
                 inner = inner
                         + Com.erfc(calcAPSKdij(i, j, m)
-                                * MathUtil.pow(EsNo * M / weightedR, 0.5)
+                                * MathUtil.pow(Com.reverseDB(EsNo) * M / weightedR, 0.5)
                                 / 2.0)
                         / 2.0;
             }
@@ -491,14 +552,19 @@ public class Comms extends Entity {
 
     }
 
+    public static int calcM(Modulation m) {
+        int mFactor = getMaryFactor(m);
+        return (int) MathUtil.pow(2, mFactor);
+    }
+
     // abstracted out r to get clean EsNo
     public static double calcAPSKdij(int i, int j, Modulation m) {
         double value = 0.0;
         double r = 1.0;  // to get clean EsNo
-        int p =0, q=0;       // circles
-        double rP=0, rQ=0;
-        int nP=0, nQ=0;
-        double phiP=0, phiQ=0;
+        int p = 0, q = 0;       // circles
+        double rP = 0, rQ = 0;
+        int nP = 0, nQ = 0;
+        double phiP = 0, phiQ = 0;
         double phi1 = 45.0 * Com.PI / 180.0;
         double phi2 = 15.0 * Com.PI / 180.0;
         double phi3 = 0.0 * Com.PI / 180.0;
@@ -581,7 +647,7 @@ public class Comms extends Entity {
             Log.p("Comms: calcAPSKdij not implemented " + m, Log.WARNING);
         }
 
-        dIJ = MathUtil.pow(rP * rP + rQ * rQ - 2 * rP * rQ
+        dIJ = MathUtil.pow(rP * rP + rQ * rQ - 2.0 * rP * rQ
                 * Math.cos(calcAPSKthetaIJ(i, j, nP, nQ, phiP, phiQ)), 0.5);
         return value;
     }
@@ -593,7 +659,7 @@ public class Comms extends Entity {
         value = Math.abs((phiP - phiQ)
                 + 2.0
                 * Com.PI
-                * ((i - 1) / nP - (j - 1) / nQ));
+                * ((i - 1.0) / nP - (j - 1.0) / nQ));
         return value;
     }
 
@@ -611,22 +677,24 @@ public class Comms extends Entity {
         return value;
     }
 
-    // Simon, Digital Comms, eqn 8.32, for large EbNo and M .4, approximation
+    // Simon, Digital Comms, eqn 8.31, for large EbNo and M .4, approximation
     public static double bepPSK(Modulation m, double EbNo) {
         double value = 0.0;
         double sum = 0.0;
         int M;
-        M = getMaryFactor(m);
-        int max = (int) Math.max(M / 4, 1);
+        M = calcM(m);
+        // should be 4.0 or else int arithmetic
+        int max = (int) Math.max(M / 4.0, 1);
         int i;
         double first, second;
         for (i = 1; i <= max; i++) {
-            first = 2 * EbNo * MathUtil.log(M) / MathUtil.log(2.0);
-            second = Math.sin((2 * i - 1) * Com.PI / M);
+            first = 2.0 * Com.reverseDB(EbNo) * MathUtil.log(M) / MathUtil.log(2.0);
+            first = MathUtil.pow(first, 0.5);
+            second = Math.sin((2.0 * i - 1) * Com.PI / M);
             sum = sum + Com.Q(first * second);
         }
 
-        value = (2 / Math.max(MathUtil.log(M) / MathUtil.log(2.0), 2.0)) * sum;
+        value = (2.0 / Math.max(MathUtil.log(M) / MathUtil.log(2.0), 2.0)) * sum;
         return value;
     }
 
@@ -645,13 +713,15 @@ public class Comms extends Entity {
             case PSK8:
                 SEP = sepPSK(m, EsNo);
                 break;
-            case QAM:
+            case QAM4:
                 // Simon, Digital Comms eqn 8.11 for 4-QAM actually
                 // M=4 for eqn 8.10 (general M-ary case)
-                SEP = 2 * Com.Q(MathUtil.pow(EsNo, 0.5))
-                        - MathUtil.pow(Com.Q(MathUtil.pow(EsNo, 0.5)), 2.0);
+                SEP = sepQAM(m,EsNo);
                 break;
 
+            case QAM16:
+                SEP = sepQAM(m,EsNo);
+                break;
             case APSK16:
                 SEP = sepAPSK(m, EsNo);
                 break;
@@ -680,17 +750,20 @@ public class Comms extends Entity {
             case PSK8:
                 ber = bepPSK(m, EbNo);
                 break;
-            case QAM:
+            case QAM4:
+                ber = bepQAM(m, EbNo);
+                break;
+            case QAM16:
                 ber = bepQAM(m, EbNo);
                 break;
             case APSK16:
                 // derive from corresponding EsNo
-                ber = calcSEPmod(m, EbNo*getMaryFactor(m))
-                        /getMaryFactor(m);
+                ber = calcSEPmod(m, EbNo * getMaryFactor(m))
+                        / getMaryFactor(m);
                 break;
             case APSK32:
-                ber = calcSEPmod(m, EbNo*getMaryFactor(m))
-                        /getMaryFactor(m);
+                ber = calcSEPmod(m, EbNo * getMaryFactor(m))
+                        / getMaryFactor(m);
                 break;
             default:
 
@@ -771,9 +844,8 @@ public class Comms extends Entity {
      */
     public void setModulation(Modulation modulation) {
         this.modulation = modulation;
+        update(this);
 
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.geteBno());
         this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.BEP));
         // change only bandwidth (and keep data rate fixed)
@@ -791,12 +863,9 @@ public class Comms extends Entity {
 
     public void setCodeRate(CodeRate c) {
         this.codeRate = c;
+        update(this);
 
         // BER is generally not set and find the value
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.geteBno());
-        this.setCodingGain(calcCodingGain(this.modulation, this.code,
-                this.codeRate, this.BEP));
         // change only bandwidth (and keep data rate fixed)
         this.bw = this.dataRate / (this.spectralEfficiency(this.modulation)
                 * this.calcCodeRate(this.codeRate));
@@ -808,9 +877,7 @@ public class Comms extends Entity {
      */
     public void setCode(Code code) {
         this.code = code;
-
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.eBno);
+        update(this);
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
@@ -833,7 +900,7 @@ public class Comms extends Entity {
         } else {
             // else calculate BEP from the existing eBno
             this.BEP = calcBEPmodCode(this.modulation, this.code,
-                    this.codeRate, this.eBno);
+                    this.codeRate, this.EbNo);
 
         }
 
@@ -878,11 +945,8 @@ public class Comms extends Entity {
         // bandwidth changes data rate (include code rate also)
         this.dataRate = this.bw * spectralEfficiency(this.modulation)
                 * calcCodeRate(this.codeRate);
-        // which changes EbNo
-        this.eBno = calcEbNo();
-        // which affects bit error rate
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.eBno);
+        // which changes EbNo, EsNo, BEP, SEP
+        update(this);
 
         // TODO coding gain check 
         // resulting in coding gain changes (circular because this changes ebno)

@@ -133,9 +133,37 @@ public class Com {
     }
 
     public static double Q(double x) {
-        return (erfc(x / MathUtil.pow(2, 0.5)) / 2.0);
+        double value = (erfc(x / MathUtil.pow(2, 0.5)) / 2.0);
+        return value;
     }
 
+    // undo DB 
+    public static double reverseDB (double db) {
+        return MathUtil.pow(10.0, db / 10.0);
+    }
+    
+    public static String textD(double d) {
+       
+        String s = String.valueOf(d);
+        int index = s.indexOf("E");
+       
+        if (index > 0) {
+            // if in exponenet form
+     
+            String mantissa = s.substring(0, index);
+            String exp = s.substring(index);
+            // reduce mantissa to 6 characters
+            int min = Math.min(6, mantissa.length());
+            mantissa = mantissa.substring(0,min);
+            s = mantissa + exp;
+            
+        } else {
+         int min = Math.min(8, s.length());
+        
+            s = s.substring(0,min);
+        }
+        return s;
+    }
     public static double erf(double x) {
         // constants
         final double a1 = 0.254829592;
