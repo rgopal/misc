@@ -193,7 +193,7 @@ public class Comms extends Entity {
     };
     private Path uLpath;
     private Path dLpath;
-    final public int PACKET_BITS = 1500*8;   //12000 bits
+    final public int PACKET_BITS = 1500 * 8;   //12000 bits
     private double dataRate = 1E6;    // bps  
     private double rollOff = .30;
     private double bw = 1E6;      // Hz
@@ -428,85 +428,235 @@ public class Comms extends Entity {
     public static double sepMAM(Modulation m, double EsNo) {
         double value;
         int M = getMaryFactor(m);
-        value = 2.0 * ((M - 1) / M) * 
-                Com.Q(MathUtil.pow(6 * EsNo / (M * M - 1), 0.5));
+        value = 2.0 * ((M - 1) / M)
+                * Com.Q(MathUtil.pow(6 * EsNo / (M * M - 1), 0.5));
         return value;
 
     }
+
     // Simon, Digital Comms, 8.14. better for for large EbNo
     public static double bepQAM(Modulation m, double EbNo) {
         double value = 0.0;
         int M = getMaryFactor(m);
-        value = 4*(MathUtil.pow(M, 0.5) - 1.0 )/MathUtil.pow(M, 0.5);
-        value = value * (1/(MathUtil.log(M)/MathUtil.log(2.0)));
-        value = value * Com.Q (MathUtil.pow(
-                3*EbNo*MathUtil.log(M)/MathUtil.log(2.0),0.5));
+        value = 4 * (MathUtil.pow(M, 0.5) - 1.0) / MathUtil.pow(M, 0.5);
+        value = value * (1 / (MathUtil.log(M) / MathUtil.log(2.0)));
+        value = value * Com.Q(MathUtil.pow(
+                3 * EbNo * MathUtil.log(M) / MathUtil.log(2.0), 0.5));
         return value;
     }
 
     // Simon, Digital Comms, eqn 8.25, approximation (upper bound)
     public static double sepPSK(Modulation m, double EsNo) {
-        double value=0.0;
+        double value = 0.0;
         int M = getMaryFactor(m);
-        
-        value = ((M-1)/M) * MathUtil.exp(
-                -EsNo*MathUtil.pow(Math.sin(Com.PI/M),2.0));
-        
+
+        value = ((M - 1) / M) * MathUtil.exp(
+                -EsNo * MathUtil.pow(Math.sin(Com.PI / M), 2.0));
+
         return value;
     }
+
+    // Constellatoin and Mapping Optimization, 2014, Jordanova, Laskov
+    // equation 8.2
+    public static double sepAPSK(Modulation m, double EsNo) {
+        double value = 0.0;
+        int M = getMaryFactor(m);
+
+        double out = 0.0;
+        for (int i = 1; i <= M; i++) {
+            // find the inner sum
+            double inner = 0.0, weightedR = 0.0;
+            for (int j = 1; j <= M; j++) {
+                if (i == j) {
+                    continue;
+                }
+                // note that to use EsNO
+                if (m == Modulation.APSK16) {
+                    // gamma1 is 2.6
+                    weightedR = M / (4 + 12 * 2.6);
+                } else {
+                    // gamma1 is 2.54 and gamma2 is 4.33
+                    weightedR = M / (4 + 12 * 2.54 + 16 * 4.33);
+                }
+                inner = inner
+                        + Com.erfc(calcAPSKdij(i, j, m)
+                                * MathUtil.pow(EsNo * M / weightedR, 0.5)
+                                / 2.0)
+                        / 2.0;
+            }
+            out = out + inner;
+        }
+        value = out / M;
+        return value;
+
+    }
+
+    // abstracted out r to get clean EsNo
+    public static double calcAPSKdij(int i, int j, Modulation m) {
+        double value = 0.0;
+        double r = 1.0;  // to get clean EsNo
+        int p =0, q=0;       // circles
+        double rP=0, rQ=0;
+        int nP=0, nQ=0;
+        double phiP=0, phiQ=0;
+        double phi1 = 45.0 * Com.PI / 180.0;
+        double phi2 = 15.0 * Com.PI / 180.0;
+        double phi3 = 0.0 * Com.PI / 180.0;
+        int N = 2, n1 = 4, n2 = 12;
+
+        double gamma1;
+
+        double dIJ;
+
+        if (m == Modulation.APSK16) {
+            // for DVB-S2 system
+            gamma1 = 2.6;
+
+            if (i < 5) {
+                p = 1;
+                rP = r;
+                nP = 4;
+                phiP = phi1;
+            } else {
+                p = 2;
+                rP = gamma1 * r;
+                nP = 12;
+                phiP = phi2;
+            }
+            if (j < 5) {
+                q = 1;
+                rQ = r;
+                nQ = 4;
+                phiQ = phi1;
+            } else {
+                q = 2;
+                rQ = gamma1 * r;
+                nQ = 12;
+                phiQ = phi2;
+            }
+
+        } else if (m == Modulation.APSK32) {
+
+            // additional parameters (gamma1 is different
+            int n3 = 16;
+            gamma1 = 2.54;
+            double gamma2 = 4.33;
+
+            if (i < 5) {
+                p = 1;
+                rP = r;
+                nP = 4;
+                phiP = phi1;
+            } else if (i < 13) {
+                p = 2;
+                rP = gamma1 * r;
+                nP = 12;
+                phiP = phi2;
+            } else {
+                p = 3;
+                rP = gamma2 * r;
+                nP = 16;
+                phiP = phi3;
+
+            }
+
+            if (j < 5) {
+                q = 1;
+                rQ = r;
+                nQ = 4;
+                phiQ = phi1;
+            } else if (j < 13) {
+                q = 2;
+                rQ = gamma1 * r;
+                nQ = 12;
+                phiQ = phi2;
+            } else {
+                q = 3;
+                rQ = gamma2 * r;
+                nQ = 16;
+                phiQ = phi3;
+            }
+
+        } else {
+            Log.p("Comms: calcAPSKdij not implemented " + m, Log.WARNING);
+        }
+
+        dIJ = MathUtil.pow(rP * rP + rQ * rQ - 2 * rP * rQ
+                * Math.cos(calcAPSKthetaIJ(i, j, nP, nQ, phiP, phiQ)), 0.5);
+        return value;
+    }
+
+    public static double calcAPSKthetaIJ(int i, int j, int nP, int nQ,
+            double phiP, double phiQ) {
+
+        double value = 0.0;
+        value = Math.abs((phiP - phiQ)
+                + 2.0
+                * Com.PI
+                * ((i - 1) / nP - (j - 1) / nQ));
+        return value;
+    }
+
     public static double bepBCH(int N, int K, int T, double p) {
         double value = 0.0;
-        
+
         int i;
-        
-        for (i=T+1; i<= N; i++) {
-        
-            value = value + i * Com.Combinatorial(N,i) * MathUtil.pow(p,i)*
-                    MathUtil.pow(1-p, N-i);
+
+        for (i = T + 1; i <= N; i++) {
+
+            value = value + i * Com.Combinatorial(N, i) * MathUtil.pow(p, i)
+                    * MathUtil.pow(1 - p, N - i);
         }
-        value = value/N;
+        value = value / N;
         return value;
     }
+
     // Simon, Digital Comms, eqn 8.32, for large EbNo and M .4, approximation
     public static double bepPSK(Modulation m, double EbNo) {
-        double value=0.0;
+        double value = 0.0;
         double sum = 0.0;
         int M;
         M = getMaryFactor(m);
-        int max = (int) Math.max(M/4, 1);
+        int max = (int) Math.max(M / 4, 1);
         int i;
         double first, second;
-        for (i=1; i<=max; i++) {
-            first = 2*EbNo*MathUtil.log(M)/MathUtil.log(2.0);
-            second = Math.sin((2*i-1)*Com.PI/M);
-            sum = sum + Com.Q(first*second);
+        for (i = 1; i <= max; i++) {
+            first = 2 * EbNo * MathUtil.log(M) / MathUtil.log(2.0);
+            second = Math.sin((2 * i - 1) * Com.PI / M);
+            sum = sum + Com.Q(first * second);
         }
-        
-        value = (2/Math.max(MathUtil.log(M)/MathUtil.log(2.0), 2.0)) * sum; 
+
+        value = (2 / Math.max(MathUtil.log(M) / MathUtil.log(2.0), 2.0)) * sum;
         return value;
     }
+
     public static double calcSEPmod(Modulation m, double EsNo) {
-        double SEP=0.0;
+        double SEP = 0.0;
         switch (m) {
             case BAM:
-                SEP = sepMAM(m,EsNo);
+                SEP = sepMAM(m, EsNo);
                 break;
             case BPSK:
-                SEP = sepPSK(m,EsNo);
+                SEP = sepPSK(m, EsNo);
                 break;
             case QPSK:
-                SEP = sepPSK(m,EsNo);
+                SEP = sepPSK(m, EsNo);
                 break;
             case PSK8:
-                SEP = sepPSK(m,EsNo);
+                SEP = sepPSK(m, EsNo);
                 break;
             case QAM:
                 // Simon, Digital Comms eqn 8.11 for 4-QAM actually
                 // M=4 for eqn 8.10 (general M-ary case)
-                SEP = 2*Com.Q(MathUtil.pow(EsNo,0.5)) - 
-                        MathUtil.pow(Com.Q(MathUtil.pow(EsNo,0.5)), 2.0);
+                SEP = 2 * Com.Q(MathUtil.pow(EsNo, 0.5))
+                        - MathUtil.pow(Com.Q(MathUtil.pow(EsNo, 0.5)), 2.0);
                 break;
-               
+
+            case APSK16:
+                SEP = sepAPSK(m, EsNo);
+                break;
+            case APSK32:
+                SEP = sepAPSK(m, EsNo);
             default:
                 break;
         }
@@ -514,28 +664,36 @@ public class Comms extends Entity {
     }
 
     // BER for each modulation, ebno is in dB
-
     public static double calcBEPmod(Modulation m, double EbNo) {
-        double ber=0.0;
+        double ber = 0.0;
         switch (m) {
             case BAM:
-                ber = calcSEPmod(m,EbNo);  // log2M 
+                ber = calcSEPmod(m, EbNo);  // log2M 
                 break;
             case BPSK:
-                // dont' use the general bepPSK (M=2,4)
+            // dont' use the general bepPSK (M=2,4)
             case QPSK:
                 ber = (1 - Com.erf(MathUtil.pow(
                         MathUtil.pow(10.0, EbNo / 10.0), 0.5)))
                         / 2.0;
                 break;
             case PSK8:
-                ber = bepPSK(m,EbNo);
+                ber = bepPSK(m, EbNo);
                 break;
             case QAM:
-                ber = bepQAM(m,EbNo);
+                ber = bepQAM(m, EbNo);
+                break;
+            case APSK16:
+                // derive from corresponding EsNo
+                ber = calcSEPmod(m, EbNo*getMaryFactor(m))
+                        /getMaryFactor(m);
+                break;
+            case APSK32:
+                ber = calcSEPmod(m, EbNo*getMaryFactor(m))
+                        /getMaryFactor(m);
                 break;
             default:
-                              
+
                 break;
 
         }
@@ -656,7 +814,7 @@ public class Comms extends Entity {
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.BEP));
-                // change only bandwidth (and keep data rate fixed)
+        // change only bandwidth (and keep data rate fixed)
 
         updateAffected();
     }
