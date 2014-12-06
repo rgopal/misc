@@ -5,11 +5,11 @@
  * for each terminal and a regenerative satellite.
  * 
  * Manage primary items such as FEC, Modulation, Data Rate, BW.  If Code, Mod,
- * or Code rate changes, then BEP will change.  If someones sets a speciic BEP
+ * or Code rate changes, then cBEP will change.  If someones sets a speciic cBEP
  * then constraint based optimzation is done which would then change mod, cod
  * directly using this (and not set which triggers other calculations, including
- * BEP).
- * BEP depends on mod, code, codeRate, and eBno
+ * cBEP).
+ * cBEP depends on mod, code, codeRate, and eBno
  * EbNo depends on code rate and power (which is not present here).
  *
  * Comms itself does not depend on any child or siblint (so has no update()
@@ -51,17 +51,17 @@ public class Comms extends Entity {
     }
 
     /**
-     * @return the BEP
+     * @return the cBEP
      */
-    public double getBEP() {
-        return BEP;
+    public double getCbEP() {
+        return cBEP;
     }
 
     /**
-     * @param BEP the BEP to set
+     * @param BEP the cBEP to set
      */
-    public void setBEP(double BEP) {
-        this.BEP = BEP;
+    public void setCbEP(double BEP) {
+        this.cBEP = BEP;
     }
 
     /**
@@ -78,7 +78,7 @@ public class Comms extends Entity {
     /**
      * @param eBno the eBno to set
      */
-    public double calcEsNo() {
+    public double availableEsNo() {
         double value;
         // not so sure about spectral efficiency, so use Mary factor
         // value = eBno + 10 * MathUtil.log10(spectralEfficiency(this.modulation))
@@ -87,15 +87,17 @@ public class Comms extends Entity {
         return value;
     }
 
+    // TODO use it in optimization
     public void seteBno(double eBno) {
         this.EbNo = eBno;
 
-        this.EsNo = calcEsNo();
+        this.EsNo = availableEsNo();
 
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.geteBno());
+        this.setBEP(calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.EbNo));
+        this.cBEP = calcBEPmod(this.modulation, this.EbcNo);
         this.SEP = calcSEPmodCode(this.modulation, this.code,
-                this.codeRate, this.geteBno());
+                this.codeRate, this.EsNo);
         updateAffected();
     }
 
@@ -147,6 +149,34 @@ public class Comms extends Entity {
      */
     public void setSEP(double SEP) {
         this.SEP = SEP;
+    }
+
+    /**
+     * @return the EbcNo
+     */
+    public double getEbcNo() {
+        return EbcNo;
+    }
+
+    /**
+     * @param EbcNo the EbcNo to set
+     */
+    public void setEbcNo(double EbcNo) {
+        this.EbcNo = EbcNo;
+    }
+
+    /**
+     * @return the BEP
+     */
+    public double getBEP() {
+        return BEP;
+    }
+
+    /**
+     * @param BEP the BEP to set
+     */
+    public void setBEP(double BEP) {
+        this.BEP = BEP;
     }
 
     /**
@@ -219,17 +249,23 @@ public class Comms extends Entity {
     };
     private Path uLpath;
     private Path dLpath;
+    private final static double EBNO_MIN = -5.0;    // in dB
+    private final static double EBNO_MAX = 100.0;   // in dB
+
     final public int PACKET_BITS = 1500 * 8;   //12000 bits
     private double dataRate = 1E6;    // bps  
     private double rollOff = .30;
     private double bw = 1E6;      // Hz
-    private double BEP = 1E-6;
-    private double SEP = 1E-6;
+    private double cBEP = 1E-6;
+    private double BEP = 1E-6;      // information bit error
+    private double SEP = 1E-6;      // coded bit error
     private BER bER = BER.BER_N;    // no explict BER set
     private double CNo;
-    private double EbNo = Satellite.NEGLIGIBLE;           // in dB
-    private double EsNo = Satellite.NEGLIGIBLE;
-    private double derivedEbNo = Satellite.NEGLIGIBLE; // if BER is set then find
+    private double EbNo = Satellite.NEGLIGIBLE;           // information bit
+    private double EsNo = Satellite.NEGLIGIBLE;          // symbol
+    private double EbcNo = Satellite.NEGLIGIBLE;        // coded bit
+
+    private double targetEbNo = Satellite.NEGLIGIBLE; // for BER set by user
     private double codingGain = 0;      // in dB
     private CodeRate codeRate = CodeRate.FEC_7_8;
     private Code code = Code.BCH;
@@ -243,8 +279,8 @@ public class Comms extends Entity {
     final public static double BW_LO = .1 * 1E6;
     final public static double BW_HI = 100.0 * 1E6;   // in Hz
 
-    public double getDerivedEbNo() {
-        return derivedEbNo;
+    public double getTargetEbNo() {
+        return targetEbNo;
     }
 
     public static int getMaryFactor(Modulation m) {
@@ -373,29 +409,41 @@ public class Comms extends Entity {
     }
 
     public void update(Entity e) {
-        this.CNo = calcCNo();
-        this.EbNo = calcEbNo();
-        this.EsNo = calcEsNo();
+        this.CNo = availableCNo();
+        this.EbNo = availableEbNo();      // information bit
+        this.EsNo = availableEsNo();        // symbol
+        this.EbcNo = availableEbcNo();   // coded bit
+
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.EbNo);
-        this.SEP = calcSEPmodCode(this.modulation, this.code,
-                this.codeRate, this.EsNo);
+        this.cBEP = calcBEPmod(this.modulation, this.EbNo);
+        this.SEP = calcSEPmod(this.modulation, this.EsNo);
         // derive EbNo if a BER is explicitly set
         if (this.bER != BER.BER_N) {
-            this.derivedEbNo = calcDerivedEbNo(this.modulation, this.code,
+            this.targetEbNo = calcTargetEbNo(this.modulation, this.code,
                     this.codeRate, this.bER);
         }
         // highest so no updateAffected
     }
 
-    public double calcEbNo() {
+    // information bit rate (data rate)
+    public double availableEbNo() {
         double value;
         // all in dB
-        value = calcCNo() - 10.0 * MathUtil.log10(this.dataRate);
+        value = availableCNo() - 10.0 * MathUtil.log10(this.dataRate);
         return value;
     }
 
-    private double calcCNo() {
+    // coded bit rate 
+    public double availableEbcNo() {
+        double value;
+        value = availableCNo()
+                - 10.0 * MathUtil.log10(calcCodedBitRate(
+                                this.codeRate, this.dataRate));
+        return value;
+    }
+
+    private double availableCNo() {
         double value;
         double first, second;
 
@@ -478,8 +526,8 @@ public class Comms extends Entity {
         double sum = 0.0;
 
         int max;
-        max = (int) MathUtil.pow(M, 0.5)/2;
-        
+        max = (int) MathUtil.pow(M, 0.5) / 2;
+
         for (int i = 1; i <= max; i++) {
             sum = sum + (2.0 * i - 1.0) * Com.Q(
                     MathUtil.pow(
@@ -534,10 +582,10 @@ public class Comms extends Entity {
                 // note that to use EsNO
                 if (m == Modulation.APSK16) {
                     // gamma1 is 2.6
-                    weightedR = M / (4 + 12 * 2.6);
-                } else {
+                    weightedR = 1 / (4 + 12 * 2.6);
+                } else if (m == Modulation.APSK32) {
                     // gamma1 is 2.54 and gamma2 is 4.33
-                    weightedR = M / (4 + 12 * 2.54 + 16 * 4.33);
+                    weightedR = 1 / (4 + 12 * 2.54 + 16 * 4.33);
                 }
                 inner = inner
                         + Com.erfc(calcAPSKdij(i, j, m)
@@ -716,11 +764,11 @@ public class Comms extends Entity {
             case QAM4:
                 // Simon, Digital Comms eqn 8.11 for 4-QAM actually
                 // M=4 for eqn 8.10 (general M-ary case)
-                SEP = sepQAM(m,EsNo);
+                SEP = sepQAM(m, EsNo);
                 break;
 
             case QAM16:
-                SEP = sepQAM(m,EsNo);
+                SEP = sepQAM(m, EsNo);
                 break;
             case APSK16:
                 SEP = sepAPSK(m, EsNo);
@@ -776,7 +824,7 @@ public class Comms extends Entity {
     public static double calcCodingGain(Modulation m, Code c, CodeRate r,
             Double BEP) {
         Double gain = 0.0;
-        // right now hardcoded for BEP 1E-6
+        // right now hardcoded for cBEP 1E-6
 
         Double rate = calcCodeRate(r);
 
@@ -794,7 +842,7 @@ public class Comms extends Entity {
                     + c, Log.DEBUG);
         }
 
-        // table 4.7 for BEP 1E-6 typical VITERBI CONV and perhaps BPSK (4.6)
+        // table 4.7 for cBEP 1E-6 typical VITERBI CONV and perhaps BPSK (4.6)
         if (rate < 1 / 2) {
             gain = 6.0;
         } else if (rate > 1 / 2 && rate < 2 / 3) {
@@ -828,7 +876,7 @@ public class Comms extends Entity {
         return value;
     }
 
-    public double calcCodedBitRate(CodeRate c, double dataRate) {
+    public static double calcCodedBitRate(CodeRate c, double dataRate) {
         return dataRate / calcCodeRate(c);
     }
 
@@ -847,7 +895,7 @@ public class Comms extends Entity {
         update(this);
 
         this.setCodingGain(calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.BEP));
+                this.codeRate, this.cBEP));
         // change only bandwidth (and keep data rate fixed)
         this.bw = this.dataRate / (this.spectralEfficiency(this.modulation)
                 * this.calcCodeRate(this.codeRate));
@@ -880,40 +928,60 @@ public class Comms extends Entity {
         update(this);
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
-                this.codeRate, this.BEP));
+                this.codeRate, this.cBEP));
         // change only bandwidth (and keep data rate fixed)
 
         updateAffected();
     }
 
-    // determines derivedEbNo if an explicit BER is set.  Else derives
-    // BEP value from all other parameters
+    // determines targetEbNo if an explicit BER is set.  
     public void setbER(BER ber) {
         this.bER = ber;
         if (ber != BER.BER_N) {
-            // if explict BER value then use that for BEP
-            this.BEP = Double.parseDouble(ber.toString());
-            Log.p("Comms: setbER set BEP value to " + this.BEP, Log.DEBUG);
-            // TODO try to find the right EbNo which will support this value
-            derivedEbNo = calcDerivedEbNo(this.modulation, this.code,
+         
+            this.targetEbNo = calcTargetEbNo(this.modulation, this.code,
                     this.codeRate, this.bER);
-        } else {
-            // else calculate BEP from the existing eBno
-            this.BEP = calcBEPmodCode(this.modulation, this.code,
-                    this.codeRate, this.EbNo);
-
-        }
+        } 
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
-                this.codeRate, this.BEP));
+                this.codeRate, this.cBEP));
         updateAffected();
 
     }
 
-    // TODO find a value which can support the explicity BER
-    public double calcDerivedEbNo(Modulation m, Code c, CodeRate r, BER b) {
-        double e = -100.0;
-        return e;
+    // find an EbNo value in dB which can support the explicit BER
+    public double calcTargetEbNo(Modulation m, Code c, CodeRate r, BER ber) {
+       // all in dB
+        double center = -100.0;
+        double left = EBNO_MIN;
+        double right = EBNO_MAX;
+        Boolean notDone = true;
+
+        int iterations=0;
+        double targetBEP = Double.parseDouble(ber.toString());
+
+        // curves are monotonic
+        do {
+
+            iterations++;
+            center = (left + right) / 2.0;
+            // left, right, center should be in dB
+            double bep = calcBEPmodCode(m, c, r, center);
+
+            if (bep < targetBEP) {
+                right = center;
+            } else {
+                left = center;
+            }
+
+            if (Com.sameValue(bep, targetBEP) || iterations > 1000) {
+                notDone = false;
+            }
+            Log.p("Comms: calcTargetEbNo: (all in dBHz) left " + left + " center "
+                    + center + " right " + right, Log.DEBUG);
+        } while (notDone);
+
+        return center;
     }
 
     /**
@@ -945,13 +1013,13 @@ public class Comms extends Entity {
         // bandwidth changes data rate (include code rate also)
         this.dataRate = this.bw * spectralEfficiency(this.modulation)
                 * calcCodeRate(this.codeRate);
-        // which changes EbNo, EsNo, BEP, SEP
+        // which changes EbNo, EsNo, cBEP, SEP
         update(this);
 
         // TODO coding gain check 
         // resulting in coding gain changes (circular because this changes ebno)
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
-                this.codeRate, this.BEP));
+                this.codeRate, this.cBEP));
 
     }
 }
