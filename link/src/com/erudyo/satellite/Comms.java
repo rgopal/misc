@@ -183,8 +183,6 @@ public class Comms extends Entity {
      * @param BER the BER to set
      */
     public enum BER {
-
-        BER_N("N/A"),
         BER_7("1.0E-7"),
         BER_6("1.0E-6"),
         BER_5("1.0E-5"),
@@ -192,7 +190,8 @@ public class Comms extends Entity {
         BER_3("1.0E-3"),
         BER_2("1.0E-2"),
         BER_1("1.0E-1"),
-        BER_0("1.0E-0");
+        BER_0("1.0E-0"),
+        BER_N("N/A"),;
 
         private final String value;
 

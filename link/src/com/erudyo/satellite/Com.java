@@ -74,10 +74,10 @@ public class Com {
 
         sldr.setThumbImage(Com.red_pin);
         sldr.getUnselectedStyle().setBgColor(0x0000FF);
-        sldr.getUnselectedStyle().setFgColor(0x0000FF);
+        sldr.getUnselectedStyle().setFgColor(0x0000FF);  // blue
         sldr.getUnselectedStyle().setBgTransparency(30);
-        sldr.getSelectedStyle().setBgColor(0x0000FF);
-        sldr.getSelectedStyle().setFgColor(0x0000FF);
+        sldr.getSelectedStyle().setBgColor(0x0000FF);  
+        sldr.getSelectedStyle().setFgColor(0x0000FF); // blue
         sldr.getSelectedStyle().setBgTransparency(30);
         sldr.setPreferredH(40);
     }
