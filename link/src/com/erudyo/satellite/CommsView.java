@@ -353,7 +353,7 @@ public class CommsView extends View {
         final Label lderivedEbNo02 = new Label(
                 Com.text(selection.getComms().getTargetEbNo()));
         lderivedEbNo02.getStyle().setFgColor(Integer.valueOf("0000FF", 16));
-        Label lderivedEbNo03 = new Label("dBHz ");
+        Label lderivedEbNo03 = new Label("dB ");
         cntMany.addComponent(lderivedEbNo01);
         cntMany.addComponent(lderivedEbNo02);
         cntMany.addComponent(lderivedEbNo03);
@@ -407,6 +407,8 @@ public class CommsView extends View {
                     selection.getComms().setModulation(
                             Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
                     // update bit error probability
+                       sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
+                            * 10.0 / 1.0E6));
                       lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
                     lEbcNo02.setText(Com.shortText(selection.getComms().getEbcNo()));
                     lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
@@ -463,6 +465,8 @@ public class CommsView extends View {
                         bgCode.setSelected((int) codeHash.get(
                                 Comms.Code.NONE.toString()));
                     }
+                       sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
+                            * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
                     lEbcNo02.setText(Com.shortText(selection.getComms().getEbcNo()));
                     lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
@@ -518,6 +522,8 @@ public class CommsView extends View {
                                 Comms.CodeRate.FEC_1_1.toString()));
 
                     }
+                       sldrBW.setProgress((int) MathUtil.round(selection.getComms().getBW()
+                            * 10.0 / 1.0E6));
                     lEbNo02.setText(Com.shortText(selection.getComms().geteBno()));
                     lEbcNo02.setText(Com.shortText(selection.getComms().getEbcNo()));
                     lEsNo02.setText(Com.shortText(selection.getComms().geteSno()));
@@ -565,6 +571,7 @@ public class CommsView extends View {
                             getSelectedIndex()]);
                     lderivedEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
+                    lEbNo02.setText(lEbNo02.getText());
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
                     updateValues(selection);
 

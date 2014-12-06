@@ -93,11 +93,11 @@ public class Comms extends Entity {
 
         this.EsNo = availableEsNo();
 
-        this.setBEP(calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.EbNo));
         this.cBEP = calcBEPmod(this.modulation, this.EbcNo);
-        this.SEP = calcSEPmodCode(this.modulation, this.code,
-                this.codeRate, this.EsNo);
+        this.setBEP(calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.cBEP));
+        
+        this.SEP = calcSEPmod(this.modulation, this.EsNo);
         updateAffected();
     }
 
@@ -183,6 +183,7 @@ public class Comms extends Entity {
      * @param BER the BER to set
      */
     public enum BER {
+
         BER_7("1.0E-7"),
         BER_6("1.0E-6"),
         BER_5("1.0E-5"),
@@ -408,14 +409,19 @@ public class Comms extends Entity {
     }
 
     public void update(Entity e) {
+        // bw is updated here because of other factors)
+        // data rate is set explicitly (using 
+        this.bw = this.dataRate / (this.spectralEfficiency(this.modulation)
+                * this.calcCodeRate(this.codeRate));
         this.CNo = availableCNo();
         this.EbNo = availableEbNo();      // information bit
         this.EsNo = availableEsNo();        // symbol
         this.EbcNo = availableEbcNo();   // coded bit
 
-        this.BEP = calcBEPmodCode(this.modulation, this.code,
-                this.codeRate, this.EbNo);
         this.cBEP = calcBEPmod(this.modulation, this.EbNo);
+        
+        this.BEP = calcBEPmodCode(this.modulation, this.code,
+                this.codeRate, this.cBEP);
         this.SEP = calcSEPmod(this.modulation, this.EsNo);
         // derive EbNo if a BER is explicitly set
         if (this.bER != BER.BER_N) {
@@ -468,24 +474,30 @@ public class Comms extends Entity {
     public void setDataRate(double d) {
         this.dataRate = d;
 
+        // update will also change bw
         // bandwidth will change because of data rate
-        this.bw = this.dataRate / (this.spectralEfficiency(this.modulation)
-                * this.calcCodeRate(this.codeRate));
         update(this);
     }
 
-    public static double calcSEPmodCode(Modulation m, Code code,
-            CodeRate rate, double esNo) {
-        return calcSEPmod(m, esNo);
-    }
-
-    // BER for each modulation, ebno is in dB, and this is stateless
+    // BEP for each modulation/code, ebno is in dB, and this is stateless
+    // here cBEP is passed (instead of EbNo etc. in other such calcs)
     public static double calcBEPmodCode(Modulation m, Code code,
-            CodeRate rate, Double ebno) {
-        double ber;
+            CodeRate rate, double cBEP) {
+        double value = 1.0;
 
+        // use the EbcNo value to get cBEP and use that in the expression
+        // for a specific coding scheme
+        switch (code) {
+            case BCH:
+                value = 0; // bepBCH(N, K, T, cBEP);
+                break;
+            case LDPC:
+                break;
+            default:
+                break;
+        }
         // TODO
-        return calcBEPmod(m, ebno);
+        return value;
     }
 
     // symbol error probably for M-ary Amplitude Modulation
@@ -581,10 +593,10 @@ public class Comms extends Entity {
                 // note that to use EsNO
                 if (m == Modulation.APSK16) {
                     // gamma1 is 2.6
-                    weightedR = 1 / (4 + 12 * 2.6);
+                    weightedR = 1 / (4 + 12 * 2.6 * 2.6);
                 } else if (m == Modulation.APSK32) {
                     // gamma1 is 2.54 and gamma2 is 4.33
-                    weightedR = 1 / (4 + 12 * 2.54 + 16 * 4.33);
+                    weightedR = 1 / (4 + 12 * 2.54 *2.54 + 16 * 4.33 *4.33);
                 }
                 inner = inner
                         + Com.erfc(calcAPSKdij(i, j, m)
@@ -937,10 +949,10 @@ public class Comms extends Entity {
     public void setbER(BER ber) {
         this.bER = ber;
         if (ber != BER.BER_N) {
-         
+
             this.targetEbNo = calcTargetEbNo(this.modulation, this.code,
                     this.codeRate, this.bER);
-        } 
+        }
 
         this.setCodingGain(calcCodingGain(this.modulation, this.code,
                 this.codeRate, this.cBEP));
@@ -950,13 +962,13 @@ public class Comms extends Entity {
 
     // find an EbNo value in dB which can support the explicit BER
     public double calcTargetEbNo(Modulation m, Code c, CodeRate r, BER ber) {
-       // all in dB
+        // all in dB
         double center = -100.0;
         double left = EBNO_MIN;
         double right = EBNO_MAX;
         Boolean notDone = true;
 
-        int iterations=0;
+        int iterations = 0;
         double targetBEP = Double.parseDouble(ber.toString());
 
         // curves are monotonic
@@ -964,8 +976,8 @@ public class Comms extends Entity {
 
             iterations++;
             center = (left + right) / 2.0;
-            // left, right, center should be in dB
-            double bep = calcBEPmodCode(m, c, r, center);
+            // left, right, center should be in dB.  Uses cBEP of coded bit
+            double bep = calcBEPmodCode(m, c, r, this.cBEP);
 
             if (bep < targetBEP) {
                 right = center;
@@ -1009,9 +1021,8 @@ public class Comms extends Entity {
      */
     public void setBW(double bw) {
         this.bw = bw;
-        // bandwidth changes data rate (include code rate also)
-        this.dataRate = this.bw * spectralEfficiency(this.modulation)
-                * calcCodeRate(this.codeRate);
+        // bandwidth does not changes data rate (include code rate also)
+        // this.dataRate = this.bw * spectralEfficiency(this.modulation)     * calcCodeRate(this.codeRate);
         // which changes EbNo, EsNo, cBEP, SEP
         update(this);
 
