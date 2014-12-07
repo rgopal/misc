@@ -96,7 +96,7 @@ public class Comms extends Entity {
         this.cBEP = calcBEPmod(this.modulation, this.EbcNo);
         this.setBEP(calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.cBEP));
-        
+
         this.SEP = calcSEPmod(this.modulation, this.EsNo);
         updateAffected();
     }
@@ -419,7 +419,7 @@ public class Comms extends Entity {
         this.EbcNo = availableEbcNo();   // coded bit
 
         this.cBEP = calcBEPmod(this.modulation, this.EbNo);
-        
+
         this.BEP = calcBEPmodCode(this.modulation, this.code,
                 this.codeRate, this.cBEP);
         this.SEP = calcSEPmod(this.modulation, this.EsNo);
@@ -583,6 +583,7 @@ public class Comms extends Entity {
         int M = calcM(m);
 
         double out = 0.0;
+     
         for (int i = 1; i <= M; i++) {
             // find the inner sum
             double inner = 0.0, weightedR = 0.0;
@@ -593,15 +594,17 @@ public class Comms extends Entity {
                 // note that to use EsNO
                 if (m == Modulation.APSK16) {
                     // gamma1 is 2.6
-                    weightedR = 1 / (4 + 12 * 2.6 * 2.6);
+                    weightedR = (4 + 12 * 2.6 * 2.6);
                 } else if (m == Modulation.APSK32) {
                     // gamma1 is 2.54 and gamma2 is 4.33
-                    weightedR = 1 / (4 + 12 * 2.54 *2.54 + 16 * 4.33 *4.33);
+                    weightedR = (4 + 12 * 2.54 * 2.54 + 16 * 4.33 * 4.33);
                 }
                 inner = inner
                         + Com.erfc(calcAPSKdij(i, j, m)
-                                * MathUtil.pow(Com.reverseDB(EsNo) * M / weightedR, 0.5)
-                                / 2.0)
+                                / 2.0
+                                * MathUtil.pow(Com.reverseDB(EsNo)
+                                        * (M / weightedR), 0.5)
+                        )
                         / 2.0;
             }
             out = out + inner;
@@ -618,7 +621,7 @@ public class Comms extends Entity {
 
     // abstracted out r to get clean EsNo
     public static double calcAPSKdij(int i, int j, Modulation m) {
-      
+
         double r = 1.0;  // to get clean EsNo
         int p = 0, q = 0;       // circles
         double rP = 0, rQ = 0;
