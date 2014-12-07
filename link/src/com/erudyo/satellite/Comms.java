@@ -497,7 +497,7 @@ public class Comms extends Entity {
                 break;
         }
         // TODO
-        return value;
+        return .001;
     }
 
     // symbol error probably for M-ary Amplitude Modulation
@@ -618,7 +618,7 @@ public class Comms extends Entity {
 
     // abstracted out r to get clean EsNo
     public static double calcAPSKdij(int i, int j, Modulation m) {
-        double value = 0.0;
+      
         double r = 1.0;  // to get clean EsNo
         int p = 0, q = 0;       // circles
         double rP = 0, rQ = 0;
@@ -672,7 +672,7 @@ public class Comms extends Entity {
                 rP = r;
                 nP = 4;
                 phiP = phi1;
-            } else if (i < 13) {
+            } else if (i < 17) {
                 p = 2;
                 rP = gamma1 * r;
                 nP = 12;
@@ -690,7 +690,7 @@ public class Comms extends Entity {
                 rQ = r;
                 nQ = 4;
                 phiQ = phi1;
-            } else if (j < 13) {
+            } else if (j < 17) {
                 q = 2;
                 rQ = gamma1 * r;
                 nQ = 12;
@@ -708,7 +708,7 @@ public class Comms extends Entity {
 
         dIJ = MathUtil.pow(rP * rP + rQ * rQ - 2.0 * rP * rQ
                 * Math.cos(calcAPSKthetaIJ(i, j, nP, nQ, phiP, phiQ)), 0.5);
-        return value;
+        return dIJ;
     }
 
     public static double calcAPSKthetaIJ(int i, int j, int nP, int nQ,
@@ -985,7 +985,7 @@ public class Comms extends Entity {
                 left = center;
             }
 
-            if (Com.sameValue(bep, targetBEP) || iterations > 1000) {
+            if (Com.sameValue(bep, targetBEP) || iterations > 100) {
                 notDone = false;
             }
             Log.p("Comms: calcTargetEbNo: (all in dBHz) left " + left + " center "
