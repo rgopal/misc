@@ -40,6 +40,7 @@ public class Com {
     public static Image blue_pin;
     public static Image red_pin;
     public final static double PI = Math.PI;
+    public final static double e = 2.7182818;
     public final static double K = 1.379E-23;       // Boltzmann constant, W/HzK
     public final static double KdB = -228.6;        // dBW/HzK
 
@@ -59,15 +60,32 @@ public class Com {
         }
         return s.substring(0, len);
     }
-    public static long Combinatorial(int n, int k) {
-        long b = 1;
-        if (k > n-k)
-            k = n-k;
-        
-        for (int i=1, m=n; i<=k; m--)
-            b = b*m/i;
-        
+
+    public static long CombinatorialLong(int n, int k) {
+        long b;
+
+        b = 1;
+        if (k > n - k) {
+            k = n - k;
+        }
+
+        for (int i = 1, m = n; i <= k; m--) {
+            b = b * m / i;
+        }
         return b;
+    }
+
+    public static double Combinatorial(int n, int k) {
+        double b;
+
+            // sterlings approximation ln(n!) = n*ln(n) - n
+        // n!/k!*(n-k)! = n*ln(n) -n - k*ln(k) - (n-k)*ln(n-k) +k +n -k
+        double logVal = n * MathUtil.log(n) - k * MathUtil.log(k)
+                - (n - k) * MathUtil.log(n - k);
+        b = (long) MathUtil.pow(Math.E, logVal);
+
+        return b;
+
     }
 
     static void formatSlider(Slider sldr) {
@@ -76,13 +94,12 @@ public class Com {
         sldr.getUnselectedStyle().setBgColor(0x0000FF);
         sldr.getUnselectedStyle().setFgColor(0x0000FF);  // blue
         sldr.getUnselectedStyle().setBgTransparency(30);
-        sldr.getSelectedStyle().setBgColor(0x0000FF);  
+        sldr.getSelectedStyle().setBgColor(0x0000FF);
         sldr.getSelectedStyle().setFgColor(0x0000FF); // blue
         sldr.getSelectedStyle().setBgTransparency(30);
         sldr.setPreferredH(40);
     }
 
-    
     static String text(double num) {
         String s = String.valueOf(num);
         int len = s.length();
@@ -138,32 +155,33 @@ public class Com {
     }
 
     // undo DB 
-    public static double reverseDB (double db) {
+    public static double reverseDB(double db) {
         return MathUtil.pow(10.0, db / 10.0);
     }
-    
+
     public static String textD(double d) {
-       
+
         String s = String.valueOf(d);
         int index = s.indexOf("E");
-       
+
         if (index > 0) {
             // if in exponenet form
-     
+
             String mantissa = s.substring(0, index);
             String exp = s.substring(index);
             // reduce mantissa to 6 characters
             int min = Math.min(6, mantissa.length());
-            mantissa = mantissa.substring(0,min);
+            mantissa = mantissa.substring(0, min);
             s = mantissa + exp;
-            
+
         } else {
-         int min = Math.min(8, s.length());
-        
-            s = s.substring(0,min);
+            int min = Math.min(8, s.length());
+
+            s = s.substring(0, min);
         }
         return s;
     }
+
     public static double erf(double x) {
         // constants
         final double a1 = 0.254829592;

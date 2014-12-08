@@ -489,7 +489,9 @@ public class Comms extends Entity {
         // for a specific coding scheme
         switch (code) {
             case BCH:
-                value = 0; // bepBCH(N, K, T, cBEP);
+                // BCH is determined by N, K, T.  N = 2^m-1
+                // Jordonava 16200 is close to 2^14 (m-14), m*T = N-K
+                value = bepBCH(16200, 16008, 14, cBEP);
                 break;
             case LDPC:
                 break;
