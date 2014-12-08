@@ -78,14 +78,20 @@ public class Com {
     public static double Combinatorial(int n, int k) {
         double b;
 
-            // sterlings approximation ln(n!) = n*ln(n) - n
         // n!/k!*(n-k)! = n*ln(n) -n - k*ln(k) - (n-k)*ln(n-k) +k +n -k
-        double logVal = n * MathUtil.log(n) - k * MathUtil.log(k)
-                - (n - k) * MathUtil.log(n - k);
-        b = (long) MathUtil.pow(Math.E, logVal);
+        double logVal = stirlingLog(n) - stirlingLog(k)
+                - stirlingLog(n - k);
+        b = MathUtil.pow(Math.E, logVal);
 
         return b;
 
+    }
+
+    // sterlings approximation ln(n!) = n*ln(n) - n + 1/2.ln(2*n*pi)
+
+    public static double stirlingLog(double nFac) {
+        return nFac * MathUtil.log(nFac) - nFac + 
+                MathUtil.log(2 * Com.PI * nFac) / 2.0;
     }
 
     static void formatSlider(Slider sldr) {

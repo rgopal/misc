@@ -499,7 +499,7 @@ public class Comms extends Entity {
                 break;
         }
         // TODO
-        return .001;
+        return value;
     }
 
     // symbol error probably for M-ary Amplitude Modulation
