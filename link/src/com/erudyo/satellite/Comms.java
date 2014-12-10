@@ -731,11 +731,27 @@ public class Comms extends Entity {
         double value = 0.0;
 
         int i;
-
+       
+        double incr;
         for (i = T + 1; i <= N; i++) {
-
-            value = value + i * Com.Combinatorial(N, i) * MathUtil.pow(p, i)
-                    * MathUtil.pow(1 - p, N - i);
+            // process everything in log to avoid over/under flows
+            incr = MathUtil.log(i) + Com.combinatorialLog(N, i) 
+                    + i * MathUtil.log(p)
+                    + (N-i) * MathUtil.log(1.0 - p);
+            
+            value = value + MathUtil.pow(Math.E, incr);
+           /* Log.p("bepBCH: i " + i + " incr " + incr + 
+                    " C(N,i) " + Com.combinatorialLog(N, i) +
+                    " i*ln(p) " + i * MathUtil.log(p) +
+                    " (N-i)*ln(1-p) " + (N-i) * MathUtil.log(1.0-p) +
+                    " value " + value, Log.DEBUG);
+            */
+            // for N - 16200, T = 14, converges quickly 
+            // at i= 276 incr -31.56032274207618 value 162.08336327062702
+            // then NaN at i = 16200, because of C(n,i).  Others are behaved
+            // i 16199 incr -74579.69536037766 C(N,i) 9.773827988357917 
+            // i*ln(p) -74599.15184282108 (N-i)*ln(1-p) -0.01005033585350145 
+            // value 162.08336327062702
         }
         value = value / N;
         return value;

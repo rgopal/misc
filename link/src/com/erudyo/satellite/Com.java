@@ -75,15 +75,20 @@ public class Com {
         return b;
     }
 
-    public static double Combinatorial(int n, int k) {
+    // return log of value
+    public static double combinatorialLog(int n, int k) {
         double b;
 
+        // else ln of 0 has to be computed (value is ln(1)
+        if (n == k || k == 0)
+            return 0;
+        
         // n!/k!*(n-k)! = n*ln(n) -n - k*ln(k) - (n-k)*ln(n-k) +k +n -k
         double logVal = stirlingLog(n) - stirlingLog(k)
                 - stirlingLog(n - k);
-        b = MathUtil.pow(Math.E, logVal);
+        // b = MathUtil.pow(Math.E, logVal);
 
-        return b;
+        return logVal;
 
     }
 
