@@ -484,14 +484,20 @@ public class Comms extends Entity {
     public static double calcBEPmodCode(Modulation m, Code code,
             CodeRate rate, double cBEP) {
         double value = 1.0;
+        int K;
+        int N = 16200;
+        double h = MathUtil.log(N);
+        K = (int) MathUtil.round(N * (1.0 - calcCodeRate(rate)));
+        int T = (int) MathUtil.round ((N - K) / h);   // keep h in double
 
         // use the EbcNo value to get cBEP and use that in the expression
         // for a specific coding scheme
         switch (code) {
             case BCH:
-                // BCH is determined by N, K, T.  N = 2^m-1
-                // Jordonava 16200 is close to 2^14 (m-14), m*T = N-K
-                value = bepBCH(16200, 16008, 14, cBEP);
+                // BCH is determined by N, K, T.  N = 2^h-1
+                // Jordonava 16200 is close to 2^14 (m-14), h*T = N-K
+
+                value = bepBCH(N, K, T, cBEP);
                 break;
             case LDPC:
                 break;
@@ -585,7 +591,7 @@ public class Comms extends Entity {
         int M = calcM(m);
 
         double out = 0.0;
-     
+
         for (int i = 1; i <= M; i++) {
             // find the inner sum
             double inner = 0.0, weightedR = 0.0;
@@ -731,21 +737,21 @@ public class Comms extends Entity {
         double value = 0.0;
 
         int i;
-       
+
         double incr;
         for (i = T + 1; i <= N; i++) {
             // process everything in log to avoid over/under flows
-            incr = MathUtil.log(i) + Com.combinatorialLog(N, i) 
+            incr = MathUtil.log(i) + Com.combinatorialLog(N, i)
                     + i * MathUtil.log(p)
-                    + (N-i) * MathUtil.log(1.0 - p);
-            
+                    + (N - i) * MathUtil.log(1.0 - p);
+
             value = value + MathUtil.pow(Math.E, incr);
-           /* Log.p("bepBCH: i " + i + " incr " + incr + 
-                    " C(N,i) " + Com.combinatorialLog(N, i) +
-                    " i*ln(p) " + i * MathUtil.log(p) +
-                    " (N-i)*ln(1-p) " + (N-i) * MathUtil.log(1.0-p) +
-                    " value " + value, Log.DEBUG);
-            */
+            /* Log.p("bepBCH: i " + i + " incr " + incr + 
+             " C(N,i) " + Com.combinatorialLog(N, i) +
+             " i*ln(p) " + i * MathUtil.log(p) +
+             " (N-i)*ln(1-p) " + (N-i) * MathUtil.log(1.0-p) +
+             " value " + value, Log.DEBUG);
+             */
             // for N - 16200, T = 14, converges quickly 
             // at i= 276 incr -31.56032274207618 value 162.08336327062702
             // then NaN at i = 16200, because of C(n,i).  Others are behaved
@@ -990,29 +996,35 @@ public class Comms extends Entity {
         Boolean notDone = true;
 
         int iterations = 0;
+
         double targetBEP = Double.parseDouble(ber.toString());
 
-        // curves are monotonic
+        // curves are monotonic.  Here left, right are EbCNo
         do {
-
+            // use binary search to find the right EbcNo
             iterations++;
             center = (left + right) / 2.0;
-            // left, right, center should be in dB.  Uses cBEP of coded bit
-            double bep = calcBEPmodCode(m, c, r, this.cBEP);
 
-            if (bep < targetBEP) {
+            // guess the right  BEP with current EbcNo range (left and right)
+            double derivedCodedBEP = calcBEPmod(m, center);
+
+            double derivedBEP = calcBEPmodCode(m, c, r, derivedCodedBEP);
+
+            if (derivedBEP < targetBEP) {
                 right = center;
             } else {
                 left = center;
             }
 
-            if (Com.sameValue(bep, targetBEP) || iterations > 100) {
+            if (Com.sameValue(derivedBEP, targetBEP) || iterations > 100) {
                 notDone = false;
             }
             Log.p("Comms: calcTargetEbNo: (all in dBHz) left " + left + " center "
                     + center + " right " + right, Log.DEBUG);
         } while (notDone);
 
+        // convert from coded to information bits (EbNo is more than EbcNo
+        center = center - 10 * MathUtil.log10(calcCodeRate(r));
         return center;
     }
 
