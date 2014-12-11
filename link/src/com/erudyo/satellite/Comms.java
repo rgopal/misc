@@ -253,9 +253,9 @@ public class Comms extends Entity {
     private final static double EBNO_MAX = 100.0;   // in dB
 
     final public int PACKET_BITS = 1500 * 8;   //12000 bits
-    private double dataRate = 1E6;    // bps  
+    private double dataRate = 30E6;    // bps  
     private double rollOff = .30;
-    private double bw = 1E6;      // Hz
+    private double bw = 30E6;      // Hz
     private double cBEP = 1E-6;
     private double BEP = 1E-6;      // information bit error
     private double SEP = 1E-6;      // coded bit error
@@ -486,9 +486,10 @@ public class Comms extends Entity {
         double value = 1.0;
         int K;
         int N = 16200;
-        double h = MathUtil.log(N);
+        double h = MathUtil.log(N)/MathUtil.log(2.0);
         K = (int) MathUtil.round(N * (1.0 - calcCodeRate(rate)));
         int T = (int) MathUtil.round ((N - K) / h);   // keep h in double
+       
 
         // use the EbcNo value to get cBEP and use that in the expression
         // for a specific coding scheme
@@ -504,6 +505,11 @@ public class Comms extends Entity {
             default:
                 break;
         }
+         Log.p("calcBEPmodCode: Mod = " + m + " Code = " + code + 
+                " Rate = " + rate + " N " + N + " K = " 
+                + K + " T = " +T + " h = " + h
+                 + " BEP = " + value,
+                Log.DEBUG);
         // TODO
         return value;
     }

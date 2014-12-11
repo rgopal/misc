@@ -349,14 +349,14 @@ public class CommsView extends View {
         cntMany.addComponent(lSEP02);
         cntMany.addComponent(lSEP03);
 
-        Label lderivedEbNo01 = new Label("Target Eb/No");
-        final Label lderivedEbNo02 = new Label(
+        Label lTargetEbNo01 = new Label("Target Eb/No");
+        final Label lTargetEbNo02 = new Label(
                 Com.text(selection.getComms().getTargetEbNo()));
-        lderivedEbNo02.getStyle().setFgColor(Integer.valueOf("0000FF", 16));
-        Label lderivedEbNo03 = new Label("dB ");
-        cntMany.addComponent(lderivedEbNo01);
-        cntMany.addComponent(lderivedEbNo02);
-        cntMany.addComponent(lderivedEbNo03);
+        lTargetEbNo02.getStyle().setFgColor(Integer.valueOf("0000FF", 16));
+        Label lTargetEbNo03 = new Label("dB ");
+        cntMany.addComponent(lTargetEbNo01);
+        cntMany.addComponent(lTargetEbNo02);
+        cntMany.addComponent(lTargetEbNo03);
         // now vertical positioning
         cntMany = new Container();
         sub.addComponent(cntMany);
@@ -415,7 +415,7 @@ public class CommsView extends View {
                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
                     lcBEP02.setText(Com.textD(selection.getComms().getCbEP()));
                     lSEP02.setText(Com.textD(selection.getComms().getSEP()));
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
                     updateValues(selection);
@@ -423,13 +423,14 @@ public class CommsView extends View {
             });
             cntMod.addComponent(bModulation);
         }
-        // set UI default to BPSK
+        // set UI default to whatever is in the object model
         bgMod.setSelected((int) modulationHash.get(
-                Comms.Modulation.BPSK.toString()));
+                selection.getComms().getModulation().toString()));
+              /*  Comms.Modulation.BPSK.toString()));
         // set model defaul to the BPSK
         selection.getComms().setModulation(
                 Comms.indexModulation.toArray(new Comms.Modulation[0])[bgMod.getSelectedIndex()]);
-
+*/
         // now bCode rate
         Container cntRate = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         cntMany.addComponent(cntRate);
@@ -473,7 +474,7 @@ public class CommsView extends View {
                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
                     lcBEP02.setText(Com.textD(selection.getComms().getCbEP()));
                     lSEP02.setText(Com.textD(selection.getComms().getSEP()));
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
                     updateValues(selection);
@@ -530,7 +531,7 @@ public class CommsView extends View {
                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
                     lcBEP02.setText(Com.textD(selection.getComms().getCbEP()));
                     lSEP02.setText(Com.textD(selection.getComms().getSEP()));
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
 
@@ -569,7 +570,7 @@ public class CommsView extends View {
                     selection.getComms().setbER(
                             Comms.indexBER.toArray(new Comms.BER[0])[bgBER.
                             getSelectedIndex()]);
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     lEbNo02.setText(lEbNo02.getText());
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
@@ -617,7 +618,7 @@ public class CommsView extends View {
                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
                     lcBEP02.setText(Com.textD(selection.getComms().getCbEP()));
                     lSEP02.setText(Com.textD(selection.getComms().getSEP()));
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
                     updateValues(selection);
@@ -648,7 +649,7 @@ public class CommsView extends View {
                     lBEP02.setText(Com.textD(selection.getComms().getBEP()));
                     lcBEP02.setText(Com.textD(selection.getComms().getCbEP()));
                     lSEP02.setText(Com.textD(selection.getComms().getSEP()));
-                    lderivedEbNo02.setText(Com.text(selection.getComms().
+                    lTargetEbNo02.setText(Com.text(selection.getComms().
                             getTargetEbNo()));
                     redOrGreen(lEbNo02, selection.getComms().getTargetEbNo());
                     updateValues(selection);
