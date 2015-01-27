@@ -2,7 +2,7 @@
  * OVERVIEW
  * This was originally nested within Satellite but creating a BandBeams 
  * object from within Satellite static method was not allowed.  So, this 
- * became its own class to get pass that static/non static problem.
+ * became its own class to get around that static/non static problem.
  */
 
 package com.erudyo.satellite;
@@ -13,7 +13,7 @@ import java.util.Hashtable;
  * Copyright (c) 2014 R. Gopal. All Rights Reserved.
  * @author rgopal
  */
-  // can have multiple bands and transponders;
+  // can have multiple beams and transponders within a beam (same number);
     // in bandBeams private Hashtable<RfBand.Band, Integer> transponders;
     // each band would have its own beam items
     public class BandSpecificItems {

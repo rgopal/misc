@@ -1,7 +1,7 @@
 /*
  * OVERVIEW
  * Covers both the amplifier for transmitter and the LNA for receiver.
- * The feeder losses for both are also modeled here along feeder temp which
+ * The feeder losses for both are also modeled here along with feeder temp which
  * is relevant only for receive. 
  */
 package com.erudyo.satellite;
@@ -19,9 +19,9 @@ public class Amplifier extends Entity {
     private double Te = 290.0;   // in degree K, effective temperature
 
     // all gains and loss will be in dB addition/subtraction 
-    private double LFTX = 0.5;     // Tx loss between amplifier and antenna  in DB
+    private double LFTX = 0.5;     // Tx loss between amplifier and antenna  in dB
     private double LFRX = 0.5;      // Rx loss between antenna and reciver in dB
-    private double feederTemp = 290.0;  // feeder temp in K
+    private double feederTemp = 290.0;  // feeder temp in K (for receiver LNA)
 
     private double noiseFigure = 1.0;   // in dB
 
@@ -38,7 +38,7 @@ public class Amplifier extends Entity {
             updateAffected();
         } else
             Log.p("Amplifier: power out of range " + 
-                    String.valueOf(power), Log.INFO);
+                    String.valueOf(power), Log.WARNING);
     }
 
      public boolean validatePower(double p) {
@@ -124,6 +124,7 @@ public class Amplifier extends Entity {
      */
     public void setFeederTemp(double feederTemp) {
         this.feederTemp = feederTemp;
+        updateAffected();
          
     }
 

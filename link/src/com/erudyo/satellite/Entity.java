@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW 
+ * Common class for most other classes to get name, description, and common
+ * processing for automated updates when a child or sibling changes its
+ * state
  */
 package com.erudyo.satellite;
 
@@ -22,7 +23,7 @@ public class Entity {
     // Map of objects (and reference count affected by it
 
     // static variables are shared by all sub-classes so have individual copies
-    // protected static int index = 0;
+    // in each class definition
   
     // Parent can set properties of a child which can trigger an update for
     // the parent itself.  When parent creates a child then it also places itself
@@ -42,9 +43,7 @@ public class Entity {
                 //  call update function of each object affected by it
                 if (affected.get(a) > 0) {
                      Log.p("Entity: Updating Object " + a + " because of " + this, Log.DEBUG);
-                     a.update(this);
-                   
-               
+                     a.update(this);             
                 } else
                     Log.p("Entity: Reference count for " + a +
                             " is 0 so don't update because of " 
@@ -57,7 +56,7 @@ public class Entity {
     // called by child or sibling of an entity (see updateAffected) and customized
     public void update(Entity e) {
         // keep all local udpates (and possibly call your own updateAffected
-        Log.p("Entity: update not implemented for " + this, Log.DEBUG);
+        Log.p("Entity: update not implemented for " + this, Log.WARNING);
                 
 
     }
@@ -74,18 +73,18 @@ public class Entity {
             affected.put(e, affected.get(e) + 1);
         } else {
             affected.put(e, 1);
-            Log.p("Entity: Added Object " + e + " to Affected list of "
+            Log.p("Entity: Added Object " + e + " to affected list of "
                     + this, Log.DEBUG);
         }
 
     }
     
-     // remove an entity from the list.  It actually decrements the reference
-    // count
+    // remove an entity from the list.  It actually decrements the reference
+    // count and logs warnings if there is any unexpected behavior
     
     final public void removeAffected(Entity e) {
         if (affected == null) {
-            Log.p("Entity: affected is NULL", Log.ERROR);
+            Log.p("Entity: affected is NULL", Log.WARNING);
             return;
         }
         if (affected.get(e) == null) {
@@ -114,11 +113,6 @@ public class Entity {
 
     }
 
-    public Entity(String n, String d, String s) {
-        name = n;
-        description = d;
-        summary = s;
-    }
 
     public String getName() {
         return name;

@@ -16,26 +16,26 @@ import com.codename1.util.MathUtil;
  */
 public class Antenna extends Entity {
 
-    private double diameter = 1;
+    private double diameter = 1.0;      // in m
     private double efficiency = 0.6;    // default for earth terminals, sat .55
     private RfBand.Band band = RfBand.Band.KA;
 
-    private double frequency = RfBand.centerFrequency(RfBand.Band.KA);
+    private double frequency = RfBand.centerFrequency(RfBand.Band.KA);  // in Hz
 
     private double depointingLoss = 0.5;
     private double depointingError = 0.1 * Com.PI / 180.0;      // in Radian
-    private double temperature = 290.0;
+    private double temperature = 290.0; // in K
 
     // the following are calculated, but can be set individually
     private double threeDBangle;
     private double gain;
     private double area;
 
-    private static double GAIN_LO = 100;
-    private static double GAIN_HI = - 10;
+    private static double GAIN_LO = 100.0;
+    private static double GAIN_HI = -10.0;
     public static final double DIAMETER_LO = .10;  // in m
     public static final double DIAMETER_HI = 12;
-     public static final double DEPOINTING_LO = .1*Com.PI/180.0;  // in 
+     public static final double DEPOINTING_LO = .1*Com.PI/180.0;  // in radian
     public static final double DEPOINTING_HI = 5.0*Com.PI/180.0;   // in radian
     private static final double EFFICIENCY_LO = 0.01;
     private static final double EFFICIENCY_HI = 1.0;
@@ -63,18 +63,18 @@ public class Antenna extends Entity {
         gain = calcGain(diameter, frequency, efficiency);
     }
 
-    private double calcArea(double diameter) {
+    static private double calcArea(double diameter) {
         double area;
         area = Com.PI * MathUtil.pow(diameter / 2.0, 2.0);
         return area;
     }
 
-    private double calcThreeDB(double d, double f) {
+    static private double calcThreeDB(double d, double f) {
         return Math.toRadians(70 * Com.C / (f * d));    // Radians
     }
 
     // calculate gain from diameter, frequency, and efficiency
-    private double calcGain(double d, double f, double e) {
+    static private double calcGain(double d, double f, double e) {
         double gain;
         gain = e * MathUtil.pow((Com.PI * d * f / Com.C), 2.0);
         return (10 * MathUtil.log10(gain));     // in dB
@@ -104,7 +104,7 @@ public class Antenna extends Entity {
             updateAffected();
         } else {
             Log.p("Antenna: setDiameter: out of range diameter "
-                    + String.valueOf(diameter), Log.DEBUG);
+                    + String.valueOf(diameter), Log.WARNING);
         }
 
     }
@@ -213,7 +213,7 @@ public class Antenna extends Entity {
      * @param threeDBangle the threeDBangle to set
      */
     public void setThreeDBangle(double threeDBangle) {
-        // TODO change diameter
+        // TODO change diameter etc.
         this.threeDBangle = threeDBangle;
         updateAffected();
     }
@@ -231,7 +231,7 @@ public class Antenna extends Entity {
     public void setBand(RfBand.Band band) {
 
         this.band = band;
-   
+        // TODO expecting someone else to change frequency
         this.gain = calcGain(diameter, this.frequency, efficiency);
         this.threeDBangle = calcThreeDB(diameter, this.frequency);
         updateAffected();
@@ -245,12 +245,14 @@ public class Antenna extends Entity {
     }
 
     /**
-     * @param gain the gain to set. Changes diameter to be consistent with gain
+     * @param gain the gain to set. Changes diameter/area to be consistent with gain
      */
     public void setGain(double g) {
         this.gain = g;
-        this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10))
+        // change gain from dB first
+        this.diameter = MathUtil.pow(MathUtil.pow(10.0, (gain / 10.0))
                 / efficiency, 0.5) * Com.C / (Com.PI * frequency);
+        this.area = calcArea(this.diameter);
         this.threeDBangle = calcThreeDB(diameter, frequency);
         updateAffected();
     }
@@ -274,7 +276,7 @@ public class Antenna extends Entity {
             updateAffected();
         } else {
             Log.p("Antenna: setFrequency out of range "
-                    + String.valueOf(f), Log.DEBUG);
+                    + String.valueOf(f), Log.WARNING);
         }
     }
 

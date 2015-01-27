@@ -1,20 +1,21 @@
 /*
  * OVERVIEW:
  * main driver for the application.  Uses models (such as Terminal) and views
- * such as (TxView) to organize code.  Selection class can hold semiMajor specific collection
+ * such as (TxView) to organize code.  Selection class can hold specific collection
  * of both views and models to provide multiple instances for user selections.
  *
  * Satellite and Terminal instances are created when .txt files are read.
- * Path objects are created 
+ * Path objects are created using satellite and terminals. 
  * 
- * Typicall, semiMajor class has semiMajor calc* function which is stateless (defined as static)
+ * Typicall, a class has calc* functions which are stateless (defined as static)
  * while the set* function would change instance level values.  Object instances
  * could depend on each other and instance's update method is automatically called
  * when any child or sibling changes.  An instance registers itself by calling
  * the addAffected method of another object (such as its child).
  * TODO
  * create a new optimization view.   It will ask which parameters (dish size, amp
- * power, mod/cod, bandwidth, data rate, ber) should be fixed and which can be varied.   Another settings view
+ * power, mod/cod, bandwidth, data rate, ber) should be fixed and which can be varied.   
+ * Another settings view
  * will take minimum and maximum values for this ranges so that algorithm can 
  * enumerate/vary and get the optimize the value.  Locations and satellite is probably fixed
  * for this optimization.   One can then select a specific variable (data rate,
@@ -62,34 +63,29 @@ public class Link {
 
     private Selection selection;
 
-    // Each band has semiMajor vector of terminals and satellites read from files
-    private View[] views;
+    private View[] views; // other forms accessible from the main one
 
     public void init(Object context) {
 
-        // create semiMajor new instance to keep track of all other objects for UI
+        // create new instance to keep track of all other objects for UI
         Log.setLevel(Log.DEBUG);
 
         // this creates View objects
         selection = new Selection();
 
-        // get the bands into selection.  In future semiMajor Selection instance
+        // In future Selection instance
         // could have customized list based on user interface preferences
-        // indexRfBand is built by setRfBandHash
-        // selection.setIndexRfBand(RfBand.indexRfBand);
         try {
             Resources theme = Resources.openLayered("/theme");
             UIManager.getInstance().setThemeProps(theme.getTheme(
                     theme.getThemeResourceNames()[0]));
             Display.getInstance().installNativeTheme();
-           
+
             Com.blue_pin = Image.createImage("/blue_pin.png");
             Com.red_pin = Image.createImage("/red_pin.png");
-            
+
             // not here since no Form setFonts();
             // refreshTheme(parentForm);
-
-            // also read terminals and the current Tx and Rx terminal
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,8 +127,8 @@ public class Link {
 
         themeAddition.put("sel#font", defaultFont);
         themeAddition.put("unsel#font", defaultFont);
-     themeAddition.put("press#font", defaultFont);
-     
+        themeAddition.put("press#font", defaultFont);
+
         themeAddition.put("Label.font", defaultFont);
         // transparency 0 looks regular, F0 looks grey/black for blue font, FF black
         // FF generates error, has to be 255
@@ -141,23 +137,23 @@ public class Link {
         themeAddition.put("Label.fgColor", "0"); // default  folor
         themeAddition.put("Label.padding", "4,4,4,4");
         themeAddition.put("Label.margin", "2,2,2,2");
-        
-          themeAddition.put("RadioButton.padding", "2,1,1,2");
+
+        themeAddition.put("RadioButton.padding", "2,1,1,2");
         themeAddition.put("RadioButton.margin", "2,1,1,2");
-        
+
         //themeAddition.put("Label.fgColor", "00FF00");
         themeAddition.put("Button.font", defaultFont);
         themeAddition.put("ComboBox.font", defaultFont);
         themeAddition.put("ComboBox.sel#font", defaultFont);
         themeAddition.put("ComboBox.press#font", defaultFont);
         themeAddition.put("ComboBox.unsel#font", defaultFont);
-        
-        themeAddition.put("Slider.bgColor","FF");
-         themeAddition.put("Slider.fgColor","00");
-        themeAddition.put("SliderFull.bgColor","FF");
-        themeAddition.put("SliderFull.fgColor","00");
+
+        themeAddition.put("Slider.bgColor", "FF");
+        themeAddition.put("Slider.fgColor", "00");
+        themeAddition.put("SliderFull.bgColor", "FF");
+        themeAddition.put("SliderFull.fgColor", "00");
         themeAddition.put("Slider.padding", "1,1,1,1");
-         themeAddition.put("SliderFull.padding", "1,1,1,1");
+        themeAddition.put("SliderFull.padding", "1,1,1,1");
 
         themeAddition.put("ComboBoxItem.font", defaultFont);
         themeAddition.put("ComboBoxItem.sel#font", mediumFont);
@@ -186,7 +182,7 @@ public class Link {
         Log.p("Started application", Log.DEBUG);
 
         views = new View[6];
-        // selection contains current selection of atellite, terminals, band, etc.
+        // selection contains current selection of satellite, terminals, band, etc.
         // selections from previous session can be read from persistent storage
         // else default values are used.
 
@@ -285,12 +281,11 @@ public class Link {
             Component widget = view.getWidget(selection);
             Component subWidget = view.getSubWidget(selection);
 
-         
             // all these widgets have to be remembered by respective views 
             Component label = view.getLabel(selection);
-            label.getStyle().setFgColor(Integer.valueOf("00FF00",16));  // green
+            label.getStyle().setFgColor(Integer.valueOf("00FF00", 16));  // green
             Component subLabel = view.getSubLabel(selection);
-            subLabel.getStyle().setFgColor(Integer.valueOf("0000FF",16));  // blue
+            subLabel.getStyle().setFgColor(Integer.valueOf("0000FF", 16));  // blue
 
             Button bSelectView = new Button(view.getShortName()); //view.getName());
 

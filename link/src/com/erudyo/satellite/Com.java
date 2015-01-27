@@ -46,7 +46,7 @@ public class Com {
 
     public final static double C = 2.99792458E8;
     public final static double RE = 6378.1E3;     // mean equatorial radius
-    public final static String DEGREE = "\u00b0";
+    public final static String DEGREE = "\u00b0"; // unicode for degree o symbol
     public final static double VISIBLE_ANGLE = 80.0 * PI / 180.0;
 
     public final static double T0 = 290.0;
@@ -61,6 +61,7 @@ public class Com {
         return s.substring(0, len);
     }
 
+    // should work for small value of n (almost never used)
     public static long CombinatorialLong(int n, int k) {
         long b;
 
@@ -144,7 +145,7 @@ public class Com {
     public static String SwapBlueRed(String s) {
         // KML uses BGR vs Java which has RGB (KML has two more opacity Hex upfront
         if (s.length() > 6) {
-            Log.p("Com: SwapBlueRed found larger than 6 color " + s, Log.WARNING);
+            Log.p("Com: SwapBlueRed found larger than 6 color bytes " + s, Log.WARNING);
         }
         return (s.substring(4, 6) + s.substring(2, 4) + s.substring(0, 2));
     }
@@ -170,6 +171,7 @@ public class Com {
         return MathUtil.pow(10.0, db / 10.0);
     }
 
+    // convert double to a shorter text (up to 8 chars)
     public static String textD(double d) {
 
         String s = String.valueOf(d);
