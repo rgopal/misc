@@ -63,8 +63,6 @@ public class Link {
 
     private Selection selection;
 
-    private View[] views; // other forms accessible from the main one
-
     public void init(Object context) {
 
         // create new instance to keep track of all other objects for UI
@@ -89,8 +87,6 @@ public class Link {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        initViews(selection);
 
         // Pro users - uncomment this code to get crash reports sent to you automatically
         Display.getInstance().addEdtErrorHandler(new ActionListener() {
@@ -177,26 +173,6 @@ public class Link {
 
     }
 
-    private void initViews(Selection selection) {
-
-        Log.p("Started application", Log.DEBUG);
-
-        views = new View[6];
-        // selection contains current selection of satellite, terminals, band, etc.
-        // selections from previous session can be read from persistent storage
-        // else default values are used.
-
-        // process satellite first since it is needed by initVisibleTerminal UlPath and DlPath
-        views[0] = selection.getSatelliteView();
-
-        views[1] = selection.getTxView();
-        views[2] = selection.getuLpathView();
-
-        views[3] = selection.getRxView();
-        views[4] = selection.getdLpathView();
-        views[5] = selection.getCommsView();
-
-    }
 
     public void start() {
         if (current != null) {
@@ -214,8 +190,6 @@ public class Link {
         Container cnt = new Container(new BorderLayout());
         main.addComponent(cnt);
 
-        // there are six items in Views.  Hardcoded table.
-        // no sub-label
         TableLayout layout = new TableLayout(10, 4);
         cnt.setLayout(layout);
 
@@ -223,20 +197,20 @@ public class Link {
         initViews(selection.getSatelliteView(), cnt, selection, layout, 4);
 
         initViews(selection.getTxView(), cnt, selection, layout, 4);
-        // now uplink, downlink paths and Comms can be created
 
+        // uplink path and then view
         selection.setuLpath(new Path(selection.getSatellite(),
                 selection.gettXterminal(), Path.PATH_TYPE.UPLINK));
         selection.getuLpath().setPathType(Path.PATH_TYPE.UPLINK);
-
         initViews(selection.getuLpathView(), cnt, selection, layout, 1);
 
+        // downlink path and view
         initViews(selection.getRxView(), cnt, selection, layout, 4);
         selection.setdLpath(new Path(selection.getSatellite(),
                 selection.getrXterminal(), Path.PATH_TYPE.DOWNLINK));
-
         initViews(selection.getdLpathView(), cnt, selection, layout, 1);
 
+        // finally communications
         selection.setComms(new Comms(selection.getuLpath(),
                 selection.getdLpath()));
 
@@ -257,13 +231,13 @@ public class Link {
         });
 
         LikeButton like = new LikeButton();
-
         main.addComponent(like);
 
         ShareButton s = new ShareButton();
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
+        
         like.setUIID("Button");
 
         main.show();
@@ -284,6 +258,7 @@ public class Link {
             // all these widgets have to be remembered by respective views 
             Component label = view.getLabel(selection);
             label.getStyle().setFgColor(Integer.valueOf("00FF00", 16));  // green
+
             Component subLabel = view.getSubLabel(selection);
             subLabel.getStyle().setFgColor(Integer.valueOf("0000FF", 16));  // blue
 
@@ -465,7 +440,7 @@ public class Link {
         selection.bandSatelliteSort(selection.getCurrentLocation().
                 getLongitude() * Com.PI / 180.0);
 
-        // note that only semiMajor String has substring functions
+        // note that only Full Java String has substring functions
         lBand.setText((Com.shortText(rFband.lowFrequency / 1E9))
                 + " - " + (Com.shortText(rFband.highFrequency / 1E9))
                 + " GHz");
