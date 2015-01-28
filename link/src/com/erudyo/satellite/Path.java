@@ -19,7 +19,7 @@ import com.codename1.util.MathUtil;
 import java.lang.Math;
 
 /**
- * Copyright (c) 2014 distance. Gopal. All Rights Reserved.
+ * Copyright (c) 2014 distance. R. Gopal. All Rights Reserved.
  *
  * @author rgopal ISO Standard is Long and then LAT, North and East are
  * positive. Fine to use all decimal after degree.
@@ -147,11 +147,11 @@ public class Path extends Entity {
 
             Log.p("Path: path " + this
                     + " in satellite " + s + "'s  Affected list",
-                    Log.WARNING);
+                    Log.DEBUG);
         } else {
             Log.p("Path: path " + this
                     + " already in affected list of satellite " + s,
-                    Log.WARNING);
+                    Log.INFO);
         }
 
         // satellite has been set, band is set so change it for terminal
@@ -174,30 +174,32 @@ public class Path extends Entity {
             if (pathType == PATH_TYPE.DOWNLINK) {
                 this.name = pathType + ":" + satellite.getName() + "-" + t.getName();
             } else {
-                this.name = pathType + "-" + t.getName() + satellite.getName();
+                this.name = pathType + ":" + t.getName() + "-" + satellite.getName();
             }
             t.addAffected(this);
             this.terminal = t;
             Log.p("Path: path " + this
-                    + " added terminal " + t + " in Affected list",
-                    Log.WARNING);
+                    + " added terminal " + t + " in affected list",
+                    Log.DEBUG);
 
         } else {
             Log.p("Path: path " + this
                     + " already in affected list of terminal " + t,
-                    Log.WARNING);
+                    Log.INFO);
 
         }
         // not needed this.terminal = t;
         setAll();
     }
 
+    // nice to get G/T and EIRP for the specific terminal
     private double calcCNo() {
         double result;
 
         // CNo depends on Tx and receive of satellite, here EIRP, loss
         // and gain are all in dBHz
         if (getPathType() == PATH_TYPE.UPLINK) {
+            // TODO: check for band similar to calcPowerReceived?
             result
                     = terminal.getEIRP()
                     - getPathLoss()
@@ -226,7 +228,8 @@ public class Path extends Entity {
                         = terminal.getEIRP()
                         - getPathLoss()
                         - getAttenuation()
-                        + satellite.bandSpecificItems.get(terminal.getBand()).rXantenna.getGain();
+                        + satellite.bandSpecificItems.get(
+                                terminal.getBand()).rXantenna.getGain();
             }
 
         } else {
@@ -377,7 +380,7 @@ public class Path extends Entity {
         this.elevation = calcElevation(this.satellite, this.terminal);
 
         // not using the true/false 
-        visible(satellite, terminal);
+        //visible(satellite, terminal);
 
         // get center frequency of band used by terminal.  Note the _UL
         // and _DL at this time
@@ -400,7 +403,7 @@ public class Path extends Entity {
 
         double p;
         if (Com.sameValue(frequency, 0.0)) {
-            Log.p("Path: frequency is zero in calcPathLoss. Using 200.0", Log.ERROR);
+            Log.p("Path: frequency is zero in calcPathLoss. Using 200.0", Log.WARNING);
             return (200.0);
         } else {
             p = 10.0 * MathUtil.log10(
@@ -418,8 +421,10 @@ public class Path extends Entity {
         if (this.getSatellite() != null && this.getTerminal() != null) {
             setAll();       // calculate everything
         } else {
-            Log.p("Path: satellite or terminal is null "
-                    + satellite + terminal, Log.ERROR);
+            Log.p("Path: satellite "
+                    + satellite + " or terminal " + terminal + " is defined", 
+                    Log.WARNING);
+                    
         }
 
         // avoid using set since that should be used to send updates down
@@ -463,7 +468,8 @@ public class Path extends Entity {
 
     public static double calcBigPhi(Satellite satellite, Terminal terminal) {
         if (satellite == null || terminal == null) {
-            Log.p("Path: satellite or terminal is null " + satellite + " " + terminal,
+            Log.p("Path: satellite  " + satellite + " or terminal " + terminal
+                    + " is not defined",
                     Log.WARNING);
         }
         double Phi;

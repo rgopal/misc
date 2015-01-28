@@ -245,7 +245,7 @@ public class RfBand extends Entity {
                 break;
             default:
                 f = 0;
-                Log.p("RfBand: frequency not in the list for " + band, Log.DEBUG);
+                Log.p("RfBand: frequency not in the list for " + band, Log.WARNING);
         }
         return f;
     }
