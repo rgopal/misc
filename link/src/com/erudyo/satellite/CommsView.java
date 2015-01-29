@@ -210,7 +210,7 @@ public class CommsView extends View {
             selection.getCommsView().setShortName("Cm");
             selection.getCommsView().setName("Comms");  // short
 
-            selection.getCommsView().setSummary("C/No " + Com.textN(
+            selection.getCommsView().setSummary("CNo " + Com.textN(
                     selection.getComms().getCNo(), 5) + "");
 
             selection.getCommsView().setValue("EbNo " + Com.textN(selection.getComms().

@@ -391,7 +391,7 @@ public class Selection {
                 }
                 // update label 
                 selection.getRxView().updateValues(selection);
-                selection.getdLpathView().updateValues(selection);
+                selection.getdLpathView().updateMainForm(selection);
 
             }
         }
@@ -445,7 +445,7 @@ public class Selection {
                 }
 
                 selection.getTxView().updateValues(selection);
-                selection.getuLpathView().updateValues(selection);
+                selection.getuLpathView().updateMainForm(selection);
             }
         }
 
