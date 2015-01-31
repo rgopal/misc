@@ -469,7 +469,7 @@ public class Terminal extends Entity {
     public void setTempSky(double tempSky) {
         this.tempSky = tempSky;
     }
-
+ 
     /**
      * @return the tempSky
      */
