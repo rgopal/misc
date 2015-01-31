@@ -29,8 +29,8 @@ import java.util.Arrays;
  */
 public class Terminal extends Entity {
 
-    private double longitude;     //longitude
-    private double latitude;       //latitude
+    private double longitude;     //longitude in Radian
+    private double latitude;       //latitude in Radian
     private RfBand.Band band;
 
     private Antenna tXantenna;
@@ -70,7 +70,7 @@ public class Terminal extends Entity {
         this.index = index;
     }
 
-    // all terminals stored in a Class level hash
+    // all terminals stored in a Class level hash with name as key
     static Hashtable<String, Terminal> terminalHash
             = new Hashtable<String, Terminal>();
 
@@ -86,7 +86,8 @@ public class Terminal extends Entity {
 
             CSVParser parser = new CSVParser(',');
 
-            // initialize terminals from the file
+            // initialize terminals from the file (ignoring bandTerminal)
+            // TODO: check if bandTerminal is needed at all
             Terminal.getFromFile(
                     parser.parse(new InputStreamReader(is)));
             // can't call since satellite null selection.initVisibleTerminal();
@@ -95,14 +96,15 @@ public class Terminal extends Entity {
         }
     }
 
-    // RxAntenna and TxAntenna bands are set from here
+    // RxAntenna and TxAntenna bands and frequency are set from here
+    // TODO: check if update needs to be called?
     public void setBand(RfBand.Band band) {
         this.band = band;
         rXantenna.setBand(RfBand.findDl(band));
         rXantenna.setFrequency(RfBand.centerFrequency(
                 RfBand.findDl(band))
         );
-        
+
         tXantenna.setBand(RfBand.findUl(band));
         tXantenna.setFrequency(RfBand.centerFrequency(
                 RfBand.findUl(band))
@@ -110,12 +112,11 @@ public class Terminal extends Entity {
 
     }
 
-    // read the terminals.txt file and return all data as a Hashtable, one ArrayList
-    // of terminals for each band.
+    // read the terminals.txt file and return all data as a Hashtable
     public static Hashtable<RfBand.Band, ArrayList<Terminal>> getFromFile(String[][] terminals) {
 
         // terminals contains values from the file.  Allow selection of an
-        // vector of Satellite objects with band as the key in a hashtable
+        // vector of Terminal objects with band as the key in a hashtable
         Hashtable<RfBand.Band, ArrayList<Terminal>> bandTerminal
                 = new Hashtable<RfBand.Band, ArrayList<Terminal>>();
 
@@ -123,13 +124,15 @@ public class Terminal extends Entity {
         for (int i = 1; i < terminals.length; i++) {
             // get the band first
 
-            Log.p("Terminal: Reading from txt file terminal #" + String.valueOf(i) + " "
+            Log.p("Terminal: Reading from terminals.txt file terminal #"
+                    + String.valueOf(i) + " "
                     + Arrays.toString(terminals[i]), Log.INFO);
             RfBand.Band band = RfBand.rFbandHash.get(terminals[i][7]).getBand();
 
             // need to key on a correct band
             if (band == null) {
-                Log.p("Terminal: Bad band " + terminals[i].toString(), Log.WARNING);
+                Log.p("Terminal:getFromFile Bad band "
+                        + terminals[i].toString(), Log.WARNING);
 
             } else {
                 // extract the band of the terminal TODO remove band processing
@@ -142,7 +145,7 @@ public class Terminal extends Entity {
                 terminalFields(terminals[i], bandTerminal.get(band));
 
                 // check the band from file and create entry in hash table
-                Log.p("Terminal: Processed terminal "
+                Log.p("Terminal: getFromFile processed terminal "
                         + Arrays.toString(terminals[i]), Log.INFO);
             }
         }
@@ -165,13 +168,13 @@ public class Terminal extends Entity {
         // All structures bandBeams etc. use just KA or C and not KA_DL
         // Terminal band is just C and not C_DL or C_UL
        /* terminal.gettXantenna().setBand((terminal.getBand()));
-        // NOT NEEDED since setBand() of terminal does this
-        terminal.gettXantenna().setFrequency(RfBand.centerFrequency(
-                RfBand.findUl(terminal.getBand())));
-        terminal.getrXantenna().setBand((terminal.getBand()));
-        terminal.getrXantenna().setFrequency(RfBand.centerFrequency(
-                RfBand.findDl(terminal.getBand())));
-        */
+         // NOT NEEDED since setBand() of terminal does this
+         terminal.gettXantenna().setFrequency(RfBand.centerFrequency(
+         RfBand.findUl(terminal.getBand())));
+         terminal.getrXantenna().setBand((terminal.getBand()));
+         terminal.getrXantenna().setFrequency(RfBand.centerFrequency(
+         RfBand.findDl(terminal.getBand())));
+         */
         // these override values in constructor
         terminal.setLongitude(Math.toRadians(Double.parseDouble(fields[1])));
         terminal.setLatitude(Math.toRadians(Double.parseDouble(fields[2])));
@@ -210,15 +213,15 @@ public class Terminal extends Entity {
 
         rXantenna = new Antenna();
         rXantenna.setName("rX" + this.name);
-        rXantenna.addAffected(this);
         rXantenna.setDiameter(1.0);
+        rXantenna.addAffected(this);
 
         // 
         tXamplifier = new Amplifier();
         tXamplifier.setName("tXamp" + this.name);
         tXamplifier.setPower(20.0);
         tXamplifier.addAffected(this);
-        
+
         rXamplifier = new Amplifier();
         rXamplifier.setName("rXamp" + this.name);
         rXamplifier.setPower(10.0);
@@ -235,7 +238,6 @@ public class Terminal extends Entity {
 
         if (getName() == null) {
             Random randomGenerator = new Random();
-
             setName("T" + String.valueOf(randomGenerator.nextInt(10000)));
         }
 
@@ -321,9 +323,10 @@ public class Terminal extends Entity {
         return tXamplifier;
     }
 
-     public Amplifier getrXamplifier() {
+    public Amplifier getrXamplifier() {
         return rXamplifier;
     }
+
     /**
      * @return the EIRP
      */
@@ -345,8 +348,9 @@ public class Terminal extends Entity {
     }
 
     private double calcEIRP() {
-        double eirp = (10 * MathUtil.log10(
-                this.gettXamplifier().getPower())) // was in W
+        double eirp
+                = (10 * MathUtil.log10(
+                        this.gettXamplifier().getPower())) // was in W
                 + this.gettXantenna().getGain() // in dB
                 - this.gettXantenna().getDepointingLoss()
                 - this.gettXamplifier().getLFTX(); // in dB
@@ -387,19 +391,16 @@ public class Terminal extends Entity {
         return noiseTemp;
     }
 
-    // this function called by children and sibling "e" of this when they change
+    // Called by terminal's children and siblings "e" of this when they change
     public void update(Entity e) {
 
         // update everything that could be affected
         // EIRP depends on antenna and amplifier, but both need to exist 
-        if (this.gettXamplifier() != null && this.gettXantenna() != null
-                && this.getrXantenna() != null) {
+        if (this.gettXamplifier() != null && this.gettXantenna() != null) {
             this.EIRP = calcEIRP();
-
         }
 
-         if (this.getrXamplifier() != null && this.getrXantenna() != null
-                && this.getrXantenna() != null) {           
+        if (this.getrXamplifier() != null && this.getrXantenna() != null) {
             this.gainTemp = calcGainTemp();
         }
         updateAffected();
@@ -474,7 +475,7 @@ public class Terminal extends Entity {
      */
     public double getTempSky(RfBand.Band band) {
         double temp = tempSky;
-     
+
         return temp;
     }
 }
