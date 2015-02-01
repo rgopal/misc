@@ -52,6 +52,13 @@ public class TxView extends View {
         // add only two items
         outer.add(addNewInner("Transmit Terminal",
                 selection.gettXterminal().getName(), ""));
+        
+        outer.add(addNewInner("Uplink Band", 
+                selection.gettXterminal().gettXantenna().getBand().toString(),""));
+        
+          outer.add(addNewInner("Center Frequency", Com.shortText(
+                selection.gettXterminal().
+                gettXantenna().getFrequency() / 1E9), "GHz"));
 
         outer.add(addNewInner("Longitude",
                 Com.toDMS(selection.gettXterminal().getLongitude()), "degree"));
@@ -92,7 +99,7 @@ public class TxView extends View {
         return outer;
     }
 
-    private ArrayList<String> addNewInner(String name, String value, String unit) {
+    public static ArrayList<String> addNewInner(String name, String value, String unit) {
         ArrayList<String> inner = new ArrayList<String>();
         inner.add(name);
         inner.add(value);

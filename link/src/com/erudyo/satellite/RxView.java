@@ -27,15 +27,76 @@ import com.codename1.ui.list.ListModel;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.util.MathUtil;
+import static com.erudyo.satellite.TxView.addNewInner;
+import java.util.ArrayList;
 
 public class RxView extends View {
 
     private Terminal terminal;
     public ComboBox spin;
-   
 
     public RxView() {
 
+    }
+
+    // create the text part (list of all attribute values) fresh when called.
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
+
+        // add only two items
+        outer.add(TxView.addNewInner("Receive Terminal",
+                selection.gettXterminal().getName(), ""));
+
+        
+        outer.add(addNewInner("DownLink Band", 
+                selection.getrXterminal().getrXantenna().getBand().toString(),""));
+        
+        outer.add(TxView.addNewInner("Center Frequency", Com.shortText(
+                selection.getrXterminal().
+                getrXantenna().getFrequency() / 1E9), "GHz"));
+        
+        
+        outer.add(TxView.addNewInner("Longitude",
+                Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
+
+        outer.add(TxView.addNewInner("Latitude",
+                Com.toDMS(selection.getrXterminal().getLatitude()), "degree"));
+
+        outer.add(TxView.addNewInner("LNA Noise Figure", Com.shortText(
+                selection.getrXterminal().getrXamplifier().getNoiseFigure()), "dB"));
+
+        outer.add(TxView.addNewInner("Antenna Efficiency",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getEfficiency()), " "));
+
+        outer.add(TxView.addNewInner("Antenna Diameter",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getEfficiency()), "m"));
+
+        outer.add(TxView.addNewInner("Antenna Gain",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getGain()), "dBi"));
+
+        outer.add(TxView.addNewInner("Antenna 3dB Angle",
+                Com.toDMS(selection.getrXterminal().
+                        getrXantenna().getThreeDBangle()), "degree"));
+
+        outer.add(TxView.addNewInner("Antenna Point Loss",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getDepointingLoss()), "dB"));
+
+        outer.add(TxView.addNewInner("Implementation Loss",
+                Com.shortText(selection.getrXterminal().getrXamplifier()
+                        .getLFRX()), "dB"));
+
+        outer.add(TxView.addNewInner("System Noise Temp",
+                Com.textN(
+                        selection.getrXterminal().calcSystemNoiseTemp(), 6), "K"));
+
+        outer.add(TxView.addNewInner("Receive Gain/Temp",
+                Com.shortText(selection.getrXterminal().getGainTemp()), "dB/K"));
+
+        return outer;
     }
 
     public Component getWidget(final Selection selection) {
@@ -84,15 +145,15 @@ public class RxView extends View {
                 // change the the selected  rX satellite
                 selection.setrXterminal(Terminal.terminalHash.get(
                         (String) combo.getSelectedItem()));
-                
+
                 selection.getrXterminal().setBand(
                         selection.getBand());
-                
+
                 selection.getrXterminal().getrXantenna().
                         setFrequency(RfBand.centerFrequency(
                                         RfBand.findDl(selection.getBand())));
 
-                updateValues(selection);
+                updateMainForm(selection);
                 Log.p("RxView: Terminal selection "
                         + combo.getSelectedItem(), Log.DEBUG);
 
@@ -100,34 +161,33 @@ public class RxView extends View {
             }
         });
 
-        updateValues(selection);
+        updateMainForm(selection);
         // combo box created so return it
         return combo;
     }
 
-     // update from the current selection of the terminal
-    public void updateValues(Selection selection) {
+    // update from the current selection of the terminal
+    public void updateMainForm(Selection selection) {
 
         // may not exist at initialization time
         if (selection.getrXterminal() != null) {
             selection.getRxView().setShortName("Rx");
             selection.getRxView().setName("Rx Terminal");
 
-            selection.getRxView().setSummary(Com.textN(
+            selection.getRxView().setSummary("GT " + Com.textN(
                     selection.getrXterminal().getGainTemp(), 5) + "dB/K");
 
-            selection.getRxView().setValue(Com.textN(selection.getrXterminal().
+            selection.getRxView().setValue("Dia " + Com.textN(selection.getrXterminal().
                     getrXantenna().getDiameter(), 5) + "m");
 
-            selection.getRxView().setSubValue(Com.textN(
+            selection.getRxView().setSubValue("NF" + Com.textN(
                     selection.getrXterminal().getrXamplifier().getNoiseFigure(), 5) + "dB");
-        // update other view summaries in Link TODO
+            // update other view summaries in Link TODO
         }
-            selection.getdLpathView().updateMainForm(selection);
-            selection.getCommsView().updateValues(selection);
+        selection.getdLpathView().updateMainForm(selection);
+        selection.getCommsView().updateValues(selection);
 
     }
-
 
     public String getDisplayName() {
         return name;
@@ -140,8 +200,6 @@ public class RxView extends View {
 
     public Form createView(final Selection selection) {
         Form cnt = new Form("Rx " + selection.getrXterminal().getName());
-
-     
 
         // there are six items in Views.  Hardcoded table. Name, value, unit
         TableLayout layout = new TableLayout(15, 3);
@@ -158,7 +216,7 @@ public class RxView extends View {
         Label lFrequency = new Label(Com.shortText(rxTerm.
                 getrXantenna().getFrequency() / 1E9));
         Label L03 = new Label("GHz " + rxTerm.getrXantenna().getBand());
-        cnt.addComponent(constraint,L01);
+        cnt.addComponent(constraint, L01);
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
@@ -179,7 +237,7 @@ public class RxView extends View {
         cnt.addComponent(L73);
 
         Label lNoiseFigureLabel = new Label("LNA Noise Figure");
-   Label lNoiseFigureUnit = new Label("dB");
+        Label lNoiseFigureUnit = new Label("dB");
         final Slider sldrNoiseFigure = new Slider();
         Com.formatSlider(sldrNoiseFigure);
         sldrNoiseFigure.setMinValue((int) MathUtil.round(Amplifier.NOISE_FIG_LO * 10)); // x10
@@ -193,12 +251,12 @@ public class RxView extends View {
         final Label lNoiseFigure = new Label(Com.shortText(rxTerm.getrXamplifier().
                 getNoiseFigure()));
         cnt.addComponent(lNoiseFigureLabel);
-      cnt.addComponent(lNoiseFigure);
+        cnt.addComponent(lNoiseFigure);
         cnt.addComponent(lNoiseFigureUnit);
-        
+
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-          cnt.addComponent(constraint, sldrNoiseFigure);
+        cnt.addComponent(constraint, sldrNoiseFigure);
         // does not change
         Label lAntennaEfficiencyLabel = new Label("Antenna Efficiency");
         Label lEfficiency = new Label(Com.shortText(rxTerm.getrXantenna().getEfficiency()));
@@ -208,7 +266,7 @@ public class RxView extends View {
         cnt.addComponent(L2A3);
 
         Label lDiameterLabel = new Label("    Diameter");
-           Label lDiameterUnit = new Label("m");
+        Label lDiameterUnit = new Label("m");
         final Slider sldrDiameter = new Slider();
         Com.formatSlider(sldrDiameter);
 
@@ -222,13 +280,12 @@ public class RxView extends View {
         sldrDiameter.setRenderValueOnTop(true);
         final Label lDiameterValue = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()));
         cnt.addComponent(lDiameterLabel);
-       cnt.addComponent(lDiameterValue);
+        cnt.addComponent(lDiameterValue);
         cnt.addComponent(lDiameterUnit);
 
-             constraint = layout.createConstraint();
+        constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
-         cnt.addComponent(constraint,sldrDiameter);
-         
+        cnt.addComponent(constraint, sldrDiameter);
 
         Label L31 = new Label("Antenna Gain");
         final Label lGain = new Label(Com.shortText(rxTerm.getrXantenna().getGain()));
@@ -265,7 +322,7 @@ public class RxView extends View {
         // does not change so not in combo/sliders
         Label lsysTemp = new Label("System Noise Temperature");
         final Label valuesysTemp = new Label(Com.textN(
-                rxTerm.calcSystemNoiseTemp(),6));
+                rxTerm.calcSystemNoiseTemp(), 6));
         Label unitsysTemp = new Label("K");
         cnt.addComponent(lsysTemp);
         cnt.addComponent(valuesysTemp);
@@ -293,10 +350,10 @@ public class RxView extends View {
                     lNoiseFigure.setText(Com.shortText(rxTerm.getrXamplifier().
                             getNoiseFigure()) + "dB");
                     valuesysTemp.setText(Com.textN(
-                            rxTerm.calcSystemNoiseTemp(),6));
+                            rxTerm.calcSystemNoiseTemp(), 6));
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // does not change depointing
-                    updateValues(selection);
+                    updateMainForm(selection);
 
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("RxView: bad number for Noise Figure "
@@ -314,7 +371,7 @@ public class RxView extends View {
                     selection.getrXterminal().getrXantenna().
                             setDiameter(Double.parseDouble(sldrDiameter.getText()) / 10.0);
                     // update EIRP and three DB
-                    lDiameterValue.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()) );
+                    lDiameterValue.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()));
                     lThreeDBangle.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
                     lGain.setText(Com.shortText(rxTerm.getrXantenna().getGain()));
                     valuePointLoss.setText(Com.shortText(
@@ -322,8 +379,8 @@ public class RxView extends View {
                     valueGainTemp.setText(Com.shortText(rxTerm.getGainTemp()));
                     // should not change
                     valuesysTemp.setText(Com.textN(
-                            rxTerm.calcSystemNoiseTemp(),6));
-                    updateValues(selection);
+                            rxTerm.calcSystemNoiseTemp(), 6));
+                    updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("TxView: bad number for diameter " + sldrDiameter.getText(), Log.DEBUG);
 

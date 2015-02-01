@@ -390,7 +390,7 @@ public class Selection {
                     selection.getrXterminal().setBand(selection.getBand());
                 }
                 // update label 
-                selection.getRxView().updateValues(selection);
+                selection.getRxView().updateMainForm(selection);
                 selection.getdLpathView().updateMainForm(selection);
 
             }
