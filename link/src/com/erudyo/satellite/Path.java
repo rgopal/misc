@@ -460,7 +460,8 @@ public class Path extends Entity {
 
         if (relativeLong > Com.PI) {
             Log.p("relativeLong: realative long is more than 180 degree "
-                    + relativeLong, Log.WARNING);
+                    + relativeLong + " satellite " + satellite
+                    + " terminal " + terminal, Log.WARNING);
         }
 
         return Math.abs(relativeLong);
