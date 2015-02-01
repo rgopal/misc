@@ -352,9 +352,9 @@ public class Link {
         ArrayList<ArrayList<String>> table
                 = view.getText(selection);
         TableLayout layout = new TableLayout(table.size() + 2, 3);
-        Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        text.addComponent(cnt);
-        cnt.setLayout(layout);
+        // don't use bad format Container cnt = new Container() ; // new BoxLayout(BoxLayout.Y_AXIS));
+        // text.addComponent(cnt);
+        text.setLayout(layout);
 
         TableLayout.Constraint constraint = layout.createConstraint();
         constraint.setWidthPercentage(45);
@@ -363,14 +363,14 @@ public class Link {
         Label lSecond = new Label("Value   ");
         Label lThird = new Label("Unit ");
 
-        cnt.addComponent(constraint, lFirst);
+        text.addComponent(constraint, lFirst);
         constraint = layout.createConstraint();
         constraint.setWidthPercentage(30);
         
-        cnt.addComponent(constraint, lSecond);
+        text.addComponent(constraint, lSecond);
         constraint = layout.createConstraint();
         constraint.setWidthPercentage(25);
-        cnt.addComponent(constraint, lThird);
+        text.addComponent(constraint, lThird);
 
         for (ArrayList<String> line : table) {
             // check the number of items in this line (max 3)
@@ -385,9 +385,9 @@ public class Link {
                   
                     // Add constraint for the last item
                     if (index++ == line.size() - 1) {
-                        cnt.addComponent(constraint, lItem);
+                        text.addComponent(constraint, lItem);
                     } else {
-                        cnt.addComponent(lItem);
+                        text.addComponent(lItem);
                     }
                 } else {
                     Log.p("Link:displayInfo null item in line  " + line, Log.WARNING);
