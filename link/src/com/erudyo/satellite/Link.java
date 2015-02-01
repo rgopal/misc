@@ -66,7 +66,7 @@ public class Link {
     public void init(Object context) {
 
         // create new instance to keep track of all other objects for UI
-        Log.setLevel(Log.DEBUG);
+        Log.setLevel(Log.WARNING);
 
         // this creates View objects
         selection = new Selection();

@@ -483,7 +483,8 @@ public class Path extends Entity {
                 * Math.sin(terminal.getLatitude())
         );
         if (Phi < 0 || Phi > Com.PI / 2.0) {
-            Log.p("Path: Phi value out of range " + Com.toDMS(Phi),
+            Log.p("Path: Phi value out of range " + Com.toDMS(Phi) + 
+                    " satellite " + satellite + " terminal " + terminal, 
                     Log.WARNING);
         }
         return Phi;

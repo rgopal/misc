@@ -824,7 +824,7 @@ public class Satellite extends Entity {
 
         } catch (Exception e) {
             Log.p("Satellites: double error in Longitude " + fields[0] + " value"
-                    + fields, Log.WARNING);
+                    + fields[8].toString(), Log.WARNING);
             // depend on default Longitude
 
         }

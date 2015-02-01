@@ -5,9 +5,7 @@
  * TODO:    Testing
  */
 package com.erudyo.satellite;
-
 import com.codename1.io.Log;
-
 import com.codename1.util.MathUtil;
 
 /**
@@ -106,7 +104,6 @@ public class Antenna extends Entity {
             Log.p("Antenna: setDiameter: out of range diameter "
                     + String.valueOf(diameter), Log.WARNING);
         }
-
     }
 
     public void setEfficiency(double e) {
