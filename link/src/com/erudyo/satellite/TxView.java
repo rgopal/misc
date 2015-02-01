@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * OVERVIEW:
+ * Models a transmitting terminal using its embedded amplifier and antenna.
  */
 package com.erudyo.satellite;
 
@@ -46,35 +45,33 @@ public class TxView extends View {
         // don't call since it is being built
     }
 
-    // create the text part fresh when called
+    // create the text part (list of all attribute values) fresh when called.
     public ArrayList<ArrayList<String>> getText(Selection selection) {
         ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
-        
-        ArrayList<String> inner = new ArrayList<String>();
-        // first row
-        inner.add("Transmit Terminal");
-        inner.add(selection.gettXterminal().getName());
-        inner.add(" ");
-        outer.add(inner);
 
-        // get a new row
-        inner = new ArrayList<String>();
-        inner.add("Longitude");
-        inner.add(Com.toDMS(selection.gettXterminal().getLongitude()));
-        inner.add("degree");
-        outer.add(inner);
+        outer.add(addNewInner("Transmit Terminal", 
+                selection.gettXterminal().getName(), " "));
+    
+        outer.add(addNewInner("Longitude",
+                Com.toDMS(selection.gettXterminal().getLongitude()), "degree"));
 
-        // get a new row
-        inner = new ArrayList<String>();
-        inner.add("Latitude");
-        inner.add(Com.toDMS(selection.gettXterminal().getLatitude()));
-        inner.add("degree");
-        
-        outer.add(inner);
+        outer.add(addNewInner("Latitude", 
+                Com.toDMS(selection.gettXterminal().getLatitude()),"degree"));     
+  
+        outer.add(addNewInner("Amplifer Power", Com.shortText(
+                selection.gettXterminal().getrXamplifier().getPower()), "W"));
         
         return outer;
     }
 
+    private ArrayList<String> addNewInner(String name, String value, String unit)
+    {
+        ArrayList<String> inner = new ArrayList<String>();
+        inner.add(name);
+        inner.add(value);
+        inner.add(unit);
+        return inner;
+    }
     // update from the current selection of the terminal
     public void updateValues(Selection selection) {
 
