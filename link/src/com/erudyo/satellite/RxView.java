@@ -47,15 +47,13 @@ public class RxView extends View {
         outer.add(TxView.addNewInner("Receive Terminal",
                 selection.gettXterminal().getName(), ""));
 
-        
-        outer.add(addNewInner("DownLink Band", 
-                selection.getrXterminal().getrXantenna().getBand().toString(),""));
-        
+        outer.add(addNewInner("DownLink Band",
+                selection.getrXterminal().getrXantenna().getBand().toString(), ""));
+
         outer.add(TxView.addNewInner("Center Frequency", Com.shortText(
                 selection.getrXterminal().
                 getrXantenna().getFrequency() / 1E9), "GHz"));
-        
-        
+
         outer.add(TxView.addNewInner("Longitude",
                 Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
 
@@ -275,10 +273,12 @@ public class RxView extends View {
         sldrDiameter.setEditable(true);
         //L22.setPreferredW(8);
         sldrDiameter.setIncrements(5); //
-        sldrDiameter.setProgress((int) MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
+        sldrDiameter.setProgress((int) 
+                MathUtil.round(rxTerm.getrXantenna().getDiameter() * 10));
 
         sldrDiameter.setRenderValueOnTop(true);
-        final Label lDiameterValue = new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()));
+        final Label lDiameterValue = 
+                new Label(Com.shortText(rxTerm.getrXantenna().getDiameter()));
         cnt.addComponent(lDiameterLabel);
         cnt.addComponent(lDiameterValue);
         cnt.addComponent(lDiameterUnit);
@@ -295,7 +295,8 @@ public class RxView extends View {
         cnt.addComponent(L33);
 
         Label L41 = new Label("    3dB Angle");
-        final Label lThreeDBangle = new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
+        final Label lThreeDBangle = 
+                new Label(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
         Label L43 = new Label("degree");
         cnt.addComponent(L41);
         cnt.addComponent(lThreeDBangle);
@@ -342,10 +343,12 @@ public class RxView extends View {
         // all actions at the end to update other fields
         sldrNoiseFigure.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("RxView: selected noise figure " + sldrNoiseFigure.getText(), Log.DEBUG);
+                Log.p("RxView: selected noise figure " + 
+                        sldrNoiseFigure.getText(), Log.DEBUG);
                 try {
                     selection.getrXterminal().getrXamplifier().
-                            setNoiseFigure(Double.parseDouble(sldrNoiseFigure.getText()) / 10.0);
+                            setNoiseFigure(Double.parseDouble(
+                                    sldrNoiseFigure.getText()) / 10.0);
                     // update EIRP
                     lNoiseFigure.setText(Com.shortText(rxTerm.getrXamplifier().
                             getNoiseFigure()) + "dB");
@@ -364,12 +367,14 @@ public class RxView extends View {
 
         sldrDiameter.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
-                Log.p("RxView: selected diameter " + sldrDiameter.getText(), Log.DEBUG);
+                Log.p("RxView: selected diameter " + 
+                        sldrDiameter.getText(), Log.DEBUG);
                 try {
 
                     // convert from cm to m first
                     selection.getrXterminal().getrXantenna().
-                            setDiameter(Double.parseDouble(sldrDiameter.getText()) / 10.0);
+                            setDiameter(
+                                    Double.parseDouble(sldrDiameter.getText()) / 10.0);
                     // update EIRP and three DB
                     lDiameterValue.setText(Com.shortText(rxTerm.getrXantenna().getDiameter()));
                     lThreeDBangle.setText(Com.toDMS(rxTerm.getrXantenna().getThreeDBangle()));
@@ -382,7 +387,8 @@ public class RxView extends View {
                             rxTerm.calcSystemNoiseTemp(), 6));
                     updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("TxView: bad number for diameter " + sldrDiameter.getText(), Log.DEBUG);
+                    Log.p("TxView: bad number for diameter " + 
+                            sldrDiameter.getText(), Log.DEBUG);
 
                 }
 
