@@ -145,7 +145,7 @@ public class SatelliteView extends View {
         selection.getSatelliteView().setSubValue(Com.textN(display, 5) + "dB/K");
 
         // update other view summaries in Link form
-        selection.getTxView().updateValues(selection);
+        selection.getTxView().updateMainForm(selection);
         selection.getuLpathView().updateMainForm(selection);
         selection.getRxView().updateValues(selection);
         selection.getCommsView().updateValues(selection);

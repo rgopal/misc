@@ -444,7 +444,7 @@ public class Selection {
                     selection.gettXterminal().setBand(selection.getBand());
                 }
 
-                selection.getTxView().updateValues(selection);
+                selection.getTxView().updateMainForm(selection);
                 selection.getuLpathView().updateMainForm(selection);
             }
         }

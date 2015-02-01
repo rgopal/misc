@@ -173,7 +173,6 @@ public class Link {
 
     }
 
-
     public void start() {
         if (current != null) {
             current.show();
@@ -237,7 +236,7 @@ public class Link {
         s.setText("Share");
         s.setTextToShare("Try the satellite link analysis app");
         main.addComponent(s);
-        
+
         like.setUIID("Button");
 
         main.show();
@@ -325,72 +324,7 @@ public class Link {
 
                     Command cInfo = new Command("Info") {
                         public void actionPerformed(ActionEvent ev) {
-                            // create a new form with its own back.  In future
-                            // add home (back to home)
-                            final Form text = new Form(view.getName());
-
-                            ArrayList<ArrayList<String>> table
-                                    = view.getText(selection);
-
-                            //TextArea taTable = new TextArea();
-                            TableLayout layout = new TableLayout(table.size() + 2, 3);
-
-                            Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-
-                            text.addComponent(cnt);
-                            cnt.setLayout(layout);
-
-                            TableLayout.Constraint constraint = layout.createConstraint();
-
-                            constraint.setWidthPercentage(40);
-
-                            Label lFirst = new Label("Item      ");
-                            Label lSecond = new Label("Value   ");
-                            Label lThird = new Label("Unit ");
-
-                            cnt.addComponent(constraint, lFirst);
-                            constraint = layout.createConstraint();
-                            constraint.setWidthPercentage(35);
-                            cnt.addComponent(constraint, lSecond);
-                            constraint = layout.createConstraint();
-                            constraint.setWidthPercentage(25);
-                            cnt.addComponent(constraint, lThird);
-
-                            for (ArrayList<String> line : table) {
-                                // check the number of items in this line (max 3)
-                                constraint = layout.createConstraint();
-                                constraint.setHorizontalSpan(4 - line.size());
-                                int index = 0;
-                                // either one item or exactly three items
-                                for (String item : line) {
-                                    if (item != null) {
-                                        Label lItem = new Label(item);
-                                        if (index++ == 0) {
-                                            cnt.addComponent(constraint, lItem);
-                                        } else {
-                                            cnt.addComponent(lItem);
-                                        }
-
-                                    } else {
-                                        Log.p("Link: null item in all " + line, Log.WARNING);
-                                    }
-                                }
-
-                            }
-
-                            //taTable.setText(string);
-                            //taTable.setEditable(false);
-                            //taTable.setFocusable(false);
-                            Command bc = new Command("Back") {
-                                public void actionPerformed(ActionEvent ev) {
-                                    form.showBack();
-                                }
-                            };
-                            text.addCommand(bc);
-                            text.setBackCommand(bc);
-                            text.show();
-
-                            Log.p("Link: menu command " + cHome.getId(), Log.DEBUG);
+                            displayInfo(form, view);
                         }
                     };
                     cInfo.putClientProperty(SideMenuBar.COMMAND_PLACEMENT_KEY,
@@ -407,9 +341,72 @@ public class Link {
             });
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void displayInfo(final Form form, final View view) {
+        // create a new form with its own back.  In future
+        // add home (back to home)
+        final Form text = new Form(view.getName());
+
+        ArrayList<ArrayList<String>> table
+                = view.getText(selection);
+        TableLayout layout = new TableLayout(table.size() + 2, 3);
+        Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        text.addComponent(cnt);
+        cnt.setLayout(layout);
+
+        TableLayout.Constraint constraint = layout.createConstraint();
+        constraint.setWidthPercentage(45);
+
+        Label lFirst = new Label("Item      ");
+        Label lSecond = new Label("Value   ");
+        Label lThird = new Label("Unit ");
+
+        cnt.addComponent(constraint, lFirst);
+        constraint = layout.createConstraint();
+        constraint.setWidthPercentage(30);
+        
+        cnt.addComponent(constraint, lSecond);
+        constraint = layout.createConstraint();
+        constraint.setWidthPercentage(25);
+        cnt.addComponent(constraint, lThird);
+
+        for (ArrayList<String> line : table) {
+            // check the number of items in this line (max 3)
+            
+            constraint = layout.createConstraint();
+            constraint.setHorizontalSpan(4 - line.size());
+            int index = 0;
+            // either one item or exactly three items
+            for (String item : line) {
+                if (item != null) {
+                    Label lItem = new Label(item);
+                  
+                    // Add constraint for the last item
+                    if (index++ == line.size() - 1) {
+                        cnt.addComponent(constraint, lItem);
+                    } else {
+                        cnt.addComponent(lItem);
+                    }
+                } else {
+                    Log.p("Link:displayInfo null item in line  " + line, Log.WARNING);
+                }
+            }
 
         }
 
+        //taTable.setText(string);
+        //taTable.setEditable(false);
+        //taTable.setFocusable(false);
+        Command bc = new Command("Back") {
+            public void actionPerformed(ActionEvent ev) {
+                form.showBack();
+            }
+        };
+        text.addCommand(bc);
+        text.setBackCommand(bc);
+        text.show();
     }
 
     public void initBands(Form main, final Selection selection) {
