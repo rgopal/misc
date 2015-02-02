@@ -303,10 +303,10 @@ public class Com {
             for (String item : line) {
                 h = h + "<td>";
                 if (item != null) {
-                    h = h + item + "\n";
+                    h = h + item + "";
                 }
 
-                h = h + "</td>\n";
+                h = h + "</td> ";
             }
             h = h + "</tr>\n";
         }
@@ -318,7 +318,7 @@ public class Com {
 
         String h = new String();
         h = "<html> <head>";
-        h = h + name + "\n";
+        h = h + name + " ";
         h = h + "</head>" + "\n";
         h = h + "<body>\n";
 

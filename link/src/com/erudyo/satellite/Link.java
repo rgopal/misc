@@ -234,7 +234,7 @@ public class Link {
 
         ShareButton s = new ShareButton();
         s.setText("Share");
-        s.setTextToShare("Try the satellite link analysis app");
+        s.setTextToShare(Com.displayInfoHTML("EmailHTML", selection));
         main.addComponent(s);
 
         like.setUIID("Button");
