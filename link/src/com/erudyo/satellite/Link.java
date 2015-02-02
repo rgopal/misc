@@ -349,6 +349,8 @@ public class Link {
         // add home (back to home)
         final Form text = new Form(view.getName());
 
+        
+        
         ArrayList<ArrayList<String>> table
                 = view.getText(selection);
         TableLayout layout = new TableLayout(table.size() + 2, 3);
@@ -416,14 +418,19 @@ public class Link {
         cntBand.setLayout(new BoxLayout(BoxLayout.X_AXIS));
         main.addComponent(cntBand);
 
+        final Label lBandName = new Label();
+        lBandName.setText("Band");
+        cntBand.addComponent(lBandName);
+        
         final Label lBand = new Label();
         selection.setlBand(lBand);
         selection.setCbBand(new ComboBox());
 
         final ComboBox cbBand = selection.getCbBand();
 
-        cntBand.addComponent(cbBand);
         cntBand.addComponent(lBand);
+        cntBand.addComponent(cbBand);
+        
 
         ListModel model = new DefaultListModel(selection.getRfBands());
         cbBand.setModel(model);
