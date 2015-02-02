@@ -81,9 +81,10 @@ public class Com {
         double b;
 
         // else ln of 0 has to be computed (value is ln(1)
-        if (n == k || k == 0)
+        if (n == k || k == 0) {
             return 0;
-        
+        }
+
         // n!/k!*(n-k)! = n*ln(n) -n - k*ln(k) - (n-k)*ln(n-k) +k +n -k
         double logVal = stirlingLog(n) - stirlingLog(k)
                 - stirlingLog(n - k);
@@ -94,10 +95,9 @@ public class Com {
     }
 
     // sterlings approximation ln(n!) = n*ln(n) - n + 1/2.ln(2*n*pi)
-
     public static double stirlingLog(double nFac) {
-        return nFac * MathUtil.log(nFac) - nFac + 
-                MathUtil.log(2 * Com.PI * nFac) / 2.0;
+        return nFac * MathUtil.log(nFac) - nFac
+                + MathUtil.log(2 * Com.PI * nFac) / 2.0;
     }
 
     static void formatSlider(Slider sldr) {
@@ -285,4 +285,51 @@ public class Com {
         }
     }
 
+    // take a vector of vectors (1 to 3 items) and convert them into
+    // HTML table
+    public static String displayTableHTML(ArrayList<ArrayList<String>> table,
+            String name) {
+
+        String h = new String();
+        h = "<table> <tbody> <thead> ";
+        h = h + name + "\n";
+        h = h + "</thead>" + "\n";
+
+        for (ArrayList<String> line : table) {
+            // check the number of items in this line (max 3)     
+
+            h = h + "<tr>\n";
+         
+            for (String item : line) {
+                h = h + "<td>";
+                if (item != null) {
+                    h = h + item + "\n";
+                }
+
+                h = h + "</td>\n";
+            }
+            h = h + "</tr>\n";
+        }
+        h = h + "</tbody> </table>\n";
+        return h;
+    }
+    
+    public static String displayInfoHTML(String name, Selection selection) {
+
+        String h = new String();
+        h = "<html> <head>";
+        h = h + name + "\n";
+        h = h + "</head>" + "\n";
+        h = h + "<body>\n";
+
+        h = h + displayTableHTML(selection.
+                getRxView().getText(selection), "Rx Terminal");
+        h = h + displayTableHTML(selection.
+                getTxView().getText(selection), "Tx Terminal");
+        
+        // dump all tables
+        
+        h = h + "</body> </html>\n";
+        return h;
+    }
 }
