@@ -28,6 +28,6 @@ import java.util.Hashtable;
         public Antenna tXantenna;
         public Amplifier rXamplifier;
         public Amplifier tXamplifier;
-        // access a lineString by its name in a hashtable (created from a file)
+        
         Hashtable<String, Satellite.Beam> beams;  // collection of beams.
     }

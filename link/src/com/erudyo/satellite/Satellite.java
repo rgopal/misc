@@ -51,7 +51,8 @@ public class Satellite extends Entity {
     public final static double NEGLIGIBLE = -200.0;
 
     // names of files containing KML info for some satellites
-    private static Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>> satBandBeamFile;
+    private static Hashtable<String, Hashtable<RfBand.Band, 
+            ArrayList<String>>> satBandBeamFile;
 
     public Hashtable<RfBand.Band, BandSpecificItems> bandSpecificItems;
 
@@ -80,7 +81,7 @@ public class Satellite extends Entity {
 
     private int index;
 
-    public enum ContourType {
+    public enum ContourPointType {
 
         EIRP, GAIN_TEMP
     };
@@ -101,7 +102,7 @@ public class Satellite extends Entity {
         public Contour maxGTcontour;
 
         public ArrayList<Point> points;  // one or more points (EIRP, GAIN)
-        public ArrayList<Contour> contours;
+        public ArrayList<Contour> contours;  // one or more contours
     }
 
     // access a lineString by its name in a hashtable (created from a file)
@@ -109,13 +110,15 @@ public class Satellite extends Entity {
     // multiple contours per lineString (one of two types (EIRP, GAIN_TEMP)
     public class Contour {
 
+        public String name;
+        public int position;
         public int color;
         public int width;
-        public String name;
+        
         public double EIRP = NEGLIGIBLE;
         public double GT = NEGLIGIBLE;
-        public int position;
-        public ContourType type;
+        
+        public ContourPointType type;
         ArrayList<Line> lines;
     }
 
@@ -126,16 +129,15 @@ public class Satellite extends Entity {
         public int color;
         public double latitude;     // in radians
         public double longitude;    // in radians
-        public ContourType type;   // share type with contour
+        public ContourPointType type;   // share type with contour
     }
 
     public class Line {
 
+        public int position;
         public String altitudeMode;    // for future
         public ArrayList<Double> latitude;   // in radians
         public ArrayList<Double> longitude;
-        public int position;
-
     }
 
     public Satellite() {
@@ -265,7 +267,7 @@ public class Satellite extends Entity {
     // gets beam contours from a file (already known that it exists)
     private Beam getBeamFromFile(Satellite satellite, String file) {
         Log.p("Satellite: getBeamsFromFile is trying to get beams for "
-                + satellite, Log.DEBUG);
+                + satellite + " from file " + file, Log.DEBUG);
         Beam beam = new Beam();
 
         try {
@@ -284,7 +286,7 @@ public class Satellite extends Entity {
             // can't use name (since there are duplicates
             // subResults add single quotes and there are empty strings when
             // tokenizing for coordinates.   StringUtil does not take regex
-            // so a lot of time spent in debugging all this
+            // A lot of time spent in debugging all this
             int posBeam = 0;
 
             // perhaps only one beam in this file
@@ -304,6 +306,8 @@ public class Satellite extends Entity {
 
                 // find the type of this placeMark
                 String pointExists = null;
+                
+                // contour uses multi geometry
                 pointExists
                         = Result.fromContent(placeMark, Result.XML).
                         getAsString("//MultiGeometry");
@@ -367,10 +371,10 @@ public class Satellite extends Entity {
                         // and the next item after number is dBW (for EIRP) string
                         if ((nameInd < nameTokens.length - 1)
                                 && (nameTokens[nameInd + 1].toUpperCase().equals("DBW"))) {
-                            contour.type = ContourType.EIRP;
+                            contour.type = ContourPointType.EIRP;
                             contour.EIRP = Double.parseDouble(nameTokens[nameInd]);
                         } else {
-                            contour.type = ContourType.GAIN_TEMP;
+                            contour.type = ContourPointType.GAIN_TEMP;
                             contour.GT = Double.parseDouble(nameTokens[nameInd]);
                         }
                     } catch (NumberFormatException nfe) {
@@ -379,7 +383,7 @@ public class Satellite extends Entity {
                         // note that index is not incremented
                     }
                     // update current maximum for the beam (EIRP or GT)
-                    if (contour.type == ContourType.EIRP) {
+                    if (contour.type == ContourPointType.EIRP) {
                         if (contour.EIRP > beam.maxEIRP) {
                             beam.maxEIRP = contour.EIRP;
                             beam.maxEIRPcontour = contour;
@@ -447,7 +451,11 @@ public class Satellite extends Entity {
 
                                     index++;
                                 } catch (NumberFormatException nfe) {
-                                    Log.p("    Satellite: KML bad number at " + i, Log.DEBUG);
+                                    Log.p("    Satellite: KML bad coordinates at " 
+                                            + i + " satellite " + satellite + " file "
+                                                    + file + " contour " + contour
+                                            + " place " + placePos + " line " +
+                                            linePos, Log.DEBUG);
                                     // note that index is not incremented
                                 }
 
@@ -507,7 +515,7 @@ public class Satellite extends Entity {
             if (satBandBeamFile.get(this.name) == null) {
                 Log.p("Satellite: readBeams no beam files for " + this
                         + " and band " + band,
-                        Log.INFO);
+                        Log.WARNING);
                 return;
             }
             // read the beam files and populate beams member
@@ -533,7 +541,8 @@ public class Satellite extends Entity {
                     Beam beam = getBeamFromFile(this, "/" + beamFile);
                     beam.position = posBeam++;
                     beams.put(beam.name, beam);
-                    Log.p("Satellite: got a beam for " + this + " and band " + band
+                    Log.p("Satellite: got beam " + beam + " for " + this + 
+                            " and band " + band
                             + " at position " + posBeam + " from file "
                             + beamFile, Log.DEBUG);
 
@@ -564,7 +573,7 @@ public class Satellite extends Entity {
                     getResourceAsStream(null, "/all_satellites.txt");
 
             // Satellite has to read all the records from file.  Selection
-            // could include only semiMajor subset per instance (e.g., satellites
+            // could include only subset per instance (e.g., satellites
             // visible from semiMajor location
             Log.p("Satellite: static{} reading file all_satellites.txt", Log.DEBUG);
             Satellite.getFromFile(
@@ -575,7 +584,8 @@ public class Satellite extends Entity {
             is = Display.getInstance().
                     getResourceAsStream(null, "/satellite_beams.txt");
 
-            satBandBeamFile = new Hashtable<String, Hashtable<RfBand.Band, ArrayList<String>>>();
+            satBandBeamFile = new Hashtable<String, Hashtable<RfBand.Band, 
+                    ArrayList<String>>>();
 
             String satBeams[][] = parser.parse(new InputStreamReader(is));
 
@@ -633,10 +643,10 @@ public class Satellite extends Entity {
     public static void initAntAmp(Satellite satellite, RfBand.Band band, int num) {
 
         satellite.bandSpecificItems.get(band).transponders = num;
-
         satellite.bandSpecificItems.get(band).rXantenna = new Antenna();
         satellite.bandSpecificItems.get(band).rXantenna.setDiameter(1.2);
         satellite.bandSpecificItems.get(band).rXantenna.setEfficiency(.55);
+      
         // use edge of beam value, assuming typical beam is 2 degree
         // can't directly use DepointingLoss since it is recalculated when
         // antenna diameter is changed.
@@ -920,7 +930,7 @@ public class Satellite extends Entity {
             return Satellite.NEGLIGIBLE;
         }
         if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
-            return getMaxforTerminal(terminal, ContourType.EIRP);
+            return getMaxforTerminal(terminal, ContourPointType.EIRP);
         } else {
             return bandSpecificItems.get(terminal.getBand()).EIRP;
         }
@@ -930,14 +940,14 @@ public class Satellite extends Entity {
     // common function to find the contour with max EIRP or GT 
     // containing the terminal.  If terminal is not in any contour
     // then NEGLIGIBLE value is returned 
-    public double getMaxforTerminal(Terminal terminal, ContourType contourType) {
+    public double getMaxforTerminal(Terminal terminal, ContourPointType contourType) {
         RfBand.Band band;
         double maxValue;
         double calcValue;
         double foundValue = NEGLIGIBLE;
 
         // if terminal is Tx then it will be UPLINK band
-        if (contourType == ContourType.EIRP) {
+        if (contourType == ContourPointType.EIRP) {
             band = terminal.getBand();
             maxValue = this.getMaxEIRPfromContours(band);
             calcValue = bandSpecificItems.get(band).EIRP;
@@ -972,7 +982,7 @@ public class Satellite extends Entity {
                     hier.beam = beam;
                     hier.contour = contour;
 
-                    if (contour.type == ContourType.EIRP) {
+                    if (contour.type == ContourPointType.EIRP) {
                         hier.value = contour.EIRP;
                         beamEIRP.add(hier);
                     } else {
@@ -982,13 +992,13 @@ public class Satellite extends Entity {
                 }
             }
 
-            if (contourType == ContourType.EIRP) {
+            if (contourType == ContourPointType.EIRP) {
                 if (beamEIRP.size() > 0) {
                     maxValue = findMax(terminal, beamEIRP, contourType);
                 } else {
                     // have to have GT contours
                     if (beamGT.size() > 0) {
-                        foundValue = findMax(terminal, beamGT, ContourType.GAIN_TEMP);
+                        foundValue = findMax(terminal, beamGT, ContourPointType.GAIN_TEMP);
 
                         if (!Com.sameValue(foundValue, NEGLIGIBLE)) {
                             maxValue = bandSpecificItems.get(band).EIRP
@@ -1011,7 +1021,7 @@ public class Satellite extends Entity {
                 } else {
                     // has to be EIRP contours
                     if (beamEIRP.size() > 0) {
-                        foundValue = findMax(terminal, beamEIRP, ContourType.EIRP);
+                        foundValue = findMax(terminal, beamEIRP, ContourPointType.EIRP);
 
                         if (!Com.sameValue(foundValue, NEGLIGIBLE)) {
                             maxValue = bandSpecificItems.get(band).gainTemp
@@ -1041,7 +1051,7 @@ public class Satellite extends Entity {
     // value for EIRP or G/T.  If not contained in any polygon then
     // return NEGLIGIBLE
     private double findMax(Terminal terminal, ArrayList<Hierarchy> beamValue,
-            ContourType contourType) {
+            ContourPointType contourType) {
 
         double foundValue = NEGLIGIBLE;
 
@@ -1075,7 +1085,7 @@ public class Satellite extends Entity {
                             + contour.name + " lines " + line.position
                             + " for satellite"
                             + this, Log.DEBUG);
-                    if (contourType == ContourType.EIRP) {
+                    if (contourType == ContourPointType.EIRP) {
                         foundValue = contour.EIRP;
                     } else {
                         foundValue = contour.GT;
@@ -1237,7 +1247,7 @@ public class Satellite extends Entity {
             return Satellite.NEGLIGIBLE;
         }
         if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
-            return getMaxforTerminal(terminal, ContourType.GAIN_TEMP);
+            return getMaxforTerminal(terminal, ContourPointType.GAIN_TEMP);
         } else {
             return bandSpecificItems.get(terminal.getBand()).gainTemp;
         }
