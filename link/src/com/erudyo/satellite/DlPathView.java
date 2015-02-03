@@ -331,8 +331,8 @@ public class DlPathView extends View {
                     // TODO: check if long/lat change affects EIRP for terminal
                     selection.getrXterminal().
                             setLongitude((Double.parseDouble(sldrLongitude.getText())
-                                    - (int) MathUtil.round(10 * 
-                                            Com.VISIBLE_ANGLE * 180.0 / Com.PI))
+                                    - (int) MathUtil.round(10
+                                            * Com.VISIBLE_ANGLE * 180.0 / Com.PI))
                                     * Com.PI / (180.0 * 10.0)
                                     + selection.getdLpath().getSatellite().getLongitude()
                             );
@@ -374,7 +374,7 @@ public class DlPathView extends View {
         return cnt;
     }
 
-       // create the text part (list of all attribute values) fresh when called.
+    // create the text part (list of all attribute values) fresh when called.
     public ArrayList<ArrayList<String>> getText(Selection selection) {
         ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
 
@@ -383,56 +383,56 @@ public class DlPathView extends View {
                 selection.gettXterminal().getName(), ""));
 
         outer.add(addNewInner("DownLink Band",
-                selection.getrXterminal().getrXantenna().getBand().toString(), ""));
+                selection.getSatellite().bandSpecificItems.get(
+                        selection.getBand()).tXantenna.getBand().toString(), ""));
 
-        outer.add(TxView.addNewInner("Center Frequency", Com.shortText(
-                selection.getrXterminal().
-                getrXantenna().getFrequency() / 1E9), "GHz"));
+        outer.add(TxView.addNewInner("Center Frequency",
+                Com.shortText(selection.getSatellite().bandSpecificItems.get(
+                                selection.getBand()).tXantenna.getFrequency() / 1E9), "GHz"));
 
-         outer.add(TxView.addNewInner("Latitude",
+        outer.add(TxView.addNewInner("Satellite EIRP", Com.shortText(selection.getSatellite().bandSpecificItems.
+                get(selection.getBand()).EIRP), "dbW"));
+
+        outer.add(TxView.addNewInner("Sat EIRP for Rx Term",
+                Com.shortText(selection.getSatellite().
+                        getEIRPforTerminal(selection.getrXterminal())), "dbW"));
+
+        outer.add(TxView.addNewInner("Latitude",
                 Com.toDMS(selection.getrXterminal().getLatitude()), "degree"));
-         
-         outer.add(TxView.addNewInner("Longitude",
+
+        outer.add(TxView.addNewInner("Longitude",
                 Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
 
-      
+        outer.add(TxView.addNewInner("Elevation",
+                Com.toDMS(selection.getdLpath().getElevation()), "degree"));
 
-        outer.add(TxView.addNewInner("LNA Noise Figure", Com.shortText(
-                selection.getrXterminal().getrXamplifier().getNoiseFigure()), "dB"));
+        outer.add(TxView.addNewInner("Azimuth",
+                Com.toDMS(selection.getdLpath().getAzimuth()), "degree"));
 
-        outer.add(TxView.addNewInner("Antenna Efficiency",
-                Com.shortText(selection.getrXterminal().
-                        getrXantenna().getEfficiency()), " "));
+        outer.add(TxView.addNewInner("Distance",
+                Com.textN(selection.getdLpath().getDistance() / 1E3, 8), "km"));
 
-        outer.add(TxView.addNewInner("Antenna Diameter",
-                Com.shortText(selection.getrXterminal().
-                        getrXantenna().getEfficiency()), "m"));
+        outer.add(TxView.addNewInner("DL PathLoss",
+                Com.text(selection.getdLpath().getPathLoss()), "dB"));
 
-        outer.add(TxView.addNewInner("Antenna Gain",
-                Com.shortText(selection.getrXterminal().
-                        getrXantenna().getGain()), "dBi"));
+        outer.add(TxView.addNewInner("Atmospheric Atten.",
+                Com.shortText(selection.getdLpath().getAttenuation()), "dB"));
 
-        outer.add(TxView.addNewInner("Antenna 3dB Angle",
-                Com.toDMS(selection.getrXterminal().
-                        getrXantenna().getThreeDBangle()), "degree"));
+        outer.add(TxView.addNewInner("Power Received at Term",
+                Com.textN(selection.getdLpath().getPowerReceived(), 8), "dBW"));
 
-        outer.add(TxView.addNewInner("Antenna Point Loss",
-                Com.shortText(selection.getrXterminal().
-                        getrXantenna().getDepointingLoss()), "dB"));
+        outer.add(TxView.addNewInner("Spec Density at Term",
+                Com.textN(selection.getdLpath().getSpectralDensity(), 8), "dBW/m2"));
 
-        outer.add(TxView.addNewInner("Implementation Loss",
-                Com.shortText(selection.getrXterminal().getrXamplifier()
-                        .getLFRX()), "dB"));
+        outer.add(TxView.addNewInner("Rx Terminal G/T",
+                Com.shortText(selection.getdLpath().getTerminal().getGainTemp()), "dB 1/K"));
 
-        outer.add(TxView.addNewInner("System Noise Temp",
-                Com.textN(
-                        selection.getrXterminal().calcSystemNoiseTemp(), 6), "K"));
-
-        outer.add(TxView.addNewInner("Receive Gain/Temp",
-                Com.shortText(selection.getrXterminal().getGainTemp()), "dB/K"));
+        outer.add(TxView.addNewInner("Downlink C/No",
+                Com.textN(selection.getdLpath().getCNo(), 7), "dB Hz"));
 
         return outer;
     }
+
     // this is downlink
     private String calcCNo(Selection selection) {
         String str;
