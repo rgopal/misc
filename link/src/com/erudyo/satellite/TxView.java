@@ -52,18 +52,17 @@ public class TxView extends View {
         // add only two items
         outer.add(addNewInner("Transmit Terminal",
                 selection.gettXterminal().getName(), ""));
-        
-        outer.add(addNewInner("Uplink Band", 
-                selection.gettXterminal().gettXantenna().getBand().toString(),""));
-        
-          outer.add(addNewInner("Center Frequency", Com.shortText(
+
+        outer.add(addNewInner("Uplink Band",
+                selection.gettXterminal().gettXantenna().getBand().toString(), ""));
+
+        outer.add(addNewInner("Center Frequency", Com.shortText(
                 selection.gettXterminal().
                 gettXantenna().getFrequency() / 1E9), "GHz"));
 
-        
         outer.add(addNewInner("Latitude",
                 Com.toDMS(selection.gettXterminal().getLatitude()), "degree"));
-        
+
         outer.add(addNewInner("Longitude",
                 Com.toDMS(selection.gettXterminal().getLongitude()), "degree"));
 
@@ -102,9 +101,14 @@ public class TxView extends View {
 
     public static ArrayList<String> addNewInner(String name, String value, String unit) {
         ArrayList<String> inner = new ArrayList<String>();
+        
         inner.add(name);
-        inner.add(value);
-        // null string is not added (only two items (such as name)
+            // null string is not added (has to have at least name) 
+        
+        if (value.length() > 0) {
+            inner.add(value);
+        }
+  
         if (unit.length() > 0) {
             inner.add(unit);
         }
@@ -225,14 +229,14 @@ public class TxView extends View {
         cnt.addComponent(constraint, L02);
         cnt.addComponent(L03);
 
-          Label L71 = new Label("Terminal Latitude");
+        Label L71 = new Label("Terminal Latitude");
         final Label L72 = new Label(Com.toDMS(tXterminal.getLatitude()));
         Label L73 = new Label("degree");
 
         cnt.addComponent(L71);
         cnt.addComponent(L72);
         cnt.addComponent(L73);
-        
+
         Label L61 = new Label("Terminal Longitude");
         final Label L62 = new Label(Com.toDMS(tXterminal.getLongitude()));
         Label L63 = new Label("degree");
@@ -240,7 +244,6 @@ public class TxView extends View {
         cnt.addComponent(L61);
         cnt.addComponent(L62);
         cnt.addComponent(L63);
-
 
         Label L11 = new Label("  Ampl Power");
         Label lPowerUnit = new Label("W");

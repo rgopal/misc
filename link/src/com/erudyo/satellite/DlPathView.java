@@ -378,13 +378,12 @@ public class DlPathView extends View {
     public ArrayList<ArrayList<String>> getText(Selection selection) {
         ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
 
-    
-   outer.add(TxView.addNewInner(
+        outer.add(TxView.addNewInner(
                 selection.getdLpath().getName(), "", ""));
 
         outer.add(TxView.addNewInner("Rx Terminal: ",
                 selection.getrXterminal().getName(), ""));
-        
+
         outer.add(addNewInner("DownLink Band",
                 selection.getSatellite().bandSpecificItems.get(
                         selection.getBand()).tXantenna.getBand().toString(), ""));
