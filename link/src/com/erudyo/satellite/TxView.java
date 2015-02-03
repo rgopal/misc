@@ -60,11 +60,12 @@ public class TxView extends View {
                 selection.gettXterminal().
                 gettXantenna().getFrequency() / 1E9), "GHz"));
 
-        outer.add(addNewInner("Longitude",
-                Com.toDMS(selection.gettXterminal().getLongitude()), "degree"));
-
+        
         outer.add(addNewInner("Latitude",
                 Com.toDMS(selection.gettXterminal().getLatitude()), "degree"));
+        
+        outer.add(addNewInner("Longitude",
+                Com.toDMS(selection.gettXterminal().getLongitude()), "degree"));
 
         outer.add(addNewInner("Amplifer Power", Com.shortText(
                 selection.gettXterminal().getrXamplifier().getPower()), "W"));
@@ -224,6 +225,14 @@ public class TxView extends View {
         cnt.addComponent(constraint, L02);
         cnt.addComponent(L03);
 
+          Label L71 = new Label("Terminal Latitude");
+        final Label L72 = new Label(Com.toDMS(tXterminal.getLatitude()));
+        Label L73 = new Label("degree");
+
+        cnt.addComponent(L71);
+        cnt.addComponent(L72);
+        cnt.addComponent(L73);
+        
         Label L61 = new Label("Terminal Longitude");
         final Label L62 = new Label(Com.toDMS(tXterminal.getLongitude()));
         Label L63 = new Label("degree");
@@ -232,13 +241,6 @@ public class TxView extends View {
         cnt.addComponent(L62);
         cnt.addComponent(L63);
 
-        Label L71 = new Label("Terminal Latitude");
-        final Label L72 = new Label(Com.toDMS(tXterminal.getLatitude()));
-        Label L73 = new Label("degree");
-
-        cnt.addComponent(L71);
-        cnt.addComponent(L72);
-        cnt.addComponent(L73);
 
         Label L11 = new Label("  Ampl Power");
         Label lPowerUnit = new Label("W");

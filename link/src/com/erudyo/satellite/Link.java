@@ -234,6 +234,7 @@ public class Link {
 
         ShareButton s = new ShareButton();
         s.setText("Share");
+       
         s.setTextToShare(Com.displayInfoHTML("EmailHTML", selection));
         main.addComponent(s);
 

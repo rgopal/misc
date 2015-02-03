@@ -45,7 +45,7 @@ public class RxView extends View {
 
         // add only two items
         outer.add(TxView.addNewInner("Receive Terminal",
-                selection.gettXterminal().getName(), ""));
+                selection.getrXterminal().getName(), ""));
 
         outer.add(addNewInner("DownLink Band",
                 selection.getrXterminal().getrXantenna().getBand().toString(), ""));
@@ -54,12 +54,13 @@ public class RxView extends View {
                 selection.getrXterminal().
                 getrXantenna().getFrequency() / 1E9), "GHz"));
 
-        outer.add(TxView.addNewInner("Longitude",
-                Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
-
-        outer.add(TxView.addNewInner("Latitude",
+         outer.add(TxView.addNewInner("Latitude",
                 Com.toDMS(selection.getrXterminal().getLatitude()), "degree"));
 
+         outer.add(TxView.addNewInner("Longitude",
+                Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
+
+     
         outer.add(TxView.addNewInner("LNA Noise Figure", Com.shortText(
                 selection.getrXterminal().getrXamplifier().getNoiseFigure()), "dB"));
 
@@ -218,21 +219,22 @@ public class RxView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        Label L61 = new Label("Terminal Longitude");
-        final Label lLongitude = new Label(Com.toDMS(rxTerm.getLongitude()));
-        Label L63 = new Label("deg");
-
-        cnt.addComponent(L61);
-        cnt.addComponent(lLongitude);
-        cnt.addComponent(L63);
-
-        Label L71 = new Label("    Latitude");
+        Label L71 = new Label("Terminal Latitude");
         final Label lLatitude = new Label(Com.toDMS(rxTerm.getLatitude()));
         Label L73 = new Label("degree");
 
         cnt.addComponent(L71);
         cnt.addComponent(lLatitude);
         cnt.addComponent(L73);
+        
+        Label L61 = new Label("Terminal Longitude");
+        final Label lLongitude = new Label(Com.toDMS(rxTerm.getLongitude()));
+        Label L63 = new Label("degree");
+
+        cnt.addComponent(L61);
+        cnt.addComponent(lLongitude);
+        cnt.addComponent(L63);
+
 
         Label lNoiseFigureLabel = new Label("LNA Noise Figure");
         Label lNoiseFigureUnit = new Label("dB");

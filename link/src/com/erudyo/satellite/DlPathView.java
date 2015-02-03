@@ -22,6 +22,8 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.util.MathUtil;
+import static com.erudyo.satellite.TxView.addNewInner;
+import java.util.ArrayList;
 
 public class DlPathView extends View {
 
@@ -372,6 +374,65 @@ public class DlPathView extends View {
         return cnt;
     }
 
+       // create the text part (list of all attribute values) fresh when called.
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
+
+        // add only two items
+        outer.add(TxView.addNewInner("Downlink Path",
+                selection.gettXterminal().getName(), ""));
+
+        outer.add(addNewInner("DownLink Band",
+                selection.getrXterminal().getrXantenna().getBand().toString(), ""));
+
+        outer.add(TxView.addNewInner("Center Frequency", Com.shortText(
+                selection.getrXterminal().
+                getrXantenna().getFrequency() / 1E9), "GHz"));
+
+         outer.add(TxView.addNewInner("Latitude",
+                Com.toDMS(selection.getrXterminal().getLatitude()), "degree"));
+         
+         outer.add(TxView.addNewInner("Longitude",
+                Com.toDMS(selection.getrXterminal().getLongitude()), "degree"));
+
+      
+
+        outer.add(TxView.addNewInner("LNA Noise Figure", Com.shortText(
+                selection.getrXterminal().getrXamplifier().getNoiseFigure()), "dB"));
+
+        outer.add(TxView.addNewInner("Antenna Efficiency",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getEfficiency()), " "));
+
+        outer.add(TxView.addNewInner("Antenna Diameter",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getEfficiency()), "m"));
+
+        outer.add(TxView.addNewInner("Antenna Gain",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getGain()), "dBi"));
+
+        outer.add(TxView.addNewInner("Antenna 3dB Angle",
+                Com.toDMS(selection.getrXterminal().
+                        getrXantenna().getThreeDBangle()), "degree"));
+
+        outer.add(TxView.addNewInner("Antenna Point Loss",
+                Com.shortText(selection.getrXterminal().
+                        getrXantenna().getDepointingLoss()), "dB"));
+
+        outer.add(TxView.addNewInner("Implementation Loss",
+                Com.shortText(selection.getrXterminal().getrXamplifier()
+                        .getLFRX()), "dB"));
+
+        outer.add(TxView.addNewInner("System Noise Temp",
+                Com.textN(
+                        selection.getrXterminal().calcSystemNoiseTemp(), 6), "K"));
+
+        outer.add(TxView.addNewInner("Receive Gain/Temp",
+                Com.shortText(selection.getrXterminal().getGainTemp()), "dB/K"));
+
+        return outer;
+    }
     // this is downlink
     private String calcCNo(Selection selection) {
         String str;
