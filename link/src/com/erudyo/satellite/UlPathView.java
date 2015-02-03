@@ -33,6 +33,8 @@ import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.ui.util.Resources;
 import com.codename1.util.MathUtil;
+import static com.erudyo.satellite.TxView.addNewInner;
+import java.util.ArrayList;
 
 public class UlPathView extends View {
 
@@ -89,6 +91,64 @@ public class UlPathView extends View {
 
         selection.getCommsView().updateValues(selection);
 
+    }
+
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        ArrayList<ArrayList<String>> outer
+                = new ArrayList<ArrayList<String>>();
+        outer.add(TxView.addNewInner(
+                selection.getuLpath().getName(),"", ""));
+
+        outer.add(TxView.addNewInner("Tx Terminal: ",
+                selection.gettXterminal().getName(), ""));
+
+        Terminal txTerm = selection.gettXterminal();
+
+        outer.add(TxView.addNewInner("Center Frequency",
+                Com.shortText(txTerm.gettXantenna().getFrequency() / 1E9),
+                "GHz "));
+
+        outer.add(TxView.addNewInner("Satellite EIRP ",
+                Com.shortText(selection.getSatellite().bandSpecificItems.
+                        get(selection.getBand()).EIRP), "dbW"));
+
+        outer.add(TxView.addNewInner("Tx Term Latitude",
+                Com.toDMS(txTerm.getLatitude()), "degree"));
+
+        outer.add(TxView.addNewInner("Tx Term Longitude",
+                Com.toDMS(txTerm.getLongitude()), "degree"));
+
+        outer.add(TxView.addNewInner("Tx Term Azimuth",
+                Com.toDMS(selection.getuLpath().getAzimuth()), "degree"));
+
+        outer.add(TxView.addNewInner("Distance - Sat",
+                Com.textN(selection.getuLpath().getDistance() / 1E3, 8), "km"));
+
+        outer.add(TxView.addNewInner("Sat Path Loss",
+                Com.textN(selection.getuLpath().getPathLoss(), 7), "dB"));
+
+        outer.add(TxView.addNewInner("Atmos Atten",
+                Com.textN(selection.getuLpath().getAttenuation(), 7), "dB"));
+
+        outer.add(TxView.addNewInner("Power Received at Sat",
+                Com.textN(selection.getuLpath().getPowerReceived(), 6), "dBW"));
+
+        outer.add(TxView.addNewInner("Spectral Density at Sat.",
+                Com.textN(selection.getuLpath().getSpectralDensity(), 6), "dBW/m2"));
+
+        outer.add(TxView.addNewInner("Satellite Band G/T",
+                Com.shortText(selection.getuLpath().getSatellite().bandSpecificItems.
+                        get(selection.getBand()).gainTemp),
+                "dB 1/K"));
+
+        outer.add(TxView.addNewInner("Sat G/T for Tx Term",
+                Com.shortText(selection.getuLpath().getSatellite().
+                        getGainTempForTerminal(txTerm)), "dB 1/K"));
+        outer.add(TxView.addNewInner("UL C/No",
+                Com.textN(selection.getuLpath().getCNo(), 7),
+                "dB Hz"));
+
+        return outer;
     }
 
     public Form createView(final Selection selection) {
@@ -355,7 +415,7 @@ public class UlPathView extends View {
                             getPathLoss(), 7));            // already in dB
 
                     valueCNo.setText(Com.textN(
-                            selection.getuLpath().getCNo(),7));
+                            selection.getuLpath().getCNo(), 7));
                     valueSpecDensity.setText(Com.textN(
                             selection.getuLpath().getSpectralDensity(), 7));
                     valuePowerRx.setText(Com.textN(
@@ -366,8 +426,8 @@ public class UlPathView extends View {
                     updateMainForm(selection);
 
                 } catch (java.lang.NumberFormatException e) {
-                    Log.p("UlPathView: bad number for diameter " + 
-                            sldrLongitude.getText(), Log.WARNING);
+                    Log.p("UlPathView: bad number for diameter "
+                            + sldrLongitude.getText(), Log.WARNING);
 
                 }
 
