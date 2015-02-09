@@ -29,6 +29,7 @@ import com.codename1.ui.list.ListModel;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import com.codename1.util.MathUtil;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -43,6 +44,26 @@ public class SatelliteView extends View {
     public SatelliteView(Selection selection) {
 
         // don't call update_values since SatelliteView is still being built
+    }
+
+    // create the text part (list of all attribute values) fresh when called.
+    public ArrayList<ArrayList<String>> getText(Selection selection) {
+        ArrayList<ArrayList<String>> outer = new ArrayList<ArrayList<String>>();
+
+        outer.add(TxView.addNewInner("Satellite",
+                selection.getSatellite().getName(), ""));
+
+        outer.add(TxView.addNewInner("COSPAR",
+                selection.getSatellite().getvCOSPAR(), ""));
+        outer.add(TxView.addNewInner("NORAD",
+                selection.getSatellite().getvNORAD(), ""));
+        outer.add(TxView.addNewInner(
+                selection.getSatellite().getComments(), "", ""));
+          outer.add(TxView.addNewInner("Source",
+                selection.getSatellite().getSource(),  ""));
+        
+
+        return outer;
     }
 
     // override getWidget to create semiMajor Combobox driven by selected band
@@ -551,8 +572,8 @@ public class SatelliteView extends View {
         cnt.addComponent(lTx3dB);
         cnt.addComponent(lTx3dBUnit);
 
-              Label lTxDepointingErrorLabel = new Label("  Depointing Error");
-              Label lTxDepointingErrorUnit = new Label("degree");
+        Label lTxDepointingErrorLabel = new Label("  Depointing Error");
+        Label lTxDepointingErrorUnit = new Label("degree");
         final Slider sldrTxDepointingError = new Slider();
         Com.formatSlider(sldrTxDepointingError);
 
@@ -568,7 +589,6 @@ public class SatelliteView extends View {
 
         final Label lTxDepointingError = new Label(Com.toDMS(
                 bandBeams.tXantenna.getDepointingError()));
-       
 
         cnt.addComponent(lTxDepointingErrorLabel);
         cnt.addComponent(lTxDepointingError);
@@ -579,7 +599,7 @@ public class SatelliteView extends View {
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrTxDepointingError);
-        
+
         // does change so not in combo/sliders
         Label lTxPointLoss = new Label(" Pointing Loss");
         final Label valueTxPointLoss = new Label(Com.shortText(
@@ -642,7 +662,7 @@ public class SatelliteView extends View {
             }
         });
 
-         sldrTxDepointingError.addDataChangedListener(new DataChangedListener() {
+        sldrTxDepointingError.addDataChangedListener(new DataChangedListener() {
             public void dataChanged(int type, int index) {
                 Log.p("SatelliteView: selected Tx depointingError "
                         + sldrTxDepointingError.getText(), Log.DEBUG);

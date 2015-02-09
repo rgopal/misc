@@ -53,6 +53,11 @@ public class Satellite extends Entity {
     // names of files containing KML info for some satellites
     private static Hashtable<String, Hashtable<RfBand.Band, 
             ArrayList<String>>> satBandBeamFile;
+    private String country;
+    private String vCOSPAR;
+    private String vNORAD;
+    private String comments;
+    private String source;
 
     public Hashtable<RfBand.Band, BandSpecificItems> bandSpecificItems;
 
@@ -80,6 +85,76 @@ public class Satellite extends Entity {
     private double polarizationLoss;
 
     private int index;
+
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * @return the vCOSPAR
+     */
+    public String getvCOSPAR() {
+        return vCOSPAR;
+    }
+
+    /**
+     * @param vCOSPAR the vCOSPAR to set
+     */
+    public void setvCOSPAR(String vCOSPAR) {
+        this.vCOSPAR = vCOSPAR;
+    }
+
+    /**
+     * @return the vNORAD
+     */
+    public String getvNORAD() {
+        return vNORAD;
+    }
+
+    /**
+     * @param vNORAD the vNORAD to set
+     */
+    public void setvNORAD(String vNORAD) {
+        this.vNORAD = vNORAD;
+    }
+
+    /**
+     * @return the comments
+     */
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * @param source the source to set
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public enum ContourPointType {
 
@@ -823,7 +898,12 @@ public class Satellite extends Entity {
         // Transponders Ka 54|TxAnt Ka 55|TxPower Ka 56|RxAnt Ka 57|RxNF Ka 58
         Satellite satellite = new Satellite();
         // race condition?
-        satellite.init(fields[0]);
+        satellite.init(fields[1-1]);
+        satellite.setCountry(fields[3-1]);
+        satellite.setvCOSPAR(fields[24-1]);
+        satellite.setvNORAD(fields[25-1]);
+        satellite.setComments(fields[26-1]);
+        satellite.setSource(fields[28-1]);
 
         // fields are name, long, lat, eirp, gainTemp, band
         try {
