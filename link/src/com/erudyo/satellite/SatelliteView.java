@@ -52,6 +52,29 @@ public class SatelliteView extends View {
 
         outer.add(TxView.addNewInner("Satellite",
                 selection.getSatellite().getName(), ""));
+        Satellite satellite = selection.getSatellite();
+
+        final BandSpecificItems bandBeams = satellite.bandSpecificItems.get(
+                selection.getBand());
+
+        final RfBand.Band band = selection.getBand();
+
+        if (bandBeams.beams != null) {
+
+            outer.add(TxView.addNewInner("Info from Contours ", "for Band ",
+                    band.toString()));
+
+            outer.add(TxView.addNewInner("   Number of Beams ",
+                    Integer.toString(bandBeams.beams.size()), ""));
+
+            outer.add(TxView.addNewInner("   Max G/T",
+                    Com.shortText(bandBeams.maxGT),
+                    "dB 1/K"));
+
+            outer.add(TxView.addNewInner("   Max Tx EIRP",
+                    Com.shortText(bandBeams.maxEIRP),
+                    "dBW"));
+        }
 
         outer.add(TxView.addNewInner("COSPAR",
                 selection.getSatellite().getvCOSPAR(), ""));
@@ -59,9 +82,84 @@ public class SatelliteView extends View {
                 selection.getSatellite().getvNORAD(), ""));
         outer.add(TxView.addNewInner(
                 selection.getSatellite().getComments(), "", ""));
-          outer.add(TxView.addNewInner("Source",
-                selection.getSatellite().getSource(),  ""));
-        
+        outer.add(TxView.addNewInner("Source",
+                selection.getSatellite().getSource(), ""));
+
+        // now go sequentially through Satellite Receive Side
+        outer.add(TxView.addNewInner("Rx Central Frequency",
+                Com.shortText(bandBeams.rXantenna.getFrequency() / 1E9), "GHz "));
+
+        //TODO Add Contour info
+        // check if contours are present (then no calculations needed)
+        // now the Rx side of the satellite
+        outer.add(TxView.addNewInner("Rx Noise Figure",
+                Com.shortText(bandBeams.rXamplifier.
+                        getNoiseFigure()), "dB"));
+
+        outer.add(TxView.addNewInner("Rx Antenna Diameter",
+                Com.shortText(
+                        bandBeams.rXantenna.getDiameter()), "m"));
+
+        outer.add(TxView.addNewInner("Rx Antenna Gain",
+                Com.shortText(
+                        bandBeams.rXantenna.getGain()), "dBi"));
+
+        outer.add(TxView.addNewInner("Rx 3dB Angle",
+                Com.toDMS(
+                        bandBeams.rXantenna.getThreeDBangle()), "degree"));
+
+        outer.add(TxView.addNewInner("Rx Depointing Error",
+                Com.toDMS(
+                        bandBeams.rXantenna.getDepointingError()), "degree"));
+
+        // does change so not in combo/sliders
+        outer.add(TxView.addNewInner("Rx Depointing Loss",
+                Com.textN(
+                        bandBeams.rXantenna.getDepointingLoss(), 5), "dB"));
+
+        outer.add(TxView.addNewInner("Rx System Noise Temp",
+                Com.text(
+                        satellite.calcSystemNoiseTemp(band)), "K"));
+
+        outer.add(TxView.addNewInner("Rx Satellite G/T",
+                Com.shortText(
+                        bandBeams.gainTemp), "dB 1/K"));
+
+        outer.add(TxView.addNewInner("Tx Central Frequency",
+                Com.shortText(
+                        bandBeams.tXantenna.getFrequency() / 1E9),
+                "GHz "));
+
+        // now the Tx side of satellite
+        outer.add(TxView.addNewInner("Tx Amp Power",
+                Com.shortText(bandBeams.tXamplifier.
+                        getPower()), "W"));
+
+        outer.add(TxView.addNewInner("Tx Ant Diameter",
+                Com.shortText(
+                        bandBeams.tXantenna.getDiameter()), "m"));
+
+        outer.add(TxView.addNewInner("Tx Ant Gain",
+                Com.shortText(bandBeams.tXantenna.getGain()),
+                "dBi"));
+
+        outer.add(TxView.addNewInner("Tx Ant 3dB Angle",
+                Com.toDMS(bandBeams.tXantenna.getThreeDBangle()),
+                "degree"));
+
+        outer.add(TxView.addNewInner("Tx Depointing Error",
+                Com.toDMS(
+                        bandBeams.tXantenna.getDepointingError()), "degree"));
+
+        outer.add(TxView.addNewInner("Tx Pointing Loss",
+                Com.shortText(
+                        bandBeams.tXantenna.getDepointingLoss()),
+                "dB"));
+
+        outer.add(TxView.addNewInner("Satellite Tx EIRP",
+                Com.shortText(bandBeams.EIRP),
+                "dBW")
+        );
 
         return outer;
     }
@@ -319,7 +417,7 @@ public class SatelliteView extends View {
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, sldrRxDiameter);
 
-        Label L31 = new Label(" Gain");
+        Label L31 = new Label("  Gain");
         final Label lRxGain = new Label(Com.shortText(
                 bandBeams.rXantenna.getGain()));
         Label L33 = new Label("dBi");
@@ -327,10 +425,10 @@ public class SatelliteView extends View {
         cnt.addComponent(lRxGain);
         cnt.addComponent(L33);
 
-        Label L41 = new Label(" 3dB Angle");
+        Label L41 = new Label("  3dB Angle");
         final Label lRxThreeDBangle = new Label(Com.toDMS(
                 bandBeams.rXantenna.getThreeDBangle()));
-        Label L43 = new Label("deg");
+        Label L43 = new Label("degree");
         cnt.addComponent(L41);
         cnt.addComponent(lRxThreeDBangle);
         cnt.addComponent(L43);
@@ -365,8 +463,8 @@ public class SatelliteView extends View {
 
         // does change so not in combo/sliders
         Label lRxPointLoss = new Label(" Depointing Loss");
-        final Label valueRxPointLoss = new Label(Com.shortText(
-                bandBeams.rXantenna.getDepointingLoss()));
+        final Label valueRxPointLoss = new Label(Com.textN(
+                bandBeams.rXantenna.getDepointingLoss(), 5));
         Label unitPointLoss = new Label("dB");
         cnt.addComponent(lRxPointLoss);
         cnt.addComponent(valueRxPointLoss);
@@ -415,7 +513,7 @@ public class SatelliteView extends View {
                             getNoiseFigure()));
                     valueRxsysTemp.setText(Com.text(
                             satellite.calcSystemNoiseTemp(band)));
-                    valueRxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+                    valueRxGainTemp.setText(Com.textN(bandBeams.gainTemp, 5));
                     // update satellite specific name, summary, value, subValue
                     // Here only the gain (which is subValue) changes
                     selection.getSatelliteView().updateValues(selection);
@@ -441,9 +539,9 @@ public class SatelliteView extends View {
                     lRxDepointingError.setText(Com.toDMS(bandBeams.rXantenna.getDepointingError()));
 
                     lRxGain.setText(Com.shortText(bandBeams.rXantenna.getGain()));
-                    valueRxPointLoss.setText(Com.shortText(
-                            bandBeams.rXantenna.getDepointingLoss()));
-                    valueRxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+                    valueRxPointLoss.setText(Com.textN(
+                            bandBeams.rXantenna.getDepointingLoss(), 5));
+                    valueRxGainTemp.setText(Com.textN(bandBeams.gainTemp, 5));
 
                     // should not change
                     valueRxsysTemp.setText(Com.text(
@@ -472,9 +570,9 @@ public class SatelliteView extends View {
                     lRxDiameter.setText(Com.shortText(bandBeams.rXantenna.getDiameter()));
                     lRxThreeDBangle.setText(Com.toDMS(bandBeams.rXantenna.getThreeDBangle()));
                     lRxGain.setText(Com.shortText(bandBeams.rXantenna.getGain()));
-                    valueRxPointLoss.setText(Com.shortText(
-                            bandBeams.rXantenna.getDepointingLoss()));
-                    valueRxGainTemp.setText(Com.shortText(bandBeams.gainTemp));
+                    valueRxPointLoss.setText(Com.textN(
+                            bandBeams.rXantenna.getDepointingLoss(), 5));
+                    valueRxGainTemp.setText(Com.textN(bandBeams.gainTemp, 5));
 
                     // should not change
                     valueRxsysTemp.setText(Com.text(
@@ -489,17 +587,17 @@ public class SatelliteView extends View {
         });
 
         Label filler = new Label(" ");
-        Label LTx01 = new Label("Rx Central Frequency");
-        Label lTxFrequency = new Label(Com.shortText(
-                bandBeams.tXantenna.getFrequency() / 1E9));
-        Label LTx03 = new Label("GHz " + bandBeams.tXantenna.getBand());
-        cnt.addComponent(constraint, LTx01);
-        cnt.addComponent(lTxFrequency);
-        cnt.addComponent(LTx03);
-
         constraint = layout.createConstraint();
         constraint.setHorizontalSpan(3);
         cnt.addComponent(constraint, filler);
+
+        Label LTx01 = new Label("Tx Central Frequency");
+        Label lTxFrequency = new Label(Com.shortText(
+                bandBeams.tXantenna.getFrequency() / 1E9));
+        Label LTx03 = new Label("GHz " + bandBeams.tXantenna.getBand());
+        cnt.addComponent(LTx01);
+        cnt.addComponent(lTxFrequency);
+        cnt.addComponent(LTx03);
 
         // now the Tx side of satellite
         Label L11 = new Label("Tx Amp Power");
@@ -558,14 +656,14 @@ public class SatelliteView extends View {
 
         cnt.addComponent(constraint, sldrTxDiameter);
 
-        Label lTxGainLabel = new Label(" Gain");
+        Label lTxGainLabel = new Label("  Gain");
         final Label lTxGain = new Label(Com.shortText(bandBeams.tXantenna.getGain()));
         Label lTxGainUnit = new Label("dBi");
         cnt.addComponent(lTxGainLabel);
         cnt.addComponent(lTxGain);
         cnt.addComponent(lTxGainUnit);
 
-        Label lTx3dBLabel = new Label(" 3dB Angle");
+        Label lTx3dBLabel = new Label("  3dB Angle");
         final Label lTx3dB = new Label(Com.toDMS(bandBeams.tXantenna.getThreeDBangle()));
         Label lTx3dBUnit = new Label("degree");
         cnt.addComponent(lTx3dBLabel);
