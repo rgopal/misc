@@ -380,14 +380,14 @@ public class Satellite extends Entity {
             for (String placeMark : placeMarks) {
 
                 // find the type of this placeMark
-                String pointExists = null;
+                String contourExists = null;
                 
                 // contour uses multi geometry
-                pointExists
+                contourExists
                         = Result.fromContent(placeMark, Result.XML).
                         getAsString("//MultiGeometry");
 
-                if (pointExists == null) {
+                if (contourExists == null) {
                     Log.p("  getBeamFromFile creating new point # "
                             + pointPos, Log.DEBUG);
                     Point point = new Point();
@@ -453,8 +453,10 @@ public class Satellite extends Entity {
                             contour.GT = Double.parseDouble(nameTokens[nameInd]);
                         }
                     } catch (NumberFormatException nfe) {
-                        Log.p("  KML bad number in " + contour.name,
-                                Log.DEBUG);
+                        Log.p("Satellite beam file " + file
+                                + " KML bad number for contour " + contour.name
+                                + " value " + nameTokens[nameInd], 
+                                Log.WARNING);
                         // note that index is not incremented
                     }
                     // update current maximum for the beam (EIRP or GT)
@@ -498,6 +500,7 @@ public class Satellite extends Entity {
                         String coordList = Result.fromContent(lineString, Result.XML).
                                 getAsString("//coordinates");
 
+                        // TODO: space after m will break this code, fix it
                         // split into an array since the whole placeMark is lat1,long2 lat2,long2
                         String coordinates[] = com.codename1.io.Util.split(coordList, " ");
 
@@ -526,11 +529,11 @@ public class Satellite extends Entity {
 
                                     index++;
                                 } catch (NumberFormatException nfe) {
-                                    Log.p("    Satellite: KML bad coordinates at " 
+                                    Log.p("Satellite: KML bad coordinates at " 
                                             + i + " satellite " + satellite + " file "
                                                     + file + " contour " + contour
                                             + " place " + placePos + " line " +
-                                            linePos, Log.DEBUG);
+                                            linePos, Log.WARNING);
                                     // note that index is not incremented
                                 }
 
@@ -795,7 +798,7 @@ public class Satellite extends Entity {
 
     }
 
-    public static void processBand(String[] fields, RfBand.Band band,
+    public static void readBandFields(String[] fields, RfBand.Band band,
             Hashtable<RfBand.Band, ArrayList<Satellite>> bandSatellite,
             Satellite satellite, int index) {
 
@@ -804,7 +807,7 @@ public class Satellite extends Entity {
                     + Arrays.toString(fields), Log.WARNING);
         } else {
 
-            // extract the band of the terminal
+            
             if (bandSatellite.get(band) == null) {
                 bandSatellite.put(band, new ArrayList<Satellite>());
             }
@@ -814,14 +817,18 @@ public class Satellite extends Entity {
                 try {
                     num = Integer.parseInt(fields[index + 1]);
                 } catch (Exception e) {
-                    Log.p("Satellite: processBand no number for transponders for satellite "
-                            + Arrays.toString(fields), Log.DEBUG);
+                    Log.p("Satellite: readBandFields no number for transponders for satellite "
+                            + Arrays.toString(fields) + " index " +
+                            index + " band " + band, Log.WARNING);
                 }
 
                 if (satellite.bandSpecificItems.get(band) == null) {
 
                     satellite.bandSpecificItems.put(band, new BandSpecificItems());
                 }
+                else 
+                    Log.p("Satellite: readBandFields bandSpecificItems is null", 
+                            Log.WARNING);
                 // these are read from txt files and can be calculated and changed
                 // unlike maxEIRP and maxGT that are from contours
                 initAntAmp(satellite, band, num);
@@ -851,10 +858,10 @@ public class Satellite extends Entity {
         return bandSatellite;
     }
 
+
+    // read satellite info from all_satellites.txt
     public static void getFromFile(String[][] satellites) {
 
-        // satellites contains values from the file.  Allow selection of an
-        // vector of Satellite objects with band as the key in semiMajor hashtable
         bandSatellite
                 = new Hashtable<RfBand.Band, ArrayList<Satellite>>();
 
@@ -927,35 +934,36 @@ public class Satellite extends Entity {
                 fields[34].toUpperCase()).getBand()
                 == RfBand.Band.C) {
 
-            processBand(fields, RfBand.Band.C, bandSatellite, satellite, 34);
+            readBandFields(fields, RfBand.Band.C, bandSatellite, satellite, 34);
             bandFound = true;
         }
         if (!(fields[40].equals("")) && RfBand.rFbandHash.get(
                 fields[40].toUpperCase()).getBand()
                 == RfBand.Band.X) {
 
-            processBand(fields, RfBand.Band.X, bandSatellite, satellite, 40);
+            readBandFields(fields, RfBand.Band.X, bandSatellite, satellite, 40);
             bandFound = true;
         }
         if (!(fields[46].equals("")) && RfBand.rFbandHash.get(
                 fields[46].toUpperCase()).getBand()
                 == RfBand.Band.KU) {
-            processBand(fields, RfBand.Band.KU, bandSatellite, satellite, 46);
+            readBandFields(fields, RfBand.Band.KU, bandSatellite, satellite, 46);
             bandFound = true;
         }
         if (!(fields[52].equals("")) && RfBand.rFbandHash.get(
                 fields[52].toUpperCase()).getBand()
                 == RfBand.Band.KA) {
-            processBand(fields, RfBand.Band.KA, bandSatellite, satellite, 52);
+            readBandFields(fields, RfBand.Band.KA, bandSatellite, satellite, 52);
             bandFound = true;
         }
         if (!bandFound) {
-            processBand(fields, RfBand.Band.UK, bandSatellite, satellite, 0);
+            readBandFields(fields, RfBand.Band.UK, bandSatellite, satellite, 0);
         }
 
     }
 
     // uplink system noise temperature at the receiver input given by
+    // equation in Satellite book equation 5.32
     public double calcSystemNoiseTemp(RfBand.Band band) {
         double tA;
         double noiseTemp;
@@ -983,7 +991,7 @@ public class Satellite extends Entity {
         if (bandSpecificItems.get(band) == null)
         {
             // this can happen beceause of circular conditions
-            Log.p("Satellite: getEIRP band is not present " + band, Log.DEBUG);
+            Log.p("Satellite: getEIRP band is not present " + band, Log.WARNING);
             return Satellite.NEGLIGIBLE;
         }
         return bandSpecificItems.get(band).EIRP;
@@ -996,9 +1004,9 @@ public class Satellite extends Entity {
         public double value;   // could be EIRP or GainTemp
     }
 
-    // Returns a real EIRP based on satellite EIRP contours if they are 
+    // Returns actual EIRP based on satellite EIRP contours if they are 
     // available.  Otherwise returns the calculated EIRP assuming
-    // satellite EIRP contours have same value in the whole footprint
+    // satellite EIRP has same value in the whole FOV
     public double getEIRPforTerminal(Terminal terminal) {
 
         // when band/satellite changes then old terminal may not have the right
@@ -1006,7 +1014,8 @@ public class Satellite extends Entity {
         // terminal is selected for the new band/satellite
         if (this.bandSpecificItems == null
                 || this.bandSpecificItems.get(terminal.getBand()) == null) {
-            Log.p("Satellite: getEIRPforTerminal can't get satellite for terminal band", Log.DEBUG);
+            Log.p("Satellite: getEIRPforTerminal can't get satellite for terminal band", 
+                    Log.DEBUG);
             return Satellite.NEGLIGIBLE;
         }
         if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
@@ -1018,8 +1027,9 @@ public class Satellite extends Entity {
     }
 
     // common function to find the contour with max EIRP or GT 
-    // containing the terminal.  If terminal is not in any contour
-    // then NEGLIGIBLE value is returned 
+    // containing the terminal.  Can use EIRP contours (and vice versa) 
+    // and terminal location to adjust the GT (calculated value) by amount.  
+    // If terminal is not in any contour then NEGLIGIBLE value is returned. 
     public double getMaxforTerminal(Terminal terminal, ContourPointType contourType) {
         RfBand.Band band;
         double maxValue;
@@ -1038,7 +1048,7 @@ public class Satellite extends Entity {
         }
 
         // now we have generic max values (calc value is first read from txt file)
-        Log.p("Satellite: getMaxforTerminal - max values " + contourType + " calculated/txt = "
+        Log.p("Satellite: getMaxforTerminal max values " + contourType + " calculated/txt = "
                 + calcValue + "  from contours = " + maxValue
                 + " and band " + band + " for satellite " + this, Log.DEBUG
         );
@@ -1138,8 +1148,15 @@ public class Satellite extends Entity {
         // now sort with descending value (EIRP or .  
         Collections.sort(beamValue, new Comparator<Hierarchy>() {
             @Override
+            // sort order is different
             public int compare(Hierarchy one, Hierarchy two) {
-                return (int) (two.value - one.value);
+                // to increase resolution
+                if (two.value < one.value)
+                    return -1;
+                else if (two.value > one.value)
+                    return 1;
+                else 
+                    return 0;
             }
         });
 
@@ -1305,7 +1322,7 @@ public class Satellite extends Entity {
     }
 
     /**
-     * @return the gainTemp without any specific terminal
+     * @return the gainTemp (calculated?) without any specific terminal
      */
     public double getGainTemp(RfBand.Band band) {
          if (bandSpecificItems.get(band) == null)
@@ -1314,6 +1331,7 @@ public class Satellite extends Entity {
             Log.p("Satellite: getGainTemp band is not present " + band, Log.DEBUG);
             return Satellite.NEGLIGIBLE;
         }
+         // calculated
         return bandSpecificItems.get(band).gainTemp;
     }
 
@@ -1329,6 +1347,7 @@ public class Satellite extends Entity {
         if (this.bandSpecificItems.get(terminal.getBand()).beams != null) {
             return getMaxforTerminal(terminal, ContourPointType.GAIN_TEMP);
         } else {
+            // calculated
             return bandSpecificItems.get(terminal.getBand()).gainTemp;
         }
     }
