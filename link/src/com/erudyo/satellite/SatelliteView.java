@@ -196,7 +196,7 @@ public class SatelliteView extends View {
 
         String name = (String) combo.getSelectedItem();
 
-        updateValues(selection);
+        updateMainForm(selection);
 
         combo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -218,7 +218,7 @@ public class SatelliteView extends View {
                 // update list of visible terminals
 
                 // update other values dependent on this satellite
-                updateValues(selection);
+                updateMainForm(selection);
 
             }
         });
@@ -228,12 +228,12 @@ public class SatelliteView extends View {
     }
 
     // update from the current selection of the Satellite
-    public void updateValues(Selection selection) {
+    public void updateMainForm(Selection selection) {
 
         selection.getSatelliteView().setShortName("ST");
         selection.getSatelliteView().setName("Satellite");
 
-        selection.getSatelliteView().setSummary(Com.toDMS(
+        selection.getSatelliteView().setSummary("Lg " + Com.toDMS(
                 selection.getSatellite().getLongitude()));
 
         // get maximum EIRP that is calculated or from contours
@@ -248,7 +248,7 @@ public class SatelliteView extends View {
             display = contour;
         }
 
-        selection.getSatelliteView().setValue(Com.textN(display, 5) + "dbW");
+        selection.getSatelliteView().setValue("erp " + Com.textN(display, 5) + "dbW");
 
         // get max G/T for sublabel
         calc = selection.getSatellite().getGainTemp(selection.getBand());
@@ -261,7 +261,7 @@ public class SatelliteView extends View {
             display = contour;
         }
 
-        selection.getSatelliteView().setSubValue(Com.textN(display, 5) + "dB/K");
+        selection.getSatelliteView().setSubValue("GT " + Com.textN(display, 5) + "dB/K");
 
         // update other view summaries in Link form
         selection.getTxView().updateMainForm(selection);
@@ -516,7 +516,7 @@ public class SatelliteView extends View {
                     valueRxGainTemp.setText(Com.textN(bandBeams.gainTemp, 5));
                     // update satellite specific name, summary, value, subValue
                     // Here only the gain (which is subValue) changes
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
@@ -546,7 +546,7 @@ public class SatelliteView extends View {
                     // should not change
                     valueRxsysTemp.setText(Com.text(
                             satellite.calcSystemNoiseTemp(band)));
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("SatelliteView: bad number for Rx Depointing Error "
                             + sldrRxDiameter.getText(), Log.DEBUG);
@@ -577,7 +577,7 @@ public class SatelliteView extends View {
                     // should not change
                     valueRxsysTemp.setText(Com.text(
                             satellite.calcSystemNoiseTemp(band)));
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("SatelliteView: bad number for Rx diameter " + sldrRxDiameter.getText(), Log.DEBUG);
 
@@ -725,7 +725,7 @@ public class SatelliteView extends View {
                     lTxAmplifier.setText(Com.shortText(bandBeams.tXamplifier.
                             getPower()));
                     valueTxEIRP.setText(Com.shortText(bandBeams.EIRP));
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                     // does not change depointing
 
                 } catch (java.lang.NumberFormatException e) {
@@ -750,7 +750,7 @@ public class SatelliteView extends View {
                     valueTxPointLoss.setText(Com.shortText(
                             bandBeams.tXantenna.getDepointingLoss()));
                     valueTxEIRP.setText(Com.shortText(bandBeams.EIRP));
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("SatelliteView: bad number for Tx diameter "
                             + sldrTxDiameter.getText(), Log.DEBUG);
@@ -779,7 +779,7 @@ public class SatelliteView extends View {
 
                     // should not change
                     //valueTxsysTemp.setText(Com.text(      satellite.calcSystemNoiseTemp(band)));
-                    selection.getSatelliteView().updateValues(selection);
+                    selection.getSatelliteView().updateMainForm(selection);
                 } catch (java.lang.NumberFormatException e) {
                     Log.p("SatelliteView: bad number for Tx Depointing Error "
                             + sldrRxDiameter.getText(), Log.DEBUG);

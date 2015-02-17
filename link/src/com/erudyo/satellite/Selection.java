@@ -495,7 +495,7 @@ public class Selection {
             selection.initVisibleTerminal();
 
             // update values for satellite, UL path, DL path, Comms TODO
-            selection.getSatelliteView().updateValues(selection);
+            selection.getSatelliteView().updateMainForm(selection);
 
         }
 
