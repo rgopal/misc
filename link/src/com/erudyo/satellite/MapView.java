@@ -37,7 +37,7 @@ import java.util.Iterator;
  */
 public class MapView extends View {
 
-    private Coord lastLocation;
+ 
 
     public String getDisplayName() {
         return "MapView";
@@ -47,7 +47,7 @@ public class MapView extends View {
     public MapView(String name) {
         super(name);
         this.value = "map";
-        this.subValue = "xx";
+        this.subValue = "google";
     }
 
     private enum TERMINAL_CHOICE {
@@ -57,8 +57,10 @@ public class MapView extends View {
 
     // ping pong for selecting a terminal by clicking
     private TERMINAL_CHOICE currentChoice = TERMINAL_CHOICE.TX;
+    
+
     // need to remember these linesSat which are removed and added as selection
-    // of satellites or terminals changes
+    // of satellites or terminals changes. TODO But map is created fresh from main
 
     private LinesLayer tXline;          // this is for satellite, tx, rx
     private LinesLayer rXline;
@@ -79,6 +81,8 @@ public class MapView extends View {
             }
 
             PointsLayer pl = new PointsLayer();
+            // TODO check if receive then blue pin
+            
             pl.setPointIcon(blue_pin);
 
             // Coord takes it in degrees.   Don't use true for projected
@@ -87,7 +91,7 @@ public class MapView extends View {
 
             final PointLayer p = new PointLayer(c, terminal.getName(), blue_pin);
 
-            p.setDisplayName(false);   // it clutters
+            p.setDisplayName(true);   // fine for terminal
             pl.addPoint(p);
 
             pl.addActionListener(new ActionListener() {
@@ -119,10 +123,11 @@ public class MapView extends View {
         public Satellite satellite;
         public PointLayer pointLayer;
         public PointsLayer pointsLayer;
+        // pointsSat of beams of selected satellite
         public ArrayList<PointsLayer> pointsSat = new ArrayList<PointsLayer>();
-// pointsSat of beams of selected satellite
+
+        // linesSat of beams of seleced satellite
         public ArrayList<LinesLayer> linesSat = new ArrayList<LinesLayer>();
-// linesSat of beams of selec satellite
 
     }
 
@@ -209,7 +214,7 @@ public class MapView extends View {
                             bands = bands + " T" + newSat.bandSpecificItems.
                                     get(band.getBand()).transponders;
                             if (newSat.bandSpecificItems.get(band.getBand()).beams != null) {
-                                bands = bands + "*";
+                                bands = bands + "CN*";
                             }
                             alBands.add(band.getBand());
                             alCmds.add(new Command(band.getBand().toString()));
@@ -235,7 +240,7 @@ public class MapView extends View {
                     if (!tXvisible && !rXvisible)
                         visible = visible + " NONE";
                     
-                    String dialogText = new String("GEO_Satellite"
+                    String dialogText = new String("GEO_Satellite "
                             + plSelSat.getName() + " at Long|Lat "
                             + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
                             + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
@@ -251,7 +256,7 @@ public class MapView extends View {
                                 alCmds.toArray(new Command[0]), 0, null, 0);
 
                         // check what was returned
-                        if (cmd.getCommandName().equalsIgnoreCase("UK")) {
+                        if (cmd.getCommandName().equalsIgnoreCase("Cancel")) {
                             doNothing = true;
                         } else {
                             newBand = RfBand.rFbandHash.get(cmd.getCommandName()).
@@ -304,7 +309,7 @@ public class MapView extends View {
                             drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
 
                             // draw tx and rx lines for terminals
-                            showLines(selection, mc);
+                            showTxRxLines(selection, mc);
 
                         }
                     }
@@ -355,7 +360,8 @@ public class MapView extends View {
         Hashtable<String, Satellite.Beam> beams;
         beams = selection.getSatellite().getBeams(selection);
 
-        // they will be emptied (not nulled, not recreated).  Also, even if the beams is null, these 
+        // they will be emptied (not nulled, not recreated).  Also, even if the 
+        // beams is null, these 
         // could have been non empty because of previous satellite
         pointsSat.clear();
         linesSat.clear();
@@ -450,7 +456,7 @@ public class MapView extends View {
 
     // display two linesSat for transmit and receive  for selected satellite
 // tX terminal and rX terminal and change icon colors
-    public void showLines(final Selection selection, final MapComponent mc) {
+    public void showTxRxLines(final Selection selection, final MapComponent mc) {
 
         Coord tx, cSatellite, rx;
 
@@ -523,7 +529,7 @@ public class MapView extends View {
                                 selection.getCurrentLocation().setLatitude(
                                         coord.getLatitude() * Com.PI / 180.0);
 
-                                
+                                // TODO add PointLayer also
                                 // this is not correct in the model
                                 PointsLayer pslNewTerm = new PointsLayer();
                                 pslNewTerm.setPointIcon(blue_pin);
@@ -550,7 +556,7 @@ public class MapView extends View {
         tXline = null;
 
         // now draw linesSat between terminals and satellite
-        showLines(selection, mc);
+        showTxRxLines(selection, mc);
 
         // show all satellites on the map
         for (String sat : selection.getBandSatellite().
@@ -647,10 +653,11 @@ public class MapView extends View {
                                     pnew.getLongitude());
 
                             // get the point in this point layer to print 
-                            Log.p("MapView: new terminal current long | lat "
+                            Log.p("MapView: new terminal action created current long | lat "
                                     + m.getLongitude() + "|" + m.getLatitude(), Log.DEBUG);
 
-                            // TODO ??? not needed changeTerminal(selection, mc, pnew, m);
+                            // uncommented
+                            changeTerminal(selection, mc, pnew, m);
                         }
                     });
                     mc.addLayer(pslNewTerm);
@@ -747,7 +754,7 @@ public class MapView extends View {
 
                 }
 
-                showLines(selection, mc);
+                showTxRxLines(selection, mc);
 
             }
 
