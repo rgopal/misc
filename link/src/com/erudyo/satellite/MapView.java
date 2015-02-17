@@ -193,6 +193,8 @@ public class MapView extends View {
                     // get the point in this point layer to print 
                     // get all bands info for the satellite
                     Satellite newSat = Satellite.satelliteHash.get(plSelSat.getName());
+                    Log.p("MapView: showSatellite action newSat is " + newSat, Log.DEBUG);
+                    
                     String bands = "";
                     ArrayList<RfBand.Band> alBands = new ArrayList<RfBand.Band>();
                     ArrayList<Command> alCmds = new ArrayList<Command>();
