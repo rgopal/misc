@@ -68,7 +68,7 @@ public class DlPathView extends View {
             selection.getdLpathView().setValue("El " + Com.toDMS(
                     selection.getdLpath().getElevation()).substring(0, 6));
 
-            selection.getdLpathView().setSummary("CNo " + Com.textN(selection.getdLpath().
+            selection.getdLpathView().setSummary("DL CNo " + Com.textN(selection.getdLpath().
                     getCNo(), 5));
 
             selection.getdLpathView().setSubValue("SpD " + Com.textN(selection.getdLpath().

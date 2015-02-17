@@ -82,7 +82,7 @@ public class UlPathView extends View {
             selection.getuLpathView().setValue("El " + Com.toDMS(
                     selection.getuLpath().getElevation()).substring(0, 6));
 
-            selection.getuLpathView().setSummary("CNo " + Com.textN(selection.getuLpath().
+            selection.getuLpathView().setSummary("UL CNo " + Com.textN(selection.getuLpath().
                     getCNo(), 5));
 
             selection.getuLpathView().setSubValue("SpD " + Com.textN(selection.getuLpath().
