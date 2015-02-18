@@ -37,8 +37,6 @@ import java.util.Iterator;
  */
 public class MapView extends View {
 
- 
-
     public String getDisplayName() {
         return "MapView";
     }
@@ -57,11 +55,9 @@ public class MapView extends View {
 
     // ping pong for selecting a terminal by clicking
     private TERMINAL_CHOICE currentChoice = TERMINAL_CHOICE.TX;
-    
 
     // need to remember these linesSat which are removed and added as selection
     // of satellites or terminals changes. TODO But map is created fresh from main
-
     private LinesLayer tXline;          // this is for satellite, tx, rx
     private LinesLayer rXline;
 
@@ -82,7 +78,7 @@ public class MapView extends View {
 
             PointsLayer pl = new PointsLayer();
             // TODO check if receive then blue pin
-            
+
             pl.setPointIcon(blue_pin);
 
             // Coord takes it in degrees.   Don't use true for projected
@@ -151,7 +147,7 @@ public class MapView extends View {
                 Log.p("MapView: satellite is null " + satName, Log.WARNING);
             }
 
-            final PointsLayer plSat = new PointsLayer();
+            final PointsLayer pslSelSat = new PointsLayer();
 
             // default is blue
             Image pin;
@@ -162,7 +158,7 @@ public class MapView extends View {
                 pin = blue_pin;
             }
 
-            plSat.setPointIcon(pin);
+            pslSelSat.setPointIcon(pin);
 
             // Coord takes it in degrees.   Don't use true for projected
             Coord coord = new Coord(Math.toDegrees(satellite.getLatitude()),
@@ -171,41 +167,42 @@ public class MapView extends View {
             final PointLayer pSat = new PointLayer(coord, satellite.getName(), pin);
 
             pSat.setDisplayName(false);   // it clutters
-            plSat.addPoint(pSat);
+            pslSelSat.addPoint(pSat);
 
             // memorize the currently selected satellite
             if (satellite == selection.getSatellite()) {
                 prevSat.pointLayer = pSat;
-                prevSat.pointsLayer = plSat;
+                prevSat.pointsLayer = pslSelSat;
                 prevSat.satellite = satellite;
             }
-           
 
-            plSat.addActionListener(new ActionListener() {
+            pslSelSat.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
                     PointLayer plSelSat = (PointLayer) evt.getSource();
 
                     // Mercator is the cylindrical projection.  Don't
                     // know why this has to be called
-                    Coord coordSelSat = Mercator.inverseMercator(plSelSat.getLatitude(),
+                    Satellite selectedSat = Satellite.satelliteHash.get(plSelSat.getName());
+                    Coord coordSelSat = Mercator.inverseMercator(selectedSat.getLatitude(),
                             plSelSat.getLongitude());
                     // get the point in this point layer to print 
                     // get all bands info for the satellite
-                    Satellite newSat = Satellite.satelliteHash.get(plSelSat.getName());
-                    Log.p("MapView: showSatellite action newSat is " + newSat, Log.DEBUG);
-                    
+
+                    Log.p("MapView: showSatellite action selectedSat is "
+                            + selectedSat, Log.DEBUG);
+
                     String bands = "";
                     ArrayList<RfBand.Band> alBands = new ArrayList<RfBand.Band>();
                     ArrayList<Command> alCmds = new ArrayList<Command>();
-                    if (newSat != null) {
+                    if (selectedSat != null) {
                         for (final RfBand band : RfBand.indexRfBand) {
                             if (band.getBand() == RfBand.Band.UK) {
                                 continue;
                             }
 
-                            if (newSat.bandSpecificItems == null
-                                    || newSat.bandSpecificItems.get(band.getBand()) == null) {
+                            if (selectedSat.bandSpecificItems == null
+                                    || selectedSat.bandSpecificItems.get(band.getBand()) == null) {
                                 Log.p("MapView: bandSatellite is null for band "
                                         + band.getBand(), Log.DEBUG);
                                 // don't return, just go to next band
@@ -213,9 +210,9 @@ public class MapView extends View {
                             }
                             bands = bands + " " + band.getBand();
                             // number of transponders
-                            bands = bands + " T" + newSat.bandSpecificItems.
+                            bands = bands + " T" + selectedSat.bandSpecificItems.
                                     get(band.getBand()).transponders;
-                            if (newSat.bandSpecificItems.get(band.getBand()).beams != null) {
+                            if (selectedSat.bandSpecificItems.get(band.getBand()).beams != null) {
                                 bands = bands + "CN*";
                             }
                             alBands.add(band.getBand());
@@ -225,106 +222,112 @@ public class MapView extends View {
                         if (bands.length() != 0) {
                             bands = " and bands " + bands + " ";
                         }
+
+                        Log.p("MapView: selected satellite " + selectedSat.getName()
+                                + " long | lat " + " "
+                                + coordSelSat.getLongitude() + "|"
+                                + coordSelSat.getLatitude()
+                                + " bands" + bands, Log.DEBUG);
+// offer band selection as well
+                        RfBand.Band oldBand = selection.getBand();
+                        RfBand.Band newBand = RfBand.Band.UK;
+
+                        Boolean tXvisible = Path.visible(selectedSat, selection.gettXterminal());
+                        Boolean rXvisible = Path.visible(selectedSat, selection.getrXterminal());
+                        String visible = "\nVisible selected terminals - ";
+                        if (tXvisible) {
+                            visible = visible + "\nTx: " + selection.gettXterminal();
+                        }
+                        if (rXvisible) {
+                            visible = visible + "\nRx:" + selection.getrXterminal();
+                        }
+                        if (!tXvisible && !rXvisible) {
+                            visible = visible + " NONE";
+                        }
+
+                        String dialogText = new String("GEO_Satellite "
+                                + selectedSat.getName() + " at Long|Lat "
+                                + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
+                                + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
+                                + visible + "\n"
+                                + bands
+                        );
+
+                        Boolean doNothing = false;
+                        if (alBands.size() > 0) {
+
+                            alCmds.add(new Command("Cancel"));
+                            Command cmd = Dialog.show("Satellite Selection ", dialogText,
+                                    alCmds.toArray(new Command[0]), 0, null, 0);
+
+                            // check what was returned
+                            if (cmd.getCommandName().equalsIgnoreCase("Cancel")) {
+                                doNothing = true;
+                            } else {
+                                newBand = RfBand.rFbandHash.get(cmd.getCommandName()).
+                                        getBand();
+                                Log.p("MapView: selecting band " + newBand, Log.DEBUG);
+                            }
+
+                        } else {
+                            // there are no bands in this satellite so newBand is UK
+                            Boolean ans = Dialog.show(dialogText,
+                                    "Select this Satellite", "Yes", "No");
+                            if (!ans) {
+                                doNothing = true;
+                            }
+                        }
+                        // if instructed, change the satellite
+                        if (!doNothing) {
+                            Satellite newSat = Satellite.satelliteHash.get(
+                                    selectedSat.getName());
+                            if (newSat == null) {
+                                Log.p("Mapview: can't find new satellite "
+                                        + selectedSat.getName(), Log.WARNING);
+                            } else {
+                                // change satellite and update linesSat
+                                Log.p("Mapview: selecting satellite "
+                                        + newSat.getName(), Log.DEBUG);
+                                selection.setBand(newBand);
+                                selection.setSatellite(newSat);
+
+                                selection.comboBand(selection);
+
+                                // remove beams of old satellite
+                                if (prevSat != null) {
+                                    removeBeams(prevSat.satellite, prevSat.pointsSat,
+                                            prevSat.linesSat, mc);
+
+                                    prevSat.pointLayer.setIcon(blue_pin);
+                                    prevSat.pointsLayer.setPointIcon(blue_pin);
+
+                                }
+
+                                // make a note for future remove beams
+                                pslSelSat.setPointIcon(red_pin);
+                                plSelSat.setIcon(red_pin);
+                                prevSat.satellite = selection.getSatellite();
+                                prevSat.pointLayer = plSelSat;
+                                prevSat.pointsLayer = pslSelSat;
+
+                                selection.getSatelliteView().spin.
+                                        setSelectedItem(selection.getSatellite().getName());
+
+                                drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
+
+                                // draw tx and rx lines for terminals
+                                showTxRxLines(selection, mc);
+
+                            }
+                        }
                     } else {
                         Log.p("MapView: showSatellite newSat is null", Log.WARNING);
                     }
-                    // offer band selection as well
-                    RfBand.Band oldBand = selection.getBand();
-                    RfBand.Band newBand = RfBand.Band.UK;
-
-                    Boolean tXvisible = Path.visible(newSat, selection.gettXterminal());
-                    Boolean rXvisible = Path.visible(newSat,selection.getrXterminal());
-                    String visible = "\nVisible selected terminals - ";
-                    if (tXvisible)
-                        visible = visible + "\nTx: " + selection.gettXterminal();
-                    if (rXvisible)
-                        visible = visible + "\nRx:" + selection.getrXterminal();
-                    if (!tXvisible && !rXvisible)
-                        visible = visible + " NONE";
-                    
-                    String dialogText = new String("GEO_Satellite "
-                            + plSelSat.getName() + " at Long|Lat "
-                            + Com.toDMS(Math.toRadians(coordSelSat.getLongitude())) + "|"
-                            + Com.toDMS(Math.toRadians(coordSelSat.getLatitude()))
-                            + visible + "\n"
-                            + bands
-                    );
-
-                    Boolean doNothing = false;
-                    if (alBands.size() > 0) {
-
-                        alCmds.add(new Command("Cancel"));
-                        Command cmd = Dialog.show("Satellite Selection ", dialogText,
-                                alCmds.toArray(new Command[0]), 0, null, 0);
-
-                        // check what was returned
-                        if (cmd.getCommandName().equalsIgnoreCase("Cancel")) {
-                            doNothing = true;
-                        } else {
-                            newBand = RfBand.rFbandHash.get(cmd.getCommandName()).
-                                    getBand();
-                            Log.p("MapView: selecting band " + newBand, Log.DEBUG);
-                        }
-
-                    } else {
-                        // there are no bands in this satellite so newBand is UK
-                        Boolean ans = Dialog.show(dialogText,
-                                "Select this Satellite", "Yes", "No");
-                        if (!ans) {
-                            doNothing = true;
-                        }
-                    }
-                    if (!doNothing) {
-                        Satellite satellite = Satellite.satelliteHash.get(
-                                plSelSat.getName());
-                        if (satellite == null) {
-                            Log.p("Mapview: can't find satellite "
-                                    + plSelSat.getName(), Log.WARNING);
-                        } else {
-                            // change satellite and update linesSat
-                            Log.p("Mapview: selecting satellite "
-                                    + plSelSat.getName(), Log.DEBUG);
-                            selection.setBand(newBand);
-                            selection.setSatellite(satellite);
-
-                            selection.comboBand(selection);
-
-                            // remove beams of old satellite
-                            if (prevSat != null) {
-                                removeBeams(prevSat.satellite, prevSat.pointsSat,
-                                        prevSat.linesSat, mc);
-
-                                prevSat.pointLayer.setIcon(blue_pin);
-                                prevSat.pointsLayer.setPointIcon(blue_pin);
-
-                            }
-
-                            plSat.setPointIcon(red_pin);
-                            plSelSat.setIcon(red_pin);
-                            prevSat.satellite = selection.getSatellite();
-                            prevSat.pointLayer = plSelSat;
-                            prevSat.pointsLayer = plSat;
-
-                            selection.getSatelliteView().spin.
-                                    setSelectedItem(selection.getSatellite().getName());
-
-                            drawBeams(selection, prevSat.pointsSat, prevSat.linesSat, mc);
-
-                            // draw tx and rx lines for terminals
-                            showTxRxLines(selection, mc);
-
-                        }
-                    }
-
-                    Log.p("MapView: satellite " + pSat.getName()
-                            + " long | lat " + " "
-                            + coordSelSat.getLongitude() + "|"
-                            + coordSelSat.getLatitude(), Log.DEBUG);
 
                 }
             }
             );
-            mc.addLayer(plSat);
+            mc.addLayer(pslSelSat);
             // Google coordinatges are in degrees (no minutes, seconds)
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -525,7 +528,6 @@ public class MapView extends View {
                                 Log.p("Map: press your location in x|y " + x + "|" + y, Log.DEBUG);
                                 Coord coord = getCoordFromPosition(x, y);
 
-                                
                                 selection.getCurrentLocation().setLongitude(
                                         coord.getLongitude() * Com.PI / 180.0);
                                 selection.getCurrentLocation().setLatitude(
@@ -688,16 +690,17 @@ public class MapView extends View {
     public void changeTerminal(Selection selection, MapComponent mc,
             PointLayer pnew, Coord m) {
 
-        Boolean satVisible = Path.visible(selection.getSatellite(), 
-                Terminal.terminalHash.get(pnew.getName()) );
-        
+        Boolean satVisible = Path.visible(selection.getSatellite(),
+                Terminal.terminalHash.get(pnew.getName()));
+
         // let the user know if the satellite will be visible from new terminal
         String visible = "\nCurrent Satellite " + selection.getSatellite();
-        if (!satVisible)
+        if (!satVisible) {
             visible = visible + " is NOT visible";
-        else
+        } else {
             visible = visible + " is VISIBLE";
-            
+        }
+
         visible = visible + "";
         String dialogText = "Terminal " + pnew.getName() + " at Long|Lat "
                 + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
