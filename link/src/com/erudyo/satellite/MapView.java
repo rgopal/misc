@@ -76,21 +76,21 @@ public class MapView extends View {
                         Log.WARNING);
             }
 
-            PointsLayer pl = new PointsLayer();
+            PointsLayer psl = new PointsLayer();
             // TODO check if receive then blue pin
 
-            pl.setPointIcon(blue_pin);
+            psl.setPointIcon(blue_pin);
 
             // Coord takes it in degrees.   Don't use true for projected
             Coord c = new Coord(Math.toDegrees(terminal.getLatitude()),
                     Math.toDegrees(terminal.getLongitude()));
 
-            final PointLayer p = new PointLayer(c, terminal.getName(), blue_pin);
+            final PointLayer pl = new PointLayer(c, terminal.getName(), blue_pin);
 
-            p.setDisplayName(true);   // fine for terminal
-            pl.addPoint(p);
+            pl.setDisplayName(true);   // fine for terminal
+            psl.addPoint(pl);
 
-            pl.addActionListener(new ActionListener() {
+            psl.addActionListener(new ActionListener() {
                 // need to get PointLayer and not PointsLayer
 
                 public void actionPerformed(ActionEvent evt) {
@@ -106,7 +106,7 @@ public class MapView extends View {
 
                 }
             });
-            mc.addLayer(pl);
+            mc.addLayer(psl);
             // Google coordinatges are in degrees (no minutes, seconds)
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -498,7 +498,7 @@ public class MapView extends View {
         Log.p("MapView: drawing lines among " + rx + " " + cSatellite
                 + " " + tx, Log.DEBUG);
 
-        rXline.addLineSegment(new Coord[]{rx, cSatellite});
+        rXline.addLineSegment(new Coord[]{cSatellite, rx});
         mc.addLayer(rXline);
         rXline.lineColor(0x0000FF);  // Blue for receive
     }
@@ -688,10 +688,10 @@ public class MapView extends View {
     }
 
     public void changeTerminal(Selection selection, MapComponent mc,
-            PointLayer pnew, Coord m) {
+            PointLayer selectedTerm, Coord coord) {
 
         Boolean satVisible = Path.visible(selection.getSatellite(),
-                Terminal.terminalHash.get(pnew.getName()));
+                Terminal.terminalHash.get(selectedTerm.getName()));
 
         // let the user know if the satellite will be visible from new terminal
         String visible = "\nCurrent Satellite " + selection.getSatellite();
@@ -702,9 +702,9 @@ public class MapView extends View {
         }
 
         visible = visible + "";
-        String dialogText = "Terminal " + pnew.getName() + " at Long|Lat "
-                + Com.toDMS(Math.toRadians(m.getLongitude())) + "|"
-                + Com.toDMS(Math.toRadians(m.getLatitude()))
+        String dialogText = "Terminal " + selectedTerm.getName() + " at Long|Lat "
+                + Com.toDMS(Math.toRadians(coord.getLongitude())) + "|"
+                + Com.toDMS(Math.toRadians(coord.getLatitude()))
                 + visible
                 + "\nSelect this terminal as";
 
@@ -721,41 +721,41 @@ public class MapView extends View {
 
         if (cmd.getCommandName().equalsIgnoreCase("Cancel")) {
             Log.p("MapView: terminal is not selected "
-                    + pnew.getName(), Log.DEBUG);
+                    + selectedTerm.getName(), Log.DEBUG);
         } else {
-            Terminal terminal = Terminal.terminalHash.get(pnew.getName());
-            if (terminal == null) {
-                Log.p("Mapview: can't find terminal " + pnew.getName() + " for "
+            Terminal newTerm = Terminal.terminalHash.get(selectedTerm.getName());
+            if (newTerm == null) {
+                Log.p("Mapview: can't find terminal " + selectedTerm.getName() + " for "
                         + currentChoice, Log.WARNING);
             } else {
                 // change terminal and update linesSat
-                Log.p("Mapview: selecting terminal " + pnew.getName(), Log.DEBUG);
+                Log.p("Mapview: selecting terminal " + selectedTerm.getName(), Log.DEBUG);
 
                 if (currentChoice == TERMINAL_CHOICE.TX) {
 
                     selection.gettXterminal().
                             setBand(selection.getBand());
 
-                    selection.settXterminal(terminal);
+                    selection.settXterminal(newTerm);
                     // update the selection of TxView 
 
                     selection.getTxView().spin.
-                            setSelectedItem(terminal.getName());
+                            setSelectedItem(newTerm.getName());
 
-                    Log.p("MapView: changeterminal() has select TX "
-                            + terminal.getName(), Log.DEBUG);
+                    Log.p("MapView: changeterminal() has selected TX "
+                            + newTerm.getName(), Log.DEBUG);
 
                 } else {
                     selection.getrXterminal().
                             setBand(selection.getBand());
 
-                    selection.setrXterminal(terminal);
+                    selection.setrXterminal(newTerm);
                     // update the model and selection of TxView 
                     selection.getRxView().spin.
-                            setSelectedItem(terminal.getName());
+                            setSelectedItem(newTerm.getName());
 
                     Log.p("MapView: changeterminal() has select RX "
-                            + terminal.getName(), Log.DEBUG);
+                            + newTerm.getName(), Log.DEBUG);
 
                 }
 

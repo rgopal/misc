@@ -179,6 +179,7 @@ public class Selection {
 
         try {
 
+            // it is in degrees 
             currentLocation
                     = LocationManager.getLocationManager().getCurrentLocation();
 
