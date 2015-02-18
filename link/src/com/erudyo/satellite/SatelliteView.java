@@ -285,11 +285,14 @@ public class SatelliteView extends View {
 
         if (Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
             // no contours for GT found
-            lHeading = new Label("G/T for terminal uses EIRP contours");
+            lHeading = new Label("G/T from EIRP contours + user input");
+           
 
         } else {
-            lHeading = new Label("G/T contours used for a terminal");
+            lHeading = new Label("G/T from G/T contours");
         }
+         lHeading.getStyle().setFgColor(
+                    Integer.valueOf("FF0000", 16));
         cnt.addComponent(constraint, lHeading);
 
         constraint = layout.createConstraint();
@@ -308,11 +311,15 @@ public class SatelliteView extends View {
         constraint.setHorizontalSpan(3);
         if (Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)) {
             // no contours for GT found
-            lHeading = new Label("EIRP for terminal uses G/T contours");
+            lHeading = new Label("EIRP from G/T contours + user input");
+            
 
         } else {
-            lHeading = new Label("EIRP contours used for a terminal");
+            lHeading = new Label("EIRP from EIRP contours");
         }
+      
+         lHeading.getStyle().setFgColor(
+                    Integer.valueOf("FF0000", 16));
         cnt.addComponent(constraint, lHeading);
 
         Label lEIRP = new Label("Satellite Max Tx EIRP");
@@ -352,11 +359,15 @@ public class SatelliteView extends View {
         cnt.addComponent(lFrequency);
         cnt.addComponent(L03);
 
-        // check if contours are present (then no calculations needed)
+        // check if contours are present (then some calculations not needed)
         if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)
                 || !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
             displayContourValues(bandBeams, cnt, layout);
-            return cnt;
+            // return only if both are valid (calculated values not used)
+            if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)
+                    && !Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
+                return cnt;
+            }
         }
         // now the Rx side of the satellite
         Label lNoiseFigureLabel = new Label("Rx Noise Figure");
@@ -484,6 +495,11 @@ public class SatelliteView extends View {
         Label lGainTemp = new Label("Satellite G/T");
         final Label valueRxGainTemp = new Label(Com.shortText(
                 bandBeams.gainTemp));
+        // grey it if contour values are present (calculated not used)
+        if (!Com.sameValue(bandBeams.maxGT, Satellite.NEGLIGIBLE)) {
+            valueRxGainTemp.getStyle().setFgColor(
+                    Integer.valueOf("FF0000", 16));  // some color
+        }
         Label unitGainTemp = new Label("dB 1/K");
         cnt.addComponent(lGainTemp);
         cnt.addComponent(valueRxGainTemp);
@@ -709,6 +725,11 @@ public class SatelliteView extends View {
 
         Label lEIRP = new Label("Satellite Tx EIRP");
         final Label valueTxEIRP = new Label(Com.shortText(bandBeams.EIRP));
+         // grey it if contour values are present (calculated not used)
+        if (!Com.sameValue(bandBeams.maxEIRP, Satellite.NEGLIGIBLE)) {
+            valueTxEIRP.getStyle().setFgColor(
+                    Integer.valueOf("FF0000", 16));  // some color
+        }
         Label unitEIRP = new Label("dBW");
         cnt.addComponent(lEIRP);
         cnt.addComponent(valueTxEIRP);

@@ -188,7 +188,7 @@ public class DlPathView extends View {
 
         sldrLongitude.setRenderValueOnTop(true);
         final Label valueLongitude = new Label(Com.toDMS(
-                rxTerm.getLongitude()) + "degree");
+                rxTerm.getLongitude()));
         cnt.addComponent(lLongitude);
 
         cnt.addComponent(valueLongitude);
