@@ -317,7 +317,7 @@ public class Selection {
 
         // since it can also be called from MapView, redundant if called
         // from action listner of the UI 
-        cbBand.setSelectedItem(selection.getBand());
+        cbBand.setSelectedItem(selection.getBand().toString());
         RfBand rFband = RfBand.rFbandHash.get(selection.
                 getBand().toString());
 
@@ -480,9 +480,10 @@ public class Selection {
                 selection.setSatellite(Satellite.satelliteHash.
                         get(selection.getSatelliteView().spin.getSelectedItem()));
             } else if (selection.getBandSatelliteHash().
-                    get(selection.getBand()).contains(
+                    get(selection.getBand()).containsKey(
                             selection.getSatellite().getName())) {
               
+                // this was just contains which would look for value (bug)
                 selection.getSatelliteView().spin.setSelectedItem(
                         selection.getSatellite().getName());
             } else {
