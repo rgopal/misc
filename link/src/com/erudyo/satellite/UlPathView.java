@@ -142,8 +142,8 @@ public class UlPathView extends View {
                 "dB 1/K"));
 
         outer.add(TxView.addNewInner("Sat G/T for Tx Term",
-                Com.shortText(selection.getuLpath().getSatellite().
-                        getGainTempForTerminal(txTerm)), "dB 1/K"));
+                Com.textN(selection.getuLpath().getSatellite().
+                        getGainTempForTerminal(txTerm),6), "dB 1/K"));
         outer.add(TxView.addNewInner("UL C/No",
                 Com.textN(selection.getuLpath().getCNo(), 7),
                 "dB Hz"));
@@ -322,9 +322,9 @@ public class UlPathView extends View {
         cnt.addComponent(unitGainTemp);
 
         Label lGainTempTerm = new Label("Sat G/T for Tx Term");
-        final Label valueGainTempTerm = new Label(Com.shortText(
+        final Label valueGainTempTerm = new Label(Com.textN(
                 selection.getuLpath().getSatellite().
-                getGainTempForTerminal(txTerm)));
+                getGainTempForTerminal(txTerm),6));
         Label unitGainTempTerm = new Label("dB 1/K");
         cnt.addComponent(lGainTempTerm);
         cnt.addComponent(valueGainTempTerm);
@@ -372,9 +372,9 @@ public class UlPathView extends View {
                             selection.getuLpath().getSpectralDensity(), 7));
                     valuePowerRx.setText(Com.textN(
                             selection.getuLpath().getPowerReceived(), 7));
-                    valueGainTempTerm.setText(Com.shortText(
+                    valueGainTempTerm.setText(Com.textN(
                             selection.getuLpath().getSatellite().
-                            getGainTempForTerminal(txTerm)));
+                            getGainTempForTerminal(txTerm),6));
                     updateMainForm(selection);
 
                 } catch (java.lang.NumberFormatException e) {
@@ -420,9 +420,9 @@ public class UlPathView extends View {
                             selection.getuLpath().getSpectralDensity(), 7));
                     valuePowerRx.setText(Com.textN(
                             selection.getuLpath().getPowerReceived(), 7));
-                    valueGainTempTerm.setText(Com.shortText(
+                    valueGainTempTerm.setText(Com.textN(
                             selection.getuLpath().getSatellite().
-                            getGainTempForTerminal(txTerm)));
+                            getGainTempForTerminal(txTerm),6));
                     updateMainForm(selection);
 
                 } catch (java.lang.NumberFormatException e) {
