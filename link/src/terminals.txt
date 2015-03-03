@@ -1,0 +1,22 @@
+name,  longitude (degree), latitude (degree), antennaSize, rx NF, Tx amplifierPower, band, Tx antenna
+Germantown MD,-77.2667,39.1833,4,5,4,80,KA,2
+Potomac MD,-77.2167,39.0167,1,2,4,8,KU,2
+San Francisco-CA,-122.4194, 37.7749,1,2,4,8,KU,2
+Houston TX,-95.3694,29.7602,1,2,4,8,KU,2
+Denver CO,-104.9847, 39.7376,1,2,4,8,KU,2
+Manhattan-NY,-73.9845,40.7590,5,4,2,40,C,2
+Los Angeles CA,-118.4085,33.9416,3,2,3,60,X,2
+Bogota CO,-74.0758, 4.5981,3,2,3,60,X,2
+Rio De J BR, -43.1971,-22.9083,3,2,3,60,X,2
+London UK, -0.1278,51.5074,3,2,3,60,X,2
+Griesheim GE,8.5676,49.8614,3,2,3,60,X,2
+Riyadh SA, 46.7167, 24.6333,3,2,3,60,X,2
+Baghdad IQ, 44.4220,33.3250,3,2,3,60,X,2
+Kabul AF, 69.1667,34.5333,3,2,3,60,X,2
+San Diego CA,-117.1611,32.7157,3,2,3,60,X,2
+Delhi IN,77.2250,28.6353,4,3,3,65,C,2
+Bombay IN,72.8777,19.0760,5,4,4,70,C,2
+Singapore SI,103.8198,1.3521,5,4,4,70,C,2
+Tokyo JP,139.6917,35.6895,5,4,4,70,C,2
+Honolulu HI,-157.8583,21.3069,5,4,4,70,C,2
+Cape Hope SA,18.4737,-34.3570,5,4,4,70,C,2

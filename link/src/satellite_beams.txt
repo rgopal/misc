@@ -1,0 +1,665 @@
+Amazonas-1|1|Amazonas161WCTHAmericas.kml|C
+Amazonas-1|2|Amazonas161WCTVAmericas.kml|C
+Amazonas-1|3|Amazonas161WKUTHNAmerica.kml|Ku
+Amazonas-1|4|Amazonas161WKUTVNAmerica.kml|Ku
+Amazonas-2|1|Amazonas261WKUTVNorthAmerica.kml|Ku
+AMC-15|1|AMC15105WKDLConus.kml|Ku
+AMC-15|2|AMC15105WKDRConus.kml|Ku
+AMC-18|1|AMC18105WCDHConus.kml|C
+AMC-18|2|AMC18105WCDVConus.kml|C
+AMC-2|1|AMC20105.5WNG1TLConusPlus.kml|Ku
+AMC-2|2|AMC20105.5WNG1TRConusPlus.kml|Ku
+AMC-2|3|AMC2101WCTHConus.kml|C
+AMC-2|4|AMC2101WCTVConus.kml|C
+AMC-2|5|AMC2101WKTHConus.kml|Ku
+AMC-2|6|AMC2101WKTVConus.kml|Ku
+AMC-2|7|AMC2267.5WKDRConus.kml|Ku
+AMC-2|8|AMC2267.5WTBRBrazil.kml|Ku
+AMC-2|9|AMC2267.5WTMLMexicoSteerable.kml|Ku
+AMC-2|10|AMC2267.5WTSRSpanishSAmerica.kml|Ku
+AMC-2|11|AMC279WCTHConus.kml|Ku
+AMC-2|12|AMC279WCTVConus.kml|Ku
+AMC-2|13|AMC279WKTHConus.kml|Ku
+AMC-2|14|AMC279WKTVConus.kml|Ku
+AMC-21|1|AMC2101WCTHConus.kml|Ku
+AMC-21|2|AMC2101WCTVConus.kml|Ku
+AMC-21|3|AMC2101WKTHConus.kml|Ku
+AMC-21|4|AMC2101WKTVConus.kml|Ku
+AMC-4|1|AMC467WCTV.kml|Ku
+AMC-4|2|AMC467WKNTV.kml|Ku
+AMC-4|3|AMC467WKSTV.kml|Ku
+Anik F1|1|AnikF1R107WCNTHCONUS.kml|Ku
+Anik F1|2|AnikF1R107WCNTVCONUS.kml|Ku
+Anik F1|3|AnikF1R107WKNTHCONUS.kml|Ku
+Anik F1|4|AnikF1R107WKNTVCONUS.kml|Ku
+Anik F3|1|AnikF3118.8WCNTHCHorizontal.kml|Ku
+Anik F3|2|AnikF3118.8WCNTVCVertical.kml|Ku
+Anik F3|3|AnikF3118.8WKNTHKUHorizontal.kml|Ku
+Anik F3|4|AnikF3118.8WKNTLKUCircularLeft.kml|Ku
+Anik F3|5|AnikF3118.8WKNTRKUCircularRight.kml|Ku
+Anik F3|6|AnikF3118.8WKNTVKuVertical.kml|Ku
+Ciel-2|1|Ciel2129WCAN4CanadaWideBeam.kml|Ku
+Ciel-2|2|Ciel2129WCAN7Conus.kml|Ku
+Ciel-2|3|Ciel2129WSB10CentralOregon.kml|Ku
+Ciel-2|4|Ciel2129WSB11NorthwestIdaho.kml|Ku
+Ciel-2|5|Ciel2129WSB12NortheastIdaho.kml|Ku
+Ciel-2|6|Ciel2129WSB13SouthCentralMontana.kml|Ku
+Ciel-2|7|Ciel2129WSB14CentralMinnesota.kml|Ku
+Ciel-2|8|Ciel2129WSB15NortheastWisconsin.kml|Ku
+Ciel-2|9|Ciel2129WSB16NorthCalifornia.kml|Ku
+Ciel-2|10|Ciel2129WSB17WesternNevada.kml|Ku
+Ciel-2|11|Ciel2129WSB18Utah.kml|Ku
+Ciel-2|12|Ciel2129WSB19NorthCentralColorado.kml|Ku
+Ciel-2|13|Ciel2129WSB1Alaska.kml|Ku
+Ciel-2|14|Ciel2129WSB20SouthCentralNebraska.kml|Ku
+Ciel-2|15|Ciel2129WSB21SoutheastIowa.kml|Ku
+Ciel-2|16|Ciel2129WSB22LakeMichigan.kml|Ku
+Ciel-2|17|Ciel2129WSB23NorthwestNewYork.kml|Ku
+Ciel-2|18|Ciel2129WSB24Indiana.kml|Ku
+Ciel-2|19|Ciel2129WSB25EasternOhio.kml|Ku
+Ciel-2|20|Ciel2129WSB26SouthCentralNewYork.kml|Ku
+Ciel-2|21|Ciel2129WSB27SoutheastNevada.kml|Ku
+Ciel-2|22|Ciel2129WSB28SoutheastColorado.kml|Ku
+Ciel-2|23|Ciel2129WSB29EasternKansas.kml|Ku
+Ciel-2|24|Ciel2129WSB30EasternMissouri.kml|Ku
+Ciel-2|25|Ciel2129WSB31WestVirginia.kml|Ku
+Ciel-2|26|Ciel2129WSB32WestCentralCalifornia.kml|Ku
+Ciel-2|27|Ciel2129WSB33SouthCalifornia.kml|Ku
+Ciel-2|28|Ciel2129WSB34CentralArizona.kml|Ku
+Ciel-2|29|Ciel2129WSB35NewMexico.kml|Ku
+Ciel-2|30|Ciel2129WSB36Oklahoma.kml|Ku
+Ciel-2|31|Ciel2129WSB37Arkansas.kml|Ku
+Ciel-2|32|Ciel2129WSB38SouthwestTennessee.kml|Ku
+Ciel-2|33|Ciel2129WSB39NorthCarolina.kml|Ku
+Ciel-2|34|Ciel2129WSB40EasternVirginia.kml|Ku
+Ciel-2|35|Ciel2129WSB41NortheastTexas.kml|Ku
+Ciel-2|36|Ciel2129WSB42SouthernMississippi.kml|Ku
+Ciel-2|37|Ciel2129WSB43NorthwestGeorgia.kml|Ku
+Ciel-2|38|Ciel2129WSB44SoutheastSouthCarolina.kml|Ku
+Ciel-2|39|Ciel2129WSB45SouthernArizona.kml|Ku
+Ciel-2|40|Ciel2129WSB46WesternTexas.kml|Ku
+Ciel-2|41|Ciel2129WSB47CentralTexas.kml|Ku
+Ciel-2|42|Ciel2129WSB48SouthwestTexas.kml|Ku
+Ciel-2|43|Ciel2129WSB49SoutheastTexas.kml|Ku
+Ciel-2|44|Ciel2129WSB4NorthwestWashington.kml|Ku
+Ciel-2|45|Ciel2129WSB50SoutheastLouisiana.kml|Ku
+Ciel-2|46|Ciel2129WSB51NortheastFlorida.kml|Ku
+Ciel-2|47|Ciel2129WSB52SouthernTexas.kml|Ku
+Ciel-2|48|Ciel2129WSB53SouthCentralFlorida.kml|Ku
+Ciel-2|49|Ciel2129WSB54SouthFlorida.kml|Ku
+Ciel-2|50|Ciel2129WSB55Hawaii.kml|Ku
+Ciel-2|51|Ciel2129WSB5WesternWashington.kml|Ku
+Ciel-2|52|Ciel2129WSB6NorthCentralMontana.kml|Ku
+Ciel-2|53|Ciel2129WSB7WesternNorthDakota.kml|Ku
+Ciel-2|54|Ciel2129WSB8EasternNorthDakota.kml|Ku
+Ciel-2|55|Ciel2129WSB9NortheastMinnesota.kml|Ku
+DirecTV-10|1|Directv10103WA1B2Tampa.kml|Ku
+DirecTV-10|2|Directv10103WA1B3Atlanta.kml|Ku
+DirecTV-10|3|Directv10103WA4BBLosAngeles.kml|Ku
+DirecTV-10|4|Directv10103WDL1.kml|Ku
+DirecTV-11|1|Directv1199.2WA1B1NewYork.kml|Ku
+DirecTV-11|2|Directv1199.2WA1B7Minneapolis.kml|Ku
+DirecTV-11|3|Directv1199.2WA1B9SantaFe.kml|Ku
+DirecTV-11|4|Directv1199.2WDL1Conus.kml|Ku
+DirecTV-12|1|Directv12103WA1B1Baltimore.kml|Ku
+DirecTV-12|2|Directv12103WA1B2Tampa.kml|Ku
+DirecTV-12|3|Directv12103WA1B3Atlanta.kml|Ku
+DirecTV-12|4|Directv12103WA1B4Chicago.kml|Ku
+DirecTV-12|5|Directv12103WA1B5Houston.kml|Ku
+DirecTV-12|6|Directv12103WA1B6OklahomaCity.kml|Ku
+DirecTV-12|7|Directv12103WA1B7SiouxFalls.kml|Ku
+DirecTV-12|8|Directv12103WA1B8Saltillo.kml|Ku
+DirecTV-12|9|Directv12103WA1B9Albuquerque.kml|Ku
+DirecTV-12|10|Directv12103WA1BAPocatello.kml|Ku
+DirecTV-12|11|Directv12103WA1BBLosAngles.kml|Ku
+DirecTV-12|12|Directv12103WA1BCPortland.kml|Ku
+DirecTV-12|13|Directv12103WA2B1NewYork.kml|Ku
+DirecTV-12|14|Directv12103WA2B2Orlando.kml|Ku
+DirecTV-12|15|Directv12103WA2B3Havanna.kml|Ku
+DirecTV-12|16|Directv12103WA2B4Knoxville.kml|Ku
+DirecTV-12|17|Directv12103WA2B5Detroit.kml|Ku
+DirecTV-12|18|Directv12103WA2B6StLouis.kml|Ku
+DirecTV-12|19|Directv12103WA2B7NewOrleans.kml|Ku
+DirecTV-12|20|Directv12103WA2B8Dallas.kml|Ku
+DirecTV-12|21|Directv12103WA2B9Omaha.kml|Ku
+DirecTV-12|22|Directv12103WA2BADenver.kml|Ku
+DirecTV-12|23|Directv12103WA2BBPhoenix.kml|Ku
+DirecTV-12|24|Directv12103WA2BCGranite.kml|Ku
+DirecTV-12|25|Directv12103WA2BDSanFrancisco.kml|Ku
+DirecTV-12|26|Directv12103WA3B1Boston.kml|Ku
+DirecTV-12|27|Directv12103WA3B2Jacksonville.kml|Ku
+DirecTV-12|28|Directv12103WA3B3Columbus.kml|Ku
+DirecTV-12|29|Directv12103WA3B4Memphis.kml|Ku
+DirecTV-12|30|Directv12103WA3B5Milwaukee.kml|Ku
+DirecTV-12|31|Directv12103WA3B6KansasCity.kml|Ku
+DirecTV-12|32|Directv12103WA3B7SanAntonio.kml|Ku
+DirecTV-12|33|Directv12103WA3B8Casper.kml|Ku
+DirecTV-12|34|Directv12103WA3B9Tucson.kml|Ku
+DirecTV-12|35|Directv12103WA3BASanJose.kml|Ku
+DirecTV-12|36|Directv12103WA3BBHawaii.kml|Ku
+DirecTV-12|37|Directv12103WA4B1Raleigh.kml|Ku
+DirecTV-12|38|Directv12103WA4B2Naples.kml|Ku
+DirecTV-12|39|Directv12103WA4B3Rochester.kml|Ku
+DirecTV-12|40|Directv12103WA4B4Cincinnati.kml|Ku
+DirecTV-12|41|Directv12103WA4B5Jackson.kml|Ku
+DirecTV-12|42|Directv12103WA4B6IowaCity.kml|Ku
+DirecTV-12|43|Directv12103WA4B7FortWorth.kml|Ku
+DirecTV-12|44|Directv12103WA4B8RapidCity.kml|Ku
+DirecTV-12|45|Directv12103WA4B9Marfa.kml|Ku
+DirecTV-12|46|Directv12103WA4BASaltLake.kml|Ku
+DirecTV-12|47|Directv12103WA4BBSanDiego.kml|Ku
+DirecTV-12|48|Directv12103WA4BCBend.kml|Ku
+DirecTV-12|49|Directv12103WA4BDAlaska.kml|Ku
+DirecTV-12|50|Directv12103WNATLConus.kml|Ku
+DirecTV-1R|1|Directv1R109.8WDLConus.kml|Ku
+DirecTV-1R|2|Directv1R72.5WConus.kml|Ku
+DirecTV-5|1|Directv5109.8WTX1Conus.kml|Ku
+DirecTV-8|1|Directv8100.8WDL_1Conus.kml|Ku
+DirecTV-9S|1|Directv9S101WBB03Orlando.kml|Ku
+DirecTV-9S|2|Directv9S101WBB07KansasCity.kml|Ku
+DirecTV-9S|3|Directv9S101WBB08Houston.kml|Ku
+DirecTV-9S|4|Directv9S101WBB09Denver.kml|Ku
+DirecTV-9S|5|Directv9S101WBB10Portland.kml|Ku
+DirecTV-9S|6|Directv9S101WBB11LosAngeles.kml|Ku
+DirecTV-9S|7|Directv9S101WBB21WashingtonDC.kml|Ku
+DirecTV-9S|8|Directv9S101WBB22Atlanta.kml|Ku
+DirecTV-9S|9|Directv9S101WBB23Indianapolis.kml|Ku
+DirecTV-9S|10|Directv9S101WBB24Memphis.kml|Ku
+DirecTV-9S|11|Directv9S101WCB12NewYork.kml|Ku
+DirecTV-9S|12|Directv9S101WCB13Detroit.kml|Ku
+DirecTV-9S|13|Directv9S101WCB14Charlotte.kml|Ku
+DirecTV-9S|14|Directv9S101WCB15Miami.kml|Ku
+DirecTV-9S|15|Directv9S101WCB16Minneapolis.kml|Ku
+DirecTV-9S|16|Directv9S101WCB17StLouis.kml|Ku
+DirecTV-9S|17|Directv9S101WCB18Dallas.kml|Ku
+DirecTV-9S|18|Directv9S101WCB19Phoenix.kml|Ku
+DirecTV-9S|19|Directv9S101WCB20SanFrancisco.kml|Ku
+DirecTV-9S|20|Directv9S101WN101Conus.kml|Ku
+DirecTV-9S|21|Directv9S101WRB01Boston.kml|Ku
+DirecTV-9S|22|Directv9S101WRB02Raleigh.kml|Ku
+DirecTV-9S|23|Directv9S101WRB04Pittsburg.kml|Ku
+DirecTV-9S|24|Directv9S101WRB05Chicago.kml|Ku
+DirecTV-9S|25|Directv9S101WRB06Nashville.kml|Ku
+DirecTV-9S|26|Directv9S101WRB25SanAntonio.kml|Ku
+DirecTV-9S|27|Directv9S101WRB26SaltLake.kml|Ku
+Echostar 1|1|Echostar10110WT01SouthernFlorida.kml|Ku
+Echostar 1|2|Echostar10110WT02EasternCarolinas.kml|Ku
+Echostar 1|3|Echostar10110WT03SouthenGeorgia.kml|Ku
+Echostar 1|4|Echostar10110WT04WesternMassachusetts.kml|Ku
+Echostar 1|5|Echostar10110WT05EasternVirginia.kml|Ku
+Echostar 1|6|Echostar10110WT06WesternCarolinas.kml|Ku
+Echostar 1|7|Echostar10110WT07NorthwestFlorida.kml|Ku
+Echostar 1|8|Echostar10110WT08NorthernMaine.kml|Ku
+Echostar 1|9|Echostar10110WT09NorthwestPennsylvania.kml|Ku
+Echostar 1|10|Echostar10110WT10SouthCentralKentucky.kml|Ku
+Echostar 1|11|Echostar10110WT11WesternAlabama.kml|Ku
+Echostar 1|12|Echostar10110WT12SoutheastLouisiana.kml|Ku
+Echostar 1|13|Echostar10110WT13SouthernMichigan.kml|Ku
+Echostar 1|14|Echostar10110WT14NorthwestTennessee.kml|Ku
+Echostar 1|15|Echostar10110WT15SouthernArkansas.kml|Ku
+Echostar 1|16|Echostar10110WT16SoutheastTexas.kml|Ku
+Echostar 1|17|Echostar10110WT17SouthernTexas.kml|Ku
+Echostar 1|18|Echostar10110WT18LakeMichigan.kml|Ku
+Echostar 1|19|Echostar10110WT19CentralIllinois.kml|Ku
+Echostar 1|20|Echostar10110WT20SouthwestMissouri.kml|Ku
+Echostar 1|21|Echostar10110WT21NortheastTexas.kml|Ku
+Echostar 1|22|Echostar10110WT22SouthCentralTexas.kml|Ku
+Echostar 1|23|Echostar10110WT23CentralWisconsin.kml|Ku
+Echostar 1|24|Echostar10110WT24SouthernIowa.kml|Ku
+Echostar 1|25|Echostar10110WT25Oklahoma.kml|Ku
+Echostar 1|26|Echostar10110WT26NorthTexas.kml|Ku
+Echostar 1|27|Echostar10110WT27WesternTexas.kml|Ku
+Echostar 1|28|Echostar10110WT28CentralMinnesota.kml|Ku
+Echostar 1|29|Echostar10110WT29SouthCentralNebraska.kml|Ku
+Echostar 1|30|Echostar10110WT30CentralColorado.kml|Ku
+Echostar 1|31|Echostar10110WT31CentralNewMexico.kml|Ku
+Echostar 1|32|Echostar10110WT32EasternDakotas.kml|Ku
+Echostar 1|33|Echostar10110WT33CentralNorthDakota.kml|Ku
+Echostar 1|34|Echostar10110WT34Utah.kml|Ku
+Echostar 1|35|Echostar10110WT35CentralArizona.kml|Ku
+Echostar 1|36|Echostar10110WT36CentralMontana.kml|Ku
+Echostar 1|37|Echostar10110WT37SouthwestMontana.kml|Ku
+Echostar 1|38|Echostar10110WT38Nevada.kml|Ku
+Echostar 1|39|Echostar10110WT39SouthCentralCalifornia.kml|Ku
+Echostar 1|40|Echostar10110WT40EasternWashington.kml|Ku
+Echostar 1|41|Echostar10110WT41WesternIdaho.kml|Ku
+Echostar 1|42|Echostar10110WT42CentralCalifornia.kml|Ku
+Echostar 1|43|Echostar10110WT43NorthCalifornia.kml|Ku
+Echostar 1|44|Echostar10110WT44Oregon.kml|Ku
+Echostar 1|45|Echostar10110WT45NorthwestWashington.kml|Ku
+Echostar 1|46|Echostar10110WT46Alaska.kml|Ku
+Echostar 1|47|Echostar10110WT47Hawaii.kml|Ku
+Echostar 1|48|Echostar10110WT48Cuba.kml|Ku
+Echostar 1|49|Echostar10110WT49PuertoRico.kml|Ku
+Echostar 1|50|Echostar11110WTRHHighPowerConus.kml|Ku
+Echostar 1|51|Echostar11110WTRSSuperHighPowerConus.kml|Ku
+Echostar 1|52|Echostar1261.5WE01Bangor.kml|Ku
+Echostar 1|53|Echostar1261.5WE02Boston.kml|Ku
+Echostar 1|54|Echostar1261.5WE03BethpageNY.kml|Ku
+Echostar 1|55|Echostar1261.5WE04WashingtonDC.kml|Ku
+Echostar 1|56|Echostar1261.5WE05Raleigh.kml|Ku
+Echostar 1|57|Echostar1261.5WE06Atlanta.kml|Ku
+Echostar 1|58|Echostar1261.5WE07Birmingham.kml|Ku
+Echostar 1|59|Echostar1261.5WE08Charleston.kml|Ku
+Echostar 1|60|Echostar1261.5WE09Miami.kml|Ku
+Echostar 1|61|Echostar1261.5WE10Detroit.kml|Ku
+Echostar 1|62|Echostar1261.5WE11Chicago.kml|Ku
+Echostar 1|63|Echostar1261.5WE12NewOrleans.kml|Ku
+Echostar 1|64|Echostar1261.5WE13Minneapolis.kml|Ku
+Echostar 1|65|Echostar1261.5WE14StLouis.kml|Ku
+Echostar 1|66|Echostar1261.5WE15KansasCity.kml|Ku
+Echostar 1|67|Echostar1261.5WE16Dallas.kml|Ku
+Echostar 1|68|Echostar1261.5WE17Houston.kml|Ku
+Echostar 1|69|Echostar1261.5WE18Denver.kml|Ku
+Echostar 1|70|Echostar1261.5WE19Albuquerque.kml|Ku
+Echostar 1|71|Echostar1261.5WE20Seattle.kml|Ku
+Echostar 1|72|Echostar1261.5WE21SanFrancisco.kml|Ku
+Echostar 1|73|Echostar1261.5WE22LosAngeles.kml|Ku
+Echostar 1|74|Echostar1261.5WEU1Conus.kml|Ku
+Echostar 1|75|Echostar14119WA01Seattle.kml|Ku
+Echostar 1|76|Echostar14119WA02SanFrancisco.kml|Ku
+Echostar 1|77|Echostar14119WA03Spokane.kml|Ku
+Echostar 1|78|Echostar14119WA04Fresno.kml|Ku
+Echostar 1|79|Echostar14119WA05Phoenix.kml|Ku
+Echostar 1|80|Echostar14119WA06Bismark.kml|Ku
+Echostar 1|81|Echostar14119WA07SiouxFalls.kml|Ku
+Echostar 1|82|Echostar14119WA08KansasCity.kml|Ku
+Echostar 1|83|Echostar14119WA09Dallas.kml|Ku
+Echostar 1|84|Echostar14119WA10CorpusChristi.kml|Ku
+Echostar 1|85|Echostar14119WA11Lansing.kml|Ku
+Echostar 1|86|Echostar14119WA12Columbus.kml|Ku
+Echostar 1|87|Echostar14119WA13Shreveport.kml|Ku
+Echostar 1|88|Echostar14119WA14NewOrleans.kml|Ku
+Echostar 1|89|Echostar14119WA15Hartford.kml|Ku
+Echostar 1|90|Echostar14119WA16Bangor.kml|Ku
+Echostar 1|91|Echostar14119WA17Greenville.kml|Ku
+Echostar 1|92|Echostar14119WA18Raleigh.kml|Ku
+Echostar 1|93|Echostar14119WA19Orlando.kml|Ku
+Echostar 1|94|Echostar14119WA20Tampa.kml|Ku
+Echostar 1|95|Echostar14119WA21Butte.kml|Ku
+Echostar 1|96|Echostar14119WA22Flagstaff.kml|Ku
+Echostar 1|97|Echostar14119WA23ElPaso.kml|Ku
+Echostar 1|98|Echostar14119WA24Alaska.kml|Ku
+Echostar 1|99|Echostar14119WA25Alaska.kml|Ku
+Echostar 1|100|Echostar14119WA26Cuba.kml|Ku
+Echostar 1|101|Echostar14119WA27Hawaii.kml|Ku
+Echostar 1|102|Echostar14119WA28Hawaii.kml|Ku
+Echostar 1|103|Echostar14119WB01Bend.kml|Ku
+Echostar 1|104|Echostar14119WB02Medford.kml|Ku
+Echostar 1|105|Echostar14119WB03LasVegas.kml|Ku
+Echostar 1|106|Echostar14119WB04SanDiego.kml|Ku
+Echostar 1|107|Echostar14119WB05DuluthSuperior.kml|Ku
+Echostar 1|108|Echostar14119WB06GrandJunction.kml|Ku
+Echostar 1|109|Echostar14119WB07Denver.kml|Ku
+Echostar 1|110|Echostar14119WB08Albuquerque.kml|Ku
+Echostar 1|111|Echostar14119WB09OklahomaCity.kml|Ku
+Echostar 1|112|Echostar14119WB10Houston.kml|Ku
+Echostar 1|113|Echostar14119WB11SanAntonio.kml|Ku
+Echostar 1|114|Echostar14119WB12Madison.kml|Ku
+Echostar 1|115|Echostar14119WB13Springfield.kml|Ku
+Echostar 1|116|Echostar14119WB14Nashville.kml|Ku
+Echostar 1|117|Echostar14119WB15Birmingham.kml|Ku
+Echostar 1|118|Echostar14119WB16Philadelphia.kml|Ku
+Echostar 1|119|Echostar14119WB17NewYork.kml|Ku
+Echostar 1|120|Echostar14119WB18Savannah.kml|Ku
+Echostar 1|121|Echostar14119WB19Jacksonville.kml|Ku
+Echostar 1|122|Echostar14119WB20FortMeyer.kml|Ku
+Echostar 1|123|Echostar14119WB21Miami.kml|Ku
+Echostar 1|124|Echostar14119WB22PuertoRico.kml|Ku
+Echostar 1|125|Echostar14119WB23PuertoRico.kml|Ku
+Echostar 1|126|Echostar14119WConus-BeamCenters.kml|Ku
+Echostar 1|127|Echostar14119WTC1RConus.kml|Ku
+Echostar 1|128|Echostar1561.5WTELConusPlus.kml|Ku
+Echostar 1|129|Echostar1561.5WTERConusPlus.kml|Ku
+Echostar 1|130|Echostar1561.5WTWLConusPlus.kml|Ku
+Echostar 1|131|Echostar1561.5WTWRConusPlus.kml|Ku
+Echostar 1|132|Echostar1661.5WCONLConusPlus.kml|Ku
+Echostar 1|133|Echostar1661.5WSP01Maine.kml|Ku
+Echostar 1|134|Echostar1661.5WSP02NewYork.kml|Ku
+Echostar 1|135|Echostar1661.5WSP03Baltimore.kml|Ku
+Echostar 1|136|Echostar1661.5WSP04Cleveland.kml|Ku
+Echostar 1|137|Echostar1661.5WSP05Raleigh.kml|Ku
+Echostar 1|138|Echostar1661.5WSP06Detroit.kml|Ku
+Echostar 1|139|Echostar1661.5WSP07Charlotte.kml|Ku
+Echostar 1|140|Echostar1661.5WSP08Madison.kml|Ku
+Echostar 1|141|Echostar1661.5WSP09Nashville.kml|Ku
+Echostar 1|142|Echostar1661.5WSP10Tallahassee.kml|Ku
+Echostar 1|143|Echostar1661.5WSP11Tampa.kml|Ku
+Echostar 1|144|Echostar1661.5WSP12DesMoines.kml|Ku
+Echostar 1|145|Echostar1661.5WSP13Omaha.kml|Ku
+Echostar 1|146|Echostar1661.5WSP14Memphis.kml|Ku
+Echostar 1|147|Echostar1661.5WSP15Dallas.kml|Ku
+Echostar 1|148|Echostar1661.5WSP16Houston.kml|Ku
+Echostar 1|149|Echostar1661.5WSP17Amarillo.kml|Ku
+Echostar 1|150|Echostar1661.5WSP18CorpusChristi.kml|Ku
+Echostar 1|151|Echostar1661.5WSP19SanDiego.kml|Ku
+Echostar 1|152|Echostar1661.5WSP20Bermuda.kml|Ku
+Echostar 1|153|Echostar1661.5WSP21Mexico.kml|Ku
+Echostar 1|154|Echostar1661.5WSP22Cuba.kml|Ku
+Echostar 1|155|Echostar1661.5WSP23Boston.kml|Ku
+Echostar 1|156|Echostar1661.5WSP24SaltLake.kml|Ku
+Echostar 1|157|Echostar1661.5WSP25LasVegas.kml|Ku
+Echostar 1|158|Echostar1661.5WSP26MexicoCity.kml|Ku
+Echostar 1|159|Echostar1661.5WSP27Cuba.kml|Ku
+Echostar 1|160|Echostar1661.5WSP28Albany.kml|Ku
+Echostar 1|161|Echostar1661.5WSP29Rochester.kml|Ku
+Echostar 1|162|Echostar1661.5WSP30Pittsburg.kml|Ku
+Echostar 1|163|Echostar1661.5WSP31DuluthSuperior.kml|Ku
+Echostar 1|164|Echostar1661.5WSP32Roanoke.kml|Ku
+Echostar 1|165|Echostar1661.5WSP33Savannah.kml|Ku
+Echostar 1|166|Echostar1661.5WSP34Davenport.kml|Ku
+Echostar 1|167|Echostar1661.5WSP35SaintLouis.kml|Ku
+Echostar 1|168|Echostar1661.5WSP36Atlanta.kml|Ku
+Echostar 1|169|Echostar1661.5WSP37Tulsa.kml|Ku
+Echostar 1|170|Echostar1661.5WSP38OklahomaCity.kml|Ku
+Echostar 1|171|Echostar1661.5WSP39SanAntonio.kml|Ku
+Echostar 1|172|Echostar1661.5WSP40BatonRouge.kml|Ku
+Echostar 1|173|Echostar1661.5WSP41Miami.kml|Ku
+Echostar 1|174|Echostar1661.5WSP42CorpusChristi.kml|Ku
+Echostar 1|175|Echostar1661.5WSP43NewOrleans.kml|Ku
+Echostar 1|176|Echostar1661.5WSP44Boise.kml|Ku
+Echostar 1|177|Echostar1661.5WSP45Phoenix.kml|Ku
+Echostar 1|178|Echostar1661.5WSP46Bismark.kml|Ku
+Echostar 1|179|Echostar1661.5WSP47Tuscon.kml|Ku
+Echostar 1|180|Echostar1661.5WSP48MichiganUpperPenninsula.kml|Ku
+Echostar 1|181|Echostar1661.5WSP49Manchester.kml|Ku
+Echostar 1|182|Echostar1661.5WSP50Burlington.kml|Ku
+Echostar 1|183|Echostar1661.5WSP51Buffalo.kml|Ku
+Echostar 1|184|Echostar1661.5WSP52Hagerstown.kml|Ku
+Echostar 1|185|Echostar1661.5WSP53Norfolk.kml|Ku
+Echostar 1|186|Echostar1661.5WSP54Lansing.kml|Ku
+Echostar 1|187|Echostar1661.5WSP55Chicago.kml|Ku
+Echostar 1|188|Echostar1661.5WSP56Columbia.kml|Ku
+Echostar 1|189|Echostar1661.5WSP57CapeCoral.kml|Ku
+Echostar 1|190|Echostar1661.5WSP58Orlando.kml|Ku
+Echostar 1|191|Echostar1661.5WSP59Atlanta.kml|Ku
+Echostar 1|192|Echostar1661.5WSP60Minneapolis.kml|Ku
+Echostar 1|193|Echostar1661.5WSP61SaintLouis.kml|Ku
+Echostar 1|194|Echostar1661.5WSP62Mobile.kml|Ku
+Echostar 1|195|Echostar1661.5WSP63Springfield.kml|Ku
+Echostar 1|196|Echostar1661.5WSP64Jackson.kml|Ku
+Echostar 1|197|Echostar1661.5WSP65RapidCity.kml|Ku
+Echostar 1|198|Echostar1661.5WSP66FortWorth.kml|Ku
+Echostar 1|199|Echostar1661.5WSP67Abilene.kml|Ku
+Echostar 1|200|Echostar1661.5WSP68Denver.kml|Ku
+Echostar 1|201|Echostar1661.5WSP69LosAngeles.kml|Ku
+Echostar 1|202|Echostar1661.5WSP70PuertoRico.kml|Ku
+Echostar 1|203|Echostar1661.5WSP71SanFrancisco.kml|Ku
+Echostar 1|204|Echostar177WTXCSubConus.kml|Ku
+Echostar 1|205|Echostar177WTXMMexico.kml|Ku
+Echostar 10|1|Echostar10110WT01SouthernFlorida.kml|Ku
+Echostar 10|2|Echostar10110WT02EasternCarolinas.kml|Ku
+Echostar 10|3|Echostar10110WT03SouthenGeorgia.kml|Ku
+Echostar 10|4|Echostar10110WT04WesternMassachusetts.kml|Ku
+Echostar 10|5|Echostar10110WT05EasternVirginia.kml|Ku
+Echostar 10|6|Echostar10110WT06WesternCarolinas.kml|Ku
+Echostar 10|7|Echostar10110WT07NorthwestFlorida.kml|Ku
+Echostar 10|8|Echostar10110WT08NorthernMaine.kml|Ku
+Echostar 10|9|Echostar10110WT09NorthwestPennsylvania.kml|Ku
+Echostar 10|10|Echostar10110WT10SouthCentralKentucky.kml|Ku
+Echostar 10|11|Echostar10110WT11WesternAlabama.kml|Ku
+Echostar 10|12|Echostar10110WT12SoutheastLouisiana.kml|Ku
+Echostar 10|13|Echostar10110WT13SouthernMichigan.kml|Ku
+Echostar 10|14|Echostar10110WT14NorthwestTennessee.kml|Ku
+Echostar 10|15|Echostar10110WT15SouthernArkansas.kml|Ku
+Echostar 10|16|Echostar10110WT16SoutheastTexas.kml|Ku
+Echostar 10|17|Echostar10110WT17SouthernTexas.kml|Ku
+Echostar 10|18|Echostar10110WT18LakeMichigan.kml|Ku
+Echostar 10|19|Echostar10110WT19CentralIllinois.kml|Ku
+Echostar 10|20|Echostar10110WT20SouthwestMissouri.kml|Ku
+Echostar 10|21|Echostar10110WT21NortheastTexas.kml|Ku
+Echostar 10|22|Echostar10110WT22SouthCentralTexas.kml|Ku
+Echostar 10|23|Echostar10110WT23CentralWisconsin.kml|Ku
+Echostar 10|24|Echostar10110WT24SouthernIowa.kml|Ku
+Echostar 10|25|Echostar10110WT25Oklahoma.kml|Ku
+Echostar 10|26|Echostar10110WT26NorthTexas.kml|Ku
+Echostar 10|27|Echostar10110WT27WesternTexas.kml|Ku
+Echostar 10|28|Echostar10110WT28CentralMinnesota.kml|Ku
+Echostar 10|29|Echostar10110WT29SouthCentralNebraska.kml|Ku
+Echostar 10|30|Echostar10110WT30CentralColorado.kml|Ku
+Echostar 10|31|Echostar10110WT31CentralNewMexico.kml|Ku
+Echostar 10|32|Echostar10110WT32EasternDakotas.kml|Ku
+Echostar 10|33|Echostar10110WT33CentralNorthDakota.kml|Ku
+Echostar 10|34|Echostar10110WT34Utah.kml|Ku
+Echostar 10|35|Echostar10110WT35CentralArizona.kml|Ku
+Echostar 10|36|Echostar10110WT36CentralMontana.kml|Ku
+Echostar 10|37|Echostar10110WT37SouthwestMontana.kml|Ku
+Echostar 10|38|Echostar10110WT38Nevada.kml|Ku
+Echostar 10|39|Echostar10110WT39SouthCentralCalifornia.kml|Ku
+Echostar 10|40|Echostar10110WT40EasternWashington.kml|Ku
+Echostar 10|41|Echostar10110WT41WesternIdaho.kml|Ku
+Echostar 10|42|Echostar10110WT42CentralCalifornia.kml|Ku
+Echostar 10|43|Echostar10110WT43NorthCalifornia.kml|Ku
+Echostar 10|44|Echostar10110WT44Oregon.kml|Ku
+Echostar 10|45|Echostar10110WT45NorthwestWashington.kml|Ku
+Echostar 10|46|Echostar10110WT46Alaska.kml|Ku
+Echostar 10|47|Echostar10110WT47Hawaii.kml|Ku
+Echostar 10|48|Echostar10110WT48Cuba.kml|Ku
+Echostar 10|49|Echostar10110WT49PuertoRico.kml|Ku
+Echostar 11|1|Echostar11110WTRHHighPowerConus.kml|Ku
+Echostar 11|2|Echostar11110WTRSSuperHighPowerConus.kml|Ku
+Echostar 12|1|Echostar1261.5WE01Bangor.kml|Ku
+Echostar 12|2|Echostar1261.5WE02Boston.kml|Ku
+Echostar 12|3|Echostar1261.5WE03BethpageNY.kml|Ku
+Echostar 12|4|Echostar1261.5WE04WashingtonDC.kml|Ku
+Echostar 12|5|Echostar1261.5WE05Raleigh.kml|Ku
+Echostar 12|6|Echostar1261.5WE06Atlanta.kml|Ku
+Echostar 12|7|Echostar1261.5WE07Birmingham.kml|Ku
+Echostar 12|8|Echostar1261.5WE08Charleston.kml|Ku
+Echostar 12|9|Echostar1261.5WE09Miami.kml|Ku
+Echostar 12|10|Echostar1261.5WE10Detroit.kml|Ku
+Echostar 12|11|Echostar1261.5WE11Chicago.kml|Ku
+Echostar 12|12|Echostar1261.5WE12NewOrleans.kml|Ku
+Echostar 12|13|Echostar1261.5WE13Minneapolis.kml|Ku
+Echostar 12|14|Echostar1261.5WE14StLouis.kml|Ku
+Echostar 12|15|Echostar1261.5WE15KansasCity.kml|Ku
+Echostar 12|16|Echostar1261.5WE16Dallas.kml|Ku
+Echostar 12|17|Echostar1261.5WE17Houston.kml|Ku
+Echostar 12|18|Echostar1261.5WE18Denver.kml|Ku
+Echostar 12|19|Echostar1261.5WE19Albuquerque.kml|Ku
+Echostar 12|20|Echostar1261.5WE20Seattle.kml|Ku
+Echostar 12|21|Echostar1261.5WE21SanFrancisco.kml|Ku
+Echostar 12|22|Echostar1261.5WE22LosAngeles.kml|Ku
+Echostar 12|23|Echostar1261.5WEU1Conus.kml|Ku
+Echostar 14|1|Echostar14119WA01Seattle.kml|Ku
+Echostar 14|2|Echostar14119WA02SanFrancisco.kml|Ku
+Echostar 14|3|Echostar14119WA03Spokane.kml|Ku
+Echostar 14|4|Echostar14119WA04Fresno.kml|Ku
+Echostar 14|5|Echostar14119WA05Phoenix.kml|Ku
+Echostar 14|6|Echostar14119WA06Bismark.kml|Ku
+Echostar 14|7|Echostar14119WA07SiouxFalls.kml|Ku
+Echostar 14|8|Echostar14119WA08KansasCity.kml|Ku
+Echostar 14|9|Echostar14119WA09Dallas.kml|Ku
+Echostar 14|10|Echostar14119WA10CorpusChristi.kml|Ku
+Echostar 14|11|Echostar14119WA11Lansing.kml|Ku
+Echostar 14|12|Echostar14119WA12Columbus.kml|Ku
+Echostar 14|13|Echostar14119WA13Shreveport.kml|Ku
+Echostar 14|14|Echostar14119WA14NewOrleans.kml|Ku
+Echostar 14|15|Echostar14119WA15Hartford.kml|Ku
+Echostar 14|16|Echostar14119WA16Bangor.kml|Ku
+Echostar 14|17|Echostar14119WA17Greenville.kml|Ku
+Echostar 14|18|Echostar14119WA18Raleigh.kml|Ku
+Echostar 14|19|Echostar14119WA19Orlando.kml|Ku
+Echostar 14|20|Echostar14119WA20Tampa.kml|Ku
+Echostar 14|21|Echostar14119WA21Butte.kml|Ku
+Echostar 14|22|Echostar14119WA22Flagstaff.kml|Ku
+Echostar 14|23|Echostar14119WA23ElPaso.kml|Ku
+Echostar 14|24|Echostar14119WA24Alaska.kml|Ku
+Echostar 14|25|Echostar14119WA25Alaska.kml|Ku
+Echostar 14|26|Echostar14119WA26Cuba.kml|Ku
+Echostar 14|27|Echostar14119WA27Hawaii.kml|Ku
+Echostar 14|28|Echostar14119WA28Hawaii.kml|Ku
+Echostar 14|29|Echostar14119WB01Bend.kml|Ku
+Echostar 14|30|Echostar14119WB02Medford.kml|Ku
+Echostar 14|31|Echostar14119WB03LasVegas.kml|Ku
+Echostar 14|32|Echostar14119WB04SanDiego.kml|Ku
+Echostar 14|33|Echostar14119WB05DuluthSuperior.kml|Ku
+Echostar 14|34|Echostar14119WB06GrandJunction.kml|Ku
+Echostar 14|35|Echostar14119WB07Denver.kml|Ku
+Echostar 14|36|Echostar14119WB08Albuquerque.kml|Ku
+Echostar 14|37|Echostar14119WB09OklahomaCity.kml|Ku
+Echostar 14|38|Echostar14119WB10Houston.kml|Ku
+Echostar 14|39|Echostar14119WB11SanAntonio.kml|Ku
+Echostar 14|40|Echostar14119WB12Madison.kml|Ku
+Echostar 14|41|Echostar14119WB13Springfield.kml|Ku
+Echostar 14|42|Echostar14119WB14Nashville.kml|Ku
+Echostar 14|43|Echostar14119WB15Birmingham.kml|Ku
+Echostar 14|44|Echostar14119WB16Philadelphia.kml|Ku
+Echostar 14|45|Echostar14119WB17NewYork.kml|Ku
+Echostar 14|46|Echostar14119WB18Savannah.kml|Ku
+Echostar 14|47|Echostar14119WB19Jacksonville.kml|Ku
+Echostar 14|48|Echostar14119WB20FortMeyer.kml|Ku
+Echostar 14|49|Echostar14119WB21Miami.kml|Ku
+Echostar 14|50|Echostar14119WB22PuertoRico.kml|Ku
+Echostar 14|51|Echostar14119WB23PuertoRico.kml|Ku
+Echostar 14|52|Echostar14119WConus-BeamCenters.kml|Ku
+Echostar 14|53|Echostar14119WTC1RConus.kml|Ku
+Echostar 15|1|Echostar1561.5WTELConusPlus.kml|Ku
+Echostar 15|2|Echostar1561.5WTERConusPlus.kml|Ku
+Echostar 15|3|Echostar1561.5WTWLConusPlus.kml|Ku
+Echostar 15|4|Echostar1561.5WTWRConusPlus.kml|Ku
+Echostar 16|1|Echostar1661.5WCONLConusPlus.kml|Ku
+Echostar 16|2|Echostar1661.5WSP01Maine.kml|Ku
+Echostar 16|3|Echostar1661.5WSP02NewYork.kml|Ku
+Echostar 16|4|Echostar1661.5WSP03Baltimore.kml|Ku
+Echostar 16|5|Echostar1661.5WSP04Cleveland.kml|Ku
+Echostar 16|6|Echostar1661.5WSP05Raleigh.kml|Ku
+Echostar 16|7|Echostar1661.5WSP06Detroit.kml|Ku
+Echostar 16|8|Echostar1661.5WSP07Charlotte.kml|Ku
+Echostar 16|9|Echostar1661.5WSP08Madison.kml|Ku
+Echostar 16|10|Echostar1661.5WSP09Nashville.kml|Ku
+Echostar 16|11|Echostar1661.5WSP10Tallahassee.kml|Ku
+Echostar 16|12|Echostar1661.5WSP11Tampa.kml|Ku
+Echostar 16|13|Echostar1661.5WSP12DesMoines.kml|Ku
+Echostar 16|14|Echostar1661.5WSP13Omaha.kml|Ku
+Echostar 16|15|Echostar1661.5WSP14Memphis.kml|Ku
+Echostar 16|16|Echostar1661.5WSP15Dallas.kml|Ku
+Echostar 16|17|Echostar1661.5WSP16Houston.kml|Ku
+Echostar 16|18|Echostar1661.5WSP17Amarillo.kml|Ku
+Echostar 16|19|Echostar1661.5WSP18CorpusChristi.kml|Ku
+Echostar 16|20|Echostar1661.5WSP19SanDiego.kml|Ku
+Echostar 16|21|Echostar1661.5WSP20Bermuda.kml|Ku
+Echostar 16|22|Echostar1661.5WSP21Mexico.kml|Ku
+Echostar 16|23|Echostar1661.5WSP22Cuba.kml|Ku
+Echostar 16|24|Echostar1661.5WSP23Boston.kml|Ku
+Echostar 16|25|Echostar1661.5WSP24SaltLake.kml|Ku
+Echostar 16|26|Echostar1661.5WSP25LasVegas.kml|Ku
+Echostar 16|27|Echostar1661.5WSP26MexicoCity.kml|Ku
+Echostar 16|28|Echostar1661.5WSP27Cuba.kml|Ku
+Echostar 16|29|Echostar1661.5WSP28Albany.kml|Ku
+Echostar 16|30|Echostar1661.5WSP29Rochester.kml|Ku
+Echostar 16|31|Echostar1661.5WSP30Pittsburg.kml|Ku
+Echostar 16|32|Echostar1661.5WSP31DuluthSuperior.kml|Ku
+Echostar 16|33|Echostar1661.5WSP32Roanoke.kml|Ku
+Echostar 16|34|Echostar1661.5WSP33Savannah.kml|Ku
+Echostar 16|35|Echostar1661.5WSP34Davenport.kml|Ku
+Echostar 16|36|Echostar1661.5WSP35SaintLouis.kml|Ku
+Echostar 16|37|Echostar1661.5WSP36Atlanta.kml|Ku
+Echostar 16|38|Echostar1661.5WSP37Tulsa.kml|Ku
+Echostar 16|39|Echostar1661.5WSP38OklahomaCity.kml|Ku
+Echostar 16|40|Echostar1661.5WSP39SanAntonio.kml|Ku
+Echostar 16|41|Echostar1661.5WSP40BatonRouge.kml|Ku
+Echostar 16|42|Echostar1661.5WSP41Miami.kml|Ku
+Echostar 16|43|Echostar1661.5WSP42CorpusChristi.kml|Ku
+Echostar 16|44|Echostar1661.5WSP43NewOrleans.kml|Ku
+Echostar 16|45|Echostar1661.5WSP44Boise.kml|Ku
+Echostar 16|46|Echostar1661.5WSP45Phoenix.kml|Ku
+Echostar 16|47|Echostar1661.5WSP46Bismark.kml|Ku
+Echostar 16|48|Echostar1661.5WSP47Tuscon.kml|Ku
+Echostar 16|49|Echostar1661.5WSP48MichiganUpperPenninsula.kml|Ku
+Echostar 16|50|Echostar1661.5WSP49Manchester.kml|Ku
+Echostar 16|51|Echostar1661.5WSP50Burlington.kml|Ku
+Echostar 16|52|Echostar1661.5WSP51Buffalo.kml|Ku
+Echostar 16|53|Echostar1661.5WSP52Hagerstown.kml|Ku
+Echostar 16|54|Echostar1661.5WSP53Norfolk.kml|Ku
+Echostar 16|55|Echostar1661.5WSP54Lansing.kml|Ku
+Echostar 16|56|Echostar1661.5WSP55Chicago.kml|Ku
+Echostar 16|57|Echostar1661.5WSP56Columbia.kml|Ku
+Echostar 16|58|Echostar1661.5WSP57CapeCoral.kml|Ku
+Echostar 16|59|Echostar1661.5WSP58Orlando.kml|Ku
+Echostar 16|60|Echostar1661.5WSP59Atlanta.kml|Ku
+Echostar 16|61|Echostar1661.5WSP60Minneapolis.kml|Ku
+Echostar 16|62|Echostar1661.5WSP61SaintLouis.kml|Ku
+Echostar 16|63|Echostar1661.5WSP62Mobile.kml|Ku
+Echostar 16|64|Echostar1661.5WSP63Springfield.kml|Ku
+Echostar 16|65|Echostar1661.5WSP64Jackson.kml|Ku
+Echostar 16|66|Echostar1661.5WSP65RapidCity.kml|Ku
+Echostar 16|67|Echostar1661.5WSP66FortWorth.kml|Ku
+Echostar 16|68|Echostar1661.5WSP67Abilene.kml|Ku
+Echostar 16|69|Echostar1661.5WSP68Denver.kml|Ku
+Echostar 16|70|Echostar1661.5WSP69LosAngeles.kml|Ku
+Echostar 16|71|Echostar1661.5WSP70PuertoRico.kml|Ku
+Echostar 16|72|Echostar1661.5WSP71SanFrancisco.kml|Ku
+Echostar 17|1|Echostar177WTXCSubConus.kml|Ku
+Echostar 17|2|Echostar177WTXMMexico.kml|Ku
+Echostar 6|1|Echostar661.65WTXLCHConus.kml|Ku
+Echostar 6|2|Echostar661.65WTXLCMConus.kml|Ku
+Echostar 6|3|Echostar672.7WTXLCHHighPowerConus.kml|Ku
+Echostar 6|4|Echostar672.7WTXLCMMediumPowerConus.kml|Ku
+Echostar 6|5|Echostar677WTXRCConus.kml|Ku
+Echostar 7|1|Echostar7119WCONTConus.kml|Ku
+Echostar 7|2|Echostar7119WS10SanAntonio_Houston.kml|Ku
+Echostar 7|3|Echostar7119WS11Chicago.kml|Ku
+Echostar 7|4|Echostar7119WS12Jackson.kml|Ku
+Echostar 7|5|Echostar7119WS13NewHaven.kml|Ku
+Echostar 7|6|Echostar7119WS14Columbia.kml|Ku
+Echostar 7|7|Echostar7119WS15Miami.kml|Ku
+Echostar 7|8|Echostar7119WS1Hawaii.kml|Ku
+Echostar 7|9|Echostar7119WS2Alaska.kml|Ku
+Echostar 7|10|Echostar7119WS3Seattle.kml|Ku
+Echostar 7|11|Echostar7119WS4Sacramento.kml|Ku
+Echostar 7|12|Echostar7119WS5SanDiego.kml|Ku
+Echostar 7|13|Echostar7119WS6Phoenix.kml|Ku
+Echostar 7|14|Echostar7119WS7SaltLakeCity.kml|Ku
+Echostar 7|15|Echostar7119WS8MexicoCity.kml|Ku
+Echostar 7|16|Echostar7119WS9Wichita.kml|Ku
+Echostar 8|1|Echostar877WTXCMMediumPowerConus.kml|Ku
+Echostar 8|2|Echostar877WTXMMexico.kml|Ku
+Galaxy-12|1|Galaxy12123WCHDNConus.kml|Ku
+Intelsat 16|1|Intelsat1658WBHDLSouthAmerica.kml|Ku
+Intelsat 16|2|Intelsat1658WM2DLMexico.kml|Ku
+Intelsat 16|3|Intelsat1658WMHDLMexico.kml|Ku
+Nimiq 5|1|Nimiq572.7WTXLConus.kml|Ku
+QuetzSat-1|1|Quetzsat177WTELNorthAmerica.kml|Ku
+QuetzSat-1|2|Quetzsat177WTERNorthAmerica.kml|Ku
+QuetzSat-1|3|Quetzsat177WTWLNorthAmerica.kml|Ku
+QuetzSat-1|4|Quetzsat177WTWRNorthAmerica.kml|Ku
+Spaceway 3|1|Spaceway395WCONRConus.kml|Ka
+Spaceway 3|2|Spaceway395WRD10Ozarks.kml|Ka
+Spaceway 3|3|Spaceway395WRD11Smokies.kml|Ka
+Spaceway 3|4|Spaceway395WRD12ChesapeakeBay.kml|Ka
+Spaceway 3|5|Spaceway395WRD13BajaCalifornia.kml|Ka
+Spaceway 3|6|Spaceway395WRD14Chihuahua.kml|Ka
+Spaceway 3|7|Spaceway395WRD15SouthEastTexas.kml|Ka
+Spaceway 3|8|Spaceway395WRD16Louisiana.kml|Ka
+Spaceway 3|9|Spaceway395WRD17NorthFlorida.kml|Ka
+Spaceway 3|10|Spaceway395WRD1Northwest.kml|Ka
+Spaceway 3|11|Spaceway395WRD2NorthernMountains.kml|Ka
+Spaceway 3|12|Spaceway395WRD3NorthernPlains.kml|Ka
+Spaceway 3|13|Spaceway395WRD4WesternGreatLakes.kml|Ka
+Spaceway 3|14|Spaceway395WRD5EasternGreatLakes.kml|Ka
+Spaceway 3|15|Spaceway395WRD6Northeast.kml|Ka
+Spaceway 3|16|Spaceway395WRD7CentralCalifornia.kml|Ka
+Spaceway 3|17|Spaceway395WRD8SaltLake.kml|Ka
+Spaceway 3|18|Spaceway395WRD9CentralPlains.kml|Ka
+Spaceway 3|19|Spaceway395WSPD10KansasCity.kml|Ka
+Spaceway 3|20|Spaceway395WSPD11Nashville.kml|Ka
+Spaceway 3|21|Spaceway395WSPD12Baltimore.kml|Ka
+Spaceway 3|22|Spaceway395WSPD13Phoenix.kml|Ka
+Spaceway 3|23|Spaceway395WSPD14ElPaso.kml|Ka
+Spaceway 3|24|Spaceway395WSPD15Houston.kml|Ka
+Spaceway 3|25|Spaceway395WSPD16NewOrleans.kml|Ka
+Spaceway 3|26|Spaceway395WSPD17Maimi.kml|Ka
+Spaceway 3|27|Spaceway395WSPD18Jacksonville.kml|Ka
+Spaceway 3|28|Spaceway395WSPD19LittleRock.kml|Ka
+Spaceway 3|29|Spaceway395WSPD1Portland.kml|Ka
+Spaceway 3|30|Spaceway395WSPD20OklahomaCity.kml|Ka
+Spaceway 3|31|Spaceway395WSPD21Charlotte.kml|Ka
+Spaceway 3|32|Spaceway395WSPD2Spokane.kml|Ka
+Spaceway 3|33|Spaceway395WSPD3Minneapolis.kml|Ka
+Spaceway 3|34|Spaceway395WSPD4Chicago.kml|Ka
+Spaceway 3|35|Spaceway395WSPD5Cleveland.kml|Ka
+Spaceway 3|36|Spaceway395WSPD6Boston.kml|Ka
+Spaceway 3|37|Spaceway395WSPD7LosAngeles.kml|Ka
+Spaceway 3|38|Spaceway395WSPD8SaltLakeCity.kml|Ka
+Spaceway 3|39|Spaceway395WSPD9Denver.kml|Ka
