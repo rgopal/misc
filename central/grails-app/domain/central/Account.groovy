@@ -9,6 +9,7 @@ class Account {
     "$email"
     }
     static constraints = {
+       
     email email: true, blank: false
     }
 }
