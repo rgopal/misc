@@ -5,21 +5,18 @@ class Person {
     enum Status implements org.springframework.context.MessageSourceResolvable {
  
         ACTIVE, INACTIVE
- 
         public Object[] getArguments() { [] as Object[] }
- 
         public String[] getCodes() { [ name() ] }
- 
-        public String getDefaultMessage() { "?-" + name() }
+        public String getDefaultMessage() { name() }    // default is name itself
     }
-    Status status
+    Status status = Status.INACTIVE
     String name
-    String country
-    String city
+    String country = 'United States'
+    String city = 'NY'
     String state 
 
     Date dateCreated  
-    Date dateUpdated
+    Date lastUpdated        
     static hasMany = [accounts: Account]
 
     // should be constraints and not constraint
@@ -28,4 +25,8 @@ class Person {
         state(inList:['MD', 'VA', 'CA'])
 
     }
+    /* DID NOT WORK static mapping = { 
+        country defaultValue: "'United States'"  
+    }
+    */
 }
