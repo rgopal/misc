@@ -18,9 +18,9 @@ class InitPerson {
             new Person(name: 'John Smith', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
                 dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960')),
             new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','06-28-1970')),
+                dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970')),
             new Person(name: 'Jane Fields', sex:Person.Sex.FEMALE, race: Person.Race.BLACK, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','02-14-1980'))
+                dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'))
         ]
        
         for (person in persons) {

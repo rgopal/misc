@@ -1,15 +1,10 @@
 package central
+import central.Status
 
 class Person {
 
     // class specific enums
-    enum Status implements org.springframework.context.MessageSourceResolvable {
  
-        ACTIVE, INACTIVE, DELETED
-        public Object[] getArguments() { [] as Object[] }
-        public String[] getCodes() { [ name() ] }
-        public String getDefaultMessage() { name() }    // default is name itself
-    }
     enum Sex implements org.springframework.context.MessageSourceResolvable {
  
         MALE, FEMALE, UNKNOWN
@@ -32,12 +27,13 @@ class Person {
     Date dateOfBirth = Date.parse('dd-MM-yyyy','01-01-1960')
     Race race = Race.WHITE
     String city = 'Germantown'
-    String state  = 'MD'
+    String state  = 'Maryland'
     String country = 'United States'
 
     // common across all domains
     
     Status status = Status.ACTIVE
+    
     Date dateCreated  
     Date lastUpdated 
     String comment
@@ -62,7 +58,7 @@ class Person {
         race (nullable:true)
         status ()
         city ()
-        state(inList:['MD', 'VA', 'CA'])
+        state()
         country ()
      
         dateCreated ()
