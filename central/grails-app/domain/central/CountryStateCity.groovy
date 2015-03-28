@@ -1,22 +1,18 @@
 package central
 import central.Status
+import central.Country
+import central.Language
 
 class CountryStateCity {
 
-    enum Country implements org.springframework.context.MessageSourceResolvable {
- 
-        USA, INDIA, CANADA, MEXICO
-        public Object[] getArguments() { [] as Object[] }
-        public String[] getCodes() { [ name() ] }
-        public String getDefaultMessage() { name() }    // default is name itself
-    }
+    
    
     // class unique fields
      
     Country country
     String state
     String city
-    String language = ''    // coutnry state cirty values in different languages
+    Language language = Language.ENGLISH    // coutnry state cirty values in different languages
     
     Date dateCreated
     Date lastUpdated
@@ -32,10 +28,13 @@ class CountryStateCity {
     // should be constraints and not constraint
     static constraints = {
          
-        status ()
+       
         city ()
         state()
         country ()
+        language ()
+        
+        status ()
      
         dateCreated ()
         lastUpdated ()

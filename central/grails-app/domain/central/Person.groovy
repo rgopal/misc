@@ -1,5 +1,7 @@
 package central
 import central.Status
+import central.Country
+import central.Language
 
 class Person {
 
@@ -28,7 +30,8 @@ class Person {
     Race race = Race.WHITE
     String city = 'Germantown'
     String state  = 'Maryland'
-    String country = 'United States'
+    Country country = Country.USA
+    Language preferredLanguage = Language.ENGLISH
 
     // common across all domains
     
@@ -57,15 +60,15 @@ class Person {
         
         race (nullable:true)
         status ()
-        city ()
-        state()
-        country ()
+        city (nullable:true)
+        state(nullable:true)
+        country (nullable:false)
+        preferredLanguage(nullable:false)
      
         dateCreated ()
         lastUpdated ()
-        comment (nullable:true)
+        comment (nullable:true, maxSiaze:1000)
         
- 
 
     }
     /* DID NOT WORK static mapping = { 

@@ -6,6 +6,7 @@
 
 package central
 import central.CountryStateCity
+import central.Country
 
 /**
  *
@@ -15,11 +16,11 @@ class InitCountryStateCity {
        
     static void load () {
         def items = [ 
-            new CountryStateCity(country:CountryStateCity.Country.USA, state:'Maryland', city:'Germantown'),
-            new CountryStateCity(country:CountryStateCity.Country.USA, state:'Maryland', city:'Gaithersburg'),
-            new CountryStateCity(country:CountryStateCity.Country.USA, state:'Maryland', city:'Rockville'),
-            new CountryStateCity(country:CountryStateCity.Country.INDIA, state:'Gujarat', city:'Surat'),
-            new CountryStateCity(country:CountryStateCity.Country.INDIA, state:'Andhra Pradesh', city:'Vishakapattanam')   
+            new CountryStateCity(country:Country.USA, state:'Maryland', city:'Germantown'),
+            new CountryStateCity(country:Country.USA, state:'Maryland', city:'Gaithersburg'),
+            new CountryStateCity(country:Country.USA, state:'Maryland', city:'Rockville'),
+            new CountryStateCity(country:Country.INDIA, state:'Gujarat', city:'Surat'),
+            new CountryStateCity(country:Country.INDIA, state:'Andhra Pradesh', city:'Vishakapattanam')   
             
         ]
        

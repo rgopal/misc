@@ -6,6 +6,7 @@
 
 package central
 import central.Person
+import central.Language
 
 /**
  *
@@ -16,11 +17,11 @@ class InitPerson {
     static void load () {
         def persons = [ 
             new Person(name: 'John Smith', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960')),
+                dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), preferredLanguage:Language.ENGLISH),
             new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970')),
+                dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),preferredLanguage:Language.ENGLISH),
             new Person(name: 'Jane Fields', sex:Person.Sex.FEMALE, race: Person.Race.BLACK, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'))
+                dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),preferredLanguage:Language.ENGLISH)
         ]
        
         for (person in persons) {
