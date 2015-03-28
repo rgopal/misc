@@ -21,8 +21,13 @@ class Person {
 
     // should be constraints and not constraint
     static constraints = {
-    
+        name (blank:false, minSize:2)
+        status ()
+        city ()
         state(inList:['MD', 'VA', 'CA'])
+        country ()
+        dateCreated ()
+        lastUpdated ()
 
     }
     /* DID NOT WORK static mapping = { 
