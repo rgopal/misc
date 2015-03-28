@@ -20,6 +20,8 @@ class InitCountryStateCity {
             new CountryStateCity(country:Country.USA, state:'Maryland', city:'Gaithersburg'),
             new CountryStateCity(country:Country.USA, state:'Maryland', city:'Rockville'),
             new CountryStateCity(country:Country.INDIA, state:'Gujarat', city:'Surat'),
+            new CountryStateCity(country:Country.INDIA, state:'बिहार', city:'पटना', language:Language.HINDI),
+            new CountryStateCity(country:Country.INDIA, state:'BIHAR', city:'PATNA', language:Language.ENGLISH),
             new CountryStateCity(country:Country.INDIA, state:'Andhra Pradesh', city:'Vishakapattanam')   
             
         ]
