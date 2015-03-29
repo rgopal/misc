@@ -30,16 +30,17 @@ class InitCountryLookup {
                            'separatorChar':'|']).eachLine { tokens ->    
             //parse the csv columns
       
-            def code= tokens[10].trim()
-            def name= tokens[1].trim()
 
             CountryLookup c = new CountryLookup()
-            c.code = code
-            c.name = name
+            c.capital = tokens[6].trim()
+            c.currencyCode = tokens[7].trim()
+            c.currency = tokens[8].trim()
+            c.countryCode = tokens[10].trim()
+            c.countryName = tokens[1].trim()
 
             if(!c.save(validate: true)){
                 c.errors.allErrors.each {
-                    log.warning (it)
+                     println "An error occured with initCountryLookup: ${error}"
                 }
             }
   
