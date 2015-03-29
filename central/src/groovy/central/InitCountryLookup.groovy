@@ -9,17 +9,20 @@ package central
 import central.Person
 import central.Language
 import org.apache.commons.logging.LogFactory
+import groovy.util.logging.Log4j
 
 import grails.compiler.GrailsCompileStatic
 // 
 
+@Log4j
 class InitCountryLookup {
     // in domain and controller this is not needed
 
     
     static void load () {
         def grailsApplication = new Person().domainClass.grailsApplication
-        def log = LogFactory.getLog("InitCountryLookup")
+        // def log = LogFactory.getLog("InitCountryLookup")
+        def log = LogFactory.getLog(this)
         log.debug ("InitCountryLookup.load started")
         
         // just .file probably would not work
@@ -40,7 +43,8 @@ class InitCountryLookup {
 
             if(!c.save(validate: true)){
                 c.errors.allErrors.each {
-                     println "An error occured with initCountryLookup: ${error}"
+                    println "An error occured with initCountryLookup: ${error}"
+                    log.warning ("An error occured with initCountryLookup: ${error}")
                 }
             }
   
