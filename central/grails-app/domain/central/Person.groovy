@@ -40,26 +40,34 @@ class Person {
     Date dateCreated  
     Date lastUpdated 
     String comment
+    Email homeEmail
+    Email workEmail
    
     // associations
-    static hasMany = [accounts: Account]
+    static hasMany = [accounts:Account]
 
     String toString(){
 
          "$name"
     }
         
+     
+    static embedded = ['homeEmail', 'workEmail']
+    
     // should be constraints and not constraint
     static constraints = {
      
         name (blank:false, size:2..64)
         sex ()
         dateOfBirth(nullable:true)
-
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
-        
         race (nullable:true)
         status ()
+        homeEmail(nullable:true)
+        workEmail(nullable:true)
+        
+        accounts ()
+       
         city (nullable:true)
         state(nullable:true)
         country (nullable:false)
@@ -67,12 +75,33 @@ class Person {
      
         dateCreated ()
         lastUpdated ()
-        comment (nullable:true, maxSiaze:1000)
+        comment (nullable:true, maxSize:1000)
         
-
     }
     /* DID NOT WORK static mapping = { 
     country defaultValue: "'United States'"  
     }
      */
+}
+class Email {
+   
+    String email
+    String provider
+    // can't use primary as it clashes with SQL
+    Boolean main = Boolean.FALSE
+    ContactType contactType = ContactType.DEFAULT
+ 
+    Status status = Status.ACTIVE
+
+    String toString () {
+        "$email"
+   }
+    static constraints = {
+        email (email:true)
+        provider (nullable:true)
+        main()
+        contactType ()
+        status ()
+      
+    }
 }
