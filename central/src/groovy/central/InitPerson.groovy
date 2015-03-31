@@ -7,6 +7,7 @@
 package central
 import central.Person
 import central.Language
+import central.Email
 
 /**
  *
@@ -17,7 +18,11 @@ class InitPerson {
     static void load () {
         def persons = [ 
             new Person(name: 'John Smith', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
-                dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), preferredLanguage:Language.ENGLISH),
+                dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), 
+                preferredLanguage:Language.ENGLISH,
+                homeEmail:new Email(email:'a@b.com', provider:'google')
+            ),
+           
             new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Person.Race.WHITE, 
                 dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),preferredLanguage:Language.ENGLISH),
             new Person(name: 'Jane Fields', sex:Person.Sex.FEMALE, race: Person.Race.BLACK, 
