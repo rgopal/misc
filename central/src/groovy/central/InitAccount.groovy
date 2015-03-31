@@ -12,15 +12,18 @@ import central.Account
  */
 class InitAccount {
     static void load () {
+        /*  works only when belongsTo is not in Account
         for (int i=0; i<100; i++) {
-            def a1 = new Account(email: "aim${i}@b.com", userName: "${i} Harry")
+        def a1 = new Account(email: "aim${i}@b.com", userName: "${i} Harry")
 
-            if (!a1.save()){ a1.errors.allErrors.each {error ->
-                    println "An error occured with a1: ${error}"
+        if (!a1.save()){ a1.errors.allErrors.each {error ->
+        println "An error occured with a1: ${error}"
 
-                }
-            }
+        }
+        }
         } 
+         */
+        
     }
 	
 }
