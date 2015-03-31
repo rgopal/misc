@@ -20,7 +20,7 @@ class Account {
     static belongsTo = Person
     static constraints = {
         owner()
-        sequence (nullable:false)
+        sequence (nullable:true)
         name (nullable:true)
         main()
         email (email: true, blank: false, nullable:true)
@@ -30,8 +30,39 @@ class Account {
     /* did not work.  This should not be used.  Sequence should be user
      * friendly value
     static mapping = {
-        sequence generator:'sequence', params:[sequence:'sequence_account',
-        initial_value:1000]
+    sequence generator:'sequence', params:[sequence:'sequence_account',
+    initial_value:1000]
     }
-    */
+     */
+    def beforeInsert() {
+        if (!sequence) {
+            if (!owner.id) {
+                sequence = 1
+            } else {
+                
+                def count = Account.createCriteria().count {
+                    eq ('owner', owner)
+                   /* owner {
+                        eq('id', owner?.id)
+                    } */
+                }
+                println "count = ${count}"
+                if (count == 0) {
+                    sequence = 1
+                } else {
+                
+                    sequence = Account.createCriteria().get {
+                        projections {
+                            max('sequence')
+                        }
+                        owner {
+                            eq('id', owner?.id)
+                        }
+                    } + 1
+                }
+                println ("beforeInsert: owner.id ${owner.id} sequence = ${sequence}")
+            
+            }
+        }
+    }
 }
