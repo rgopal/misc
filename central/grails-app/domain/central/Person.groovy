@@ -2,6 +2,7 @@ package central
 import central.Status
 import central.Country
 import central.Language
+import central.Email
 
 class Person {
 
@@ -52,7 +53,7 @@ class Person {
     }
         
      
-    static embedded = ['homeEmail', 'workEmail']
+   static embedded = ['homeEmail', 'workEmail']
     
     // should be constraints and not constraint
     static constraints = {
@@ -82,26 +83,4 @@ class Person {
     country defaultValue: "'United States'"  
     }
      */
-}
-class Email {
-   
-    String email
-    String provider
-    // can't use primary as it clashes with SQL
-    Boolean main = Boolean.FALSE
-    ContactType contactType = ContactType.DEFAULT
- 
-    Status status = Status.ACTIVE
-
-    String toString () {
-        "$email"
-   }
-    static constraints = {
-        email (email:true)
-        provider (nullable:true)
-        main()
-        contactType ()
-        status ()
-      
-    }
 }
