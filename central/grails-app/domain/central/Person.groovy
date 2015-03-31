@@ -41,8 +41,13 @@ class Person {
     Date dateCreated  
     Date lastUpdated 
     String comment
-    Email homeEmail
-    Email workEmail
+    // will bring it back to composition, spent 2 days 3/30
+    String homeEmail
+    String workEmail
+    String homePhone
+    String workPhone
+    String mobilePhone
+    String zip
    
     // associations
     static hasMany = [accounts:Account]
@@ -53,7 +58,8 @@ class Person {
     }
         
      
-   static embedded = ['homeEmail', 'workEmail']
+    // problems with embedded (or non embedded composition)
+    // static embedded = ['homeEmail', 'workEmail']
     
     // should be constraints and not constraint
     static constraints = {
@@ -64,8 +70,24 @@ class Person {
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
         race (nullable:true)
         status ()
-        homeEmail(nullable:true)
-        workEmail(nullable:true)
+        homeEmail(nullable:true, email:true)
+        workEmail(nullable:true, email:true)
+        homePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
+        workPhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
+        mobilePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
+        // validator takes 3 (1 is value, 2 obj, 3 error
+        // returns true or null (both good) or error messages
+        
+        zip (nullable:true, size: 5..10, validator:{zip, obj ->
+                if (!zip) {
+                    true
+                } else if (obj.country == Country.USA) {
+                    (zip ==~ /^(\d{5}-\d{4})|(\d{5})$/) ? true : false
+                } else {
+                    true
+                }
+            })
+        
         
         accounts ()
        
