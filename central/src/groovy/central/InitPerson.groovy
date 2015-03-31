@@ -33,7 +33,9 @@ class InitPerson {
                 dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),
                 preferredLanguage:Language.ENGLISH,
                 homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( new Account(
-                    email:'johnsmith@facebook.com', userName : 'John Smith again')
+                    email:'johnsmith@facebook.com', userName : 'John Smith again',
+                    sequence:1, name:'Primary', main:true
+                )
             ), 
             
             new Person(name: 'Jane Fields', sex:Person.Sex.FEMALE, race: Race.BLACK, 
