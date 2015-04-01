@@ -17,7 +17,7 @@ class Account {
 
     String toString(){
 
-    "$name"
+    "${sequence} ${name}"
     }
     // only one Person can own an Account (owner) with cascaded deletes
     // without belongsTo, an account can be associated with multiple persons
