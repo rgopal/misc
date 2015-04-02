@@ -34,7 +34,9 @@
                 <span id="personName">
                     ${session?.person?.name}!
                 </span><br><br>
-                You have (${session.person.accounts?.size() ?: 0}) accounts.<br>
+
+                Your country is ${session.person.country} <br>
+
             </div>
         </g:if>
         <g:else>
