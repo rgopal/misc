@@ -19,7 +19,8 @@ class Person {
  
    
     // class unique fields
-     
+    String login
+    String password
     String name
     Sex sex = Sex.UNKNOWN
     Date dateOfBirth = Date.parse('dd-MM-yyyy','01-01-1960')
@@ -64,6 +65,8 @@ class Person {
     // should be constraints and not constraint
     static constraints = {
      
+        login blank:false, size:5..15,matches:/[\S]+/, unique:true
+        password blank:false, size:5..15,matches:/[\S]+/
         name (blank:false, size:2..64)
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
