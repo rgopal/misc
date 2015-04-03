@@ -18,52 +18,64 @@
     <g:layoutHead/>
 </head>
 <body>
-    <div id="grailsLogo" role="banner"><a href="http://oumuo.com"><asset:image src="grails_logo.png" alt="Oumuo"/></a></div>
-        <g:layoutBody/>
-    <div class="footer" role="contentinfo"></div>
-    <div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
+    <div id="grailsLogo" role="banner"><a href="http://oumuo.com"><asset:image src="grails_logo.png" alt="Oumuo"/></a>
 
-    <div id="loginBox" class="loginBox">
-        <g:if test="${session?.person}">
-            <div style="margin-top:20px">
-                <div style="float:right;">
-                    <a href="#">Profile</a> | <g:link controller="person"
-                        action="logout">Logout</g:link><br>
-                    </div>
-                Welcome back
-                <span id="personName">
-                    ${session?.person?.name}!
-                </span><br><br>
+    </div>
 
-                Your country is ${session.person.country} <br>
+<ct:loginToggle />
+<g:layoutBody/>
 
-            </div>
-        </g:if>
-        <g:else>
-            <g:form
-                name="loginForm"
-                url="[controller:'person',action:'login']">
-                <div>Username:</div>
+<div class="footer" role="contentinfo"></div>
+<div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
+
+<div id="loginBox" class="loginBox">
+    <g:if test="${session?.person}">
+        <div style="margin-top:20px">
+            <div style="float:right;margin-right:10px">
+                <g:link controller="person"
+                    action="show" 
+                id="${session.person?.id}" 
+                    >Profile</g:link> |
+                <g:link controller="person"
+                    action="logout">Logout</g:link><br>
+                </div>
+            Welcome back
+            <span style="float:left;margin-left:10px" id="personName">
+                  ${session?.person?.name}!
+
+                  Your country is ${session.person.country} 
+                  </span><br><br>
+                  <br>
+
+                  </div>
+            </g:if>
+            <g:else>
+                <g:form
+                    name="loginForm"
+                    url="[controller:'person',action:'login']">
+                    <div  style="float:left;margin-left:10px"> 
+                    Username:</div>
                 <g:textField name="login"
                 value="${fieldValue(bean:loginCmd, field:'login')}">
                 </g:textField>
-                <div>Password:</div>
-                <g:passwordField name="password"></g:passwordField>
-                    <br/>
-                <input type="image"
-                src="${createLinkTo(dir:'images', file:'login-button.gif')}"
-                name="loginButton" id="loginButton" border="0"></input>
+            <div style="float:left;margin-left:10px">
+                 Password:</div>
+                 <g:passwordField name="password"></g:passwordField>
+                     <br/>
+                 <input type="image"
+                 src="${createLinkTo(dir:'images', file:'login-button.gif')}"
+                 name="loginButton" id="loginButton" border="0"></input>
             </g:form>
             <g:renderErrors bean="${loginCmd}"></g:renderErrors>
         </g:else>
-    </div>
-    <div id="navPane">
+        </div>
+        <div id="navPane" style="float:left;margin-left:10px" >
         <g:if test="${session.person}">
             <ul>
                 <li><g:link controller="person"
-                        action="show">My Information</g:link></li>
+                        action="show" id = "${session.person.id}" > My Information</g:link></li>
                 <li><g:link controller="person"
-                        action="show">My Information</g:link></li>
+                        action="show" id= "${session.person.id}"> My Information</g:link></li>
                 </ul>
         </g:if>
         <g:else>

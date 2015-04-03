@@ -110,6 +110,8 @@ log4j.main = {
         console name: "customAppender",
         layout: pattern(conversionPattern: "%c{2} %m%n")
     }
+    // for all domain controller etc.
+    // debug customAppender:'central.controller'
     debug customAppender:'central'
     
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers

@@ -1,12 +1,7 @@
-<!--
-  To change this license header, choose License Headers in Project Properties.
-  To change this template file, choose Tools | Templates
-  and open the template in the editor.
--->
-
+<!doctype html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
         <title>User Registration</title>
     </head>
     <body id="body">
@@ -14,16 +9,18 @@
         <p>Complete the form below to create an account!</p>
         <g:hasErrors bean="${person}">
             <div class="errors">
-                <g:renderErrors bean="${person}"></g:renderErrors>
-                </div>
+                <g:renderErrors bean="${person}">
+                </g:renderErrors>
+            </div>
         </g:hasErrors>
         <g:form action="register" name="registerForm">
             <div class="formField">
                 <label for="login">Login:</label>
-                <g:textField name="login" value="${person?.login}"></g:textField>
-                </div>
-                <div class="formField">
-                    <label for="password">Password:</label>
+                <g:textField name="login" value="${person?.login}">
+                </g:textField>
+            </div>
+            <div class="formField">
+                <label for="password">Password:</label>
                 <g:passwordField name="password" value="${person?.password}"></g:passwordField>
                 </div>
                 <div class="formField">
@@ -34,8 +31,9 @@
                     <label for="Name">Name:</label>
                 <g:textField name="name" value="${person?.name}"></g:textField>
                 </div>
-               
-            <g:submitButton class="formButton" name="register" value="Register"></g:submitButton>
+
+            <g:submitButton class="formButton" name="register" value="Register">
+            </g:submitButton>
         </g:form>
-    <body>
+    <body>   
 </html>
