@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
     <head>
-
+        <meta name="layout" content="main"/>
         <title>User Registration</title>
     </head>
+
     <body id="body">
         <h1>Registration</h1>
         <p>Complete the form below to create an account!</p>

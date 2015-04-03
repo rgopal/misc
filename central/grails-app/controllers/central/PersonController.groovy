@@ -7,14 +7,15 @@ import groovy.util.logging.Log4j
 class PersonController {
 
     def logout = {
-        log.debug ("loging out ${person}")
+        // println ("loging out ${person}")
         session.person = null
         
         redirect(url:resource(dir:'' ))
     }
 
+  
     def register() {
-        log.debug "request ${request}"
+       // does not work println "request ${request}"
         if(request.method == 'POST') {
             def u = new Person()
             u.properties['login', 'password', 'name'] = params
@@ -22,9 +23,17 @@ class PersonController {
                 u.errors.rejectValue("password", "person.password.dontmatch")
                 return [person:u]
             }
-        } else if(u.save()) {
+            u.save()
             session.person = u
-            redirect controller:"person"
+            redirect controller:"person", action:"show", id:u.id
+            
+        } else if (request.method == 'GET') {
+           // nothing exists yet return [person:u] 
+           // this is when register is called for HTTP click, starts view register.gsp now
+        }
+        else if(u.save()) {
+            session.person = u
+            redirect controller:"person", action:"show", id:u.id
         } else {
             return [person:u]
         }
@@ -35,10 +44,10 @@ class PersonController {
                 session.person = cmd.getPerson()
                 redirect controller:'person'
             } else {
-                render view:'/person/index', model:[loginCmd:cmd]
+                render view:'/index', model:[loginCmd:cmd]
             }
         } else {
-            render view:'/person/index'
+            render view:'/index'
         }
     }
     def scaffold = Person
