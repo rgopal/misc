@@ -66,7 +66,7 @@ class Person {
     static constraints = {
      
         login blank:false, size:5..15,matches:/[\S]+/, unique:true
-        password blank:false, size:5..15,matches:/[\S]+/
+        password blank:false, size:5..15,matches:/[\S]+/, display:false
         name (blank:false, size:2..64)
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
