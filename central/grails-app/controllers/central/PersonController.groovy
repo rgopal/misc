@@ -1,10 +1,20 @@
 package central
-import central.LoginCommand
 
+import central.LoginCommand
+import groovy.util.logging.Log4j
+
+@Log4j
 class PersonController {
 
-    def index () {}
+    def logout = {
+        log.debug ("loging out ${person}")
+        session.person = null
+        
+        redirect(url:resource(dir:'' ))
+    }
+
     def register() {
+        log.debug "request ${request}"
         if(request.method == 'POST') {
             def u = new Person()
             u.properties['login', 'password', 'name'] = params

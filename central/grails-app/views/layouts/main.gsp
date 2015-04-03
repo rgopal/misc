@@ -8,7 +8,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title><g:layoutTitle default="Grails"/></title>
+        <title><g:layoutTitle default="Oumuo"/></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="${assetPath(src: 'favicon.ico')}" type="image/x-icon">
         <link rel="apple-touch-icon" href="${assetPath(src: 'apple-touch-icon.png')}">
@@ -62,7 +62,7 @@
             <ul>
                 <li><g:link controller="person"
                         action="show">My Information</g:link></li>
-                <li><g:link controller="store"
+                <li><g:link controller="person"
                         action="show">My Information</g:link></li>
                 </ul>
         </g:if>

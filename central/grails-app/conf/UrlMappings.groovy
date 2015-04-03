@@ -6,7 +6,7 @@ class UrlMappings {
                 // apply constraints here
             }
         }
-        "/" (controller:'person') {
+        "/" (view:'/index') {
             constraints {
             }
         }

@@ -20,7 +20,7 @@ invokeTag('captureMeta','sitemesh',10,['gsp_sm_xmlClosingForEmptyTag':(""),'http
 printHtmlPart(1)
 createTagBody(2, {->
 createTagBody(3, {->
-invokeTag('layoutTitle','g',11,['default':("Grails")],-1)
+invokeTag('layoutTitle','g',11,['default':("Oumuo")],-1)
 })
 invokeTag('captureTitle','sitemesh',11,[:],3)
 })
@@ -58,55 +58,53 @@ invokeTag('link','g',31,['controller':("person"),'action':("logout")],3)
 printHtmlPart(14)
 expressionOut.print(session?.person?.name)
 printHtmlPart(15)
-expressionOut.print(session.person.accounts?.size() ?: 0)
-printHtmlPart(16)
 expressionOut.print(session.person.country)
-printHtmlPart(17)
+printHtmlPart(16)
 }
 else {
-printHtmlPart(18)
+printHtmlPart(17)
 createTagBody(3, {->
-printHtmlPart(19)
-createClosureForHtmlPart(20, 4)
+printHtmlPart(18)
+createClosureForHtmlPart(19, 4)
 invokeTag('textField','g',49,['name':("login"),'value':(fieldValue(bean:loginCmd, field:'login'))],4)
-printHtmlPart(21)
+printHtmlPart(20)
 invokeTag('passwordField','g',51,['name':("password")],-1)
-printHtmlPart(22)
+printHtmlPart(21)
 expressionOut.print(createLinkTo(dir:'images', file:'login-button.gif'))
-printHtmlPart(23)
+printHtmlPart(22)
 })
 invokeTag('form','g',56,['name':("loginForm"),'url':([controller:'person',action:'login'])],3)
-printHtmlPart(18)
+printHtmlPart(17)
 invokeTag('renderErrors','g',57,['bean':(loginCmd)],-1)
 printHtmlPart(1)
 }
-printHtmlPart(24)
+printHtmlPart(23)
 if(true && (session.person)) {
-printHtmlPart(25)
-createClosureForHtmlPart(26, 3)
+printHtmlPart(24)
+createClosureForHtmlPart(25, 3)
 invokeTag('link','g',64,['controller':("person"),'action':("show")],3)
+printHtmlPart(26)
+createClosureForHtmlPart(25, 3)
+invokeTag('link','g',66,['controller':("person"),'action':("show")],3)
 printHtmlPart(27)
-createClosureForHtmlPart(26, 3)
-invokeTag('link','g',66,['controller':("store"),'action':("show")],3)
-printHtmlPart(28)
 }
 else {
-printHtmlPart(29)
-createClosureForHtmlPart(30, 3)
+printHtmlPart(28)
+createClosureForHtmlPart(29, 3)
 invokeTag('link','g',73,['controller':("person"),'action':("register")],3)
-printHtmlPart(31)
+printHtmlPart(30)
 }
-printHtmlPart(32)
+printHtmlPart(31)
 })
 invokeTag('captureBody','sitemesh',78,[:],1)
-printHtmlPart(33)
+printHtmlPart(32)
 }
 public static final Map JSP_TAGS = new HashMap()
 protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1428008745382L
+public static final long LAST_MODIFIED = 1428073032861L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
 public static final String OUT_CODEC = 'html'
