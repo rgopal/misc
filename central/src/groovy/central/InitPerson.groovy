@@ -61,6 +61,7 @@ class InitPerson {
                 dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1992'),preferredLanguage:Language.HINDI)
         ]
        
+        
         for (person in persons) {
             log.info "created person ${person}"
             if (!person.save()){ person.errors.allErrors.each {error ->
@@ -70,6 +71,6 @@ class InitPerson {
             }
        
         }
-	
+	log.info "created ${Person.count()} persons in database."
     }
 }

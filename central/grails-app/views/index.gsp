@@ -111,11 +111,16 @@
             <p>Manage your education programs, courses, and assessments.</p>
 
             <div id="controller-list" role="navigation">
-                <h2>Available Controllers:</h2>
+                <h2>Available domains (list, create, edit, delete):</h2>
                 <ul>
                     <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">
-                        <li class="controller"><g:link controller="${c.logicalPropertyName}">
-                            ${c.fullName.replace('central.','').replace('.Controller','')}</g:link></li>
+
+                        <g:if test="${c.fullName ==~ /^central.*/}">
+
+
+                            <li class="controller"><g:link controller="${c.logicalPropertyName}">
+                                    ${c.fullName.replace('central.','').replace('Controller','')}</g:link></li>
+                            </g:if>
                         </g:each>
                 </ul>
             </div>
