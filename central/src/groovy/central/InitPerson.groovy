@@ -16,8 +16,9 @@ import groovy.util.logging.Log4j
  *
  * @author gopal
  */
+@Log4j
 class InitPerson {
-     def log = LogFactory.getLog(this)
+     // def log = LogFactory.getLog(this)
     
     static void load () {
         def persons = [ 
@@ -61,6 +62,7 @@ class InitPerson {
         ]
        
         for (person in persons) {
+            log.info "created person ${person}"
             if (!person.save()){ person.errors.allErrors.each {error ->
                     log.debug "An error occured with person: ${error}"
 
