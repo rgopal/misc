@@ -12,36 +12,49 @@ class PersonController {
         
         redirect(uri:'/')
     }
-
   
     def register() {
-        // does not work println "request ${request}"
+        log.debug "request ${request}"
         if(request.method == 'POST') {
             def u = new Person()
             def v
             u.properties['login', 'password', 'name'] = params
+            // check if the passwords match
             if(u.password != params.confirm) {
                 u.errors.rejectValue("password", "person.password.dontmatch")
                 // three options (redirect, render, or return a model current view
                 return [person:u]
             }
+            
+            // check if the login name already exists
             v = Person.findByLogin(u.login)
             if (v) {
                 u.errors.rejectValue("login", "person.login.exists")
-                return [person.u]
+                return [person:u]
             }
-            // now save
-            u.save()
+           
+             // a new user ready to be saved 
+            if (!u.save()){ 
+                u.errors.allErrors.each {error ->
+                    log.debug "An error occured with u: ${error}"
+
+                }
+                u.errors.rejectValue("login", "person.save.error")     
+                return [person:u]
+            }
+        
+          
             session.person = u
-            redirect controller:"person", action:"show", id:u.id
+            redirect controller:"person"
             
         } else if (request.method == 'GET') {
             // nothing exists yet return [person:u] 
             // this is when register is called for HTTP click, starts view register.gsp now
         }
         else if(u.save()) {
+            log.debug "request $request} for u $u} apparently saved"
             session.person = u
-            redirect controller:"person", action:"show", id:u.id
+            redirect controller:"person"
         } else {
             return [person:u]
         }

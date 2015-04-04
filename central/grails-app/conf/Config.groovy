@@ -104,17 +104,24 @@ log4j.main = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
     root {
-        info()
+        // info()
+        info  'file', 'stdout'
+        //debug  'file', 'stdout'
+        additivity = true
     }
     appenders {
-        console name: "customAppender",
-        layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name:'stdout', layout:pattern(conversionPattern: '%d %p %t [%c] - <%m>%n')
+        // console name: "customAppender",
+        rollingFile  name:'file', file:'igive.log', maxFileSize:'2000KB', 
+        maxBackupIndex:'5',append:'true',layout:pattern(conversionPattern: '%d{[EEE, dd-MMM-yyyy @ HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n')
+        // layout: pattern(conversionPattern: "%c{2} %m%n")
     }
     // for all domain controller etc.
     // debug customAppender:'central.controller'
-    debug customAppender:'central'
+    debug 'central'
     
-    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
+    // this used to be error (for below)
+    warn  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
