@@ -133,3 +133,28 @@ log4j.main = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
+
+// Added by the Spring Security Core plugin:
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.UserLoginAuthority'
+grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'
+grails.plugin.springsecurity.authority.groupAuthorityNameField = 'authorities'
+grails.plugin.springsecurity.useRoleGroups = true
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+	'/':                              ['permitAll'],
+	'/index':                         ['permitAll'],
+	'/index.gsp':                     ['permitAll'],
+	'/assets/**':                     ['permitAll'],
+	'/**/js/**':                      ['permitAll'],
+	'/**/css/**':                     ['permitAll'],
+	'/**/images/**':                  ['permitAll'],
+	'/**/favicon.ico':                ['permitAll'],
+        '/central/index':                  ['permintAll'],
+        '/login/**':          ['permitAll'],
+        '/logout/**':         ['permitAll'],
+        '/secure/**':         ['ROLE_ADMIN'],
+        '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
+]
+

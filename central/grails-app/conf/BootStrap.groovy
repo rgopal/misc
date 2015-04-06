@@ -2,6 +2,7 @@ import central.InitAccount
 import central.InitPerson
 import central.InitCountryStateCity
 import central.InitCountryLookup
+import com.oumuo.InitSpringSecurity
 
 class BootStrap {
     def init = { servletContext ->
@@ -11,6 +12,7 @@ class BootStrap {
         InitAccount.load()
         InitPerson.load()
         InitCountryStateCity.load()
+        InitSpringSecurity.load()
     }
    
     def destory = {
