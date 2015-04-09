@@ -121,7 +121,7 @@ log4j.main = {
     debug 'central'
     
     // this used to be error (for below)
-    warn  'org.codehaus.groovy.grails.web.servlet',        // controllers
+    warn   'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
@@ -142,7 +142,10 @@ grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.User
 grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'
 grails.plugin.springsecurity.authority.groupAuthorityNameField = 'authorities'
 grails.plugin.springsecurity.useRoleGroups = true
-grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+// this used to be staticRules, changed to interceptURLmaps
+// grails.plugin.springsecurity.controllerAnnotations.staticRules
+
+grails.plugin.springsecurity.interceptUrlMap= [
 	'/':                              ['permitAll'],
 	'/index':                         ['permitAll'],
 	'/index.gsp':                     ['permitAll'],
@@ -153,6 +156,8 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/**/favicon.ico':                ['permitAll'],
         '/central/index':                  ['permintAll'],
         '/login/**':          ['permitAll'],
+        '/central/login/**':    ['permitAll'],
+        '/central/logout/**':    ['permitAll'],
         '/logout/**':         ['permitAll'],
         '/secure/**':         ['ROLE_ADMIN'],
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']

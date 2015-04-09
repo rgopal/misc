@@ -8,9 +8,10 @@ class UrlMappings {
         }
         "/" (view:'/index') {
             constraints {
+                
             }
         }
-        
+     
         // "/"(view:"/index") this was default
         "500"(view:'/error')
     }

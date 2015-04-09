@@ -39,9 +39,9 @@ class InitSpringSecurity {
         ]
         
         for (user in users) {
-            log.info "created user ${user}"
-            if (!user.save().flush(true)){ user.errors.allErrors.each {error ->
-                    log.debug "An error occured with user: ${user}"
+            log.info "created user ${user.username}"
+            if (!user.save()){ user.errors.allErrors.each {error ->
+                    log.debug "An error occured with user: ${user.username}"
 
                 }
             }
