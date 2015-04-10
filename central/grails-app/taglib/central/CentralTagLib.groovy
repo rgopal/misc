@@ -1,6 +1,12 @@
 package central
+import groovy.transform.CompileStatic
 
+
+//@CompileStatic
 class CentralTagLib {
+    // this is s regular service so needs to be inected
+    def springSecurityService
+    
     // This should be removed since it escapes the output which needs to
     // be renderedable as HTML
     // static defaultEncodeAs = [taglib:'html']
@@ -8,16 +14,16 @@ class CentralTagLib {
     //static encodeAsForTags = [tagName: [taglib:'html'], otherTagName: [taglib:'none']]
     def loginToggle = {
         out << "<html> <div>"
-        if (session.person){
+        if (springSecurityService?.currentUser){
             out << "<span style='float:right'>"
-            out << " ${session.person}."
+            out << " ${springSecurityService.currentUser.username}."
             out << "</span><span style='float:right;margin-right:10px'>"
-            out << "<a href='${createLink(controller:'person', action:'logout')}'>"
+            out << "<a href='${createLink(controller:'logout')}'>"
             out << "Logout </a></span>"
         }
         else{
             out << "<span style='float:right;margin-right:10px'>"
-            out << "<a href='${createLink(controller:'person', action:'login')}'>"
+            out << "<a href='${createLink(controller:'login')}'>"
             out << "Login </a></span>"
         }
         out << "</div> </html>"

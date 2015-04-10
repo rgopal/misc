@@ -53,63 +53,16 @@ invokeTag('layoutBody','g',26,[:],-1)
 printHtmlPart(10)
 invokeTag('message','g',29,['code':("spinner.alt"),'default':("Loading&hellip;")],-1)
 printHtmlPart(11)
-if(true && (session?.person)) {
+})
+invokeTag('captureBody','sitemesh',31,[:],1)
 printHtmlPart(12)
-createClosureForHtmlPart(13, 3)
-invokeTag('link','g',38,['controller':("person"),'action':("show"),'id':(session.person?.id)],3)
-printHtmlPart(14)
-createClosureForHtmlPart(15, 3)
-invokeTag('link','g',40,['controller':("person"),'action':("logout")],3)
-printHtmlPart(16)
-expressionOut.print(session?.person?.name)
-printHtmlPart(17)
-expressionOut.print(session.person.country)
-printHtmlPart(18)
-}
-else {
-printHtmlPart(19)
-createTagBody(3, {->
-printHtmlPart(20)
-createClosureForHtmlPart(19, 4)
-invokeTag('textField','g',60,['name':("login"),'value':(fieldValue(bean:loginCmd, field:'login'))],4)
-printHtmlPart(21)
-invokeTag('passwordField','g',63,['name':("password")],-1)
-printHtmlPart(22)
-expressionOut.print(createLinkTo(dir:'images', file:'login-button.gif'))
-printHtmlPart(23)
-})
-invokeTag('form','g',68,['name':("loginForm"),'url':([controller:'person',action:'login'])],3)
-printHtmlPart(24)
-invokeTag('renderErrors','g',69,['bean':(loginCmd)],-1)
-printHtmlPart(1)
-}
-printHtmlPart(25)
-if(true && (session.person)) {
-printHtmlPart(26)
-createClosureForHtmlPart(27, 3)
-invokeTag('link','g',76,['controller':("person"),'action':("show"),'id':(session.person.id)],3)
-printHtmlPart(28)
-createClosureForHtmlPart(27, 3)
-invokeTag('link','g',78,['controller':("person"),'action':("show"),'id':(session.person.id)],3)
-printHtmlPart(29)
-}
-else {
-printHtmlPart(30)
-createClosureForHtmlPart(31, 3)
-invokeTag('link','g',85,['controller':("person"),'action':("register")],3)
-printHtmlPart(32)
-}
-printHtmlPart(33)
-})
-invokeTag('captureBody','sitemesh',90,[:],1)
-printHtmlPart(34)
 }
 public static final Map JSP_TAGS = new HashMap()
 protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1428328255818L
+public static final long LAST_MODIFIED = 1428623183782L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
 public static final String OUT_CODEC = 'html'

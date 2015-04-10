@@ -33,8 +33,8 @@ class InitSpringSecurity {
         }
 
         def users = [ 
-            new UserLogin(username: 'user', password: 'admin'),
-             new UserLogin(username: 'user2', password: 'admin'),
+            new UserLogin(username: 'user', password: 'user'),
+             new UserLogin(username: 'user2', password: 'user2'),
             new UserLogin(username: 'admin', password: 'admin')
         ]
         

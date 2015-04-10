@@ -65,7 +65,10 @@ grails.project.dependency.resolution = {
         compile ":csv:0.3.1" 
 
         // plugins needed at runtime but not for compilation
-        runtime ":hibernate4:4.3.6.1" // or ":hibernate:3.6.10.18"
+        // Sprinng security apparently does not work (downgrade) 4/7/2015
+       // runtime ":hibernate4:4.3.6.1" // or ":hibernate:3.6.10.18"
+        // downgrading did not help redirects 
+        runtime ":hibernate4:4.3.5.5" 
         runtime ":database-migration:1.4.0"
         runtime ":jquery:1.11.1"
         compile ':spring-security-core:2.0-RC4'

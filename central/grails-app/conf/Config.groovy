@@ -160,6 +160,8 @@ grails.plugin.springsecurity.interceptUrlMap= [
         '/central/logout/**':    ['permitAll'],
         '/logout/**':         ['permitAll'],
         '/secure/**':         ['ROLE_ADMIN'],
+       '/central/**':         ['ROLE_USER'],
+       '/central/**':         ['ROLE_ADMIN'],
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 
