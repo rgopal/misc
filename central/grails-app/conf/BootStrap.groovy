@@ -10,7 +10,9 @@ class BootStrap {
         // keep all database table load code in src/groovy
         InitCountryLookup.load()
         InitAccount.load()
-        InitPerson.load()
+        
+        // person associated as part of Userlogin
+        // InitPerson.load()
         InitCountryStateCity.load()
         InitSpringSecurity.load()
     }

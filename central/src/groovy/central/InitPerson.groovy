@@ -9,12 +9,13 @@ import central.Person
 import central.Language
 import central.Email
 import central.Race
+import central.Country
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
 /**
  *
- * @author gopal
+ * @author gopal  4/10/2015 this has been merged with initSpringSecurity.load
  */
 @Log4j
 class InitPerson {
@@ -22,6 +23,8 @@ class InitPerson {
     
     static void load () {
         def persons = [ 
+                    // embedded does not work 
+                // homeEmail:new Email(email:'John.Smith@gmail.com', provider:'google')
             // this has Email embedded object which works here but GUI cannot save
             // The List GUI can display value saved here (but GUI destroys it)
             // TODO: fix the GUI for embedded
@@ -29,8 +32,6 @@ class InitPerson {
                 login:'jsmith', password:'jsmith',
                 dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), 
                 preferredLanguage:Language.ENGLISH,
-                // embedded does not work 
-                // homeEmail:new Email(email:'John.Smith@gmail.com', provider:'google')
                 homeEmail:'john.smith@gmail.com'
             ),
            

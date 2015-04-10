@@ -174,19 +174,19 @@ grails.plugin.springsecurity.interceptUrlMap= [
 	'/index':                         ['permitAll'],
     '/dbconsole/**':                         ['permitAll'],
 	'/index.gsp':                     ['permitAll'],
-	'/assets/**':                     ['permitAll'],
+	'/assets/**':                     ['permitAll'],  // check for .txt files
 	'/**/js/**':                      ['permitAll'],
 	'/**/css/**':                     ['permitAll'],
 	'/**/images/**':                  ['permitAll'],
 	'/**/favicon.ico':                ['permitAll'],
         '/login/**':          ['permitAll'],
         '/logout/**':         ['permitAll'],
+        '/register/**':                   ['permitAll'],\
         '/secure/**':         ['ROLE_ADMIN'],
         '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
-        '/account/**':         ['ROLE_ADMIN', 'ROLE_ADMIN'],
+        '/account/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_ADMIN'],
         '/authority/**':         ['ROLE_ADMIN'],
-         '/register/**':                   ['permitAll'],
         '/user/**':                       ['ROLE_ADMIN'],
         '/role/**':                       ['ROLE_ADMIN'],
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
@@ -194,3 +194,4 @@ grails.plugin.springsecurity.interceptUrlMap= [
 
 // default from email
 grails.mail.default.from="oumuo1@oumuo.com"
+// grails.plugin.springsecurity.successHandler.defaultTargetUrl = 'controllerName/actionName'

@@ -4,6 +4,7 @@ import central.Country
 import central.Language
 import central.Email
 import central.Race
+import com.oumuo.UserLogin
 
 class Person {
 
@@ -19,8 +20,8 @@ class Person {
  
    
     // class unique fields
-    String login
-    String password
+    // String login
+    // String password
     String name
     Sex sex = Sex.UNKNOWN
     Date dateOfBirth = Date.parse('dd-MM-yyyy','01-01-1960')
@@ -48,11 +49,17 @@ class Person {
     String homePhone
     String workPhone
     String mobilePhone
+    // NOT WORKING UserLogin userLogin  //hasOne led to null issue
 
    
     // associations
     static hasMany = [accounts:Account]
+    
+    // bidirectional next step
+  //  static hasOne = [userLogin:UserLogin]
 
+    static belongsTo = [userLogin: UserLogin]
+    
     String toString(){
 
          "$name"
@@ -65,8 +72,10 @@ class Person {
     // should be constraints and not constraint
     static constraints = {
      
-        login blank:false, size:5..15,matches:/[\S]+/, unique:true
-        password blank:false, size:5..15,matches:/[\S]+/, display:false
+      //  login blank:false, size:5..15,matches:/[\S]+/, unique:true
+      //  password blank:false, size:5..15,matches:/[\S]+/, display:false
+        // this is another table with bidirectional reference so one has to be null
+        // userLogin(nullable:true)
         name (blank:false, size:2..64)
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
