@@ -57,28 +57,24 @@ printHtmlPart(18)
 printHtmlPart(19)
 for( c in (grailsApplication.controllerClasses.sort { it.fullName }) ) {
 printHtmlPart(20)
-if(true && (c.fullName ==~ /^central.*/)) {
+createTagBody(3, {->
 printHtmlPart(21)
-createTagBody(4, {->
-printHtmlPart(22)
 expressionOut.print(c.fullName.replace('central.','').replace('Controller',''))
 })
-invokeTag('link','g',122,['controller':(c.logicalPropertyName)],4)
+invokeTag('link','g',122,['controller':(c.logicalPropertyName)],3)
+printHtmlPart(22)
+}
 printHtmlPart(23)
-}
-printHtmlPart(24)
-}
-printHtmlPart(25)
 })
-invokeTag('captureBody','sitemesh',128,[:],1)
-printHtmlPart(26)
+invokeTag('captureBody','sitemesh',124,[:],1)
+printHtmlPart(24)
 }
 public static final Map JSP_TAGS = new HashMap()
 protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1428328255648L
+public static final long LAST_MODIFIED = 1428680182951L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
 public static final String OUT_CODEC = 'html'

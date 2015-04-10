@@ -58,6 +58,19 @@ grails {
         // escapes all not-encoded output at final stage of outputting
         // filteringCodecForContentType.'text/html' = 'html'
     }
+    mail { 
+        host = "smtp.1and1.com" 
+        port = 587 
+        username = "oumuo1@oumuo.com" 
+        password = "Maryland-1" 
+        props = ["mail.debug": "true", 
+                "mail.smtp.protocol": "smtps", 
+                "mail.smtp.auth": "true", 
+                "mail.smtp.starttls.enable": "true", 
+                "mail.smtp.host": "smtp.1and1.com", 
+                "mail.smtp.user": "oumuo1@oumuo.com", 
+                "mail.smtp.password": "Maryland-1"] 
+    }
 }
 
 
@@ -143,6 +156,16 @@ grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.User
 grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'
 grails.plugin.springsecurity.authority.groupAuthorityNameField = 'authorities'
 grails.plugin.springsecurity.useRoleGroups = true
+
+// security implications so change to true and fix logout
+grails.plugin.springsecurity.logout.postOnly = false
+
+// suggested for s2ui customization
+// grails.plugin.springsecurity.ui.register.emailBody = '...'
+// grails.plugin.springsecurity.ui.register.emailFrom = '...'
+// grails.plugin.springsecurity.ui.register.emailSubject = '...'
+// grails.plugin.springsecurity.ui.register.defaultRoleNames = ['ROLE_CUSTOMER']
+// ach new user will be granted ROLE_USER after finalizing the registration 
 // this used to be staticRules, changed to interceptURLmaps
 // grails.plugin.springsecurity.controllerAnnotations.staticRules
 
@@ -159,8 +182,15 @@ grails.plugin.springsecurity.interceptUrlMap= [
         '/login/**':          ['permitAll'],
         '/logout/**':         ['permitAll'],
         '/secure/**':         ['ROLE_ADMIN'],
-       '/person/**':         ['ROLE_USER'],
-       '/account/**':         ['ROLE_ADMIN'],
+        '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
+        '/account/**':         ['ROLE_ADMIN', 'ROLE_ADMIN'],
+        '/userlogin/**':         ['ROLE_ADMIN'],
+        '/authority/**':         ['ROLE_ADMIN'],
+         '/register/**':                   ['permitAll'],
+        '/user/**':                       ['ROLE_ADMIN'],
+        '/role/**':                       ['ROLE_ADMIN'],
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 
+// default from email
+grails.mail.default.from="oumuo1@oumuo.com"

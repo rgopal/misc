@@ -115,12 +115,12 @@
                 <ul>
                     <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">
 
-                        <g:if test="${c.fullName ==~ /^central.*/}">
+                       <%-- <g:if test="${c.fullName ==~ /^central.*/}"> --%>
 
 
                             <li class="controller"><g:link controller="${c.logicalPropertyName}">
                                     ${c.fullName.replace('central.','').replace('Controller','')}</g:link></li>
-                            </g:if>
+                          <%--  </g:if> --%>
                         </g:each>
                 </ul>
             </div>
