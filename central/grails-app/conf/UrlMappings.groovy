@@ -12,6 +12,10 @@ class UrlMappings {
             }
         }
      
+        // needed to avoid 404 error
+        "/login/$action?"(controller: "login")
+        "/logout/$action?"(controller: "logout")
+        
         // "/"(view:"/index") this was default
         "500"(view:'/error')
     }

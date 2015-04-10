@@ -132,6 +132,7 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+    trace 'org.springframework.security'
 }
 
 grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
@@ -148,20 +149,18 @@ grails.plugin.springsecurity.useRoleGroups = true
 grails.plugin.springsecurity.interceptUrlMap= [
 	'/':                              ['permitAll'],
 	'/index':                         ['permitAll'],
+    '/dbconsole/**':                         ['permitAll'],
 	'/index.gsp':                     ['permitAll'],
 	'/assets/**':                     ['permitAll'],
 	'/**/js/**':                      ['permitAll'],
 	'/**/css/**':                     ['permitAll'],
 	'/**/images/**':                  ['permitAll'],
 	'/**/favicon.ico':                ['permitAll'],
-        '/central/index':                  ['permintAll'],
         '/login/**':          ['permitAll'],
-        '/central/login/**':    ['permitAll'],
-        '/central/logout/**':    ['permitAll'],
         '/logout/**':         ['permitAll'],
         '/secure/**':         ['ROLE_ADMIN'],
-       '/central/**':         ['ROLE_USER'],
-       '/central/**':         ['ROLE_ADMIN'],
+       '/person/**':         ['ROLE_USER'],
+       '/account/**':         ['ROLE_ADMIN'],
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 

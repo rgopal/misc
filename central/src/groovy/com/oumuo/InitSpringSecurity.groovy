@@ -18,24 +18,27 @@ import groovy.util.logging.Log4j
 @Log4j
 class InitSpringSecurity {
     static void load () {
-        
+        def springSecurityService
         def roles = [
             new Authority(authority: 'ROLE_ADMIN'),     
             new Authority(authority: 'ROLE_USER')]
     
         for (role in roles) {
-            log.info "created role ${role}"
+            log.info "created role ${role.authority}"
             if (!role.save()){ role.errors.allErrors.each {error ->
-                    log.debug "An error occured with role: ${role}"
+                    log.debug "An error occured with role: ${role.authority}"
 
                 }
             }
         }
 
         def users = [ 
-            new UserLogin(username: 'user', password: 'user'),
-             new UserLogin(username: 'user2', password: 'user2'),
-            new UserLogin(username: 'admin', password: 'admin')
+            new UserLogin(username: 'user', enabled: true, 
+                password: 'user'),
+            new UserLogin(username: 'user2',enabled: true, 
+                password: 'user2'),
+            new UserLogin(username: 'admin', enabled: true, 
+                password: 'admin')
         ]
         
         for (user in users) {
@@ -48,13 +51,38 @@ class InitSpringSecurity {
         }
         
         def user = UserLogin.findByUsername('user')
+        def user2 = UserLogin.findByUsername('user2')
+        
         def admin = UserLogin.findByUsername('admin')
         def userRole = Authority.findByAuthority('ROLE_USER')
         def adminRole = Authority.findByAuthority('ROLE_ADMIN')
         
-        UserLoginAuthority.create user, userRole, true
-        UserLoginAuthority.create admin, adminRole, true
-    
+        def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)
+        def u2 = new UserLoginAuthority (userLogin:admin, authority:adminRole)
+        u1.save()
+        u2.save()
+     
+        def sg = new SecurityGroup (name: 'all_users')
+        sg.save()
+        
+        def sga = new SecurityGroup(name:'all_admin') 
+        sga.save()
+        
+        def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
+        sa.save()
+        
+        sa = new SecurityGroupAuthority(securityGroup:sga, authority:adminRole)
+        sa.save()
+        
+        def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
+        us.save()
+        us = new UserLoginSecurityGroup(userLogin:user2, securityGroup:sg)
+        us.save()
+        
+        us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sga)
+        us.save()
+        
+        
     }
 
 }
