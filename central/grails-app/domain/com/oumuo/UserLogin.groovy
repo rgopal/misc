@@ -42,6 +42,10 @@ class UserLogin {
     }
     def beforeInsert() {
         encodePassword()
+        // default s2 UI does not have person
+        if (!person) {
+            person = new Person (name:username)
+        }
                 
     }
 
