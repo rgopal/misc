@@ -54,9 +54,6 @@ class Person {
    
     // associations
     static hasMany = [accounts:Account]
-    
-    // bidirectional next step
-  //  static hasOne = [userLogin:UserLogin]
 
     static belongsTo = [userLogin: UserLogin]
     

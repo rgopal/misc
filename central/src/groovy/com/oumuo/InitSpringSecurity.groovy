@@ -39,17 +39,17 @@ class InitSpringSecurity {
 
         def users = [ 
             new UserLogin(username: 'jsmith', enabled: true, 
-                password: 'mjohns', person:  new Person(name: 'John Smith', 
+                password: 'jsmith', person:  new Person(name: 'John Smith', 
                     sex:Person.Sex.MALE, race: Race.WHITE,
                     dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), 
                     preferredLanguage:Language.ENGLISH,
                     homeEmail:'john.smith@gmail.com'
                 )
             ),
-            new UserLogin(username: 'mjohnd',enabled: true, 
-                password: 'mjohns'),
+          
             new UserLogin(username: 'mjohns',enabled: true, 
-                password: 'mjohns', person: new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Race.WHITE, 
+                password: 'mjohns', 
+                person: new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Race.WHITE, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),
                     preferredLanguage:Language.ENGLISH,
                     homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( new Account(
@@ -59,12 +59,14 @@ class InitSpringSecurity {
                 )
             ),
             new UserLogin(username: 'jfields',enabled: true, 
-                password: 'jfields',  person:   new Person(name: 'Jane Fields', 
+                password: 'jfields',  
+                person:   new Person(name: 'Jane Fields', 
                     sex:Person.Sex.FEMALE, race: Race.BLACK, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),preferredLanguage:Language.ENGLISH)),
            
             new UserLogin(username: 'rpandey',enabled: true, 
-                password: 'rpandey', person: new Person(name: 'Ram Pandey', sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
+                password: 'rpandey', 
+                person: new Person(name: 'Ram Pandey', sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
                     country:Country.INDIA,
                     zip:'160031', city:'Ahmedabad', state: 'Gujarat',
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1986'),preferredLanguage:Language.ENGLISH)
@@ -79,14 +81,15 @@ class InitSpringSecurity {
             ),
             
             new UserLogin(username: 'admin', enabled: true, 
-                password: 'admin', person: new Person (name: 'Administrator'))
+                password: 'admin', 
+                person: new Person (name: 'Administrator'))
         ]
         
         for (user in users) {
           
             log.info "user person ${user.person} "
             // create the reverse link (at least for two users)
-           // NOT WORKING user.person.userLogin = user
+            // NOT WORKING user.person.userLogin = user
          
             
             
@@ -98,37 +101,54 @@ class InitSpringSecurity {
             log.info "created user ${user.username}"
         }
         
-        def user = UserLogin.findByUsername('user')
-        def user2 = UserLogin.findByUsername('user2')
-        
+        def user = UserLogin.findByUsername('jfields')
+        def user2 = UserLogin.findByUsername('jsmith')      
         def admin = UserLogin.findByUsername('admin')
+        
         def userRole = Authority.findByAuthority('ROLE_USER')
         def adminRole = Authority.findByAuthority('ROLE_ADMIN')
         
+        // this is not used because of Group (Need to fix s2 UI) TODO
         def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)
         def u2 = new UserLoginAuthority (userLogin:admin, authority:adminRole)
-        u1.save()
-        u2.save()
-     
+        if (!u1.save()) {
+            log.warn "u1 not saved ${u1}"
+        }
+         if (!u2.save()) {
+            log.warn "u2 not saved ${u2}"
+        }
         def sg = new SecurityGroup (name: 'all_users')
-        sg.save()
-        
+         if (!sg.save()) {
+            log.warn "sg not saved ${sg}"
+        }
         def sga = new SecurityGroup(name:'all_admin') 
-        sga.save()
+        if (!sga.save()) {
+            log.warn "sga not saved ${sga}"
+        }
         
         def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
-        sa.save()
-        
+        if (!sa.save()) {
+            log.warn "sa 1 not saved ${sa}"
+        }
         sa = new SecurityGroupAuthority(securityGroup:sga, authority:adminRole)
-        sa.save()
+          if (!sa.save()) {
+            log.warn "sa 2 not saved ${sa}"
+        }
         
         def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
-        us.save()
+          if (!us.save()) {
+            log.warn "us 1 not saved ${us}"
+        }
+        
         us = new UserLoginSecurityGroup(userLogin:user2, securityGroup:sg)
-        us.save()
+        if (!us.save()) {
+            log.warn "us 2 not saved ${us}"
+        }
         
         us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sga)
-        us.save()
+         if (!us.save()) {
+            log.warn "us 3 not saved ${us}"
+        }
         
         
     }

@@ -131,8 +131,8 @@ log4j.main = {
     }
     // for all domain controller etc.
     // debug customAppender:'central.controller'
-    debug 'central'
-    
+    trace 'central'
+    trace 'com.oumuo'
     // this used to be error (for below)
     warn   'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -145,7 +145,9 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    trace 'org.springframework.security'
+    warn 'org.springframework.security'
+    debug 'org.hibernate.SQL'
+    trace 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
 
 grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
@@ -159,6 +161,10 @@ grails.plugin.springsecurity.useRoleGroups = true
 
 // security implications so change to true and fix logout
 grails.plugin.springsecurity.logout.postOnly = false
+// note this is plugin and not plugins
+// grails.plugin.springsecurity.successHandler.defaultTargetUrl = '/'
+grails.plugin.springsecurity.successHandler.alwaysUseDefault = true
+// exception grails.plugin.springsecurity.successHandler.defaultTargetUrl = 'controllerName/actionName'
 
 // suggested for s2ui customization
 // grails.plugin.springsecurity.ui.register.emailBody = '...'

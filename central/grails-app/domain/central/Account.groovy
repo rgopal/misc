@@ -5,8 +5,7 @@ import groovy.util.logging.Log4j
 
 @Log4j
 class Account {
-        
-    // already annotaeded def log = LogFactory.getLog(this)
+
     String name
     Long sequence
     Boolean main = false
