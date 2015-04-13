@@ -39,7 +39,9 @@ class InitSpringSecurity {
 
         def users = [ 
             new UserLogin(username: 'jsmith', enabled: true, 
-                password: 'jsmith', person:  new Person(name: 'John Smith', 
+                password: 'jsmith', 
+                person:  new Person(name: 'John Smith',
+                    userName : 'jsmith',
                     sex:Person.Sex.MALE, race: Race.WHITE,
                     dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), 
                     preferredLanguage:Language.ENGLISH,
@@ -47,42 +49,56 @@ class InitSpringSecurity {
                 )
             ),
           
+            // this also creates a 1 account record
             new UserLogin(username: 'mjohns',enabled: true, 
                 password: 'mjohns', 
-                person: new Person(name: 'Mike Johns', sex:Person.Sex.MALE, race: Race.WHITE, 
+                person: new Person(name: 'Mike Johns', 
+                    userName : 'mjohns',
+                    sex:Person.Sex.MALE, race: Race.WHITE, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),
                     preferredLanguage:Language.ENGLISH,
                     homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( new Account(
-                        email:'johnsmith@facebook.com', userName : 'John Smith again',
+                        email:'johnsmith@facebook.com', 
                         sequence:1, name:'Primary', main:true
                     )
                 )
             ),
             new UserLogin(username: 'jfields',enabled: true, 
                 password: 'jfields',  
-                person:   new Person(name: 'Jane Fields', 
+                person:   new Person(name: 'Jane Fields',
+                    userName : 'jfields',
                     sex:Person.Sex.FEMALE, race: Race.BLACK, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),preferredLanguage:Language.ENGLISH)),
            
             new UserLogin(username: 'rpandey',enabled: true, 
                 password: 'rpandey', 
-                person: new Person(name: 'Ram Pandey', sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
+                person: new Person(name: 'Ram Pandey', 
+                    userName : 'rpandey',
+                    sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
                     country:Country.INDIA,
                     zip:'160031', city:'Ahmedabad', state: 'Gujarat',
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1986'),preferredLanguage:Language.ENGLISH)
             ),
             new UserLogin(username: 'राहुल',enabled: true, 
                 password: 'राहुल', 
-                person: new Person(name: 'राहुल नंदा', sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
+                person: new Person(name: 'राहुल नंदा', 
+                    userName : 'राहुल',
+                    sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
                     country:Country.INDIA,
-                    login:'राहुल', password:'राहुल',
                     zip:'260014', city:'लखनऊ', state: 'उत्तर प्रदेश',
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1992'),preferredLanguage:Language.HINDI)
             ),
             
             new UserLogin(username: 'admin', enabled: true, 
                 password: 'admin', 
-                person: new Person (name: 'Administrator'))
+                person: new Person (name: 'Administrator',
+                    userName: 'admin')),
+            
+             new UserLogin(username: 'admin2', enabled: true, 
+                password: 'admin2'
+                // this tests UserLogin pre-insert to copy username into Person
+                // , person: new Person (name: 'Administrator')
+            )
         ]
         
         for (user in users) {

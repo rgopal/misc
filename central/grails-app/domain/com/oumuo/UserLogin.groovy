@@ -18,8 +18,8 @@ class UserLogin {
     // bidrectional by using belongsTo in Person (which takes care of cascade)   
     // Person person leads to transient object (cascase explicitly needed)
 
-    static hasOne = [person:Person]
-    
+    // static hasOne = [person:Person]
+    Person person
     
     static transients = ['springSecurityService']
 
@@ -27,7 +27,7 @@ class UserLogin {
         username blank: false, unique: true
         password blank: false
         email(nullable:true, email:true)
-        person()
+        person(nullable:true)
         // person(nullable:true)
         // this creates true one to one
     }
@@ -49,7 +49,11 @@ class UserLogin {
         log.trace ("before new: person ${person} username ${username}")
         // default s2 UI does not have person
         if (!person) {
-            person = new Person (name:username)
+            person = new Person (userName:username, name:username)
+            person.userLogin = this
+           if (!person.save()) {
+               person.errors.allErrors.each {log.warn it}
+           }
             // explicit save does not help (otherwise transient error)
             // person.save()
         }
@@ -61,6 +65,17 @@ class UserLogin {
         if (isDirty('password')) {
             encodePassword()
         }
+        log.trace ("before update new: person ${person} username ${username}")
+        // default s2 UI does not have person
+        if (!person) {
+            person = new Person (userName:username, name:username)
+            person.userLogin = this
+            person.save()
+            // explicit save does not help (otherwise transient error)
+            // person.save()
+        }
+        log.trace ("after update new: person ${person} username ${username}")
+               
     }
 
     protected void encodePassword() {

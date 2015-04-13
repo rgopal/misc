@@ -61,15 +61,15 @@ grails {
     mail { 
         host = "smtp.1and1.com" 
         port = 587 
-        username = "oumuo1@oumuo.com" 
-        password = "Maryland-1" 
+        username = "authAgent@oumuo.com" 
+        password = "Texas-1" 
         props = ["mail.debug": "true", 
                 "mail.smtp.protocol": "smtps", 
                 "mail.smtp.auth": "true", 
                 "mail.smtp.starttls.enable": "true", 
                 "mail.smtp.host": "smtp.1and1.com", 
-                "mail.smtp.user": "oumuo1@oumuo.com", 
-                "mail.smtp.password": "Maryland-1"] 
+                "mail.smtp.user": "authAgent@oumuo.com", 
+                "mail.smtp.password": "Texas-1"] 
     }
 }
 
@@ -146,8 +146,8 @@ log4j.main = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
     warn 'org.springframework.security'
-    debug 'org.hibernate.SQL'
-    trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+    warn 'org.hibernate.SQL'
+    warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
 
 grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"

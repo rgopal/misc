@@ -6,6 +6,7 @@ import central.Email
 import central.Race
 import com.oumuo.UserLogin
 
+// This is owned by UserLogin which is created by s2
 class Person {
 
     // class specific enums
@@ -22,7 +23,8 @@ class Person {
     // class unique fields
     // String login
     // String password
-    String name
+    String name     // this is full name
+    String userName // it is unique and same as in UserLogin
     Sex sex = Sex.UNKNOWN
     Date dateOfBirth = Date.parse('dd-MM-yyyy','01-01-1960')
     Race race = Race.WHITE
@@ -74,6 +76,7 @@ class Person {
         // this is another table with bidirectional reference so one has to be null
         // userLogin(nullable:true)
         name (blank:false, size:2..64)
+        userName(blank:false)
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
         race (nullable:true)
