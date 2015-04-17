@@ -51,9 +51,10 @@ class UserLogin {
         if (!person) {
             person = new Person (userName:username, name:username)
             person.userLogin = this
-           if (!person.save()) {
-               person.errors.allErrors.each {log.warn it}
-           }
+   
+            if (!person.save()) {
+                person.errors.allErrors.each {log.warn it}
+            }
             // explicit save does not help (otherwise transient error)
             // person.save()
         }

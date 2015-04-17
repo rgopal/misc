@@ -59,20 +59,26 @@ grails {
         // filteringCodecForContentType.'text/html' = 'html'
     }
     mail { 
-        host = "smtp.1and1.com" 
+        host = "smtp.gmail.com"
+        
         port = 587 
-        username = "authAgent@oumuo.com" 
-        password = "Texas-1" 
+        username = "oumuoauthagent@gmail.com" 
+        password = "Acuu-raa1" 
         props = ["mail.debug": "true", 
                 "mail.smtp.protocol": "smtps", 
-                "mail.smtp.auth": "true", 
+                "mail.smtp.auth": "true",
+               // "mail.hostname":"smtp.1and1.com",
                 "mail.smtp.starttls.enable": "true", 
-                "mail.smtp.host": "smtp.1and1.com", 
-                "mail.smtp.user": "authAgent@oumuo.com", 
-                "mail.smtp.password": "Texas-1"] 
+            	// "mail.smtp.EnableSSL.enable":"true",
+		// "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+		// "mail.smtp.socketFactory.fallback":"false",
+                "mail.smtp.host": "smtp.gmail.com", 
+                "mail.smtp.user": "oumuoauthagent@gmail.com", 
+                "mail.smtp.password": "xxxxxxx"] 
     }
 }
-
+// default from email
+grails.mail.default.from="rgopalsw@gmail.com"
 
 grails.converters.encoding = "UTF-8"
 // scaffolding templates configuration
@@ -198,6 +204,5 @@ grails.plugin.springsecurity.interceptUrlMap= [
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 
-// default from email
-grails.mail.default.from="oumuo1@oumuo.com"
+
 // grails.plugin.springsecurity.successHandler.defaultTargetUrl = 'controllerName/actionName'

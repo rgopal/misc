@@ -58,7 +58,7 @@ class InitSpringSecurity {
                     dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),
                     preferredLanguage:Language.ENGLISH,
                     homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( new Account(
-                        email:'johnsmith@facebook.com', 
+                        email:'mikejohns@facebook.com', 
                         sequence:1, name:'Primary', main:true
                     )
                 )
@@ -94,12 +94,38 @@ class InitSpringSecurity {
                 person: new Person (name: 'Administrator',
                     userName: 'admin')),
             
-             new UserLogin(username: 'admin2', enabled: true, 
+            new UserLogin(username: 'admin2', enabled: true, 
                 password: 'admin2'
                 // this tests UserLogin pre-insert to copy username into Person
                 // , person: new Person (name: 'Administrator')
             )
         ]
+        
+        def userRole = Authority.findByAuthority('ROLE_USER')
+        def adminRole = Authority.findByAuthority('ROLE_ADMIN')
+        
+        def sg = new SecurityGroup (name: 'all_users')
+        if (!sg.save()) {
+            log.warn "sg not saved ${sg}"
+        }
+        def sgad = new SecurityGroup(name:'all_admin') 
+        if (!sgad.save()) {
+            log.warn "sga not saved ${sgad}"
+        }
+        
+        def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
+        if (!sa.save()) {
+            log.warn "sa user not saved ${sa}"
+        }
+        
+        def saad = new SecurityGroupAuthority(securityGroup:sgad, authority:adminRole)
+        if (!saad.save()) {
+            log.warn "sa admin not saved ${saad}"
+        }
+        
+        // this is not used because of Group (Need to fix s2 UI) TODO
+       
+     
         
         for (user in users) {
           
@@ -107,63 +133,47 @@ class InitSpringSecurity {
             // create the reverse link (at least for two users)
             // NOT WORKING user.person.userLogin = user
          
-            
+       
             
             if (!user.save()){ user.errors.allErrors.each {error ->
                     log.debug "An error occured with user: ${user.username}"
 
                 }
             }
+            
+            // not needed
+            def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)        
+            if (!u1.save()) {
+                log.warn "u1 not saved ${u1} for ${user}"
+            }
+            
+            // all get all_users
+            def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
+            if (!us.save()) {
+                log.warn "us user not saved ${user} for ${sg}"
+            }
+        
+         
+        
             log.info "created user ${user.username}"
         }
         
-        def user = UserLogin.findByUsername('jfields')
-        def user2 = UserLogin.findByUsername('jsmith')      
+       
+        // admin get admin role
         def admin = UserLogin.findByUsername('admin')
         
-        def userRole = Authority.findByAuthority('ROLE_USER')
-        def adminRole = Authority.findByAuthority('ROLE_ADMIN')
-        
-        // this is not used because of Group (Need to fix s2 UI) TODO
-        def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)
+        // not needed
         def u2 = new UserLoginAuthority (userLogin:admin, authority:adminRole)
-        if (!u1.save()) {
-            log.warn "u1 not saved ${u1}"
-        }
-         if (!u2.save()) {
+       
+        if (!u2.save()) {
             log.warn "u2 not saved ${u2}"
         }
-        def sg = new SecurityGroup (name: 'all_users')
-         if (!sg.save()) {
-            log.warn "sg not saved ${sg}"
-        }
-        def sga = new SecurityGroup(name:'all_admin') 
-        if (!sga.save()) {
-            log.warn "sga not saved ${sga}"
-        }
-        
-        def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
-        if (!sa.save()) {
-            log.warn "sa 1 not saved ${sa}"
-        }
-        sa = new SecurityGroupAuthority(securityGroup:sga, authority:adminRole)
-          if (!sa.save()) {
-            log.warn "sa 2 not saved ${sa}"
-        }
-        
-        def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
-          if (!us.save()) {
-            log.warn "us 1 not saved ${us}"
-        }
-        
-        us = new UserLoginSecurityGroup(userLogin:user2, securityGroup:sg)
+    
+       
+        // admin2 picked up in preinsert of UserLogin
+        def us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sgad)
         if (!us.save()) {
-            log.warn "us 2 not saved ${us}"
-        }
-        
-        us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sga)
-         if (!us.save()) {
-            log.warn "us 3 not saved ${us}"
+            log.warn "us admin not saved ${us} for ${sgad}"
         }
         
         
