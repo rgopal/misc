@@ -16,7 +16,11 @@ class Account {
 
     String toString(){
 
-    "${sequence} ${name}"
+        def tag = ""
+        if (main == true) {
+            tag = " *"
+        }
+    "${sequence} ${name} ${tag}"
     }
     // only one Person can own an Account (owner) with cascaded deletes
     // without belongsTo, an account can be associated with multiple persons
@@ -24,7 +28,7 @@ class Account {
     static belongsTo = [person: Person]
     static constraints = {
         // named association so not needed owner()
-        sequence (nullable:true)
+        sequence (nullable:true, display:false)
         name (nullable:true)
         main()
         email (email: true, blank: false, nullable:true)
@@ -64,6 +68,32 @@ class Account {
             // log.debug ("beforeInsert: person.id ${person.id} sequence = ${sequence}")
             
         }
+        // if this has become main then other should becomem false
+        if (this.main == true) {
+            checkMain()
+        }
         
+    }
+    def beforeUpdate () {
+        if (this.main == true) {
+            checkMain()
+        }
+    }
+    def checkMain() {
+        // does not work other = Account.findByPersonAndMain(this.person.id, main:true)
+        
+        def other = Account.createCriteria().get {
+                person {
+                    eq ('id', person.id)
+                }
+                eq ('main', true)
+            }
+        if (other) {
+            other.main = false;
+            log.trace "checkMain: resetting other $other to false"
+        } else {
+            log.trace "checkMain: no other Account with main = true"
+        }
+       
     }
 }
