@@ -14,7 +14,7 @@
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
-grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
+grails.mime.disable.accept.header.userAgents  ['Gecko', 'WebKit', 'Presto', 'Trident']
 grails.assets.bundle=true // for development environment, already done for other 4/2
 grails.mime.types = [ // the first one is the default format
     all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
@@ -63,7 +63,7 @@ grails {
         
         port = 587 
         username = "oumuoauthagent@gmail.com" 
-        password = "Acuu-raa1" 
+        password = "" 
         props = ["mail.debug": "true", 
                 "mail.smtp.protocol": "smtps", 
                 "mail.smtp.auth": "true",
@@ -74,11 +74,11 @@ grails {
 		// "mail.smtp.socketFactory.fallback":"false",
                 "mail.smtp.host": "smtp.gmail.com", 
                 "mail.smtp.user": "oumuoauthagent@gmail.com", 
-                "mail.smtp.password": "xxxxxxx"] 
+                "mail.smtp.password": ""] 
     }
 }
 // default from email
-grails.mail.default.from="rgopalsw@gmail.com"
+grails.mail.default.from="oumuoauthagent@gmail.com"
 
 grails.converters.encoding = "UTF-8"
 // scaffolding templates configuration

@@ -47,6 +47,7 @@ class Account {
                 }
             }
            
+            log.trace "beforeInsert: count is $count for $person"
             if (count == 0) {
                 sequence = 1
             } else {

@@ -57,7 +57,8 @@ class InitSpringSecurity {
                     sex:Person.Sex.MALE, race: Race.WHITE, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','0-09-1970'),
                     preferredLanguage:Language.ENGLISH,
-                    homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( new Account(
+                    homeEmail:'Mike.Johns@gmail.com' ).addToAccounts( 
+                    new Account(
                         email:'mikejohns@facebook.com', 
                         sequence:1, name:'Primary', main:true
                     )
@@ -68,7 +69,16 @@ class InitSpringSecurity {
                 person:   new Person(name: 'Jane Fields',
                     userName : 'jfields',
                     sex:Person.Sex.FEMALE, race: Race.BLACK, 
-                    dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),preferredLanguage:Language.ENGLISH)),
+                    dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),
+                    preferredLanguage:Language.ENGLISH).
+                    addToAccounts (
+                    new Account(
+                        email:'janefields@twitter.com', 
+                        sequence:1, // sequence can't be null
+                        name:'Secondary', main:false
+                    )  
+                )
+            ),
            
             new UserLogin(username: 'rpandey',enabled: true, 
                 password: 'rpandey', 
@@ -86,7 +96,8 @@ class InitSpringSecurity {
                     sex:Person.Sex.MALE, race: Race.ASIAN_INDIAN, 
                     country:Country.INDIA,
                     zip:'260014', city:'लखनऊ', state: 'उत्तर प्रदेश',
-                    dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1992'),preferredLanguage:Language.HINDI)
+                    dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1992'),
+                    preferredLanguage:Language.HINDI)
             ),
             
             new UserLogin(username: 'admin', enabled: true, 
@@ -147,11 +158,12 @@ class InitSpringSecurity {
                 log.warn "u1 not saved ${u1} for ${user}"
             }
             
-            // all get all_users
-            def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
-            if (!us.save()) {
-                log.warn "us user not saved ${user} for ${sg}"
-            }
+            // all get all_users (but in afterInsert of UserLogin to take care
+            // of users registering (was resulting in object already exists
+            //  def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
+            // if (!us.save()) {
+            //     log.warn "us user not saved ${user} for ${sg}"
+            // }
         
          
         

@@ -61,6 +61,35 @@ class UserLogin {
         log.trace ("after new: person ${person} username ${username}")
                 
     }
+    // every user added to all_users (registration).  Can't be done in preInsert
+    // because id does not exist at that time (.exists(null,2) failed)
+    def afterInsert() {
+        log.trace ("afterInsert: Creating ULSG for username ${username}")
+    
+        def sg = SecurityGroup.findByName('all_users')
+        if (sg) {
+            log.trace "afterInsert: checking UserLogin $this} Security Group ${sg}"
+            if (!UserLoginSecurityGroup.findByUserLoginAndSecurityGroup(this, sg)) {
+                def us = new UserLoginSecurityGroup(userLogin:this, securityGroup:sg)
+                   
+                if (!us.save()) {
+                    log.warn "afterInsert: UserLoginSecurityGroup not saved ${us}"
+                }
+                log.trace ("afterInsert: Created ULSG all_users for username ${username}")
+            } else {
+                log.trace("afterInsert: ULSG already exists for $this and $sg")
+                
+            }
+            
+        }
+        else {
+            log.warn "afterInsert: all_users not found in SecurityGroup for ${username}"
+            
+        }  
+             
+    }
+    
+
 
     def beforeUpdate() {
         if (isDirty('password')) {
