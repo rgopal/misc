@@ -76,7 +76,16 @@ class InitSpringSecurity {
                         email:'janefields@twitter.com', 
                         sequence:1, // sequence can't be null
                         name:'Secondary', main:false
-                    )  
+                    )
+                ).
+                    addToAccounts(
+                    // note that this is after (not sure if preInsert would work
+                    new Account (
+                        email:'janefields@yahoo.com',
+                        sequence: 2,
+                        main:true,
+                        name:'Primary'
+                    )
                 )
             ),
            

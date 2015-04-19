@@ -18,12 +18,14 @@ import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.authentication.dao.NullSaltSource
 import grails.util.GrailsNameUtils
+import groovy.util.logging.Log4j
 
 import org.springframework.dao.DataIntegrityViolationException
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
+@Log4j
 class UserController extends AbstractS2UiController {
 
 	def saltSource
@@ -83,6 +85,7 @@ class UserController extends AbstractS2UiController {
 
 		String usernameFieldName = SpringSecurityUtils.securityConfig.userLookup.usernamePropertyName
 
+                println "update: user is ${user} ufn ${usernameFieldName} "
 		lookupUserRoleClass().removeAll user
 		addRoles user
 		userCache.removeUserFromCache user[usernameFieldName]
@@ -217,7 +220,12 @@ class UserController extends AbstractS2UiController {
 		String authoritiesPropertyName = SpringSecurityUtils.securityConfig.userLookup.authoritiesPropertyName
 
 		List roles = sortedRoles()
-		Set userRoleNames = user[authoritiesPropertyName].collect { it[authorityFieldName] }
+                log.trace roles
+                println "buildUserModel: user ${user} roles ${roles} aPN ${authoritiesPropertyName}   aFN  ${authorityFieldName}" 
+		
+        // had to hardcode this to 'name' from authorityFieldName since the variable is used elsewhere
+        // and has to be authority
+                Set userRoleNames = user[authoritiesPropertyName].collect { it['name'] }
 		def granted = [:]
 		def notGranted = [:]
 		for (role in roles) {

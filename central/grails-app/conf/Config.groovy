@@ -158,11 +158,25 @@ log4j.main = {
 
 grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
 
-// Added by the Spring Security Core plugin:
+// Added by the Spring Security Core plugin: 
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
-grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.UserLoginAuthority'
+
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.UserLoginSecurityGroup'
 grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'
+grails.plugin.springsecurity.authority.authorityNameField = 'authorities'
+
+//hardcode name in userController (s2ui plugin) since the following can't be
+// set to other than authority
+
+// this has to be authority and can't be changed to authorities
+grails.plugin.springsecurity.authority.nameField='authority'
+
+// Following NameField has to be set as is to use the core SecurityGroup
 grails.plugin.springsecurity.authority.groupAuthorityNameField = 'authorities'
+
+//grails.plugin.springsecurity.authority.groupAuthorityFieldName = 'authority'
+grails.plugin.springsecurity.userLookup.authoritiesPropertyName = 'authorities'
+// grails.plugin.springsecurity.userLookup.groupAuthoritiesPropertyName = 'authorities'
 grails.plugin.springsecurity.useRoleGroups = true
 
 // security implications so change to true and fix logout
@@ -195,6 +209,8 @@ grails.plugin.springsecurity.interceptUrlMap= [
         '/logout/**':         ['permitAll'],
         '/register/**':                   ['permitAll'],\
         '/secure/**':         ['ROLE_ADMIN'],
+     '/securityinfo/**':         ['ROLE_ADMIN'],
+    '/**/**':   ['ROLE_ADMIN'],    // CHECK THIS IN FUTURE TODO
         '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/account/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_ADMIN'],
