@@ -103,7 +103,9 @@
                     sb << ' name="' << property.name << '.id"'
                     sb << ' id="' << property.name << '"'
                     sb << ' readonly="readonly"'
-                    sb << ' value="${' << "${domainInstance}?.${property.name}" << '}"'
+                    sb << ' class="many-to-one"'
+                    // sb << ' value="${' << "${domainInstance}?.${property.name}" << '}"'
+                    sb << ' value="${' << "${domainInstance}?.${property.name}" << '?.id}"'
                     sb << '/>'
                 } else {
                         sb << '<g:select'
