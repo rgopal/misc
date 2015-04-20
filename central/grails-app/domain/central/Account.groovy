@@ -31,6 +31,7 @@ class Account {
         sequence (nullable:true, display:false)
         name (nullable:true)
         main()
+        person(editable:false)
         email (email: true, blank: false, nullable:true)
         dateCreated()
         lastUpdated()
@@ -78,6 +79,7 @@ class Account {
         if (this.main == true) {
             checkMain()
         }
+       
     }
     def checkMain() {
         // does not work other = Account.findByPersonAndMain(this.person.id, main:true)

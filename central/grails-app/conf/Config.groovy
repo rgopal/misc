@@ -67,11 +67,11 @@ grails {
         props = ["mail.debug": "true", 
                 "mail.smtp.protocol": "smtps", 
                 "mail.smtp.auth": "true",
-               // "mail.hostname":"smtp.1and1.com",
+            // "mail.hostname":"smtp.1and1.com",
                 "mail.smtp.starttls.enable": "true", 
-            	// "mail.smtp.EnableSSL.enable":"true",
-		// "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
-		// "mail.smtp.socketFactory.fallback":"false",
+            // "mail.smtp.EnableSSL.enable":"true",
+            // "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+            // "mail.smtp.socketFactory.fallback":"false",
                 "mail.smtp.host": "smtp.gmail.com", 
                 "mail.smtp.user": "oumuoauthagent@gmail.com", 
                 "mail.smtp.password": ""] 
@@ -209,14 +209,15 @@ grails.plugin.springsecurity.interceptUrlMap= [
         '/logout/**':         ['permitAll'],
         '/register/**':                   ['permitAll'],\
         '/secure/**':         ['ROLE_ADMIN'],
-     '/securityinfo/**':         ['ROLE_ADMIN'],
-    '/**/**':   ['ROLE_ADMIN'],    // CHECK THIS IN FUTURE TODO
+        '/securityinfo/**':         ['ROLE_ADMIN'],
         '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/account/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_ADMIN'],
         '/authority/**':         ['ROLE_ADMIN'],
         '/user/**':                       ['ROLE_ADMIN'],
         '/role/**':                       ['ROLE_ADMIN'],
+        // the following stopped ROLE_USER to work if before /person
+        '/**/**':   ['ROLE_ADMIN'],    // CHECK THIS IN FUTURE TODO
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 

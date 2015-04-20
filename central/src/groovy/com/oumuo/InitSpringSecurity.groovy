@@ -26,7 +26,9 @@ class InitSpringSecurity {
         def springSecurityService
         def roles = [
             new Authority(authority: 'ROLE_ADMIN'),     
-            new Authority(authority: 'ROLE_USER')]
+            new Authority(authority: 'ROLE_USER'),
+            new Authority(authority: 'ROLE_FINANCE'),
+            new Authority(authority: 'ROLE_POWER_USER')]
     
         for (role in roles) {
             log.info "created role ${role.authority}"
