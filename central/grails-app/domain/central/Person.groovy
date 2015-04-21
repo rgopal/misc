@@ -83,6 +83,7 @@ class Person {
         status ()
         preferredLanguage(nullable:false)
      
+        userLogin(editable:false)
         homeEmail(nullable:true, email:true)
         workEmail(nullable:true, email:true)
         homePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')

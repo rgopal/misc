@@ -98,28 +98,24 @@
 		def sb = new StringBuilder()
 
                 // belongsTo and others will be readonly if editable is false 4/20/2015
-                if (!cp.editable) {
-                    sb << '<g:textField'
-                    sb << ' name="' << property.name << '.id"'
-                    sb << ' id="' << property.name << '"'
-                    sb << ' readonly="readonly"'
-                    sb << ' class="many-to-one"'
-                    // sb << ' value="${' << "${domainInstance}?.${property.name}" << '}"'
-                    sb << ' value="${' << "${domainInstance}?.${property.name}" << '?.id}"'
-                    sb << '/>'
-                } else {
+              
                         sb << '<g:select'
 			// id is "x" and name is "x.id" as the label will have for="x" and "." in an id will confuse CSS
  			sb << ' id="' << property.name << '"'
  			sb << ' name="' << property.name << '.id"'
+                        if (cp.editable) {
  			sb << ' from="${' << property.type.name << '.list()}"'
+                        } else {
+                        sb << ' from="${' << property.type.name << 
+                             '.findAllById(' << "${domainInstance}?.${property.name}" << '?.id)}"'
+                        }
  			sb << ' optionKey="id"'
 			if (isRequired()) sb << ' required=""'
  			sb << ' value="${' << "${domainInstance}?.${property.name}" << '?.id}"'
  			sb << ' class="many-to-one"'
  			sb << renderNoSelection(property)
  			sb << '/>'
-                }
+                
 		sb as String
         }
     }
