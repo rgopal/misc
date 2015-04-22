@@ -43,6 +43,7 @@ class InitSpringSecurity {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',
             AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        log.trace "SCH ${SCH.context.authentication}"
         
         def roles = [
             new Authority(authority: 'ROLE_ADMIN'),     
@@ -183,6 +184,14 @@ class InitSpringSecurity {
                 }
             }
             
+            log.trace "load: starting ACL creations for ${user}"
+            aclUtilService.addPermission user, 'admin', ADMINISTRATION
+               
+            aclService.createAcl(
+               objectIdentityRetrievalStrategy.getObjectIdentity(user))
+           
+         
+           
             // not needed
             def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)        
             if (!u1.save()) {

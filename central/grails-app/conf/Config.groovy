@@ -178,6 +178,9 @@ grails.plugin.springsecurity.authority.groupAuthorityNameField = 'authorities'
 grails.plugin.springsecurity.userLookup.authoritiesPropertyName = 'authorities'
 // grails.plugin.springsecurity.userLookup.groupAuthoritiesPropertyName = 'authorities'
 grails.plugin.springsecurity.useRoleGroups = true
+grails.plugin.springsecurity.useControllerAnnotations = true
+ 
+grails.plugin.springsecurity.useAcl = true
 
 // security implications so change to true and fix logout
 grails.plugin.springsecurity.logout.postOnly = false
