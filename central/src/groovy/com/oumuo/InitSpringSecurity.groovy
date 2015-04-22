@@ -6,6 +6,15 @@
 
 package com.oumuo
 
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import static org.springframework.security.acls.domain.BasePermission.DELETE
+import static org.springframework.security.acls.domain.BasePermission.READ
+import static org.springframework.security.acls.domain.BasePermission.WRITE
+
+import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.core.context.SecurityContextHolder as SCH
+
 import central.Person
 import central.Account
 import central.Language
@@ -22,8 +31,19 @@ import groovy.util.logging.Log4j
  */
 @Log4j
 class InitSpringSecurity {
+   
     static void load () {
         def springSecurityService
+        def aclService
+        def aclUtilService
+        def objectIdentityRetrievalStrategy
+        def sessionFactory
+        
+        // have to be authenticated as an admin to create ACLs
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(
+            'admin', 'admin',
+            AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        
         def roles = [
             new Authority(authority: 'ROLE_ADMIN'),     
             new Authority(authority: 'ROLE_USER'),
@@ -199,7 +219,11 @@ class InitSpringSecurity {
             log.warn "us admin not saved ${us} for ${sgad}"
         }
         
-        
+        processACL()
     }
+    static void processACL () {
+       
+    }
+    
 
 }
