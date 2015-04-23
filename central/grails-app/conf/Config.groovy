@@ -156,10 +156,11 @@ log4j.main = {
     warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
 
-grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
+// grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
+grails.plugin.springsecurity.securityConfigType = "Annotation"
 
 // Added by the Spring Security Core plugin: 
-grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
+grails.pl//gin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
 
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.UserLoginSecurityGroup'
 grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'

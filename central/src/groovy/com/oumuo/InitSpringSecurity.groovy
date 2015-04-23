@@ -6,13 +6,21 @@
 
 package com.oumuo
 
+
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.DELETE
 import static org.springframework.security.acls.domain.BasePermission.READ
 import static org.springframework.security.acls.domain.BasePermission.WRITE
 
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.acls.domain.BasePermission
+import org.springframework.security.acls.model.Permission
+
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
+
+
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 import central.Person
@@ -22,6 +30,10 @@ import central.Email
 import central.Race
 import central.Country
 import com.oumuo.UserLogin
+import com.oumuo.UserLoginSecurityGroup
+import com.oumuo.Authority
+import com.oumuo.SecurityGroupAuthority
+
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
@@ -31,14 +43,16 @@ import groovy.util.logging.Log4j
  */
 @Log4j
 class InitSpringSecurity {
+    
+   // def sessionFactory
+   // def springSecurityService
+   // def aclService  (this is outside grails so not working???)
+   //  def aclUtilService
+   // def objectIdentityRetrievalStrategy
+    
    
-    static void load () {
-        def springSecurityService
-        def aclService
-        def aclUtilService
-        def objectIdentityRetrievalStrategy
-        def sessionFactory
-        
+     void load (Object aclUtilService, Object aclService, Object objectIdentityRetrievalStrategy) {
+     
         // have to be authenticated as an admin to create ACLs
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',
@@ -168,8 +182,6 @@ class InitSpringSecurity {
         
         // this is not used because of Group (Need to fix s2 UI) TODO
        
-     
-        
         for (user in users) {
           
             log.info "user person ${user.person} "
@@ -184,13 +196,13 @@ class InitSpringSecurity {
                 }
             }
             
-            log.trace "load: starting ACL creations for ${user}"
+            log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
+            
+            aclService.createAcl(
+                objectIdentityRetrievalStrategy.getObjectIdentity(user))
+           
             aclUtilService.addPermission user, 'admin', ADMINISTRATION
                
-            aclService.createAcl(
-               objectIdentityRetrievalStrategy.getObjectIdentity(user))
-           
-         
            
             // not needed
             def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)        
