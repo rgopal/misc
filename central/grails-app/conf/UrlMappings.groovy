@@ -1,3 +1,6 @@
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.acls.model.NotFoundException
+
 class UrlMappings {
 
     static mappings = {
@@ -20,10 +23,10 @@ class UrlMappings {
             exception: NotFoundException)
         
         // needed to avoid 404 error
-       // "/login/$action?"(controller: "login")
-       // "/logout/$action?"(controller: "logout")
+        // "/login/$action?"(controller: "login")
+        // "/logout/$action?"(controller: "logout")
         
         // "/"(view:"/index") this was default
-       // "500"(view:'/error')
+        // "500"(view:'/error')
     }
 }

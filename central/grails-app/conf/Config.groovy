@@ -152,7 +152,7 @@ log4j.main = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
     trace 'org.springframework.security'
-    trace 'org.hibernate.SQL'
+    warn 'org.hibernate.SQL'
     warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
 
@@ -160,7 +160,7 @@ log4j.main = {
 grails.plugin.springsecurity.securityConfigType = "Annotation"
 
 // Added by the Spring Security Core plugin: 
-grails.pl//gin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.oumuo.UserLogin'
 
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.oumuo.UserLoginSecurityGroup'
 grails.plugin.springsecurity.authority.className = 'com.oumuo.Authority'
@@ -190,6 +190,8 @@ grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.successHandler.alwaysUseDefault = true
 // exception grails.plugin.springsecurity.successHandler.defaultTargetUrl = 'controllerName/actionName'
 
+grails.plugin.springsecurity.fii.rejectPublicInvocations = false
+
 // suggested for s2ui customization
 // grails.plugin.springsecurity.ui.register.emailBody = '...'
 // grails.plugin.springsecurity.ui.register.emailFrom = '...'
@@ -197,9 +199,9 @@ grails.plugin.springsecurity.successHandler.alwaysUseDefault = true
 // grails.plugin.springsecurity.ui.register.defaultRoleNames = ['ROLE_CUSTOMER']
 // ach new user will be granted ROLE_USER after finalizing the registration 
 // this used to be staticRules, changed to interceptURLmaps
-// grails.plugin.springsecurity.controllerAnnotations.staticRules
+// grails.plugin.springsecurity.interceptUrlMap=  (Was used before annotations)
 
-grails.plugin.springsecurity.interceptUrlMap= [
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/':                              ['permitAll'],
 	'/index':                         ['permitAll'],
     '/dbconsole/**':                         ['permitAll'],

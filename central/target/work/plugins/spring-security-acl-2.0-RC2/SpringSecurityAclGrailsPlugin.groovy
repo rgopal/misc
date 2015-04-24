@@ -102,7 +102,7 @@ class SpringSecurityAclGrailsPlugin {
 		boolean printStatusMessages = (conf.printStatusMessages instanceof Boolean) ? conf.printStatusMessages : true
 
 		if (printStatusMessages) {
-			println "\nConfiguring Spring Security ACL ...${conf}"
+			println "\nConfiguring Spring Security ACL ..."
 		}
 
 		if (conf.useRunAs) {
