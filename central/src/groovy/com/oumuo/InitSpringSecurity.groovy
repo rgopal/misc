@@ -202,6 +202,8 @@ class InitSpringSecurity {
                 objectIdentityRetrievalStrategy.getObjectIdentity(user))
            
             aclUtilService.addPermission user, 'admin', ADMINISTRATION
+            
+            aclUtilService.changeOwner user, user.username
                
            
             // not needed
