@@ -198,12 +198,15 @@ class InitSpringSecurity {
             
             log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
             
+            // create for user.person
             aclService.createAcl(
-                objectIdentityRetrievalStrategy.getObjectIdentity(user))
-           
-            aclUtilService.addPermission user, 'admin', ADMINISTRATION
+                objectIdentityRetrievalStrategy.getObjectIdentity(user.person))
             
-            aclUtilService.changeOwner user, user.username
+            aclUtilService.addPermission user.person, user.username, READ
+           
+            aclUtilService.addPermission user.person, 'admin', ADMINISTRATION
+            
+            aclUtilService.changeOwner user.person, user.username
                
            
             // not needed
