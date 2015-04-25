@@ -77,7 +77,7 @@ grails {
                 "mail.smtp.password": ""] 
     }
 }
-// default from email
+// default from email  REMOVE THE PASSWORD
 grails.mail.default.from="oumuoauthagent@gmail.com"
 
 grails.converters.encoding = "UTF-8"
@@ -151,7 +151,7 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    debug 'org.springframework.security'
+    warn 'org.springframework.security'
     warn 'org.hibernate.SQL'
     warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
@@ -216,7 +216,7 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/register/**':                   ['permitAll'],\
         '/secure/**':         ['ROLE_ADMIN'],
         '/securityinfo/**':         ['ROLE_ADMIN'],
-        '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
+        // '/person/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/account/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/authority/**':         ['ROLE_ADMIN'],

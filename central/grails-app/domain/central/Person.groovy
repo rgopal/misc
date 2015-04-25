@@ -76,7 +76,7 @@ class Person {
         // this is another table with bidirectional reference so one has to be null
         // userLogin(nullable:true)
         name (blank:false, size:2..64)
-        userName(blank:false)
+        userName(blank:false, editable:false)
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
         race (nullable:true)

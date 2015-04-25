@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j
 @Log4j
 class UserLogin {
 
+    def personService
     transient springSecurityService
 
     String username

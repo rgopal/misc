@@ -202,11 +202,15 @@ class InitSpringSecurity {
             aclService.createAcl(
                 objectIdentityRetrievalStrategy.getObjectIdentity(user.person))
             
-            aclUtilService.addPermission user.person, user.username, READ
+            // with ADMIN, all read, delete, update witll be granted
+            aclUtilService.addPermission user.person, user.username, ADMINISTRATION
            
-            aclUtilService.addPermission user.person, 'admin', ADMINISTRATION
+            // admin should be able to read everything (but not accidentally delete)
+            aclUtilService.addPermission user.person, 'admin', READ
             
+            // onwer can give privileges to others??
             aclUtilService.changeOwner user.person, user.username
+         
                
            
             // not needed

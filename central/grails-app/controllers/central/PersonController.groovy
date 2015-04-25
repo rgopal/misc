@@ -9,8 +9,6 @@ import grails.plugin.springsecurity.annotation.Secured
 @Secured(['ROLE_USER'])
 class PersonController {
 
-    static defaultAction = 'list'
-
     def personService
 
     def list() {
@@ -20,11 +18,11 @@ class PersonController {
     }
 
     def create() {
-        [personInstance: new Person(params)]
+        [personInstance: new Person()]
     }
 
     def save() {
-        def person = personService.create(params.name)
+        def person = personService.create(params)
         if (!renderWithErrors('create', person)) {
             redirectShow "Person $person.id created", person.id
         }
@@ -48,7 +46,7 @@ class PersonController {
         def person = findInstance()
         if (!person) return
 
-        personService.update person, params.name
+        personService.update params
         if (!renderWithErrors('edit', person)) {
             redirectShow "Person $person.id updated", person.id
         }
