@@ -43,6 +43,7 @@ class UserLoginSecurityGroup implements Serializable {
 
     // this is perhaps a bug in UI.  Can't figure out so find security group first
     // for specific authority and then save it in the 
+    /// line 106 of userController.groovy
     static UserLoginSecurityGroup create(UserLogin userLogin, Authority authority) {
         def securityGroup = SecurityGroupAuthority.findByAuthority(authority)
         if (!securityGroup) {
@@ -52,7 +53,13 @@ class UserLoginSecurityGroup implements Serializable {
         instance.save(flush: true, insert: true)
         instance
     }
-       
+    
+    // this is for the s2ui User Interface to work (for changing roles
+    // take username, authority, and true
+    // line 212 of grails-app controllers grails plugin springsecurity ui UserController.groovy
+    static UserLoginSecurityGroup create(UserLogin userLogin, Authority authority, boolean ignore) {
+        create(userLogin, authority)
+    }
     static UserLoginSecurityGroup create(UserLogin userLogin, SecurityGroup securityGroup, boolean flush = false) {
         def instance = new UserLoginSecurityGroup(userLogin: userLogin, securityGroup: securityGroup)
         instance.save(flush: flush, insert: true)

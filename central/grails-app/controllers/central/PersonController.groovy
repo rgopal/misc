@@ -9,9 +9,12 @@ import grails.plugin.springsecurity.annotation.Secured
 @Secured(['ROLE_USER'])
 class PersonController {
 
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     def personService
-
-    def list() {
+    
+    // list is not longer the default (index is automatically generated not list)
+    def index () {
+    
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [personInstanceList: personService.list(params),
             personInstanceTotal: personService.count()]
@@ -30,7 +33,7 @@ class PersonController {
 
     def show() {
         def person = findInstance()
-        if (!person) return
+        if (!person)  return
 
         [personInstance: person]
     }
@@ -43,12 +46,25 @@ class PersonController {
     }
 
     def update() {
-        def person = findInstance()
-        if (!person) return
+        def personInstance = findInstance()
+        if (!personInstance) return
 
-        personService.update params
-        if (!renderWithErrors('edit', person)) {
-            redirectShow "Person $person.id updated", person.id
+        if(params.version) {
+            def version = params.version.toLong()
+            if(personInstance.version > version) {
+                personInstance.errors.rejectValue("version" ,
+                    "person.optimistic.locking.failure" ,
+                    "Another user has updated this person " +
+                    "while you were editing." )
+                render(view:'edit' ,model:[personInstance:personInstance])
+                return
+            }
+        }
+        personInstance.properties = params
+        personService.update personInstance, params
+        
+        if (!renderWithErrors('edit', personInstance)) {
+            redirectShow "Person $personInstance.id updated", personInstance.id
         }
     }
 
@@ -86,7 +102,7 @@ class PersonController {
         def person = personService.get(params.long('id'))
         if (!person) {
             flash.message = "Person not found with id $params.id"
-            redirect action: list
+            redirect action: index
         }
         person
     }
@@ -103,7 +119,5 @@ class PersonController {
         }
         false
     }
-
-   
     def scaffold = Person
 } 

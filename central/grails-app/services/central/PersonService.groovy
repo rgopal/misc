@@ -27,6 +27,7 @@ class PersonService {
         aclUtilService.addPermission person, username, permission
     }
 
+    // called from save of controller (with params returned from form)
     @Transactional
     @PreAuthorize("hasRole('ROLE_USER')")
     Person create(Map params) {
@@ -53,7 +54,7 @@ class PersonService {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
     List<Person> list(Map params) {
-        Person.list params
+        Person.list()
     }
 
     int count() {
@@ -62,11 +63,11 @@ class PersonService {
 
     @Transactional
     @PreAuthorize("hasPermission(#person, write) or hasPermission(#person, admin)")
-    void update(Map params) {
-        def personInstance = Person.get(params.id)
-        personInstance.properties = params
-        if (!person.save()) {
-           
+    void update(person, Map params) {
+        
+        log.trace "udpate: before binding ${person}"    
+        person.properties = params
+        if (!person.save()) {         
             person.errors.allErrors.each {
                 log.warning ("create: error while saving person ${person}: ${error}")
             }

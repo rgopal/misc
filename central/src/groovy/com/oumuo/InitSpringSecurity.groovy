@@ -44,14 +44,14 @@ import groovy.util.logging.Log4j
 @Log4j
 class InitSpringSecurity {
     
-   // def sessionFactory
-   // def springSecurityService
-   // def aclService  (this is outside grails so not working???)
-   //  def aclUtilService
-   // def objectIdentityRetrievalStrategy
+    // def sessionFactory
+    // def springSecurityService
+    // def aclService  (this is outside grails so not working???)
+    //  def aclUtilService
+    // def objectIdentityRetrievalStrategy
     
    
-     void load (Object aclUtilService, Object aclService, Object objectIdentityRetrievalStrategy) {
+    void load (Object aclUtilService, Object aclService, Object objectIdentityRetrievalStrategy) {
      
         // have to be authenticated as an admin to create ACLs
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(
@@ -160,6 +160,7 @@ class InitSpringSecurity {
         
         def userRole = Authority.findByAuthority('ROLE_USER')
         def adminRole = Authority.findByAuthority('ROLE_ADMIN')
+        def powerUserRole =  Authority.findByAuthority('ROLE_POWER_USER')
         
         def sg = new SecurityGroup (name: 'all_users')
         if (!sg.save()) {
@@ -169,10 +170,19 @@ class InitSpringSecurity {
         if (!sgad.save()) {
             log.warn "sga not saved ${sgad}"
         }
+        def sgp = new SecurityGroup(name:'all_power_users') 
+        if (!sgp.save()) {
+            log.warn "sgp not saved ${sgp}"
+        }
         
         def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
         if (!sa.save()) {
             log.warn "sa user not saved ${sa}"
+        }
+        
+        def sap = new SecurityGroupAuthority(securityGroup:sgp, authority:powerUserRole)
+        if (!sap.save()) {
+            log.warn "sap user not saved ${sap}"
         }
         
         def saad = new SecurityGroupAuthority(securityGroup:sgad, authority:adminRole)
@@ -180,16 +190,13 @@ class InitSpringSecurity {
             log.warn "sa admin not saved ${saad}"
         }
         
-        // this is not used because of Group (Need to fix s2 UI) TODO
        
         for (user in users) {
           
             log.info "user person ${user.person} "
             // create the reverse link (at least for two users)
             // NOT WORKING user.person.userLogin = user
-         
-       
-            
+             
             if (!user.save()){ user.errors.allErrors.each {error ->
                     log.debug "An error occured with user: ${user.username}"
 
@@ -210,23 +217,6 @@ class InitSpringSecurity {
             
             // onwer can give privileges to others??
             aclUtilService.changeOwner user.person, user.username
-         
-               
-           
-            // not needed
-            def u1 = new UserLoginAuthority (userLogin:user, authority:userRole)        
-            if (!u1.save()) {
-                log.warn "u1 not saved ${u1} for ${user}"
-            }
-            
-            // all get all_users (but in afterInsert of UserLogin to take care
-            // of users registering (was resulting in object already exists
-            //  def us = new UserLoginSecurityGroup(userLogin:user, securityGroup:sg)
-            // if (!us.save()) {
-            //     log.warn "us user not saved ${user} for ${sg}"
-            // }
-        
-         
         
             log.info "created user ${user.username}"
         }
@@ -234,19 +224,16 @@ class InitSpringSecurity {
        
         // admin get admin role
         def admin = UserLogin.findByUsername('admin')
-        
-        // not needed
-        def u2 = new UserLoginAuthority (userLogin:admin, authority:adminRole)
-       
-        if (!u2.save()) {
-            log.warn "u2 not saved ${u2}"
-        }
-    
-       
+        def jfields = UserLogin.findByUsername('jfields')
         // admin2 picked up in preinsert of UserLogin
         def us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sgad)
         if (!us.save()) {
             log.warn "us admin not saved ${us} for ${sgad}"
+        }
+        
+        def usp = new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgp)
+        if (!usp.save()) {
+            log.warn "us admin not saved ${usp} for ${sgp}"
         }
         
         processACL()

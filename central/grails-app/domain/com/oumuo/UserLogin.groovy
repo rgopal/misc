@@ -53,6 +53,7 @@ class UserLogin {
             person = new Person (userName:username, name:username)
             person.userLogin = this
    
+            // call the service so that ACL is correctly done
             if (!person.save()) {
                 person.errors.allErrors.each {log.warn it}
             }
