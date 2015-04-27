@@ -96,7 +96,7 @@ class UserLogin {
         }  
         // now store the ACL (but need to check if it already exists)
         // there is no user logged on when user registers
-        if (!springSecurityService?.currentUser) {
+        if (!springSecurityService.isLoggedIn()) {
             // note that when pre-creating users, SCH is used as admin
             SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',

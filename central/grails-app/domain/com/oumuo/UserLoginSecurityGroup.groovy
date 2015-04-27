@@ -68,13 +68,13 @@ class UserLoginSecurityGroup implements Serializable {
     }
 
     static findUsersAuthority (role) {
-        def securityGroup = SecurityGroupAuthority.findByAuthority(role)
-        def users = UserLoginSecurityGroup.findAllBySecurityGroup(securityGroup)
+        def securityGroup = SecurityGroupAuthority.findByAuthority(role).securityGroup
+        def users = UserLoginSecurityGroup.findAllBySecurityGroup(securityGroup)*.userLogin
         return users
     }
     static int countUsersAuthority(role) {
-        def securityGroup = SecurityGroupAuthority.findByAuthority(role)
-        def users = UserLoginSecurityGroup.CountBySecurityGroup(securityGroup)
+        def securityGroup = SecurityGroupAuthority.findByAuthority(role).securityGroup
+        def users = UserLoginSecurityGroup.countBySecurityGroup(securityGroup)
         return users
     }
     static boolean remove(UserLogin u, SecurityGroup g, boolean flush = false) {
