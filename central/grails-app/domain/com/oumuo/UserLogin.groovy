@@ -1,7 +1,9 @@
 package com.oumuo
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import static org.springframework.security.acls.domain.BasePermission.READ
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
 import central.Person
 import groovy.util.logging.Log4j
 @Log4j
@@ -11,6 +13,8 @@ class UserLogin {
     def aclUtilService
     def aclService
     def objectIdentityRetrievalStrategy
+    
+    // this has to be transient else user lookup does not work
     def springSecurityService
 
     String username
@@ -28,7 +32,7 @@ class UserLogin {
     // static hasOne = [person:Person]
     Person person
     
-    static transients = ['springSecurityService']
+   // static transients = ['springSecurityService']
 
     static constraints = {
         username blank: false, unique: true
@@ -102,12 +106,13 @@ class UserLogin {
             'admin', 'admin',
                 AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         
-            log.trace ("afterInsert: cu.u $springSecurityService.currentUser.username person $person username $username")
+            log.trace ("afterInsert: creating ACL for person $person username $username sch.c $SCH.context")
             
             aclService.createAcl(
                 objectIdentityRetrievalStrategy.getObjectIdentity(person))
             
             aclUtilService.addPermission person, username, ADMINISTRATION
+            aclUtilService.addPermission person, 'admin', READ
             aclUtilService.changeOwner person, username
              
         }
