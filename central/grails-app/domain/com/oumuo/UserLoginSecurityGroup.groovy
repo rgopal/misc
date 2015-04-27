@@ -54,6 +54,7 @@ class UserLoginSecurityGroup implements Serializable {
         instance
     }
     
+    
     // this is for the s2ui User Interface to work (for changing roles
     // take username, authority, and true
     // line 212 of grails-app controllers grails plugin springsecurity ui UserController.groovy
@@ -66,6 +67,16 @@ class UserLoginSecurityGroup implements Serializable {
         instance
     }
 
+    static findUsersAuthority (role) {
+        def securityGroup = SecurityGroupAuthority.findByAuthority(role)
+        def users = UserLoginSecurityGroup.findAllBySecurityGroup(securityGroup)
+        return users
+    }
+    static int countUsersAuthority(role) {
+        def securityGroup = SecurityGroupAuthority.findByAuthority(role)
+        def users = UserLoginSecurityGroup.CountBySecurityGroup(securityGroup)
+        return users
+    }
     static boolean remove(UserLogin u, SecurityGroup g, boolean flush = false) {
         if (u == null || g == null) return false
 

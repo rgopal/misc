@@ -54,8 +54,14 @@ class RoleController extends AbstractS2UiController {
 		def roleClassName = GrailsNameUtils.getShortName(lookupRoleClassName())
 		def userField = GrailsNameUtils.getPropertyName(GrailsNameUtils.getShortName(lookupUserClassName()))
 
-		def users = lookupUserRoleClass()."findAllBy$roleClassName"(role, params)*."$userField"
-		int userCount = lookupUserRoleClass()."countBy$roleClassName"(role)
+                // println "RoleController: rcn $roleClassName role $role params $params uf $userField"
+                // s2ui can't deal with security group so change the following
+                // Here the lookupUserRoleClass is UserLoginSecurityGroup and userField is UserLogin.  roleClassName is Authority
+		// def users = lookupUserRoleClass()."findAllBy$roleClassName"(role, params)*."$userField"
+                def users = lookupUserRoleClass()."findUsers$roleClassName"(role)   // return users
+                
+		// int userCount = lookupUserRoleClass()."countBy$roleClassName"(role)
+                int userCount = lookupUserRoleClass()."countUsers$roleClassName"(role)
 
 		[role: role, users: users, userCount: userCount]
 	}

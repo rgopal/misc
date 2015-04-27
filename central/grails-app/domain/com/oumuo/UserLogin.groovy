@@ -1,11 +1,17 @@
 package com.oumuo
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import org.springframework.security.core.context.SecurityContextHolder as SCH
+import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import central.Person
 import groovy.util.logging.Log4j
 @Log4j
 class UserLogin {
 
-    def personService
-    transient springSecurityService
+   
+    def aclUtilService
+    def aclService
+    def objectIdentityRetrievalStrategy
+    def springSecurityService
 
     String username
     String password
@@ -88,7 +94,23 @@ class UserLogin {
             log.warn "afterInsert: all_users not found in SecurityGroup for ${username}"
             
         }  
+        // now store the ACL (but need to check if it already exists)
+        // there is no user logged on when user registers
+        if (!springSecurityService?.currentUser) {
+            // note that when pre-creating users, SCH is used as admin
+            SCH.context.authentication = new UsernamePasswordAuthenticationToken(
+            'admin', 'admin',
+                AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        
+            log.trace ("afterInsert: cu.u $springSecurityService.currentUser.username person $person username $username")
+            
+            aclService.createAcl(
+                objectIdentityRetrievalStrategy.getObjectIdentity(person))
+            
+            aclUtilService.addPermission person, username, ADMINISTRATION
+            aclUtilService.changeOwner person, username
              
+        }
     }
     
 
