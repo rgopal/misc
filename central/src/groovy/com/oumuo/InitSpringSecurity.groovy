@@ -63,6 +63,7 @@ class InitSpringSecurity {
             new Authority(authority: 'ROLE_ADMIN'),     
             new Authority(authority: 'ROLE_USER'),
             new Authority(authority: 'ROLE_FINANCE'),
+            new Authority(authority: 'ROLE_GUEST'),
             new Authority(authority: 'ROLE_POWER_USER')]
     
         for (role in roles) {
@@ -217,6 +218,7 @@ class InitSpringSecurity {
             
             // onwer can give privileges to others??
             aclUtilService.changeOwner user.person, user.username
+            
         
             log.info "created user ${user.username}"
         }

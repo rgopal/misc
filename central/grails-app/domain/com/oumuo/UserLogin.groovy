@@ -114,6 +114,12 @@ class UserLogin {
             aclUtilService.addPermission person, username, ADMINISTRATION
             aclUtilService.addPermission person, 'admin', READ
             aclUtilService.changeOwner person, username
+            
+            // change it back to anonymous (just in case)
+            SCH.context.authentication = new UsernamePasswordAuthenticationToken(
+            'anonymousUser', '',
+                AuthorityUtils.createAuthorityList('ROLE_ANONYMOUS'))
+            SCH.clearContext();
              
         }
     }
