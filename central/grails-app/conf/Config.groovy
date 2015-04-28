@@ -225,5 +225,4 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 
-
 // grails.plugin.springsecurity.successHandler.defaultTargetUrl = 'controllerName/actionName'
