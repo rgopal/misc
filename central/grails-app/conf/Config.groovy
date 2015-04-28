@@ -151,7 +151,7 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    warn 'org.springframework.security'
+    trace 'org.springframework.security'
     warn 'org.hibernate.SQL'
     warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
@@ -216,7 +216,6 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/register/**':                   ['permitAll'],\
         '/secure/**':         ['ROLE_ADMIN'],
         '/securityinfo/**':         ['ROLE_ADMIN'],
-        '/account/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/authority/**':         ['ROLE_ADMIN'],
         '/user/**':                       ['ROLE_ADMIN'],

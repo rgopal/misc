@@ -21,7 +21,11 @@ class PersonController {
     }
 
     def create() {
-        [personInstance: new Person()]
+          // need to handle associations (editable:false on many-to-one can
+        // still get a list from base Person.   For editable:true logic in
+        // renderTemplate, need to provide owner.id (here person)
+        
+        [personInstance: personService.getNew(params)]
     }
 
     def save() {
@@ -75,7 +79,7 @@ class PersonController {
         try {
             personService.delete person
             flash.message = "Person $params.id deleted"
-            redirect action: list
+            redirect action: index
         }
         catch (DataIntegrityViolationException e) {
             redirectShow "Person $params.id could not be deleted", params.id

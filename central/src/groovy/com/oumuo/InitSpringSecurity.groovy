@@ -46,13 +46,18 @@ class InitSpringSecurity {
     
     // def sessionFactory
     // def springSecurityService
-    // def aclService  (this is outside grails so not working???)
-    //  def aclUtilService
-    // def objectIdentityRetrievalStrategy
+    def aclService  
+    def aclUtilService
+    def objectIdentityRetrievalStrategy
     
    
-    void load (Object aclUtilService, Object aclService, Object objectIdentityRetrievalStrategy) {
+    void load (Object aclUtilSer, Object aclSer, Object objectIdentityRetrievalStr) {
      
+        // they can't be injected in a groovy class so get them from bootstrap
+        aclService = aclSer
+        aclUtilService = aclUtilSer
+        objectIdentityRetrievalStrategy = objectIdentityRetrievalStr
+        
         // have to be authenticated as an admin to create ACLs
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',
@@ -206,22 +211,14 @@ class InitSpringSecurity {
             
             log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
             
-            // create for user.person
-            aclService.createAcl(
-                objectIdentityRetrievalStrategy.getObjectIdentity(user.person))
-            
-            // with ADMIN, all read, delete, update witll be granted
-            aclUtilService.addPermission user.person, user.username, ADMINISTRATION
-           
-            // admin should be able to read everything (but not accidentally delete)
-            aclUtilService.addPermission user.person, 'admin', READ
-            
-            // onwer can give privileges to others??
-            aclUtilService.changeOwner user.person, user.username
-            
-        
-            log.info "created user ${user.username}"
+            grantACL(user.person, user.username)
+      
+            for (account in user.person.accounts) {
+                grantACL (account, user.username)
+            }
+            log.debug "created user ${user.username}"
         }
+        log.info ("laod: loaded $users.size() users")
         
        
         // admin get admin role
@@ -238,10 +235,23 @@ class InitSpringSecurity {
             log.warn "us admin not saved ${usp} for ${sgp}"
         }
         
-        processACL()
+        
     }
-    static void processACL () {
-       
+    void grantACL (item, username) {
+            // create for user.person
+            log.trace "grantACL: for object $item and username $username"
+            aclService.createAcl(
+                objectIdentityRetrievalStrategy.getObjectIdentity(item))
+            
+            // with ADMIN, all read, delete, update witll be granted
+            aclUtilService.addPermission item, username, ADMINISTRATION
+           
+            // admin should be able to read everything (but not accidentally delete)
+            aclUtilService.addPermission item, 'admin', READ
+            
+            // onwer can give privileges to others??
+            aclUtilService.changeOwner item, username
+            
     }
     
 

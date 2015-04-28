@@ -27,6 +27,21 @@ class PersonService {
         aclUtilService.addPermission person, username, permission
     }
 
+    // to handle edited many-to-one relation in renderTemplate.  Note here
+    // person is sort of hardcoded and needs to be handled for any such association
+    
+    @PreAuthorize("hasRole('ROLE_USER')")
+    Account getNew(Map params) {
+        def person = new Person()
+        person.userLogin = Person.findById(params.userLogin.id)
+        if (!person.userLogin) {
+            person.errors.allErrors.each {
+                log.warning ("create: error while getting new account ${person}: ${error}")
+            }
+        }
+        person
+    }
+    
     // called from save of controller (with params returned from form)
     @Transactional
     @PreAuthorize("hasRole('ROLE_USER')")
