@@ -200,26 +200,28 @@ class InitSpringSecurity {
        
         for (user in users) {
           
-            log.info "user person ${user.person} "
+            log.trace "processing user person ${user.person} "
             // create the reverse link (at least for two users)
             // NOT WORKING user.person.userLogin = user
              
-            if (!user.save()){ user.errors.allErrors.each {error ->
-                    log.debug "An error occured with user: ${user.username}"
-
+            if (!user.save()) { 
+                user.errors.allErrors.each {error ->
+                    log.debug "An error occured with ${user.username} $error"
                 }
-            }
+            } else {
             
-            log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
+                log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
             
-            grantACL(user.person, user.username)
+                grantACL(user.person, user.username)
       
-            for (account in user.person.accounts) {
-                grantACL (account, user.username)
+                for (account in user.person.accounts) {
+                    grantACL (account, user.username)
+                }
+                log.debug "created user ${user.username}"
             }
-            log.debug "created user ${user.username}"
         }
-        log.info ("laod: loaded $users.size() users")
+    
+        log.info ("load: loaded ${UserLogin.count()} out of ${users.size()} users")
         
        
         // admin get admin role
@@ -239,19 +241,19 @@ class InitSpringSecurity {
         
     }
     void grantACL (item, username) {
-            // create for user.person
-            log.trace "grantACL: for object $item and username $username"
-            aclService.createAcl(
-                objectIdentityRetrievalStrategy.getObjectIdentity(item))
+        // create for user.person
+        log.trace "grantACL: for object $item and username $username"
+        aclService.createAcl(
+            objectIdentityRetrievalStrategy.getObjectIdentity(item))
             
-            // with ADMIN, all read, delete, update witll be granted
-            aclUtilService.addPermission item, username, ADMINISTRATION
+        // with ADMIN, all read, delete, update witll be granted
+        aclUtilService.addPermission item, username, ADMINISTRATION
            
-            // admin should be able to read everything (but not accidentally delete)
-            aclUtilService.addPermission item, 'admin', READ
+        // admin should be able to read everything (but not accidentally delete)
+        aclUtilService.addPermission item, 'admin', READ
             
-            // onwer can give privileges to others??
-            aclUtilService.changeOwner item, username
+        // onwer can give privileges to others??
+        aclUtilService.changeOwner item, username
             
     }
     

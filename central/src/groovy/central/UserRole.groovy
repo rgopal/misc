@@ -14,7 +14,9 @@ package central
       
     // these names have to have ROLE_ because the plugin expects it (not spring security)
  
-        ROLE_ADMIN, ROLE_USER, ROLE_POWER_USER, ROLE_GUEST, ROLE_STUDENT, ROLE_TEACHER, ROLE_WRITER, ROLE_MANAGER
+        ROLE_ADMIN, ROLE_USER, ROLE_POWER_USER, ROLE_GUEST, ROLE_STUDENT, 
+        ROLE_TEACHER, ROLE_WRITER, ROLE_MANAGER,
+        ROLE_EVALUATOR, ROLE_APPRENTICE, ROLE_COUNSELOR
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself

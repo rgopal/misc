@@ -1,6 +1,5 @@
 package central
 import central.Person
-import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -11,6 +10,10 @@ class Account {
     Boolean main = false
     // Person owner (does not work well with sequence updates)
     String email
+    WebSite webSite
+    String loginName
+    String password
+    Date expiryDate
     Date dateCreated
     Date lastUpdated
 
@@ -33,6 +36,10 @@ class Account {
         main()
         person(editable:false)
         email (email: true, blank: false, nullable:true)
+        webSite(nullable: true, editable: true)
+        loginName(nullable:true)
+        password(nullable:true)
+        expiryDate(nullable:true)
         dateCreated()
         lastUpdated()
     }

@@ -1,4 +1,5 @@
-import central.InitAccount
+import central.InitWebSite
+
 import central.InitPerson
 import central.InitCountryStateCity
 import central.InitCountryLookup
@@ -13,11 +14,12 @@ class BootStrap {
 println "aclService - ${aclService}"
         // keep all database table load code in src/groovy
         InitCountryLookup.load()
-        InitAccount.load()
+       
         
         // person associated as part of Userlogin
         // InitPerson.load()
         InitCountryStateCity.load()
+        InitWebSite.load()
         def iss = new InitSpringSecurity()
         iss.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
     }

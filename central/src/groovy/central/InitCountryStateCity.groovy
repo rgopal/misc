@@ -7,11 +7,13 @@
 package central
 import central.CountryStateCity
 import central.Country
+import groovy.util.logging.Log4j
 
 /**
  *
  * @author gopal
  */
+@Log4j
 class InitCountryStateCity {
        
     static void load () {
@@ -27,13 +29,15 @@ class InitCountryStateCity {
         ]
        
         for (item in items) {
+            log.trace "load: loading $item"
             if (!item.save()){ item.errors.allErrors.each {error ->
-                    println "An error occured with item: ${error}"
+                    log.warn "An error occured with item: ${error}"
 
                 }
             }
        
         }
+        log.info ("load: loaded ${CountryStateCity.count()} out of $items.size() items")
 	
     }
 	
