@@ -5,6 +5,7 @@
  */
 
 package com.oumuo
+import central.UserRole as ROLE
 
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
@@ -34,6 +35,7 @@ import com.oumuo.UserLoginSecurityGroup
 import com.oumuo.Authority
 import com.oumuo.SecurityGroupAuthority
 
+
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
@@ -61,16 +63,15 @@ class InitSpringSecurity {
         // have to be authenticated as an admin to create ACLs
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',
-            AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+            AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
-        
-        def roles = [
-            new Authority(authority: 'ROLE_ADMIN'),     
-            new Authority(authority: 'ROLE_USER'),
-            new Authority(authority: 'ROLE_FINANCE'),
-            new Authority(authority: 'ROLE_GUEST'),
-            new Authority(authority: 'ROLE_POWER_USER')]
-    
+
+        def roles = []
+        for (ROLE r: ROLE.values()) {
+            roles << new Authority(authority: r.name())
+            log.trace "load: added role $r to roles"
+        }
+            
         for (role in roles) {
             log.info "created role ${role.authority}"
             if (!role.save()){ role.errors.allErrors.each {error ->
@@ -164,9 +165,9 @@ class InitSpringSecurity {
             )
         ]
         
-        def userRole = Authority.findByAuthority('ROLE_USER')
-        def adminRole = Authority.findByAuthority('ROLE_ADMIN')
-        def powerUserRole =  Authority.findByAuthority('ROLE_POWER_USER')
+        def userRole = Authority.findByAuthority(ROLE.ROLE_USER.name())
+        def adminRole = Authority.findByAuthority(ROLE.ROLE_ADMIN.name())
+        def powerUserRole =  Authority.findByAuthority(ROLE.ROLE_POWER_USER.name())
         
         def sg = new SecurityGroup (name: 'all_users')
         if (!sg.save()) {

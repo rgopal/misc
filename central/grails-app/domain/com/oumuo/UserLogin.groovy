@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import central.Person
+import central.UserRole as ROLE
 import groovy.util.logging.Log4j
 @Log4j
 class UserLogin {
@@ -104,7 +105,7 @@ class UserLogin {
             // note that when pre-creating users, SCH is used as admin
             SCH.context.authentication = new UsernamePasswordAuthenticationToken(
             'admin', 'admin',
-                AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+                AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         
             log.trace ("afterInsert: creating ACL for person $person username $username sch.c $SCH.context")
             

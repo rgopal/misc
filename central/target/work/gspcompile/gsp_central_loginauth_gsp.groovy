@@ -22,7 +22,7 @@ invokeTag('captureTitle','sitemesh',4,[:],3)
 })
 invokeTag('wrapTitleTag','sitemesh',4,[:],2)
 printHtmlPart(1)
-invokeTag('captureMeta','sitemesh',5,['gsp_sm_xmlClosingForEmptyTag':("/"),'name':("layout"),'content':("register")],-1)
+invokeTag('captureMeta','sitemesh',5,['gsp_sm_xmlClosingForEmptyTag':("/"),'name':("layout"),'content':("main")],-1)
 printHtmlPart(1)
 })
 invokeTag('captureHead','sitemesh',6,[:],1)
@@ -61,7 +61,7 @@ protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1428679719312L
+public static final long LAST_MODIFIED = 1430245925730L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
 public static final String OUT_CODEC = 'html'

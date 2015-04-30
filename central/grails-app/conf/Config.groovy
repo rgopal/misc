@@ -151,7 +151,7 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    trace 'org.springframework.security'
+    warn 'org.springframework.security'
     warn 'org.hibernate.SQL'
     warn 'org.hibernate.type.descriptor.sql.BasicBinder'
 }
