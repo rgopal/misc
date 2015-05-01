@@ -6,6 +6,7 @@
 
 package com.oumuo
 import central.UserRole as ROLE
+import central.PersonRole
 
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
@@ -114,6 +115,7 @@ class InitSpringSecurity {
                     userName : 'jfields',
                     sex:Person.Sex.FEMALE, race: Race.BLACK, 
                     dateOfBirth:Date.parse('dd-MM-yyyy','02-09-1980'),
+                    preferredPersonRole:ROLE.ROLE_STUDENT,
                     preferredLanguage:Language.ENGLISH).
                     addToAccounts (
                     new Account(
@@ -121,14 +123,34 @@ class InitSpringSecurity {
                         sequence:1, // sequence can't be null
                         name:'Secondary', main:false
                     )
-                ).
-                    addToAccounts(
+                ).addToAccounts(
                     // note that this is after (not sure if preInsert would work
                     new Account (
                         email:'janefields@yahoo.com',
                         sequence: 2,
                         main:true,
                         name:'Primary'
+                    )
+                ).addToPersonRoles (
+                    new PersonRole (
+                        language:Language.ENGLISH,
+                        sequence: 1,
+                        current:true,
+                        userRole:ROLE.ROLE_STUDENT
+                    )
+                ).addToPersonRoles (
+                    new PersonRole (
+                        language:Language.SPANISH,
+                        sequence: 2,
+                        current:false,
+                        userRole:ROLE.ROLE_TEACHER
+                    )
+                ).addToPersonRoles (
+                    new PersonRole (
+                        language:Language.SPANISH,
+                        sequence: 3,
+                        current:false,
+                        userRole:ROLE.ROLE_COUNSELOR
                     )
                 )
             ),
@@ -216,6 +238,13 @@ class InitSpringSecurity {
       
                 for (account in user.person.accounts) {
                     grantACL (account, user.username)
+                }
+                
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.accounts?.size()} accounts"
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.personRoles?.size()} personRoles"
+             
+                for (personRole in user.person.personRoles) {
+                    grantACL (personRole, user.username)
                 }
                 log.debug "created user ${user.username}"
             }

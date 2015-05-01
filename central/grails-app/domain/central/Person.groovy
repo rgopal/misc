@@ -4,9 +4,10 @@ import central.Country
 import central.Language
 import central.Email
 import central.Race
+import central.UserRole as ROLE
+import central.PersonRole
 import com.oumuo.UserLogin
 
-// This is owned by UserLogin which is created by s2
 class Person {
 
     // class specific enums
@@ -55,7 +56,7 @@ class Person {
 
    
     // associations
-    static hasMany = [accounts:Account]
+    static hasMany = [accounts:Account, personRoles: PersonRole]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -71,8 +72,8 @@ class Person {
     // should be constraints and not constraint
     static constraints = {
      
-      //  login blank:false, size:5..15,matches:/[\S]+/, unique:true
-      //  password blank:false, size:5..15,matches:/[\S]+/, display:false
+        //  login blank:false, size:5..15,matches:/[\S]+/, unique:true
+        //  password blank:false, size:5..15,matches:/[\S]+/, display:false
         // this is another table with bidirectional reference so one has to be null
         // userLogin(nullable:true)
         name (blank:false, size:2..64)
@@ -83,6 +84,8 @@ class Person {
         status ()
         preferredLanguage(nullable:false)
      
+        personRoles()
+        accounts ()
         userLogin(editable:false)
         homeEmail(nullable:true, email:true)
         workEmail(nullable:true, email:true)
@@ -110,7 +113,7 @@ class Person {
         // validator takes 3 (1 is value, 2 obj, 3 error
         // returns true or null (both good) or error messages
         
-        accounts ()
+       
    
         dateCreated ()
         lastUpdated ()

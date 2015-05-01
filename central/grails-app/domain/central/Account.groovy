@@ -92,14 +92,15 @@ class Account {
         // does not work other = Account.findByPersonAndMain(this.person.id, main:true)
         
         def other = Account.createCriteria().get {
-                person {
-                    eq ('id', person.id)
-                }
-                eq ('main', true)
+            person {
+                eq ('id', person.id)
             }
+            eq ('main', true)
+        }
         if (other) {
             other.main = false;
-            log.trace "checkMain: resetting other $other to false"
+            
+            log.trace "checkMain: reseted other $other to false"
         } else {
             log.trace "checkMain: no other Account with main = true"
         }
