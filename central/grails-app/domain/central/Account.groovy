@@ -50,9 +50,11 @@ class Account {
     initial_value:1000]
     }
      */
-    def beforeInsert() {
+    
+    def AfterInsert() {
         if (!sequence) {
-                        
+               
+            
             def count = Account.createCriteria().count {
                 person {
                     eq ('id', person.id)
@@ -91,16 +93,31 @@ class Account {
     def checkMain() {
         // does not work other = Account.findByPersonAndMain(this.person.id, main:true)
         
+        /*
         def other = Account.createCriteria().get {
-            person {
-                eq ('id', person.id)
-            }
-            eq ('main', true)
+        person {
+        eq ('id', person.id)
         }
-        if (other) {
-            other.main = false;
+        eq ('main', true)
+        }
+         */
+        // find all records with main to be true and not equal to current account record
+        log.trace "checkMain: full accounts ${Person.findById(person.id).accounts}"
+        def other = Person.findById(person.id).accounts.findAll {it.main == true}
+  
+        // beforeInsert will not select the current record, but beforeUpdate will
+        if (this.id != null) {
+            other = other - this
+        }
+        log.trace "checkMain: other after removing this - $other"
+        if (other.size() > 1) {
+            // should be 1 or zero
+            log.warn "checkMain: ${other.size()} accounts found"
+        } else if (other.size() == 1) {
+      
+            other[0].main = false;
             
-            log.trace "checkMain: reseted other $other to false"
+            log.trace "checkMain: reseted other $other[0] to false"
         } else {
             log.trace "checkMain: no other Account with main = true"
         }

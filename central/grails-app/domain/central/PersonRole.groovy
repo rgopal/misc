@@ -82,15 +82,23 @@ class PersonRole {
     def checkMain() {
         // does not work other = PersonRole.findByPersonAndMain(this.person.id, current:true)
         
-        def other = PersonRole.createCriteria().get {
-            person {
-                eq ('id', person.id)
-            }
-            eq ('current', true)
+        // find all records with current to be true and not equal to current personRole record
+        log.trace "checkMain: full personRoles ${Person.findById(person.id).personRoles}"
+        def other = Person.findById(person.id).personRoles.findAll {it.current == true}
+  
+        // beforeInsert will not select the current record, but beforeUpdate will
+        if (this.id != null) {
+            other = other - this
         }
-        if (other) {
-            other.current = false;
-            log.trace "checkMain: resetting other $other to false"
+        log.trace "checkMain: other after removing this - $other"
+        if (other.size() > 1) {
+            // should be 1 or zero
+            log.warn "checkMain: ${other.size()} personRoles found"
+        } else if (other.size() == 1) {
+      
+            other[0].current = false;
+            
+            log.trace "checkMain: reseted other $other[0] to false"
         } else {
             log.trace "checkMain: no other PersonRole with current = true"
         }

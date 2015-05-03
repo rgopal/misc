@@ -46,7 +46,7 @@ class PersonRoleService {
     @PreAuthorize("hasRole('ROLE_USER')")
     PersonRole create(Map params) {
         PersonRole personRole = new PersonRole(params)
-        if (!personRole.save()) {
+        if (!personRole.save(flush:true)) {
             personRole.errors.allErrors.each {
                 log.warning ("create: error while saving personRole ${personRole}: ${error}")
             }
@@ -81,7 +81,7 @@ class PersonRoleService {
         
         log.trace "udpate: before binding ${personRole}"    
         personRole.properties = params
-        if (!personRole.save()) {         
+        if (!personRole.save(flush:true)) {         
             personRole.errors.allErrors.each {
                 log.warning ("create: error while saving personRole ${personRole}: ${error}")
             }

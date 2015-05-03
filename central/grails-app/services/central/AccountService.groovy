@@ -46,7 +46,7 @@ class AccountService {
     @PreAuthorize("hasRole('ROLE_USER')")
     Account create(Map params) {
         Account account = new Account(params)
-        if (!account.save()) {
+        if (!account.save(flush:true)) {
             account.errors.allErrors.each {
                 log.warning ("create: error while saving account ${account}: ${error}")
             }
@@ -81,7 +81,7 @@ class AccountService {
         
         log.trace "udpate: before binding ${account}"    
         account.properties = params
-        if (!account.save()) {         
+        if (!account.save(flush:true)) {         
             account.errors.allErrors.each {
                 log.warning ("create: error while saving account ${account}: ${error}")
             }
