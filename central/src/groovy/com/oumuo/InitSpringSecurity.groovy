@@ -49,9 +49,9 @@ class InitSpringSecurity {
     
     // def sessionFactory
     // def springSecurityService
-    def aclService  
-    def aclUtilService
-    def objectIdentityRetrievalStrategy
+    static aclService  
+    static aclUtilService
+    static objectIdentityRetrievalStrategy
     
    
     void load (Object aclUtilSer, Object aclSer, Object objectIdentityRetrievalStr) {
@@ -269,7 +269,9 @@ class InitSpringSecurity {
         
         
     }
-    void grantACL (item, username) {
+    // will be used from other places
+    
+    static void grantACL (item, username) {
         // create for user.person
         log.trace "grantACL: for object $item and username $username"
         aclService.createAcl(

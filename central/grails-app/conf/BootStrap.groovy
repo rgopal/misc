@@ -4,6 +4,7 @@ import central.InitPerson
 import central.InitCountryStateCity
 import central.InitCountryLookup
 import com.oumuo.InitSpringSecurity
+import com.oumuo.InitOrganization
 
 class BootStrap {
     def aclService
@@ -22,6 +23,9 @@ println "aclService - ${aclService}"
         InitWebSite.load()
         def iss = new InitSpringSecurity()
         iss.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
+        
+        def iorg = new InitOrganization()
+        iorg.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
     }
    
     def destory = {
