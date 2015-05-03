@@ -51,7 +51,7 @@ class Account {
     }
      */
     
-    def AfterInsert() {
+    def beforeInsert() {
         if (!sequence) {
                
             
@@ -102,21 +102,21 @@ class Account {
         }
          */
         // find all records with main to be true and not equal to current account record
-        log.trace "checkMain: full accounts ${Person.findById(person.id).accounts}"
+        log.trace "checkMain: accounts ${Person.findById(person.id).accounts.findAll {it.main == true}}"
         def other = Person.findById(person.id).accounts.findAll {it.main == true}
   
+        // remove this (record which is set to true) from the list
+        // used to have a check for this.id != null but now the Ids are there
         // beforeInsert will not select the current record, but beforeUpdate will
-        if (this.id != null) {
-            other = other - this
-        }
+       
+        other = other - this
+     
         log.trace "checkMain: other after removing this - $other"
         if (other.size() > 1) {
             // should be 1 or zero
             log.warn "checkMain: ${other.size()} accounts found"
         } else if (other.size() == 1) {
-      
-            other[0].main = false;
-            
+            other[0].main = false;         
             log.trace "checkMain: reseted other $other[0] to false"
         } else {
             log.trace "checkMain: no other Account with main = true"

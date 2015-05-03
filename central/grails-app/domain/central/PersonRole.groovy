@@ -83,13 +83,13 @@ class PersonRole {
         // does not work other = PersonRole.findByPersonAndMain(this.person.id, current:true)
         
         // find all records with current to be true and not equal to current personRole record
-        log.trace "checkMain: full personRoles ${Person.findById(person.id).personRoles}"
+        log.trace "checkMain: personRoles ${Person.findById(person.id).personRoles.findAll {it.current == true}}"
         def other = Person.findById(person.id).personRoles.findAll {it.current == true}
   
         // beforeInsert will not select the current record, but beforeUpdate will
-        if (this.id != null) {
+       
             other = other - this
-        }
+      
         log.trace "checkMain: other after removing this - $other"
         if (other.size() > 1) {
             // should be 1 or zero
