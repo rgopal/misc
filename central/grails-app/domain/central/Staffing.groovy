@@ -18,7 +18,7 @@ class Staffing {
 
     String toString(){
 
-    "${sequence} ${name} "
+    "${sequence} ${name} ${userRole} "
     }
     // only one Person can own an Account (owner) with cascaded deletes
     // without belongsTo, an account can be associated with multiple persons
@@ -40,33 +40,11 @@ class Staffing {
     
     def beforeInsert() {
         if (!sequence) {
-                           
-            def count = Account.createCriteria().count {
-                person {
-                    eq ('id', person.id)
-                }
-            }
-           
-            log.trace "beforeInsert: count is $count for $person"
-            if (count == 0) {
-                sequence = 1
-            } else {
-                
-                sequence = Account.createCriteria().get {
-                    projections {
-                        max('sequence')
-                    }
-                    person {
-                        eq ('id', person.id)
-                    }
-                } + 1
-            }
-            // log.debug ("beforeInsert: person.id ${person.id} sequence = ${sequence}")
-            
-        }
-      
-        
+                       
+            sequence = Organization.findById(organization.id).staffings.size() + 1
+            log.trace "beforeInsert: sequence updated to $sequence"
+               
+        }     
     }
-   
 
 }

@@ -287,6 +287,6 @@ class InitSpringSecurity {
         aclUtilService.changeOwner item, username
             
     }
-    
+   
 
 }

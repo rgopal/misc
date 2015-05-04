@@ -22,10 +22,13 @@ println "aclService - ${aclService}"
         InitCountryStateCity.load()
         InitWebSite.load()
         def iss = new InitSpringSecurity()
+        
+        // need to pass these to plain groovy classes which don't get auto service inject
         iss.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
         
         def iorg = new InitOrganization()
-        iorg.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
+        // Acl services are reused from InitSpringSecurity (static fields)
+        iorg.load()
     }
    
     def destory = {

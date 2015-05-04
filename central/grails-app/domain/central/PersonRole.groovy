@@ -44,27 +44,8 @@ class PersonRole {
     def beforeInsert() {
         if (!sequence) {
                         
-            def count = PersonRole.createCriteria().count {
-                person {
-                    eq ('id', person.id)
-                }
-            }
-           
-            log.trace "beforeInsert: count is $count for $person"
-            if (count == 0) {
-                sequence = 1
-            } else {
-                
-                sequence = PersonRole.createCriteria().get {
-                    projections {
-                        max('sequence')
-                    }
-                    person {
-                        eq ('id', person.id)
-                    }
-                } + 1
-            }
-            // log.debug ("beforeInsert: person.id ${person.id} sequence = ${sequence}")
+            sequence = Person.findById(person.id).personRoles.size() + 1
+            log.trace "beforeInsert: sequence updated to $sequence"
             
         }
         // if this has become current then other should becomem false

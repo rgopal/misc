@@ -5,7 +5,7 @@
  */
 
 package com.oumuo
-import central.UserRole as ROLE
+
 
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
@@ -30,11 +30,8 @@ import central.Language
 import central.Email
 import central.Race
 import central.Country
-import com.oumuo.UserLogin
-import com.oumuo.UserLoginSecurityGroup
-import com.oumuo.Authority
-import com.oumuo.SecurityGroupAuthority
-
+import central.UserRole as ROLE
+import central.AcademicStratum
 
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
@@ -53,7 +50,7 @@ class InitOrganization {
     def objectIdentityRetrievalStrategy
     
    
-    void load (Object aclUtilSer, Object aclSer, Object objectIdentityRetrievalStr) {
+    void load () {
      
 
         // have to be authenticated as an admin to create ACLs
@@ -66,6 +63,7 @@ class InitOrganization {
         def organizations = [ 
             new Organization(name: 'Montgomery County Community College',
                 preferredLanguage:Language.ENGLISH,
+                academicStratum:AcademicStratum.ASSOCIATE,
                 workEmail:'admin@mccc.edu'
                 
             ),
@@ -73,6 +71,7 @@ class InitOrganization {
             new Organization(name: 'Quince Orchard High School', 
        
                 preferredLanguage:Language.ENGLISH,
+                academicStratum:AcademicStratum.HIGH,
                 workEmail:'admin@mcps.edu' ).addToStaffings( 
                 new Staffing (
                     email:'mikejohns@facebook.com', 
@@ -81,8 +80,9 @@ class InitOrganization {
                 
             ),
             new Organization(name: 'RidgeView Middle School',
-  
-                preferredLanguage:Language.ENGLISH).
+                preferredLanguage:Language.ENGLISH,
+                academicStratum:AcademicStratum.MIDDLE,
+                workEmail:'admin@mcps.edu').
                 addToStaffings (
                 new Staffing( 
                     sequence:1, // sequence can't be null
@@ -109,7 +109,8 @@ class InitOrganization {
        
         for (org in organizations) {
           
-            log.trace "processing  organization ${org.organization} "
+            def user = 'jfields'    // current owner 
+            log.trace "processing  organization ${org} "
        
             if (!org.save()) { 
                 org.errors.allErrors.each {error ->
@@ -117,15 +118,15 @@ class InitOrganization {
                 }
             } else {
             
-                log.trace "load: starting ACL creations for ${user} util ${aclUtilService} aclService ${aclService} ${objectIdentityRetrievalStrategy}"
+                log.trace "load: starting ACL creations for $user}"
             
-                InitSpringSecurity.grantACL(org, 'jfields')
+                InitSpringSecurity.grantACL(org, user)
       
                 for (staffing in org.staffings) {
-                    InitSpringSecurity.grantACL (staffing, 'jfields')
+                    InitSpringSecurity.grantACL (staffing, user)
                 }
                 
-                log.info "  loaded ${Organization.findById(org.id).organization.staffings?.size()} staffing"
+                log.info "  loaded ${Organization.findById(org.id).staffings?.size()} staffing"
 
                 log.debug "created Organization ${org}"
             }

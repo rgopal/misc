@@ -33,7 +33,7 @@ class Organization {
     String mobilePhone
 
     // associations
-    static hasMany = [staffing:Staffing]
+    static hasMany = [staffings:Staffing]
 
     String toString(){
 
@@ -47,8 +47,7 @@ class Organization {
         preferredLanguage(nullable:false)
         academicStratum()
         organizationType()
-        type()
-        staffing()
+        staffings()
         workEmail(nullable:true, email:true)
         workPhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
         mobilePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')

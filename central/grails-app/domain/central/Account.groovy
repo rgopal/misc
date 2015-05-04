@@ -53,30 +53,9 @@ class Account {
     
     def beforeInsert() {
         if (!sequence) {
-               
-            
-            def count = Account.createCriteria().count {
-                person {
-                    eq ('id', person.id)
-                }
-            }
+            sequence = Person.findById(person.id).accounts.size() + 1
+            log.trace "beforeInsert: sequence updated to $sequence"
            
-            log.trace "beforeInsert: count is $count for $person"
-            if (count == 0) {
-                sequence = 1
-            } else {
-                
-                sequence = Account.createCriteria().get {
-                    projections {
-                        max('sequence')
-                    }
-                    person {
-                        eq ('id', person.id)
-                    }
-                } + 1
-            }
-            // log.debug ("beforeInsert: person.id ${person.id} sequence = ${sequence}")
-            
         }
         // if this has become main then other should becomem false
         if (this.main == true) {
