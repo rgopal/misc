@@ -17,7 +17,7 @@ class Organization {
     String zip = '20876'
     Country country = Country.USA
     Language preferredLanguage = Language.ENGLISH
-    AcademicStratum stratum = AcademicStratum.OTHER
+    AcademicStratum academicStratum = AcademicStratum.OTHER
     OrganizationType organizationType = OrganizationType.OTHER
 
     // common across all domains
