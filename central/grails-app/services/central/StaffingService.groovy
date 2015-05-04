@@ -33,10 +33,17 @@ class StaffingService {
     @PreAuthorize("hasRole('ROLE_USER')")
     Staffing getNew(Map params) {
         def staffing = new Staffing()
-        staffing.organization = Organization.findById(params.organization.id)
+        staffing.organization = Organization.findById(params.organization?.id)
+        
         if (!staffing.organization) {
-            staffing.errors.allErrors.each {
-                log.warning ("create: error while getting new staffing ${staffing}: ${error}")
+            // try person next (second 1toM to Staffing)
+            staffing.person = Person.findById(params.person?.id) 
+            
+            // this has to be non null
+            if (!staffing.person) {
+                staffing.errors.allErrors.each {
+                    log.warning ("create: error while getting new staffing ${staffing}: ${error}")
+                }
             }
         }
         staffing

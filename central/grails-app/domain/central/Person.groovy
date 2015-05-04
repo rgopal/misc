@@ -56,7 +56,7 @@ class Person {
 
    
     // associations
-    static hasMany = [accounts:Account, personRoles: PersonRole]
+    static hasMany = [accounts:Account, personRoles: PersonRole, staffings:Staffing]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -85,6 +85,7 @@ class Person {
         preferredLanguage(nullable:false)
      
         personRoles()
+        staffings()
         accounts ()
         userLogin(editable:false)
         homeEmail(nullable:true, email:true)

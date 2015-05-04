@@ -8,6 +8,8 @@ class Staffing {
 
     String name
     Long sequence
+    Person person
+    Organization organization
     UserRole userRole = UserRole.ROLE_MANAGER
     // Person owner (does not work well with sequence updates)
   
@@ -23,13 +25,15 @@ class Staffing {
     // only one Person can own an Account (owner) with cascaded deletes
     // without belongsTo, an account can be associated with multiple persons
     // akin to a lookup field (instead of true master-detail
-    static belongsTo = [organization: Organization]
+    // static belongsTo = [organization: Organization]
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
         name (nullable:true)
+        person (nullable:true)
+        organization (nullable:true)
         userRole()
-        organization (editable:false)
+        organization (editable:true)
  
         startDate(nullable:true)
         endDate(nullable:true)
@@ -40,8 +44,15 @@ class Staffing {
     
     def beforeInsert() {
         if (!sequence) {
-                       
-            sequence = Organization.findById(organization.id).staffings.size() + 1
+                 
+            // ideally should be created through organization
+            if (organization)
+                sequence = Organization.findById(organization.id).staffings.size() + 1
+            else if (person)
+                sequence = Person.findById(person.id).staffings.size() + 1
+            else
+                log.warn "beforeInsert: either organization or person should be not null"
+            
             log.trace "beforeInsert: sequence updated to $sequence"
                
         }     
