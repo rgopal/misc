@@ -57,5 +57,11 @@ class Staffing {
                
         }     
     }
+    
+    // for classes with 1toM relation, may need to control the many side in
+    // the popup list.  Used in renderTemplate edit
+    def secureList() {
+        return staffingService.list()
+    }
 
 }

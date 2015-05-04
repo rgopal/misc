@@ -121,6 +121,9 @@ class Person {
         comment (nullable:true, maxSize:1000)
         
     }
+    def secureList () {
+        return personService.list()
+    }
     /* DID NOT WORK static mapping = { 
     country defaultValue: "'United States'"  
     }

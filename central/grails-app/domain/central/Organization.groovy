@@ -78,4 +78,7 @@ class Organization {
         
     }
    
+    def secureList () {
+        return organizationService.list()
+    }
 }

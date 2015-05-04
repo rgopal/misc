@@ -104,7 +104,11 @@
  			sb << ' id="' << property.name << '"'
  			sb << ' name="' << property.name << '.id"'
                         if (cp.editable) {
- 			sb << ' from="${' << property.type.name << '.list()}"'
+                            if (property.name.metaClass.respondsTo(
+                                property.name, 'secureList'))                      
+                            sb << ' from="${' << property.type.name << '.secureList()}"'
+                            else
+                                sb << ' from="${' << property.type.name << '.list()}"'
                         } else {
                         sb << ' from="${' << property.type.name << 
                              '.findAllById(' << "${domainInstance}?.${property.name}" << '?.id)}"'
