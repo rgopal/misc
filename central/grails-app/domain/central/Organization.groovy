@@ -17,8 +17,8 @@ class Organization {
     String zip = '20876'
     Country country = Country.USA
     Language preferredLanguage = Language.ENGLISH
-    AcademicStratum stratum = AcademicStratum.HIGH
-    OrganizationType academyType = OrganizationType.ONLINE
+    AcademicStratum stratum = AcademicStratum.OTHER
+    OrganizationType organizationType = OrganizationType.OTHER
 
     // common across all domains
     
@@ -45,8 +45,8 @@ class Organization {
     
         status ()
         preferredLanguage(nullable:false)
-        academyStratum()
-        academyType()
+        academicStratum()
+        organizationType()
         type()
         staffing()
         workEmail(nullable:true, email:true)

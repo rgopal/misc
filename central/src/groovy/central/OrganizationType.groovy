@@ -12,7 +12,7 @@ package central
  */
    enum OrganizationType implements org.springframework.context.MessageSourceResolvable {
  
-        EDUCATION, PLACEMENT, TRAINING, TUTORING, COACHING, COOUNSELING, RECRUITMENT, CONTENT, SERVICE
+        EDUCATION, PLACEMENT, TRAINING, TUTORING, COACHING, COOUNSELING, RECRUITMENT, CONTENT, SERVICE, OTHER
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself
