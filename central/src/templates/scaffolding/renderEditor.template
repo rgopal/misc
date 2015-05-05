@@ -104,11 +104,13 @@
  			sb << ' id="' << property.name << '"'
  			sb << ' name="' << property.name << '.id"'
                         if (cp.editable) {
-                            if (property.name.metaClass.respondsTo(
-                                property.name, 'secureList'))                      
-                            sb << ' from="${' << property.type.name << '.secureList()}"'
-                            else
+                            // for all central domain classes, add a secureList()
+                            if (property.type.name =~ /^central./)  {                    
+                                sb << ' from="${' << property.type.name << '.secureList()}"'
+                            }
+                            else {
                                 sb << ' from="${' << property.type.name << '.list()}"'
+                            }
                         } else {
                         sb << ' from="${' << property.type.name << 
                              '.findAllById(' << "${domainInstance}?.${property.name}" << '?.id)}"'
