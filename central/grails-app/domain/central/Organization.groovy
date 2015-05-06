@@ -78,7 +78,12 @@ class Organization {
         
     }
    
-    def secureList () {
+    static secureList () {
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def ctx = grailsApplication.mainContext
+        def config = grailsApplication.config
+        def organizationService = ctx.organizationService
+      
         return organizationService.list()
     }
 }

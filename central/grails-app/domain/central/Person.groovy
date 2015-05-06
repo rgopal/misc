@@ -121,7 +121,11 @@ class Person {
         comment (nullable:true, maxSize:1000)
         
     }
-    def secureList () {
+    static secureList () {
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def ctx = grailsApplication.mainContext
+        def config = grailsApplication.config
+        def personService = ctx.personService
         return personService.list()
     }
     /* DID NOT WORK static mapping = { 
