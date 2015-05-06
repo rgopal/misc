@@ -105,23 +105,23 @@ class InitOrganization {
        
         for (org in organizations) {
           
-            def user = 'jfields'    // current owner 
+        
             log.trace "processing  organization ${org} "
        
             if (!org.save()) { 
                 org.errors.allErrors.each {error ->
                     log.debug "An error occured with ${org} $error"
                 }
-            } else {
-            
-                log.trace "load: starting ACL creations for $user}"
-            
-                InitSpringSecurity.grantACL(org, user)
+            } else {     
+                // give permissions to two users
+                for (user in ['jfields', 'mjohns']) {
+                    log.trace "   starting ACL creations for $user}"
+                    InitSpringSecurity.grantACL(org, user)
       
-                for (staffing in org.staffings) {
-                    InitSpringSecurity.grantACL (staffing, user)
+                    for (staffing in org.staffings) {
+                        InitSpringSecurity.grantACL (staffing, user)
+                    }
                 }
-                
                 log.info "  loaded ${Organization.findById(org.id).staffings?.size()} staffing"
 
                 log.debug "created Organization ${org}"

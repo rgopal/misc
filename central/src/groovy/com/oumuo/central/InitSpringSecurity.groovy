@@ -99,6 +99,12 @@ class InitSpringSecurity {
                         email:'mikejohns@facebook.com', 
                         sequence:1, name:'Primary', main:true
                     )
+                ).addToComments (
+                    new Comment (
+                        comment: "first comment bigger than 20",
+                        detailedComment: "http://www.google.com",
+                        commentType: ItemType.URL
+                    )
                 )
             ),
             new UserLogin(username: 'jfields',enabled: true, 
@@ -231,13 +237,20 @@ class InitSpringSecurity {
                 for (account in user.person.accounts) {
                     grantACL (account, user.username)
                 }
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.accounts?.size()} accounts" 
                 
-                log.info "  loaded ${UserLogin.findByUsername(user.username).person.accounts?.size()} accounts"
-                log.info "  loaded ${UserLogin.findByUsername(user.username).person.personRoles?.size()} personRoles"
-             
                 for (personRole in user.person.personRoles) {
                     grantACL (personRole, user.username)
                 }
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.personRoles?.size()} personRoles"
+
+                for (comment in user.person.comments) {
+                    grantACL (comment, user.username)
+                }
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.comments?.size()} comments" 
+                
+  
+                
                 log.debug "created user ${user.username}"
             }
         }
@@ -266,9 +279,13 @@ class InitSpringSecurity {
     static void grantACL (item, username) {
         // create for user.person
         log.trace "grantACL: for object $item and username $username"
-        aclService.createAcl(
-            objectIdentityRetrievalStrategy.getObjectIdentity(item))
-            
+        
+        if (!objectIdentityRetrievalStrategy.getObjectIdentity(item)) {
+            aclService.createAcl(
+                objectIdentityRetrievalStrategy.getObjectIdentity(item))
+        }  else
+           "grantACL: objectIdentity already exists for $item"
+        
         // with ADMIN, all read, delete, update witll be granted
         aclUtilService.addPermission item, username, ADMINISTRATION
            

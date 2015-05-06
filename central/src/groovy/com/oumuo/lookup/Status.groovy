@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
 public enum Status implements org.springframework.context.MessageSourceResolvable {
  
-    ACTIVE, INACTIVE, DELETED
+    ACTIVE, INACTIVE
     public Object[] getArguments() { [] as Object[] }
     public String[] getCodes() { [ name() ] }
     public String getDefaultMessage() { name() }    // default is name itself
