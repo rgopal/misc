@@ -33,7 +33,7 @@ class Organization {
     String mobilePhone
 
     // associations
-    static hasMany = [staffings:Staffing]
+    static hasMany = [staffings:Staffing, comments: Comment]
 
     String toString(){
 
@@ -48,6 +48,7 @@ class Organization {
         academicStratum()
         organizationType()
         staffings()
+        comments()
         workEmail(nullable:true, email:true)
         workPhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
         mobilePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')

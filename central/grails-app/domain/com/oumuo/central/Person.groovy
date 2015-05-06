@@ -82,6 +82,7 @@ class Person {
         personRoles()
         staffings()
         accounts ()
+        comments ()
         userLogin(editable:false)
         homeEmail(nullable:true, email:true)
         workEmail(nullable:true, email:true)

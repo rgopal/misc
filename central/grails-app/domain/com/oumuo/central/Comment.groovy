@@ -40,8 +40,7 @@ class Comment {
         parentComment (nullable:true)
         comment (nullable:true)
         detailedComment (nullable:true)
-        commentType ()
-        
+        commentType ()   
         subComments()
 
         organization (editable:true, nullable: true)
