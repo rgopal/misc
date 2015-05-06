@@ -53,6 +53,11 @@ class OrganizationService {
         addPermission organization, springSecurityService.authentication.name,
         BasePermission.ADMINISTRATION
 
+          // also give permission to ADMIN
+
+        addPermission organization, 'admin',
+        BasePermission.READ
+        
         organization
     }
 

@@ -47,11 +47,11 @@ class Staffing {
                  
             // ideally should be created through organization
             if (organization)
-                sequence = Organization.findById(organization.id).staffings.size() + 1
+            sequence = Organization.findById(organization.id).staffings.size() + 1
             else if (person)
-                sequence = Person.findById(person.id).staffings.size() + 1
+            sequence = Person.findById(person.id).staffings.size() + 1
             else
-                log.warn "beforeInsert: either organization or person should be not null"
+            log.warn "beforeInsert: either organization or person should be not null"
             
             log.trace "beforeInsert: sequence updated to $sequence"
                
@@ -60,7 +60,12 @@ class Staffing {
     
     // for classes with 1toM relation, may need to control the many side in
     // the popup list.  Used in renderTemplate edit
-    def secureList() {
+    static secureList() {
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def ctx = grailsApplication.mainContext
+        def config = grailsApplication.config
+        def staffingService = ctx.staffingService
+     
         return staffingService.list()
     }
 

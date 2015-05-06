@@ -56,7 +56,10 @@ class AccountService {
         // Grant the current principal administrative permission
         addPermission account, springSecurityService.authentication.name,
         BasePermission.ADMINISTRATION
+  // also give permission to ADMIN
 
+        addPermission account, 'admin',
+        BasePermission.READ
         account
     }
 

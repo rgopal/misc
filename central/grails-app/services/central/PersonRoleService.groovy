@@ -56,6 +56,11 @@ class PersonRoleService {
         // Grant the current principal administrative permission
         addPermission personRole, springSecurityService.authentication.name,
         BasePermission.ADMINISTRATION
+        
+          // also give permission to ADMIN
+
+        addPermission personRole, 'admin',
+        BasePermission.READ
 
         personRole
     }

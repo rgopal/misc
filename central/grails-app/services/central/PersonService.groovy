@@ -58,6 +58,11 @@ class PersonService {
         addPermission person, springSecurityService.authentication.name,
         BasePermission.ADMINISTRATION
 
+          // also give permission to ADMIN
+
+        addPermission person, 'admin',
+        BasePermission.READ
+        
         person
     }
 

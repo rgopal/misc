@@ -63,7 +63,12 @@ class StaffingService {
         // Grant the current principal administrative permission
         addPermission staffing, springSecurityService.authentication.name,
         BasePermission.ADMINISTRATION
+        
+        // also give permission to ADMIN
 
+        addPermission staffing, 'admin',
+        BasePermission.READ
+        
         staffing
     }
 
