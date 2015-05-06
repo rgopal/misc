@@ -105,7 +105,7 @@
  			sb << ' name="' << property.name << '.id"'
                         if (cp.editable) {
                             // for all central domain classes, add a secureList()
-                            if (property.type.name =~ /^central./)  {                    
+                            if (property.type.name =~ /^com.oumuo.central./)  {                    
                                 sb << ' from="${' << property.type.name << '.secureList()}"'
                             }
                             else {

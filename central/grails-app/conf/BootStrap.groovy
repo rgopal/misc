@@ -1,10 +1,10 @@
-import central.InitWebSite
+import com.oumuo.lookup.InitWebSite
 
-import central.InitPerson
-import central.InitCountryStateCity
-import central.InitCountryLookup
-import com.oumuo.InitSpringSecurity
-import com.oumuo.InitOrganization
+import com.oumuo.central.InitPerson
+import com.oumuo.lookup.InitCountryStateCity
+import com.oumuo.lookup.InitCountryLookup
+import com.oumuo.central.InitSpringSecurity
+import com.oumuo.central.InitOrganization
 
 class BootStrap {
     def aclService
