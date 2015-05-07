@@ -31,18 +31,23 @@ class Comment {
     
     String toString(){
 
-    sequence + ". " + comment.substring(0,Math.min(15, comment.length()))
+    sequence + ". " + comment?.substring(0,Math.min(15, comment? comment.length():0))
     }
   
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
-        parentComment (nullable:true)
+        
+        // this allows the user to make parentComment null (and thus a new root)
+        parentComment (nullable:true, editable:false)
+        person(editable:false)
+        // in future make all other editable false as well
         comment (nullable:true)
         detailedComment (nullable:true)
         commentType ()   
         subComments()
 
+        // this will become editable:false (same for other)
         organization (editable:true, nullable: true)
  
         dateCreated()

@@ -41,12 +41,14 @@ class CommentService {
             springSecurityService.authentication.name
         )
         
+        
         // this has to be non null (since comment belongsTo Person
         if (!comment.person) {
             comment.errors.allErrors.each {
                 log.warning ("create: error while getting new comment ${comment}: ${error}")
             }
-        }
+        } else
+         log.trace "getNew: creating new comment for $comment.person"
         
         // check if it was created against an existin comment (becomes parent)  
         comment.parentComment = Comment.findById(params.comment?.id)
@@ -57,10 +59,13 @@ class CommentService {
             
             comment.organization = Organization.findById(params.organization?.id)
           
-            log.trace "getNew: $this is created for a org $comment.organization "
+            log.trace "getNew: root comment $comment is created for a org $comment.organization "
             
             // now keep adding all new "owners" such as Organization, Course, etc.
-        }
+        } else
+            log.trace "getNew: $comment is a subComment of $comment.parentComment"
+        
+        comment
       
     }
     // called from save of controller (with params returned from form)
