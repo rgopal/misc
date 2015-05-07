@@ -31,9 +31,10 @@ class OrganizationService {
     // organization is sort of hardcoded and needs to be handled for any such association
     
     @PreAuthorize("hasRole('ROLE_USER')")
-    Account getNew(Map params) {
+    Organization getNew(Map params) {
         def organization = new Organization()
     
+        log.trace "getNew: params are $params"
         organization
     }
     

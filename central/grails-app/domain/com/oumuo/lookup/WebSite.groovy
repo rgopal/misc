@@ -9,7 +9,7 @@ class WebSite {
   
     // Person owner (does not work well with sequence updates)
  
-    URL url
+    String url
     boolean loginSupported = false
     Date dateCreated
     Date lastUpdated
@@ -21,7 +21,7 @@ class WebSite {
     static constraints = {   
         name (nullable:true)
         loginSupported()
-        url()
+        url(nullable:true, url: true)
         dateCreated()
         lastUpdated()
     }

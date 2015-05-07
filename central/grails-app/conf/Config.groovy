@@ -218,6 +218,8 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/securityinfo/**':         ['ROLE_ADMIN'],
         '/userlogin/**':         ['ROLE_USER', 'ROLE_ADMIN'],
         '/authority/**':         ['ROLE_ADMIN'],
+        '/countryLookup/**':        ['ROLE_USER'],
+        '/countryStateCity/**':     ['ROLE_USER'],  
         '/user/**':                       ['ROLE_ADMIN'],
         '/role/**':                       ['ROLE_ADMIN'],
         // the following stopped ROLE_USER to work if before /person

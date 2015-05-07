@@ -1,10 +1,6 @@
 package com.oumuo.central
-import com.oumuo.lookup.Status
-import com.oumuo.lookup.Country
-import com.oumuo.lookup.Language
-import com.oumuo.lookup.Email
-import com.oumuo.lookup.AcademicStratum
-import com.oumuo.lookup.OrganizationType
+import com.oumuo.lookup.*
+
 
 class Organization {
 
@@ -80,7 +76,7 @@ class Organization {
     }
    
     static secureList () {
-        def grailsApplication = new Account().domainClass.grailsApplication
+        def grailsApplication = new Organization().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
         def organizationService = ctx.organizationService

@@ -31,12 +31,12 @@ class PersonService {
     // person is sort of hardcoded and needs to be handled for any such association
     
     @PreAuthorize("hasRole('ROLE_USER')")
-    Account getNew(Map params) {
+    Person getNew(Map params) {
         def person = new Person()
         person.userLogin = Person.findById(params.userLogin.id)
         if (!person.userLogin) {
             person.errors.allErrors.each {
-                log.warning ("create: error while getting new account ${person}: ${error}")
+                log.warning ("create: error while getting new person ${person}: ${error}")
             }
         }
         person
