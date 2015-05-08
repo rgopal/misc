@@ -68,7 +68,7 @@ class InitSpringSecurity {
         for (role in roles) {
             log.info "created role ${role.authority}"
             if (!role.save()){ role.errors.allErrors.each {error ->
-                    log.debug "An error occured with role: ${role.authority}"
+                    log.warn "An error occured with role: ${role.authority}"
 
                 }
             }
@@ -188,6 +188,7 @@ class InitSpringSecurity {
         def userRole = Authority.findByAuthority(ROLE.ROLE_USER.name())
         def adminRole = Authority.findByAuthority(ROLE.ROLE_ADMIN.name())
         def powerUserRole =  Authority.findByAuthority(ROLE.ROLE_POWER_USER.name())
+        def managerRole =  Authority.findByAuthority(ROLE.ROLE_MANAGER.name())
         
         def sg = new SecurityGroup (name: 'all_users')
         if (!sg.save()) {
@@ -201,7 +202,10 @@ class InitSpringSecurity {
         if (!sgp.save()) {
             log.warn "sgp not saved ${sgp}"
         }
-        
+        def sgm = new SecurityGroup(name:'all_managers') 
+        if (!sgm.save()) {
+            log.warn "sgm not saved ${sgm}"
+        }
         def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
         if (!sa.save()) {
             log.warn "sa user not saved ${sa}"
@@ -217,6 +221,10 @@ class InitSpringSecurity {
             log.warn "sa admin not saved ${saad}"
         }
         
+        def sam = new SecurityGroupAuthority(securityGroup:sgm, authority:managerRole)
+        if (!sam.save()) {
+            log.warn "sa manager not saved ${sam}"
+        }
        
         for (user in users) {
           
@@ -249,8 +257,6 @@ class InitSpringSecurity {
                 }
                 log.info "  loaded ${UserLogin.findByUsername(user.username).person.comments?.size()} comments" 
                 
-  
-                
                 log.debug "created user ${user.username}"
             }
         }
@@ -261,6 +267,7 @@ class InitSpringSecurity {
         // admin get admin role
         def admin = UserLogin.findByUsername('admin')
         def jfields = UserLogin.findByUsername('jfields')
+        
         // admin2 picked up in preinsert of UserLogin
         def us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sgad)
         if (!us.save()) {
@@ -272,8 +279,19 @@ class InitSpringSecurity {
             log.warn "us admin not saved ${usp} for ${sgp}"
         }
         
-        
+        // enroll them for ROLE_MANAGER (this will be used in Organization for ex
+        for (name in ['jfields', 'mjohns']) {
+            if (!(new UserLoginSecurityGroup(userLogin:
+                        UserLogin.findByUsername(name),securityGroup:sgm).save())) {
+                log.warn "user $name not saved in ULSG for ${sgm}"
+            } else
+            log.trace "enrolled $name for $sgm"
+            
+        }
+                  
     }
+        
+
     // will be used from other places
     
     static void grantACL (item, username) {
@@ -295,7 +313,8 @@ class InitSpringSecurity {
         // onwer can give privileges to others??
         aclUtilService.changeOwner item, username
             
-    }
+
    
 
+    }
 }

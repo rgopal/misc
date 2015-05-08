@@ -29,8 +29,9 @@ class OrganizationService {
 
     // to handle edited many-to-one relation in renderTemplate.  Note here
     // organization is sort of hardcoded and needs to be handled for any such association
+    // Not just ROLE_USER, need to be a manager to create Organization
     
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     Organization getNew(Map params) {
         def organization = new Organization()
     
@@ -40,7 +41,7 @@ class OrganizationService {
     
     // called from save of controller (with params returned from form)
     @Transactional
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     Organization create(Map params) {
         Organization organization = new Organization(params)
         if (!organization.save(flush:true)) {
