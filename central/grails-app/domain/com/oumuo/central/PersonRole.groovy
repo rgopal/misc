@@ -14,6 +14,9 @@ class PersonRole {
     Language language = Language.ENGLISH
     UserRole userRole = UserRole.ROLE_ANONYMOUS
     Date expiryDate
+    
+ // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
 
@@ -36,6 +39,7 @@ class PersonRole {
         userRole()
         person(editable:false)
         expiryDate(nullable:true)
+        status()
         dateCreated()
         lastUpdated()
     }

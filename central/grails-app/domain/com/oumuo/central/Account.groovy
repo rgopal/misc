@@ -1,6 +1,6 @@
 package com.oumuo.central
 import com.oumuo.central.Person
-import com.oumuo.lookup.WebSite
+import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -15,7 +15,10 @@ class Account {
     String loginName
     String password
     Date expiryDate
-    Date dateCreated
+    
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated 
     Date lastUpdated
 
     String toString(){
@@ -33,7 +36,7 @@ class Account {
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
-        name (nullable:true)
+        name (nullable:false)
         main()
         person(editable:false)
         email (email: true, blank: false, nullable:true)
@@ -41,6 +44,8 @@ class Account {
         loginName(nullable:true)
         password(nullable:true)
         expiryDate(nullable:true)
+        
+        status()
         dateCreated()
         lastUpdated()
     }

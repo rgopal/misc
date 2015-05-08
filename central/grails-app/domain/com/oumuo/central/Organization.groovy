@@ -16,12 +16,11 @@ class Organization {
     AcademicStratum academicStratum = AcademicStratum.OTHER
     OrganizationType organizationType = OrganizationType.OTHER
 
-    // common across all domains
-    
+  // these are common to all
     Status status = Status.ACTIVE
+    Date dateCreated
+    Date lastUpdated
     
-    Date dateCreated  
-    Date lastUpdated 
     String comment
 
     String workEmail
@@ -68,7 +67,8 @@ class Organization {
             })
         // validator takes 3 (1 is value, 2 obj, 3 error
         // returns true or null (both good) or error messages
-        
+    
+        status()
         dateCreated ()
         lastUpdated ()
         comment (nullable:true, maxSize:1000)

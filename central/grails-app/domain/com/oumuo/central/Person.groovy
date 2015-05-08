@@ -33,12 +33,12 @@ class Person {
     Country country = Country.USA
     Language preferredLanguage = Language.ENGLISH
 
-    // common across all domains
-    
+     // these are common to all; 
     Status status = Status.ACTIVE
+
+    Date dateCreated
+    Date lastUpdated
     
-    Date dateCreated  
-    Date lastUpdated 
     String comment
     
     // will bring it back to composition, spent 2 days 3/30
@@ -110,8 +110,7 @@ class Person {
         // validator takes 3 (1 is value, 2 obj, 3 error
         // returns true or null (both good) or error messages
         
-       
-   
+      
         dateCreated ()
         lastUpdated ()
         comment (nullable:true, maxSize:1000)

@@ -21,8 +21,9 @@ class Comment {
     static transients = ['allSubComments']
    
     
-    State state = State.CURRENT
-    Date dateCreated = new Date()
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated
     Date lastUpdated
 
     def getAllSubComments() {
@@ -50,6 +51,7 @@ class Comment {
         // this will become editable:false (same for other)
         organization (editable:true, nullable: true)
  
+        status()
         dateCreated()
         lastUpdated()
     }

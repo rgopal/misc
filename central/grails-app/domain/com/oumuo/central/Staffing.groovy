@@ -3,6 +3,10 @@ import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
+
+// this associated with either or both of Person and Organization and therefore
+// they are both nullable.  
+
 class Staffing {
 
     String name
@@ -14,6 +18,8 @@ class Staffing {
   
     Date startDate = new Date()
     Date endDate
+     // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
 
@@ -28,7 +34,7 @@ class Staffing {
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
-        name (nullable:true)
+        name (nullable:false)
         person (nullable:true)
         organization (nullable:true)
         userRole()
@@ -36,6 +42,8 @@ class Staffing {
  
         startDate(nullable:true)
         endDate(nullable:true)
+        
+        status()
         dateCreated()
         lastUpdated()
     }
