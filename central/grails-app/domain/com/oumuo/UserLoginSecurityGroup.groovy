@@ -47,7 +47,7 @@ class UserLoginSecurityGroup implements Serializable {
     static UserLoginSecurityGroup create(UserLogin userLogin, Authority authority) {
         def securityGroup = SecurityGroupAuthority.findByAuthority(authority)
         if (!securityGroup) {
-            log.trace ("create (bug for s2ui): securityGroup ${securityGroup} for authority ${authority}")
+            println ("create (bug for s2ui): securityGroup ${securityGroup} for authority ${authority}")
         }
         def instance = new UserLoginSecurityGroup(userLogin: userLogin, securityGroup: securityGroup)
         instance.save(flush: true, insert: true)
@@ -68,14 +68,18 @@ class UserLoginSecurityGroup implements Serializable {
     }
 
     static findUsersAuthority (role) {
-        def securityGroup = SecurityGroupAuthority.findByAuthority(role).securityGroup
-        def users = UserLoginSecurityGroup.findAllBySecurityGroup(securityGroup)*.userLogin
+        // there could be multiple securityGroups with the same role
+        def securityGroups = SecurityGroupAuthority.findAllByAuthority(role)*.securityGroup
+        def users = []
+        for (securityGroup in securityGroups) {
+            // println "findUsersAuthority finding users for $securityGroup"
+            users << UserLoginSecurityGroup.findAllBySecurityGroup(securityGroup)*.userLogin
+        }
         return users
     }
     static int countUsersAuthority(role) {
-        def securityGroup = SecurityGroupAuthority.findByAuthority(role).securityGroup
-        def users = UserLoginSecurityGroup.countBySecurityGroup(securityGroup)
-        return users
+        
+        return findUsersAuthority(role).size()
     }
     static boolean remove(UserLogin u, SecurityGroup g, boolean flush = false) {
         if (u == null || g == null) return false
