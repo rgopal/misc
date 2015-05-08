@@ -51,7 +51,8 @@ class Person {
 
    
     // associations
-    static hasMany = [accounts:Account, personRoles: PersonRole, staffings:Staffing, comments:Comment]
+    static hasMany = [accounts:Account, personRoles: PersonRole, 
+        staffings:Staffing, comments:Comment, programs:Program]
 
     static belongsTo = [userLogin: UserLogin]
     

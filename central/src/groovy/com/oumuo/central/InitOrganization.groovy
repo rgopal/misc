@@ -93,11 +93,15 @@ class InitOrganization {
             ),
            
             new Organization(name: 'R K Acakdemy', 
+                academicStratum:AcademicStratum.HIGH,
+                country:Country.INDIA,
+                zip:'250001', city: 'Meerut', state: 'Uttar Pradesh',
                 preferredLanguage:Language.ENGLISH
             ),
-            new Organization(name: 'राहुल नंदा', 
+            new Organization(name: 'लखनऊ विश्वविद्यालय', 
+                academicStratum:AcademicStratum.UNIVERSITY,
                 country:Country.INDIA,
-                zip:'260014', city:'लखनऊ', state: 'उत्तर प्रदेश',
+                zip:'260001', city:'लखनऊ', state: 'उत्तर प्रदेश',
                 preferredLanguage:Language.HINDI
             )
         ]

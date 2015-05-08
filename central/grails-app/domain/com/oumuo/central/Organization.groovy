@@ -28,7 +28,7 @@ class Organization {
     String mobilePhone
 
     // associations
-    static hasMany = [staffings:Staffing, comments: Comment]
+    static hasMany = [staffings:Staffing, comments: Comment, programs:Program]
 
     String toString(){
 

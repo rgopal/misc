@@ -5,6 +5,7 @@ import com.oumuo.lookup.InitCountryStateCity
 import com.oumuo.lookup.InitCountryLookup
 import com.oumuo.central.InitSpringSecurity
 import com.oumuo.central.InitOrganization
+import com.oumuo.central.InitProgram
 
 class BootStrap {
     def aclService
@@ -29,6 +30,9 @@ println "aclService - ${aclService}"
         def iorg = new InitOrganization()
         // Acl services are reused from InitSpringSecurity (static fields)
         iorg.load()
+        
+        def ii = new InitProgram()
+        ii.load()
     }
    
     def destory = {
