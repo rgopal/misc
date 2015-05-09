@@ -1,0 +1,1 @@
+if(typeof SpringSecurityUI=="undefined"){SpringSecurityUI=new Object;SpringSecurityUI.message=function(e,t,n){var r="icon ";if(e=="error"){r+="icon_error"}else if(e=="info"){r+="icon_info"}$.jGrowl('<span class="'+r+'">'+t+"</span>",{life:n})}}

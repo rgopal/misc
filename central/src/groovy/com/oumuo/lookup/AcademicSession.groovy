@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
    enum AcademicSession implements org.springframework.context.MessageSourceResolvable {
  
-       YEAR, SEMESTER, TRIMESTER, QUARTER, MONTH, WEEK, DAY, FREE_FORM
+       YEAR, SEMESTER, TRIMESTER, QUARTER, MONTH, WEEK, DAY, FREE_FORM, OTHER
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself

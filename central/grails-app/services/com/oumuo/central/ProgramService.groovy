@@ -1,6 +1,5 @@
 package com.oumuo.central
 
-import com.oumuo.central.Program
 
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize

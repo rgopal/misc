@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
    enum AcademicMajor implements org.springframework.context.MessageSourceResolvable {
  
-       SCIENCE, ARTS, HUMANITIES, PHYSICS, CHEMISTRY, PREMED, BIOE, EE, EECS, ME,
+       SCIENCES, ARTS, HUMANITIES, PHYSICS, CHEMISTRY, PREMED, BIOE, CS, EE, EECS, ME,
        UNDECIDED, GENERAL, ES, OTHER
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }

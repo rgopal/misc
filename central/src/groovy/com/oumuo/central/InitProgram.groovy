@@ -58,61 +58,60 @@ class InitProgram {
 
         def programs = [ 
             new Program(name: 'Computer Science Diploma',
-                person:Person.getByUsername('jfieds'),
+                person:Person.findByUserName('jfields'),
                 academicSession:AcademicSession.SEMESTER,
                 academicStratum:AcademicStratum.ASSOCIATE,
                 academicMajor:AcademicMajor.CS,
-                ranking = 600,
-                minimumGPA = GPA.D,
+                ranking: 600,
+                minimumGPA: GPA.D,
                 credential:Credential.CERTIFICATE,
-                sessionFee = 2000.0,
+                sessionFee: 2000.0,
                 organization: Organization.
-                    getByName('Montgomery County Community College')   
+                    findByName('Montgomery County Community College')   
             ),
           
             new Program(name: 'High School Physics Help',
-                person:Person.getByUsername('jfieds'),
+                person:Person.findByUserName('jfields'),
                 academicSession:AcademicSession.MONTH,
                 academicStratum:AcademicStratum.HIGH,
                 academicMajor:AcademicMajor.SCIENCES,
-                ranking = 400,
-                minimumGPA = GPA.D,
+                ranking: 400,
+                minimumGPA : GPA.D,
                 credential:Credential.NONE,
-                sessionFee = 0.0,
+                sessionFee : 0.0,
                 organization: Organization.
-                    getByName('Quince Orchard High School')   
+                    findByName('Quince Orchard High School')   
             ),
             new Program(name: 'Middle School English',
-                person:Person.getByUsername('jfieds'),
+                person:Person.findByUserName('jfields'),
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.MIDDLE,
                 academicMajor:AcademicMajor.GENERAL,
-                ranking = 800,
-                minimumGPA = GPA.F,
+                ranking : 800,
+                minimumGPA : GPA.F,
                 credential:Credential.NONE,
-                sessionFee = 0.0,
+                sessionFee : 0.0,
                 organization: Organization.
-                    getByName('RidgeView Middle School')   
+                    findByName('RidgeView Middle School')   
             ),
             new Program(name: 'लखनऊ विश्वविद्यालय कला संकाय',
-                person:Person.getByUsername('jfieds'),
+                person:Person.findByUserName('jfields'),
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.UNIVERSITY,
                 academicMajor:AcademicMajor.ARTS,
-                ranking = 950,
-                minimumGPA = GPA.NONE,
-                minimumPercentage = 55.0,
+                ranking : 950,
+                minimumGPA : GPA.NONE,
+                minimumPercentage : 55.0,
                 credential:Credential.DEGREE,
-                sessionFee = 20.0,
+                sessionFee : 20.0,
                 organization: Organization.
-                    getByName('लखनऊ विश्वविद्यालय')   
+                    findByName('लखनऊ विश्वविद्यालय')   
             )
         ]
         
        
-        for (program in programs) {
-          
-        
+        // save all the programss and create ACLs
+        for (program in programs) {     
             log.trace "processing  program ${program} "
        
             if (!program.save()) { 
@@ -124,15 +123,13 @@ class InitProgram {
                 for (user in ['jfields', 'mjohns']) {
                     log.trace "   starting ACL creations for $user}"
                     InitSpringSecurity.grantACL(program, user)
-      
-               
                 }
              
-                log.debug "created Organization ${org}"
+                log.debug "created Program ${program}"
             }
         }
     
-        log.info ("load: loaded ${Program.count()} out of ${programs.size()} organizations")
+        log.info ("load: loaded ${Program.count()} out of ${programs.size()} programs")
        
         
     }

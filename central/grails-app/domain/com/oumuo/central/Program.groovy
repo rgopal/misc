@@ -16,12 +16,11 @@ class Program {
     Integer ranking = 500           // automatically derived from multiple items
     Credential credential = Credential.NONE  
     AcademicStratum academicStratum = AcademicStratum.OTHER
-    Integer popularity
     AcademicMajor academicMajor = AcademicMajor.GENERAL 
-    GPA minimumGPA = GPA.C
+    Grade minimumGrade = Grade.C
     Double minimumPercentage
     AcademicSession academicSession = AcademicSession.FREE_FORM
-    Float sessionFee
+    Float sessionFee = 0.0f
    
     Date startDate = new Date()
     Date endDate
@@ -45,11 +44,11 @@ class Program {
         credential()
         academicStratum()
         academicMajor()
-        minimumGPA()
+        minimumGrade()
         minimumPercentage(min:0.0d, max:100.0d, nullable:true)
         academicSession()
-        sessionFee()
-        ranking(0..1000, editable:false)
+        sessionFee(nullable:true)
+        ranking(range:0..1000, editable:false)
  
         startDate(nullable:true)
         endDate(nullable:true)
