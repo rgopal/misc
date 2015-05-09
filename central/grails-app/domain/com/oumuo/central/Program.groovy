@@ -19,6 +19,7 @@ class Program {
     AcademicSession academicSession = AcademicSession.FREE_FORM
     Float sessionFee = 0.0f
 
+    SortedSet catalogs
     static hasMany = [catalogs: Catalog]     
     // spent a lot of time when it was pure Catalog catalog -- this transient problem Catalog 5/10
 

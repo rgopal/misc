@@ -10,7 +10,8 @@ import groovy.util.logging.Log4j
 // Each course of a complete catalog are also listed in a program as a sorted
 // list under the property allCourses (so each catalog node has a reference to
 // that program.
-class Catalog {
+
+class Catalog implements Comparable {
 
     String name
     String sequence
@@ -20,6 +21,9 @@ class Catalog {
    
     // parent could be null
     Catalog parentCatalog
+    
+    // each level is sorted
+    SortedSet subCatalogs
     static hasMany = [ subCatalogs: Catalog ] 
    
     Program program                 // weaker for sharing catalogs
@@ -31,6 +35,11 @@ class Catalog {
     Date dateCreated
     Date lastUpdated
 
+    // TODO  parse sequence and perform recursive numeric sort on each field 
+    int compareTo(obj) {
+        sequence.compareTo(obj.sequence)
+    }
+  
     def getAllSubCatalogs() {
         return subCatalogs ? subCatalogs*.allSubCatalogs.flatten() + subCatalogs : []
     }
