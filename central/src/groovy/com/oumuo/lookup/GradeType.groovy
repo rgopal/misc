@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
    enum GradeType implements org.springframework.context.MessageSourceResolvable {
  
-       GRADE, PERCENTAGE, NONE, OTHER
+       LETTER, PERCENTAGE, NONE, OTHER
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself

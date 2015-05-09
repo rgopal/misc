@@ -6,6 +6,7 @@ import com.oumuo.lookup.InitCountryLookup
 import com.oumuo.central.InitSpringSecurity
 import com.oumuo.central.InitOrganization
 import com.oumuo.central.InitProgram
+import com.oumuo.central.InitCourse
 
 class BootStrap {
     def aclService
@@ -33,6 +34,7 @@ println "aclService - ${aclService}"
         
         def ii = new InitProgram()
         ii.load()
+        new InitCourse().load()
     }
    
     def destory = {
