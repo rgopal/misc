@@ -4,8 +4,7 @@ import groovy.util.logging.Log4j
 
 @Log4j
 
-// this associated with either or both of Person and Organization, but a Person
-// does this on their own so it is not null 
+// A program hasOne catalog so it will appear as Add Catalog
 
 class Program {
 
@@ -21,7 +20,10 @@ class Program {
     Double minimumPercentage
     AcademicSession academicSession = AcademicSession.FREE_FORM
     Float sessionFee = 0.0f
-   
+    
+    static hasOne = [catalog: Catalog]                     // root catalog
+    static hasMany = [allCatalogs:Catalog]  // flattened list for browsing
+ 
     Date startDate = new Date()
     Date endDate
      // these are common to all; state is managed by system
@@ -40,6 +42,9 @@ class Program {
         name (nullable:false)
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
+ 
+        catalog(nullable:true, editable:true)   // to create structure
+        allCatalogs(editable:false)         // for browsing only
         
         credential()
         academicStratum()

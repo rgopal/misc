@@ -203,14 +203,7 @@ class InitSpringSecurity {
         if (!sgp.save()) {
             log.warn "sgp not saved ${sgp}"
         }
-        def sgm = new SecurityGroup(name:'all_managers') 
-        if (!sgm.save()) {
-            log.warn "sgm not saved ${sgm}"
-        }
-        def sgc = new SecurityGroup(name:'all_content_creators') 
-        if (!sgc.save()) {
-            log.warn "sgc not saved ${sgc}"
-        }
+       
         
         def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
         if (!sa.save()) {
@@ -227,15 +220,9 @@ class InitSpringSecurity {
             log.warn "sa admin not saved ${saad}"
         }
         
-        def sam = new SecurityGroupAuthority(securityGroup:sgm, authority:managerRole)
-        if (!sam.save()) {
-            log.warn "sa manager not saved ${sam}"
-        }
        
-        def sac = new SecurityGroupAuthority(securityGroup:sgm, authority:contentRole)
-        if (!sac.save()) {
-            log.warn "sa content not saved ${sac}"
-        }
+       
+     
         for (user in users) {
           
             log.trace "processing user person ${user.person} "
@@ -289,6 +276,16 @@ class InitSpringSecurity {
             log.warn "us admin not saved ${usp} for ${sgp}"
         }
         
+        def sgm = new SecurityGroup(name:'all_managers') 
+        if (!sgm.save()) {
+            log.warn "sgm not saved ${sgm}"
+        }
+        
+        if (! (new SecurityGroupAuthority(securityGroup:sgm, authority:managerRole)))
+        {
+            log.warn "sa manager not saved ${sam}"
+        }
+     
         // enroll them for ROLE_MANAGER (this will be used in Organization for ex
         for (name in ['jfields', 'mjohns']) {
             if (!(new UserLoginSecurityGroup(userLogin:
@@ -298,8 +295,17 @@ class InitSpringSecurity {
             log.trace "enrolled $name for $sgm"
             
         }
+        
         // jfields is content creator
-        new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgp).save(flush:true)
+        def sgc = new SecurityGroup(name:'all_content_creators') 
+        if (!sgc.save()) {
+            log.warn "sgc not saved ${sgc}"
+        }
+        if (!new SecurityGroupAuthority(securityGroup:sgc, 
+                authority:Authority.findByAuthority(ROLE.ROLE_CONTENT_CREATOR.name())).save()) {
+            log.warn "sa content not saved ${sac}"
+        }
+        new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgc).save(flush:true)
       
                   
     }

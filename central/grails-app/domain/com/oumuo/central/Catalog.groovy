@@ -1,0 +1,74 @@
+package com.oumuo.central
+import com.oumuo.lookup.*
+import groovy.util.logging.Log4j
+
+@Log4j
+
+// Catalog includes a tree of catalog nodes (recursive) each referring to a
+// a course and is created under the constraints of course prerequisites.  A root
+// catalog can be recursively traversed from the catalog property of a program.
+// Each course of a complete catalog are also listed in a program as a sorted
+// list under the property allCourses (so each catalog node has a reference to
+// that program.
+class Catalog {
+
+    String name
+    String sequence
+    Person person
+    // Program hasOne Catalog so it will be included
+    Course course
+
+    CourseType courseType = CourseType.REQUIRED
+   
+    // parent could be null
+    Catalog parentCatalog
+    static hasMany = [ subCatalogs: Catalog ]    
+    static belongsTo = [ program: Program ]
+    static transients = ['allSubCatalogs']
+     
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated
+    Date lastUpdated
+
+    def getAllSubCatalogs() {
+        return subCatalogs ? subCatalogs*.allSubCatalogs.flatten() + subCatalogs : []
+    }
+    
+    String toString(){
+
+        sequence + " " + name?.substring(0,Math.min(15, name? name.length():0))
+    }
+  
+    static constraints = {
+        // named association so not needed owner()
+        sequence (nullable:true, display:false)
+        name(nullable:false)
+        program()       
+        // this allows the user to make parentCatalog null (and thus a new root)
+        parentCatalog (nullable:true, editable:false)
+        person(editable:false, nullable:false)
+        // in future make all other editable false as well
+        course (nullable:true)
+        courseType () 
+        
+        subCatalogs()
+
+        status()
+        dateCreated()
+        lastUpdated()
+    }
+
+    // beforeInsert is gone (included in CatalogService)
+    
+    // for classes with 1toM relation, may need to control the many side in
+    // the popup list.  Used in renderTemplate edit
+    static secureList() {
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def ctx = grailsApplication.mainContext
+        def config = grailsApplication.config
+        def catalogService = ctx.catalogService
+     
+        return catalogService.list()
+    }
+}
