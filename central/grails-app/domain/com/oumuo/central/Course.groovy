@@ -8,9 +8,15 @@ import groovy.util.logging.Log4j
 // does this on their own so it is not null 
 
 class Course {
+    
     String name
+    //  keep all associations first
     Person person
     Organization organization
+    SortedSet catalogs
+    static hasMany = [catalogs: Catalog] 
+    
+    // then proper fileds
     Integer ranking = 500           // automatically derived from multiple items
     Credential credential = Credential.NONE  
     AcademicStratum academicStratum = AcademicStratum.OTHER
@@ -36,7 +42,8 @@ class Course {
     
     Date startDate = new Date()
     Date endDate
-     // these are common to all; state is managed by system
+    
+    // these are common to all; state is managed by system
     Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
@@ -52,6 +59,7 @@ class Course {
         name (nullable:false)
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
+        catalogs()
         
         credential()
         academicStratum()
