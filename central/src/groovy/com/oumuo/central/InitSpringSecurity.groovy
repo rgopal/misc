@@ -189,6 +189,7 @@ class InitSpringSecurity {
         def adminRole = Authority.findByAuthority(ROLE.ROLE_ADMIN.name())
         def powerUserRole =  Authority.findByAuthority(ROLE.ROLE_POWER_USER.name())
         def managerRole =  Authority.findByAuthority(ROLE.ROLE_MANAGER.name())
+        def contentRole =  Authority.findByAuthority(ROLE.ROLE_CONTENT_CREATOR.name())
         
         def sg = new SecurityGroup (name: 'all_users')
         if (!sg.save()) {
@@ -206,6 +207,11 @@ class InitSpringSecurity {
         if (!sgm.save()) {
             log.warn "sgm not saved ${sgm}"
         }
+        def sgc = new SecurityGroup(name:'all_content_creators') 
+        if (!sgc.save()) {
+            log.warn "sgc not saved ${sgc}"
+        }
+        
         def sa = new SecurityGroupAuthority(securityGroup:sg, authority:userRole)
         if (!sa.save()) {
             log.warn "sa user not saved ${sa}"
@@ -226,6 +232,10 @@ class InitSpringSecurity {
             log.warn "sa manager not saved ${sam}"
         }
        
+        def sac = new SecurityGroupAuthority(securityGroup:sgm, authority:contentRole)
+        if (!sac.save()) {
+            log.warn "sa content not saved ${sac}"
+        }
         for (user in users) {
           
             log.trace "processing user person ${user.person} "
@@ -288,6 +298,9 @@ class InitSpringSecurity {
             log.trace "enrolled $name for $sgm"
             
         }
+        // jfields is content creator
+        new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgp).save(flush:true)
+      
                   
     }
         
