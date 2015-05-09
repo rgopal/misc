@@ -27,7 +27,7 @@ class Comment {
     Date lastUpdated
 
     def getAllSubComments() {
-        return subComments ? subComments*.allSubComments.flatten() + subComments : []
+        return subCommentsfb ? subComments*.allSubComments.flatten() + subComments : []
     }
     
     String toString(){

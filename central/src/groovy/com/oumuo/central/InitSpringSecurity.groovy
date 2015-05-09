@@ -62,16 +62,17 @@ class InitSpringSecurity {
         def roles = []
         for (ROLE r: ROLE.values()) {
             roles << new Authority(authority: r.name())
-            log.trace "load: added role $r to roles"
+        
         }
             
         for (role in roles) {
-            log.info "created role ${role.authority}"
-            if (!role.save()){ role.errors.allErrors.each {error ->
+            
+            if (!role.save(flush:true)){ role.errors.allErrors.each {error ->
                     log.warn "An error occured with role: ${role.authority}"
 
                 }
-            }
+            } else
+            log.info "created role ${role.authority}"
         }
 
         def users = [ 
@@ -267,29 +268,32 @@ class InitSpringSecurity {
         
         // admin2 picked up in preinsert of UserLogin
         def us = new UserLoginSecurityGroup(userLogin:admin, securityGroup:sgad)
-        if (!us.save()) {
+        if (!us.save(flush:true)) {
             log.warn "us admin not saved ${us} for ${sgad}"
         }
         
         def usp = new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgp)
-        if (!usp.save()) {
-            log.warn "us admin not saved ${usp} for ${sgp}"
+        if (!usp.save(flush:true)) {
+            log.warn "us jfields not saved ${usp} for ${sgp}"
         }
         
         def sgm = new SecurityGroup(name:'all_managers') 
-        if (!sgm.save()) {
+        if (!sgm.save(flush:true)) {
             log.warn "sgm not saved ${sgm}"
         }
         
-        if (! (new SecurityGroupAuthority(securityGroup:sgm, authority:managerRole)))
+        // wasted a lot of time since save() was not here.  So this was transient and then
+        // we tried to use it later.  Did it create complications
+        if (! (new SecurityGroupAuthority(securityGroup:sgm, 
+                    authority:Authority.findByAuthority(ROLE.ROLE_MANAGER.name())).save(flush:true)))
         {
-            log.warn "sa manager not saved ${sam}"
+            log.warn "sa managerRole not saved for ${sgm}"
         }
      
         // enroll them for ROLE_MANAGER (this will be used in Organization for ex
         for (name in ['jfields', 'mjohns']) {
             if (!(new UserLoginSecurityGroup(userLogin:
-                        UserLogin.findByUsername(name),securityGroup:sgm).save())) {
+                        UserLogin.findByUsername(name),securityGroup:sgm).save(flush:true))) {
                 log.warn "user $name not saved in ULSG for ${sgm}"
             } else
             log.trace "enrolled $name for $sgm"
@@ -298,12 +302,12 @@ class InitSpringSecurity {
         
         // jfields is content creator
         def sgc = new SecurityGroup(name:'all_content_creators') 
-        if (!sgc.save()) {
-            log.warn "sgc not saved ${sgc}"
+        if (!sgc.save(flush:true)) {
+            log.warn "securityGroup not saved ${sgc}"
         }
-        if (!new SecurityGroupAuthority(securityGroup:sgc, 
-                authority:Authority.findByAuthority(ROLE.ROLE_CONTENT_CREATOR.name())).save()) {
-            log.warn "sa content not saved ${sac}"
+        if (!(new SecurityGroupAuthority(securityGroup:sgc, 
+                    authority:Authority.findByAuthority(ROLE.ROLE_CONTENT_CREATOR.name())).save(flush:true))) {
+            log.warn "securityGroupAuthority not saved ${sgc} and ROLE_CONTENT_CREATOR"
         }
         new UserLoginSecurityGroup(userLogin:jfields, securityGroup:sgc).save(flush:true)
       

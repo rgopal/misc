@@ -4,8 +4,6 @@ import groovy.util.logging.Log4j
 
 @Log4j
 
-// A program hasOne catalog so it will appear as Add Catalog
-
 class Program {
 
     String name
@@ -20,10 +18,10 @@ class Program {
     Double minimumPercentage
     AcademicSession academicSession = AcademicSession.FREE_FORM
     Float sessionFee = 0.0f
-    
-    static hasOne = [catalog: Catalog]                     // root catalog
-    static hasMany = [allCatalogs:Catalog]  // flattened list for browsing
- 
+
+    static hasMany = [catalogs: Catalog]     
+    // spent a lot of time when it was pure Catalog catalog -- this transient problem Catalog 5/10
+
     Date startDate = new Date()
     Date endDate
      // these are common to all; state is managed by system
@@ -43,8 +41,8 @@ class Program {
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
  
-        catalog(nullable:true, editable:true)   // to create structure
-        allCatalogs(editable:false)         // for browsing only
+        // still not happy TODO this was supposed to be a singleton
+        catalogs()
         
         credential()
         academicStratum()

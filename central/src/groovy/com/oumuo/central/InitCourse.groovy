@@ -104,7 +104,7 @@ class InitCourse {
         for (course in courses) {     
             log.trace "processing  course ${course} "
        
-            if (!course.save()) { 
+            if (!course.save(flush:true)) { 
                 course.errors.allErrors.each {error ->
                     log.warn "An error occured with ${course} $error"
                 }

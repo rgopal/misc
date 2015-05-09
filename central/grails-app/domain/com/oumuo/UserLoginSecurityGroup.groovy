@@ -69,7 +69,7 @@ class UserLoginSecurityGroup implements Serializable {
 
     static findUsersAuthority (role) {
         // there could be multiple securityGroups with the same role
-        def securityGroups = SecurityGroupAuthority.findAllByAuthority(role)*.securityGroup
+        def securityGroups = SecurityGroupAuthority.findAllByAuthority(role)*.securityGroup.unique()
         def users = []
         for (securityGroup in securityGroups) {
             // println "findUsersAuthority finding users for $securityGroup"

@@ -114,7 +114,7 @@ class InitProgram {
         for (program in programs) {     
             log.trace "processing  program ${program} "
        
-            if (!program.save()) { 
+            if (!program.save(flush:true)) { 
                 program.errors.allErrors.each {error ->
                     log.warn "An error occured with ${program} $error"
                 }

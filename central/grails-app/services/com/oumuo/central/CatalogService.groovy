@@ -55,20 +55,25 @@ class CatalogService {
         catalog.parentCatalog = Catalog.findById(params.catalog?.id)
         
         if (!catalog.parentCatalog) {
-            // start a new root
-            catalog.sequence = "1"
-            
-            // will list each course in catalog tree through program's allCourses
+         
+     
             catalog.program = Program.findById(params.program?.id)
-          
+             // start a new root TODO find the current number for each program       
+         
+            if (!catalog.program) {
+                   catalog.sequence = "1"
+            } else
+            {
+                catalog.sequence = catalog.program.catalogs.size() + 1
+            }
             log.trace "getNew: root catalog $catalog is created for a org $catalog.program "
             
         } else {
             // not a root so get the sequence from other siblings and program
-            def location = parentCatalog.subCatalogs.size()+ 1
-            catalog.sequence = parentCatalog.sequence + "." + location.toString()
-            catalog.program = parentCatalog.program  // for allCatalogs to work
-            log.trace "getNew: $catalog sequence $catalog.seqeuence is subCatalog of $catalog.parentCatalog"
+            def location = catalog.parentCatalog.subCatalogs ? catalog.parentCatalog.subCatalogs.size()+ 1 : 1
+            catalog.sequence = catalog.parentCatalog.sequence + "." + location.toString()
+            catalog.program = catalog.parentCatalog.program  // for allCatalogs to work
+            log.trace "getNew: $catalog sequence $catalog.sequence is subCatalog of $catalog.parentCatalog"
         }
         catalog
       

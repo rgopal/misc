@@ -7,6 +7,7 @@ import com.oumuo.central.InitSpringSecurity
 import com.oumuo.central.InitOrganization
 import com.oumuo.central.InitProgram
 import com.oumuo.central.InitCourse
+import com.oumuo.central.InitCatalog
 
 class BootStrap {
     def aclService
@@ -35,6 +36,7 @@ println "aclService - ${aclService}"
         def ii = new InitProgram()
         ii.load()
         new InitCourse().load()
+        new InitCatalog().load()
     }
    
     def destory = {

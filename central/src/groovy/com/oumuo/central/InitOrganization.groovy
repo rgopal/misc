@@ -7,16 +7,6 @@
 package com.oumuo.central
 
 
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.DELETE
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
-
-import org.springframework.security.access.prepost.PostFilter
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.Permission
-
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 
@@ -112,7 +102,8 @@ class InitOrganization {
         
             log.trace "processing  organization ${org} "
        
-            if (!org.save()) { 
+            // call flush (ACL may give transient object not saved error)
+            if (!org.save(flush:true)) { 
                 org.errors.allErrors.each {error ->
                     log.debug "An error occured with ${org} $error"
                 }

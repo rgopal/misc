@@ -8,8 +8,6 @@ import groovy.util.logging.Log4j
 // does this on their own so it is not null 
 
 class Course {
-
-    
     String name
     Person person
     Organization organization

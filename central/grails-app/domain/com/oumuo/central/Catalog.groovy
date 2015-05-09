@@ -15,15 +15,15 @@ class Catalog {
     String name
     String sequence
     Person person
-    // Program hasOne Catalog so it will be included
     Course course
-
     CourseType courseType = CourseType.REQUIRED
    
     // parent could be null
     Catalog parentCatalog
-    static hasMany = [ subCatalogs: Catalog ]    
-    static belongsTo = [ program: Program ]
+    static hasMany = [ subCatalogs: Catalog ] 
+   
+    Program program                 // weaker for sharing catalogs
+    //static belongsTo = [ program: Program ]
     static transients = ['allSubCatalogs']
      
     // these are common to all; state is managed by system
@@ -42,9 +42,9 @@ class Catalog {
   
     static constraints = {
         // named association so not needed owner()
-        sequence (nullable:true, display:false)
+        sequence (nullable:true, display:true, editable:false)
         name(nullable:false)
-        program()       
+        program(nullable:false)       
         // this allows the user to make parentCatalog null (and thus a new root)
         parentCatalog (nullable:true, editable:false)
         person(editable:false, nullable:false)
@@ -64,7 +64,7 @@ class Catalog {
     // for classes with 1toM relation, may need to control the many side in
     // the popup list.  Used in renderTemplate edit
     static secureList() {
-        def grailsApplication = new Account().domainClass.grailsApplication
+        def grailsApplication = new Catalog ().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
         def catalogService = ctx.catalogService
