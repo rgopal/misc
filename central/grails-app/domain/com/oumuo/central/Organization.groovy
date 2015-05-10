@@ -5,7 +5,12 @@ import com.oumuo.lookup.*
 class Organization {
 
     String name     // this is full name
+
     
+    // associations
+    static hasMany = [staffings:Staffing, comments: Comment, programs:Program, 
+        courses:Course, rankings:Ranking]
+
     String addressLine1
     String addressLine2
     String city = 'Germantown'
@@ -27,9 +32,6 @@ class Organization {
     String workPhone
     String mobilePhone
 
-    // associations
-    static hasMany = [staffings:Staffing, comments: Comment, programs:Program, courses:Course]
-
     String toString(){
 
          "$name"
@@ -38,12 +40,17 @@ class Organization {
   
         name (blank:false, size:2..64)
     
+        staffings()
+        comments()
+        programs()
+        courses()
+        rankings()
+        
         status ()
         preferredLanguage(nullable:false)
         academicStratum()
         organizationType()
-        staffings()
-        comments()
+
         workEmail(nullable:true, email:true)
         workPhone(nullable:true, matches: '\\d{3}\\-\\d{7}')
         mobilePhone(nullable:true, matches: '\\d{3}\\-\\d{7}')

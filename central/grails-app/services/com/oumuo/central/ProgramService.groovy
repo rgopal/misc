@@ -77,7 +77,7 @@ class ProgramService {
         program
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Program', read) or hasPermission(#id, 'com.oumuo.central.Program', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Program', read) or hasPermission(#id, 'com.oumuo.central.Program', admin) or hasRole('ROLE_USER')")
     Program get(long id) {
         Program.get id
     }

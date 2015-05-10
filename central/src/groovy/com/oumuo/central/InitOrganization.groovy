@@ -45,6 +45,7 @@ class InitOrganization {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
+        def admin = Person.findByUserName('admin')
 
         def organizations = [ 
             new Organization(name: 'Montgomery County Community College',
@@ -52,6 +53,11 @@ class InitOrganization {
                 academicStratum:AcademicStratum.ASSOCIATE,
                 workEmail:'admin@mccc.edu'
                 
+            ).addToRankings (
+                new Ranking (
+                    sequence: 1,
+                    person:admin
+                )
             ),
           
             new Organization(name: 'Quince Orchard High School', 
@@ -116,9 +122,13 @@ class InitOrganization {
                     for (staffing in org.staffings) {
                         InitSpringSecurity.grantACL (staffing, user)
                     }
+                    
+                    for (ranking in org.rankings) {
+                        InitSpringSecurity.grantACL (ranking, user)
+                    }
                 }
                 log.info "  loaded ${Organization.findById(org.id).staffings?.size()} staffing"
-
+                log.info "  loaded ${Organization.findById(org.id).rankings?.size()} ranking"     
                 log.debug "created Organization ${org}"
             }
         }

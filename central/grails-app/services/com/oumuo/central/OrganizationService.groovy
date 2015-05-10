@@ -63,7 +63,7 @@ class OrganizationService {
         organization
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Organization', read) or hasPermission(#id, 'com.oumuo.central.Organization', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Organization', read) or hasPermission(#id, 'com.oumuo.central.Organization', admin) or hasRole('ROLE_USER')")
     Organization get(long id) {
         Organization.get id
     }

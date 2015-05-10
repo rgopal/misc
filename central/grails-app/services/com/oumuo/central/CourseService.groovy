@@ -77,7 +77,7 @@ class CourseService {
         course
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Course', read) or hasPermission(#id, 'com.oumuo.central.Course', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Course', read) or hasPermission(#id, 'com.oumuo.central.Course', admin) or hasRole('ROLE_USER')")
     Course get(long id) {
         Course.get id
     }

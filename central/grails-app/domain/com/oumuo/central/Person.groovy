@@ -52,7 +52,8 @@ class Person {
    
     // associations
     static hasMany = [accounts:Account, personRoles: PersonRole, 
-        staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog]
+        staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
+        rankings:Ranking]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -74,16 +75,20 @@ class Person {
         // userLogin(nullable:true)
         name (blank:false, size:2..64)
         // already their belongsTo userName(blank:false, editable:false)
+         personRoles()
+        staffings()
+        accounts ()
+        comments ()
+        programs()
+        catalogs()
+        rankings()
+        
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
         race (nullable:true)
         status ()
         preferredLanguage(nullable:false)
-     
-        personRoles()
-        staffings()
-        accounts ()
-        comments ()
+        
         userLogin(editable:false)
         homeEmail(nullable:true, email:true)
         workEmail(nullable:true, email:true)

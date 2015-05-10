@@ -102,7 +102,7 @@ class CatalogService {
         catalog
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Catalog', read) or hasPermission(#id, 'com.oumuo.central.Catalog', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Catalog', read) or hasPermission(#id, 'com.oumuo.central.Catalog', admin) or hasRole('ROLE_USER')")
     Catalog get(long id) {
         Catalog.get id
     }
