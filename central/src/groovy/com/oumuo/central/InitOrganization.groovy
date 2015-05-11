@@ -13,8 +13,7 @@ import org.springframework.security.core.authority.AuthorityUtils
 
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
-import com.oumuo.central.Organization
-import com.oumuo.central.Staffing
+
 import com.oumuo.lookup.*
 import com.oumuo.lookup.UserRole as ROLE
 import org.apache.commons.logging.LogFactory
@@ -26,13 +25,7 @@ import groovy.util.logging.Log4j
  */
 @Log4j
 class InitOrganization {
-    
-    // def sessionFactory
-    // def springSecurityService
-    def aclService  
-    def aclUtilService
-    def objectIdentityRetrievalStrategy
-    
+  
    
     void load () {
      

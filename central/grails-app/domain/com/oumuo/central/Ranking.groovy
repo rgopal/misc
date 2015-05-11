@@ -49,10 +49,10 @@ class Ranking {
         name()
         current()
         person(editable:false)
-        organization(editable:false)
-        program(editable:false)
+        organization(editable:false, nullable:true)
+        program(editable:false, nullable:true)
         organizationRankingItems()
-         programRankingItems()
+        programRankingItems()
         
         overall(range:0..1000, editable:false)
         prestige(range:0..1000, editable:false) 

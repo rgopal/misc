@@ -47,13 +47,13 @@ class RankingItemService {
         } else
             log.trace "getNew: creating new rankingItem for person $rankingItem.person"
         
-        rankingItem.organization = Organization.findById(params.organization?.id)
+        rankingItem.organizationRanking = OrganizationRanking.findById(params.organizationRanking?.id)
  
-        if (rankingItem.organization) {
+        if (rankingItem.organizationRanking) {
             // use sequence number for organization
-            rankingItem.sequence = rankingItem.organization.rankingItems ?
-                        rankingItem.organization.rankingItems.size() + 1 : 1
-            log.trace "getNew:  rankingItem $rankingItem is created for organization $rankingItem.organization "
+            rankingItem.sequence = rankingItem.organizationRanking.rankingItems ?
+                        rankingItem.organizationRanking.rankingItems.size() + 1 : 1
+            log.trace "getNew:  rankingItem $rankingItem is created for organizationR $rankingItem.organizationRanking "
             
         }
   
