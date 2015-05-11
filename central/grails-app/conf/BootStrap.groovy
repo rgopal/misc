@@ -15,26 +15,25 @@ class BootStrap {
     def objectIdentityRetrievalStrategy
     
     def init = { servletContext ->
-println "aclService - ${aclService}"
+        println "aclService - ${aclService}"
         // keep all database table load code in src/groovy
-        InitCountryLookup.load()
-       
-        
-        // person associated as part of Userlogin
-        // InitPerson.load()
-        InitCountryStateCity.load()
-        InitWebSite.load()
-        def iss = new InitSpringSecurity()
-        
+           
         // need to pass these to plain groovy classes which don't get auto service inject
-        iss.load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
-        
-        def iorg = new InitOrganization()
+        // they get stored as static so that other Inits can use them
+       
+        new InitSpringSecurity()
+        .load(aclUtilService, aclService, objectIdentityRetrievalStrategy)
+        new InitPerson().load()
+        InitCountryLookup.load()
+
+        InitCountryStateCity.load()
+       
+        InitWebSite.load()
+
+        new InitOrganization().load()
         // Acl services are reused from InitSpringSecurity (static fields)
-        iorg.load()
-        
-        def ii = new InitProgram()
-        ii.load()
+          
+        new InitProgram().load()
         new InitCourse().load()
         new InitCatalog().load()
     }

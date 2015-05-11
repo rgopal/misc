@@ -14,9 +14,9 @@ package com.oumuo.lookup
       
     // these names have to have ROLE_ because the plugin expects it (not spring security)
  
-        ROLE_ADMIN, ROLE_USER, ROLE_POWER_USER, ROLE_GUEST, ROLE_STUDENT, 
-        ROLE_TEACHER, ROLE_WRITER, ROLE_MANAGER, ROLE_CONTENT_CREATOR,
-        ROLE_EVALUATOR, ROLE_APPRENTICE, ROLE_COUNSELOR,
+        ROLE_GUEST, ROLE_STUDENT, ROLE_TEACHER, ROLE_WRITER,
+        ROLE_CONTENT_CREATOR, ROLE_EVALUATOR, ROLE_APPRENTICE, ROLE_COUNSELOR,
+        ROLE_ADMIN, ROLE_USER, ROLE_POWER_USER, ROLE_READ_ALL,  ROLE_MANAGER, 
         ROLE_ANONYMOUS
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
