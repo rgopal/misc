@@ -156,6 +156,11 @@ class InitPerson {
                 password: 'admin2'
                 // this tests UserLogin pre-insert to copy username into Person
                 // , person: new Person (name: 'Administrator')
+            ),
+            new UserLogin(username: 'cronRanking', enabled: false, 
+                password: 'cronRanking'
+                // This cron job processes individual user rankings to create aggregate
+                // ranking items for Organization, Course, etc.  
             )
         ]
                
@@ -231,7 +236,7 @@ class InitPerson {
             
         }
         
-        for (name in ['jfields']) {
+        for (name in ['jfields', 'cronRanking']) {
             if (!(new UserLoginSecurityGroup(userLogin:
                         UserLogin.findByUsername(name),securityGroup:
                         SecurityGroup.findByName('all_read_all')).save(flush:true))) {
