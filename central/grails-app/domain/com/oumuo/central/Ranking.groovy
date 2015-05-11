@@ -8,8 +8,11 @@ import groovy.util.logging.Log4j
 class Ranking {
    
     Long sequence
+    String name             // updated by cron job, e.g May 2015 Ranking
     Boolean current = false
     Organization organization
+    Program program
+    static hasMany =[organizationRankingItems: RankingItem, programRankingItems:RankingItem]
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)
@@ -35,23 +38,27 @@ class Ranking {
         if (current == true) {
             tag = " *"
         }
-    "${sequence} $lastUpdated.toString() ${tag}"
+    "${sequence} $lastUpdated ${tag}"
     }
 
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
+        name()
         current()
         person(editable:false)
         organization(editable:false)
+        program(editable:false)
+        organizationRankingItems()
+         programRankingItems()
         
-        overall()
-        prestige() 
-        learning() 
-        affordability() 
-        recommendation() 
-        improvement() 
-        jobPlacement()
+        overall(range:0..1000, editable:false)
+        prestige(range:0..1000, editable:false) 
+        learning(range:0..1000, editable:false) 
+        affordability(range:0..1000, editable:false) 
+        recommendation(range:0..1000, editable:false) 
+        improvement(range:0..1000, editable:false) 
+        jobPlacement(range:0..1000, editable:false)
 
 
         expiryDate(nullable:true)

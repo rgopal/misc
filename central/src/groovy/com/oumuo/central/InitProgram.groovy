@@ -7,16 +7,6 @@
 package com.oumuo.central
 
 
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.DELETE
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
-
-import org.springframework.security.access.prepost.PostFilter
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.Permission
-
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 
@@ -55,7 +45,8 @@ class InitProgram {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
-
+ def cronRanking = Person.findByUserName('cronRanking')
+ 
         def programs = [ 
             new Program(name: 'Computer Science Diploma',
                 person:Person.findByUserName('jfields'),
@@ -67,7 +58,13 @@ class InitProgram {
                 credential:Credential.CERTIFICATE,
                 sessionFee: 2000.0,
                 organization: Organization.
-                    findByName('Montgomery County Community College')   
+                    findByName('Montgomery County Community College').addToRankings (
+                    new Ranking (
+                        sequence: 1,
+                        name:'June 2015 Ranking',
+                        person:cronRanking
+                    )  
+                )
             ),
           
             new Program(name: 'High School Physics Help',

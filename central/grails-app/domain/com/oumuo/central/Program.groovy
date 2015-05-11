@@ -7,7 +7,9 @@ import groovy.util.logging.Log4j
 class Program {
 
     String name
-
+  SortedSet catalogs
+    static hasMany = [catalogs: Catalog, rankings: Ranking] 
+    
     Person person
     Organization organization
     Integer ranking = 500           // automatically derived from multiple items
@@ -19,8 +21,7 @@ class Program {
     AcademicSession academicSession = AcademicSession.FREE_FORM
     Float sessionFee = 0.0f
 
-    SortedSet catalogs
-    static hasMany = [catalogs: Catalog]     
+      
     // spent a lot of time when it was pure Catalog catalog -- this transient problem Catalog 5/10
 
     Date startDate = new Date()
@@ -41,9 +42,11 @@ class Program {
         name (nullable:false)
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
+    
  
         // still not happy TODO this was supposed to be a singleton
         catalogs()
+        rankings()
         
         credential()
         academicStratum()

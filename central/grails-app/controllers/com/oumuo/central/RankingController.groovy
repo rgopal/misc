@@ -7,7 +7,7 @@ import grails.plugin.springsecurity.annotation.Secured
 
 @Log4j
 // performed by system programs and not users
-@Secured(['ROLE_ADMIN'])
+@Secured(['ROLE_READ_ALL'])
 class RankingController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]

@@ -17,8 +17,6 @@ import com.oumuo.central.Organization
 import com.oumuo.central.Staffing
 import com.oumuo.lookup.*
 import com.oumuo.lookup.UserRole as ROLE
-
-
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
@@ -45,18 +43,18 @@ class InitOrganization {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
-        def admin = Person.findByUserName('admin')
+        def cronRanking = Person.findByUserName('cronRanking')
 
         def organizations = [ 
             new Organization(name: 'Montgomery County Community College',
                 preferredLanguage:Language.ENGLISH,
                 academicStratum:AcademicStratum.ASSOCIATE,
-                workEmail:'admin@mccc.edu'
-                
+                workEmail:'admin@mccc.edu'  
             ).addToRankings (
                 new Ranking (
                     sequence: 1,
-                    person:admin
+                    name:'May 2015 Ranking',
+                    person:cronRanking
                 )
             ),
           

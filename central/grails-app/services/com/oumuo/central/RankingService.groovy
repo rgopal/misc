@@ -27,7 +27,7 @@ class RankingService {
         aclUtilService.addPermission ranking, username, permission
     }
     
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_READ_ALL')")
     Ranking getNew(Map params) {
      
         // this serves the purpose to drive a form but save again gets a new
@@ -64,7 +64,7 @@ class RankingService {
     }
     // called from save of controller (with params returned from form)
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_READ_ALL')")
     Ranking create(Map params) {
         Ranking ranking = new Ranking(params)
         if (!ranking.save(flush:true)) {

@@ -53,7 +53,7 @@ class Person {
     // associations
     static hasMany = [accounts:Account, personRoles: PersonRole, 
         staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
-        rankings:Ranking]
+        rankings:Ranking, rankingItems:RankingItem]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -82,6 +82,7 @@ class Person {
         programs()
         catalogs()
         rankings()
+        rankingItems()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)
