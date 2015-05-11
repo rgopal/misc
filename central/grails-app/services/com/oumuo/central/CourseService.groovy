@@ -83,7 +83,7 @@ class CourseService {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_USER')")
     List<Course> list(Map params) {
         Course.list()
     }

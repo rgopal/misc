@@ -63,13 +63,13 @@ class AccountService {
         account
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Account', read) or hasPermission(#id, 'com.oumuo.central.Account', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Account', read) or hasPermission(#id, 'com.oumuo.central.Account', admin) or hasRole('ROLE_READ_ALL')")
     Account get(long id) {
         Account.get id
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_READ_ALL')")
     List<Account> list(Map params) {
         Account.list()
     }

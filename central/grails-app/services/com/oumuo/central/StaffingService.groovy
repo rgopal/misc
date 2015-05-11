@@ -72,13 +72,13 @@ class StaffingService {
         staffing
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Staffing', read) or hasPermission(#id, 'com.oumuo.central.Staffing', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Staffing', read) or hasPermission(#id, 'com.oumuo.central.Staffing', admin) or hasRole('ROLE_READ_ALL')")
     Staffing get(long id) {
         Staffing.get id
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_READ_ALL')")
     List<Staffing> list(Map params) {
         Staffing.list()
     }

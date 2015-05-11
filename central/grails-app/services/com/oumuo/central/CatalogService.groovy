@@ -108,7 +108,7 @@ class CatalogService {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_USER')")
     List<Catalog> list(Map params) {
         Catalog.list()
     }

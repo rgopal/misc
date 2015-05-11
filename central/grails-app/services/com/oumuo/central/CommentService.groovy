@@ -92,13 +92,13 @@ class CommentService {
         comment
     }
 
-    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Comment', read) or hasPermission(#id, 'com.oumuo.central.Comment', admin)")
+    @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Comment', read) or hasPermission(#id, 'com.oumuo.central.Comment', admin) or hasRole('ROLE_READ_ALL')")
     Comment get(long id) {
         Comment.get id
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin)")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_READ_ALL')")
     List<Comment> list(Map params) {
         Comment.list()
     }
