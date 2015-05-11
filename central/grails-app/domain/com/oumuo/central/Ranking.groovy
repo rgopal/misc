@@ -13,6 +13,8 @@ class Ranking {
     Organization organization
     Program program
     static hasMany =[organizationRankingItems: RankingItem, programRankingItems:RankingItem]
+    static mappedBy = [organizationRankingItems:'organizationRanking',
+        programRankingItems:'programRanking'] 
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)

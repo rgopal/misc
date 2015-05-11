@@ -11,6 +11,9 @@ class RankingItem {
     Ranking organizationRanking     // future would have more rankings
     Ranking programRanking          //
     
+   // static mappedBy = [organizationRankingItems:'organizationRanking',
+     //               programRankingItems:'programRanking'] 
+    
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)
