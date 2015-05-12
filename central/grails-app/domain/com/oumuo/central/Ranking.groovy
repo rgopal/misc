@@ -109,10 +109,10 @@ class Ranking {
     }
     def setCurrent(String instance, String claz)
     {
-        if (ranking.$instance) {
+        if (${instance}) {
             log.trace "setCurrent: rankings ${Claz} ${instance} "
             def other = $claz.findById(
-                ranking.${instance}.id).rankings.findAll {it.current == true}
+                ${instance}.id).rankings.findAll {it.current == true}
   
             // beforeInsert will not select the current record, but beforeUpdate will
        
