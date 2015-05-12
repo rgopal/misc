@@ -45,7 +45,7 @@ class InitProgram {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
- def cronRanking = Person.findByUserName('cronRanking')
+        def cronRanking = Person.findByUserName('cronRanking')
  
         def programs = [ 
             new Program(name: 'Computer Science Diploma',
@@ -58,14 +58,15 @@ class InitProgram {
                 credential:Credential.CERTIFICATE,
                 sessionFee: 2000.0,
                 organization: Organization.
-                    findByName('Montgomery County Community College').addToRankings (
-                    new Ranking (
-                        sequence: 1,
-                        name:'June 2015 Ranking',
-                        person:cronRanking
-                    )  
-                )
+                    findByName('Montgomery County Community College')
+            ).addToRankings (
+                new Ranking (
+                    sequence: 1,
+                    name:'June 2015 Ranking',
+                    person:cronRanking
+                )  
             ),
+       
           
             new Program(name: 'High School Physics Help',
                 person:Person.findByUserName('jfields'),
@@ -120,11 +121,17 @@ class InitProgram {
                 for (user in ['jfields', 'mjohns']) {
                     log.trace "   starting ACL creations for $user}"
                     InitSpringSecurity.grantACL(program, user)
+            
+            
+                    for (ranking in program.rankings) {
+                        InitSpringSecurity.grantACL (ranking, user)
+                    }
+                    log.info "  loaded ${Program.findById(program.id).rankings?.size()} rankings" 
                 }
-             
-                log.debug "created Program ${program}"
             }
+            log.debug "created Program ${program}"
         }
+    
     
         log.info ("load: loaded ${Program.count()} out of ${programs.size()} programs")
        

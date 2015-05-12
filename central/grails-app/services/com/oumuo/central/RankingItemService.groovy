@@ -45,20 +45,20 @@ class RankingItemService {
                 log.warning ("create: error while getting new rankingItem ${rankingItem}: ${error}")
             }
         } else
-            log.trace "getNew: creating new rankingItem for person $rankingItem.person"
+        log.trace "getNew: creating new rankingItem for person $rankingItem.person"
         
-        rankingItem.organizationRanking = OrganizationRanking.findById(params.organizationRanking?.id)
- 
-        if (rankingItem.organizationRanking) {
-            // use sequence number for organization
-            rankingItem.sequence = rankingItem.organizationRanking.rankingItems ?
-                        rankingItem.organizationRanking.rankingItems.size() + 1 : 1
-            log.trace "getNew:  rankingItem $rankingItem is created for organizationR $rankingItem.organizationRanking "
-            
-        }
-  
-        // check for other domains which would have rankingItem (only one would be
-        // with non null value in params
+        // do with Organization, Program, etc.
+        
+        rankingItem.organizationRanking = params.organization ? 
+            Ranking.findById(params.ranking.id):null
+        if (rankingItem.organizationRanking)
+        log.trace ("getNew: found organizatoin $rankingItem.organization")
+        
+        rankingItem.programRanking = params.program ? 
+            Ranking.findById(params.ranking.id):null
+        if (rankingItem.programRanking)
+        log.trace ("getNew: found program $rankingItem.program")
+        
         rankingItem
       
     }

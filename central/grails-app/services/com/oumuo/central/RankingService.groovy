@@ -48,14 +48,8 @@ class RankingService {
             log.trace "getNew: creating new ranking for person $ranking.person"
         
         ranking.organization = Organization.findById(params.organization?.id)
+        ranking.program = Program.findById(params.program?.id)
  
-        if (ranking.organization) {
-            // use sequence number for organization
-            ranking.sequence = ranking.organization.rankings ?
-                        ranking.organization.rankings.size() + 1 : 1
-            log.trace "getNew:  ranking $ranking is created for organization $ranking.organization "
-            
-        }
   
         // check for other domains which would have ranking (only one would be
         // with non null value in params
