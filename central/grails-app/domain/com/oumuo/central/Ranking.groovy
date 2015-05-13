@@ -83,16 +83,16 @@ class Ranking {
     
     def beforeInsert() {
         if (organization) {
-            // use sequence number for organization
+            // use sequence number for organization (this is already counted)
             sequence = organization.rankings ?
-                organization.rankings.size() + 1 : 1
+                organization.rankings.size() : 1
             log.trace "beforeInsert:  seqeuence is $sequence with organization "
             
         }
         if (program) {
             // use sequence number for organization
             sequence = program.rankings ?
-            program.rankings.size() + 1 : 1
+            program.rankings.size() : 1
             log.trace "beforeInsert: seqeunce is $sequence with program "
             
         }

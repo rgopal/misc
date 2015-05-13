@@ -42,7 +42,7 @@ class RankingService {
         // this has to be non null (not using belongsTo for flexibility)
         if (!ranking.person) {
             ranking.errors.allErrors.each {
-                log.warning ("create: error while getting new ranking ${ranking}: ${error}")
+                log.warning ("getNew: error while getting new ranking ${ranking}: ${error}")
             }
         } else
             log.trace "getNew: creating new ranking for person $ranking.person"

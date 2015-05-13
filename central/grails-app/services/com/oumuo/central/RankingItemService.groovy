@@ -27,7 +27,7 @@ class RankingItemService {
         aclUtilService.addPermission rankingItem, username, permission
     }
     
-    @PreAuthorize("hasRole('ROLE_READ_ALL')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     RankingItem getNew(Map params) {
      
         // this serves the purpose to drive a form but save again gets a new
@@ -39,32 +39,41 @@ class RankingItemService {
             springSecurityService.authentication.name
         )
         
-        // this has to be non null (not using belongsTo for flexibility)
+        // this has to be non null (using belongsTo for flexibility)
         if (!rankingItem.person) {
             rankingItem.errors.allErrors.each {
                 log.warning ("create: error while getting new rankingItem ${rankingItem}: ${error}")
             }
         } else
         log.trace "getNew: creating new rankingItem for person $rankingItem.person"
+        println params.collect{it}.join('\n')
         
-        // do with Organization, Program, etc.
+        // find the parent Ranking object for this item
+        def ranking = Ranking.findById(params.ranking.id)
+        println ranking.properties.collect{it}
+          
+        // ALl PROPS println r.domainClass.persistentProperties.collect{it}.join('\n')
         
-        rankingItem.organizationRanking = params.organization ? 
-            Ranking.findById(params.ranking.id):null
-        if (rankingItem.organizationRanking)
-        log.trace ("getNew: found organizatoin $rankingItem.organization")
-        
-        rankingItem.programRanking = params.program ? 
-            Ranking.findById(params.ranking.id):null
-        if (rankingItem.programRanking)
-        log.trace ("getNew: found program $rankingItem.program")
-        
+        // find the parent for this item
+        if (ranking.program) {
+            // check if this is for a program
+            log.trace ("getNew: found organizatoin $ranking.program")
+            rankingItem.programRanking = ranking
+            
+        } else if (ranking.organization) {
+            // or for the parent Ranking has an organization (can't be both
+            log.trace ("getNew: found program $ranking.organization")
+            rankingItem.organizationRanking = ranking   
+        }
+        else
+            log.warn "getNew: did not find either prgoram or organization in Ranking"
+            
         rankingItem
       
     }
     // called from save of controller (with params returned from form)
     @Transactional
-    @PreAuthorize("hasRole('ROLE_READ_ALL')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     RankingItem create(Map params) {
         RankingItem rankingItem = new RankingItem(params)
         if (!rankingItem.save(flush:true)) {
