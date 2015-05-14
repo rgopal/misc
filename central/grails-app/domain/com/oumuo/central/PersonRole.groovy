@@ -53,7 +53,8 @@ class PersonRole {
     }
     def beforeInsert() {
         if (!sequence) {
-                        
+
+            // InitPerson uses explict 1 for sequence
             sequence = Person.findById(person.id).personRoles.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             

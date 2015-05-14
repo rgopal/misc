@@ -45,7 +45,7 @@ class InitOrganization {
                 workEmail:'admin@mccc.edu'  
             ).addToRankings (
                 new Ranking (
-                    sequence: 1,
+                    sequence: 1,            // Has to be here, beforeInsert can't deal automated
                     name:'May 2015 Ranking',
                     person:cronRanking
                 )

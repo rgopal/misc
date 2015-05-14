@@ -82,19 +82,22 @@ class Ranking {
     // should be here and not in Service
     
     def beforeInsert() {
+        if (!sequence) {
+            // Init* even when does not provide seqeuence, it gets initialzied
+            // to 2, so better to check for all prepopuldated records.
         if (organization) {
-            // use sequence number for organization (this is already counted)
-            sequence = organization.rankings ?
-                organization.rankings.size() : 1
+            // go the persistence to get existing rankings
+   
+            sequence = Organization.findById(organization.id).rankings.size()  + 1
             log.trace "beforeInsert:  seqeuence is $sequence with organization "
             
         }
         if (program) {
             // use sequence number for organization
-            sequence = program.rankings ?
-            program.rankings.size() : 1
+            sequence = Program.findById(program.id).rankings.size()  + 1
             log.trace "beforeInsert: seqeunce is $sequence with program "
             
+        }
         }
     }
     def beforeUpdate () {
