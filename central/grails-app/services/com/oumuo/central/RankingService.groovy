@@ -42,7 +42,7 @@ class RankingService {
         // this has to be non null (not using belongsTo for flexibility)
         if (!ranking.person) {
             ranking.errors.allErrors.each {
-                log.warning ("getNew: error while getting new ranking ${ranking}: ${error}")
+                log.warning ("getNew: error while getting new ranking ${ranking}: ${it}")
             }
         } else
             log.trace "getNew: creating new ranking for person $ranking.person"
@@ -63,7 +63,7 @@ class RankingService {
         Ranking ranking = new Ranking(params)
         if (!ranking.save(flush:true)) {
             ranking.errors.allErrors.each {
-                log.warning ("create: error while saving ranking ${ranking}: ${error}")
+                log.warning ("create: error while saving ranking ${ranking}: ${it}")
             }
         }
       
@@ -102,7 +102,7 @@ class RankingService {
         ranking.properties = params
         if (!ranking.save(flush:true)) {         
             ranking.errors.allErrors.each {
-                log.warning ("create: error while saving ranking ${ranking}: ${error}")
+                log.warning ("create: error while saving ranking ${ranking}: ${it}")
             }
         }
             

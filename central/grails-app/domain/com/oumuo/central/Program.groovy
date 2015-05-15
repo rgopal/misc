@@ -70,9 +70,9 @@ class Program {
         def grailsApplication = new Program().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def programService = ctx.programService
+        def programInstanceService = ctx.programInstanceService
      
-        return programService.list()
+        return programInstanceService.list()
     }
 
 }

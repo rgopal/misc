@@ -36,7 +36,7 @@ class AccountService {
         account.person = Person.findById(params.person.id)
         if (!account.person) {
             account.errors.allErrors.each {
-                log.warning ("create: error while getting new account ${account}: ${error}")
+                log.warning ("create: error while getting new account ${account}: ${it}")
             }
         }
         account
@@ -48,7 +48,7 @@ class AccountService {
         Account account = new Account(params)
         if (!account.save(flush:true)) {
             account.errors.allErrors.each {
-                log.warning ("create: error while saving account ${account}: ${error}")
+                log.warning ("create: error while saving account ${account}: ${it}")
             }
         }
       
@@ -86,7 +86,7 @@ class AccountService {
         account.properties = params
         if (!account.save(flush:true)) {         
             account.errors.allErrors.each {
-                log.warning ("create: error while saving account ${account}: ${error}")
+                log.warning ("create: error while saving account ${account}: ${it}")
             }
         }
        

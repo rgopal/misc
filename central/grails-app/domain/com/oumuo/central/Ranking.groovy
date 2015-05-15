@@ -6,6 +6,8 @@ import groovy.util.logging.Log4j
 
 @Log4j
 class Ranking {
+    
+    def grailsApplication
    
     Long sequence
     
@@ -85,20 +87,22 @@ class Ranking {
         if (!sequence) {
             // Init* even when does not provide seqeuence, it gets initialzied
             // to 2, so better to check for all prepopuldated records.
-        if (organization) {
-            // go the persistence to get existing rankings
+            if (organization) {
+                // go the persistence to get existing rankings
    
-            sequence = Organization.findById(organization.id).rankings.size()  + 1
-            log.trace "beforeInsert:  seqeuence is $sequence with organization "
+                sequence = Organization.findById(organization.id).rankings.size()  + 1
+                log.trace "beforeInsert:  seqeuence is $sequence with organization "
             
-        }
-        if (program) {
-            // use sequence number for organization
-            sequence = Program.findById(program.id).rankings.size()  + 1
-            log.trace "beforeInsert: seqeunce is $sequence with program "
+            }
+            if (program) {
+                // use sequence number for organization
+                sequence = Program.findById(program.id).rankings.size()  + 1
+                log.trace "beforeInsert: seqeunce is $sequence with program "
             
+            }
         }
-        }
+        // don't forget to check for new records also
+        checkMain()
     }
     def beforeUpdate () {
         if (this.current == true) {
@@ -107,24 +111,36 @@ class Ranking {
        
     }
     def checkMain() {
+        
         // Ranking is for Organization, Course, etc. so find for each type
-        setCurrent('organization', 'Organization')
+          
+        log.trace "checkMain: $program and $organization will both be checked"
+        if (organization)
+        updateCurrent(organization, 'com.oumuo.central.Organization')
+        else if (program)
+        updateCurrent(program, 'com.oumuo.central.Program')
+        
     }
-    def setCurrent(String instance, String claz)
+    def updateCurrent(Object instance, String owner)
     {
-        if (${instance}) {
-            log.trace "setCurrent: rankings ${Claz} ${instance} "
-            def other = $claz.findById(
-                ${instance}.id).rankings.findAll {it.current == true}
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def claz = grailsApplication.getClassForName(owner)
+        
+      
+        if (instance) {
+            log.trace "updateCurrent: rankings ${claz} ${instance} for $instance.id "
+            def other = claz.findById(
+                instance.id).rankings.findAll {it.current == true}
   
+            log.trace "updateCurrent: other before subtraction $other"
             // beforeInsert will not select the current record, but beforeUpdate will
        
             other = other - this
       
-            log.trace "checkMain: other $claz after removing this - $other"
+            log.trace "updateCurrent: other $claz after removing this - $other"
             if (other.size() > 1) {
                 // should be 1 or zero
-                log.warn "checkMain: ${other.size()} rankings found"
+                log.warn "updateCurrent: ${other.size()} rankings found"
             } else if (other.size() == 1) {
       
                 other[0].current = false;
