@@ -95,9 +95,9 @@ class Course {
         def grailsApplication = new Course().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def courseService = ctx.courseService
+        def courseInstanceService = ctx.courseInstanceService
      
-        return courseService.list()
+        return courseInstanceService.list()
     }
 
 }

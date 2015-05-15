@@ -53,7 +53,7 @@ class InitCourse {
                 academicStratum:AcademicStratum.ASSOCIATE,
                 academicMajor:AcademicMajor.CS,
                 ranking: 600,
-                passingGPA: GPA.C,
+                passingGrade: Grade.C,
                 credential:Credential.CERTIFICATE,
                 fee: 2000.0,
                 organization: Organization.
@@ -66,7 +66,7 @@ class InitCourse {
                 academicStratum:AcademicStratum.HIGH,
                 academicMajor:AcademicMajor.SCIENCES,
                 ranking: 400,
-                passingGPA : GPA.D,
+                passingGrade : Grade.D,
                 credential:Credential.NONE,
                 fee : 0.0,
                 organization: Organization.
@@ -78,7 +78,7 @@ class InitCourse {
                 academicStratum:AcademicStratum.MIDDLE,
                 academicMajor:AcademicMajor.GENERAL,
                 ranking : 800,
-                passingGPA : GPA.F,
+                passingGrade : Grade.F,
                 credential:Credential.NONE,
                 fee : 0.0,
                 organization: Organization.
@@ -90,7 +90,7 @@ class InitCourse {
                 academicStratum:AcademicStratum.UNIVERSITY,
                 academicMajor:AcademicMajor.ARTS,
                 ranking : 950,
-                passingGPA : GPA.NONE,
+                passingGrade : Grade.NONE,
                 passingPercentage : 55.0,
                 credential:Credential.DEGREE,
                 fee : 20.0,

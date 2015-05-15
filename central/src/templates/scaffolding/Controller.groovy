@@ -7,7 +7,6 @@ import grails.plugin.springsecurity.annotation.Secured
 
 
 @Secured(['ROLE_USER'])
-
 class ${className}Controller {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]

@@ -76,8 +76,8 @@ class Catalog implements Comparable {
         def grailsApplication = new Catalog ().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def catalogService = ctx.catalogService
+        def catalogInstanceService = ctx.catalogInstanceService
      
-        return catalogService.list()
+        return catalogInstanceService.list()
     }
 }
