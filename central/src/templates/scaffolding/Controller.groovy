@@ -10,14 +10,20 @@ import grails.plugin.springsecurity.annotation.Secured
 
 class ${className}Controller {
 
+    // remove "Instance" before calling a service
+    // everything between <% %> will get evaluated, otherwise just
+    // substituted for ${} enclosed variables
+    
+    <% def serviceName = propertyName.replaceFirst(/Instance$/, "") %>
+    
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
-    def ${propertyName}Service
+    def ${serviceName}Service
 
     def index () {
     
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        [${propertyName}List: ${propertyName}Service.list(params),
-            ${propertyName}Total: ${propertyName}Service.count()]
+        [${propertyName}List: ${serviceName}Service.list(params),
+            ${propertyName}Total: ${serviceName}Service.count()]
     }
 
     def create() {
@@ -25,13 +31,13 @@ class ${className}Controller {
         // still get a list from base ${className}.   For editable:true logic in
         // renderTemplate, need to provide owner.id (here ${propertyName})
         
-        [${propertyName}: ${propertyName}Service.getNew(params)]
+        [${propertyName}: ${serviceName}Service.getNew(params)]
     }
 
  
 
     def save() {
-        def ${propertyName} = ${propertyName}Service.create(params)
+        def ${propertyName} = ${serviceName}Service.create(params)
         if (!renderWithErrors('create', ${propertyName})) {
             redirectShow "${className} ${propertyName}.id created", ${propertyName}.id
         }
@@ -68,7 +74,7 @@ class ${className}Controller {
             }
         }
         ${propertyName}.properties = params
-        ${propertyName}Service.update ${propertyName}, params
+        ${serviceName}Service.update ${propertyName}, params
         
         if (!renderWithErrors('edit', ${propertyName})) {
             redirectShow "${className} ${propertyName}.id updated", ${propertyName}.id
@@ -79,7 +85,7 @@ class ${className}Controller {
         if (!${propertyName}) return
 
         try {
-            ${propertyName}Service.delete ${propertyName}
+            ${serviceName}Service.delete ${propertyName}
             flash.message = "${className} " + params.id + " deleted"
             redirect action: index
         }
@@ -96,7 +102,7 @@ class ${className}Controller {
             return [${propertyName}: ${propertyName}]
         }
 
-        ${propertyName}Service.addPermission(${propertyName}, params.recipient,
+        ${serviceName}Service.addPermission(${propertyName}, params.recipient,
             params.int('permission'))
 
         redirectShow "Permission " + params.permission + " granted on ${className} " +
@@ -105,7 +111,7 @@ class ${className}Controller {
     }
 
     private ${className} findInstance() {
-        def ${propertyName} = ${propertyName}Service.get(params.long('id'))
+        def ${propertyName} = ${serviceName}Service.get(params.long('id'))
         if (!${propertyName}) {
             flash.message = "${className} not found with id " + params.id
             redirect action: index
