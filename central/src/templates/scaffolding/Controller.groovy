@@ -1,102 +1,131 @@
 <%=packageName ? "package ${packageName}\n\n" : ''%>
 
-import static org.springframework.http.HttpStatus.*
-import grails.transaction.Transactional
 
-@Transactional(readOnly = true)
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.security.acls.model.Permission
+import grails.plugin.springsecurity.annotation.Secured
+
+
+@Secured(['ROLE_USER'])
+
 class ${className}Controller {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    def ${propertyName}Service
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond ${className}.list(params), model:[${propertyName}Count: ${className}.count()]
-    }
-
-    def show(${className} ${propertyName}) {
-        respond ${propertyName}
+    def index () {
+    
+        params.max = Math.min(params.max ? params.int('max') : 10, 100)
+        [${propertyName}List: ${propertyName}Service.list(params),
+            ${propertyName}Total: ${propertyName}Service.count()]
     }
 
     def create() {
-        respond new ${className}(params)
+        // need to handle associations (editable:false on many-to-one can
+        // still get a list from base ${className}.   For editable:true logic in
+        // renderTemplate, need to provide owner.id (here ${propertyName})
+        
+        [${propertyName}: ${propertyName}Service.getNew(params)]
     }
 
-    @Transactional
-    def save(${className} ${propertyName}) {
-        if (${propertyName} == null) {
-            notFound()
-            return
+ 
+
+    def save() {
+        def ${propertyName} = ${propertyName}Service.create(params)
+        if (!renderWithErrors('create', ${propertyName})) {
+            redirectShow "${className} ${propertyName}.id created", ${propertyName}.id
+        }
+    }
+
+    def show() {
+        def ${propertyName} = findInstance()
+        if (!${propertyName})  return
+
+        [${propertyName}: ${propertyName}]
+    }
+
+    def edit() {
+        def ${propertyName} = findInstance()
+        if (!${propertyName}) return
+
+        [${propertyName}: ${propertyName}]
+    }
+
+    
+    def update() {
+        def ${propertyName} = findInstance()
+        if (!${propertyName}) return
+
+        if(params.version) {
+            def version = params.version.toLong()
+            if(${propertyName}.version > version) {
+                ${propertyName}.errors.rejectValue("version" ,
+                    "${propertyName}.optimistic.locking.failure" ,
+                    "Another user has updated this ${propertyName} " +
+                    "while you were editing." )
+                render(view:'edit' ,model:[${propertyName}:${propertyName}])
+                return
+            }
+        }
+        ${propertyName}.properties = params
+        ${propertyName}Service.update ${propertyName}, params
+        
+        if (!renderWithErrors('edit', ${propertyName})) {
+            redirectShow "${className} ${propertyName}.id updated", ${propertyName}.id
+        }
+    }
+    def delete() {
+        def ${propertyName} = findInstance()
+        if (!${propertyName}) return
+
+        try {
+            ${propertyName}Service.delete ${propertyName}
+            flash.message = "${className} " + params.id + " deleted"
+            redirect action: index
+        }
+        catch (DataIntegrityViolationException e) {
+            redirectShow "${className} " + params.id + " could not be deleted", params.id
+        }
+    }
+    def grant() {
+
+        def ${propertyName} = findInstance()
+        if (!${propertyName}) return
+
+        if (!request.post) {
+            return [${propertyName}: ${propertyName}]
         }
 
+        ${propertyName}Service.addPermission(${propertyName}, params.recipient,
+            params.int('permission'))
+
+        redirectShow "Permission " + params.permission + " granted on ${className} " +
+                    ${propertyName}.id  + " to " + params.recipient,  ${propertyName}.id
+        
+    }
+
+    private ${className} findInstance() {
+        def ${propertyName} = ${propertyName}Service.get(params.long('id'))
+        if (!${propertyName}) {
+            flash.message = "${className} not found with id " + params.id
+            redirect action: index
+        }
+        ${propertyName}
+    }
+
+    
+    private boolean renderWithErrors(String view, ${className} ${propertyName}) {
         if (${propertyName}.hasErrors()) {
-            respond ${propertyName}.errors, view:'create'
-            return
+            render view: view, model: [${propertyName}: ${propertyName}]
+            return true
         }
-
-        ${propertyName}.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: '${domainClass.propertyName}.label', default: '${className}'), ${propertyName}.id])
-                redirect ${propertyName}
-            }
-            '*' { respond ${propertyName}, [status: CREATED] }
-        }
+        false
     }
 
-    def edit(${className} ${propertyName}) {
-        respond ${propertyName}
+    private void redirectShow(message, id) {
+        flash.message = message
+        redirect action: show, id: id
     }
 
-    @Transactional
-    def update(${className} ${propertyName}) {
-        if (${propertyName} == null) {
-            notFound()
-            return
-        }
-
-        if (${propertyName}.hasErrors()) {
-            respond ${propertyName}.errors, view:'edit'
-            return
-        }
-
-        ${propertyName}.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: '${className}.label', default: '${className}'), ${propertyName}.id])
-                redirect ${propertyName}
-            }
-            '*'{ respond ${propertyName}, [status: OK] }
-        }
-    }
-
-    @Transactional
-    def delete(${className} ${propertyName}) {
-
-        if (${propertyName} == null) {
-            notFound()
-            return
-        }
-
-        ${propertyName}.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: '${className}.label', default: '${className}'), ${propertyName}.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: '${domainClass.propertyName}.label', default: '${className}'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
+ 
 }
