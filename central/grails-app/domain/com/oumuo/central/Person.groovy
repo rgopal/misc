@@ -127,8 +127,8 @@ class Person {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def personInstanceService = ctx.personInstanceService
-        return personInstanceService.list()
+        def personService = ctx.personService
+        return personService.list()
     }
     /* DID NOT WORK static mapping = { 
     country defaultValue: "'United States'"  

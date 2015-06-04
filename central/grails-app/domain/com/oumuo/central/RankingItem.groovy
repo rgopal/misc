@@ -60,7 +60,7 @@ class RankingItem {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def rankingItemInstanceService = ctx.rankingItemInstanceService
-        return rankingItemInstanceService.list()
+        def rankingItemService = ctx.rankingItemService
+        return rankingItemService.list()
     }
 }

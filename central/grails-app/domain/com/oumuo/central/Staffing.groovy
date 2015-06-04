@@ -71,9 +71,9 @@ class Staffing {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def staffingInstanceService = ctx.staffingInstanceService
+        def staffingService = ctx.staffingService
      
-        return staffingInstanceService.list()
+        return staffingService.list()
     }
 
 }

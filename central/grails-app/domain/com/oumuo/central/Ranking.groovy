@@ -77,8 +77,8 @@ class Ranking {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def rankingInstanceService = ctx.rankingInstanceService
-        return rankingInstanceService.list()
+        def rankingService = ctx.rankingService
+        return rankingService.list()
     }
 
     // should be here and not in Service

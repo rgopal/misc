@@ -77,8 +77,8 @@ class Comment {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def commentInstanceService = ctx.commentInstanceService
+        def commentService = ctx.commentService
      
-        return commentInstanceService.list()
+        return commentService.list()
     }
 }
