@@ -48,8 +48,8 @@ class PersonRole {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def personRoleService = ctx.personRoleService
-        return personRoleService.list()
+        def personRoleInstanceService = ctx.personRoleInstanceService
+        return personRoleInstanceService.list()
     }
     def beforeInsert() {
         if (!sequence) {

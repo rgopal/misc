@@ -1,54 +1,58 @@
 package com.oumuo.central
 
-import groovy.util.logging.Log4j
+
+
+
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.acls.model.Permission
 import grails.plugin.springsecurity.annotation.Secured
 
-@Log4j
+
 @Secured(['ROLE_USER'])
 class PersonController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
-    def personService
-    
-    // list is not longer the default (index is automatically generated not list)
+    def personInstanceService
+
     def index () {
     
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        [personInstanceList: personService.list(params),
-            personInstanceTotal: personService.count()]
+        [personInstanceList: personInstanceService.list(params),
+            personInstanceTotal: personInstanceService.count()]
     }
 
     def create() {
-          // need to handle associations (editable:false on many-to-one can
+        // need to handle associations (editable:false on many-to-one can
         // still get a list from base Person.   For editable:true logic in
-        // renderTemplate, need to provide owner.id (here person)
+        // renderTemplate, need to provide owner.id (here personInstance)
         
-        [personInstance: personService.getNew(params)]
+        [personInstance: personInstanceService.getNew(params)]
     }
 
+ 
+
     def save() {
-        def person = personService.create(params)
-        if (!renderWithErrors('create', person)) {
-            redirectShow "Person $person.id created", person.id
+        def personInstance = personInstanceService.create(params)
+        if (!renderWithErrors('create', personInstance)) {
+            redirectShow "Person personInstance.id created", personInstance.id
         }
     }
 
     def show() {
-        def person = findInstance()
-        if (!person)  return
+        def personInstance = findInstance()
+        if (!personInstance)  return
 
-        [personInstance: person]
+        [personInstance: personInstance]
     }
 
     def edit() {
-        def person = findInstance()
-        if (!person) return
+        def personInstance = findInstance()
+        if (!personInstance) return
 
-        [personInstance: person]
+        [personInstance: personInstance]
     }
 
+    
     def update() {
         def personInstance = findInstance()
         if (!personInstance) return
@@ -57,58 +61,66 @@ class PersonController {
             def version = params.version.toLong()
             if(personInstance.version > version) {
                 personInstance.errors.rejectValue("version" ,
-                    "person.optimistic.locking.failure" ,
-                    "Another user has updated this person " +
+                    "personInstance.optimistic.locking.failure" ,
+                    "Another user has updated this personInstance " +
                     "while you were editing." )
                 render(view:'edit' ,model:[personInstance:personInstance])
                 return
             }
         }
         personInstance.properties = params
-        personService.update personInstance, params
+        personInstanceService.update personInstance, params
         
         if (!renderWithErrors('edit', personInstance)) {
-            redirectShow "Person $personInstance.id updated", personInstance.id
+            redirectShow "Person personInstance.id updated", personInstance.id
         }
     }
-
     def delete() {
-        def person = findInstance()
-        if (!person) return
+        def personInstance = findInstance()
+        if (!personInstance) return
 
         try {
-            personService.delete person
-            flash.message = "Person $params.id deleted"
+            personInstanceService.delete personInstance
+            flash.message = "Person " + params.id + " deleted"
             redirect action: index
         }
         catch (DataIntegrityViolationException e) {
-            redirectShow "Person $params.id could not be deleted", params.id
+            redirectShow "Person " + params.id + " could not be deleted", params.id
         }
     }
-
     def grant() {
 
-        def person = findInstance()
-        if (!person) return
+        def personInstance = findInstance()
+        if (!personInstance) return
 
         if (!request.post) {
-            return [personInstance: person]
+            return [personInstance: personInstance]
         }
 
-        personService.addPermission(person, params.recipient,
+        personInstanceService.addPermission(personInstance, params.recipient,
             params.int('permission'))
 
-        redirectShow "Permission $params.permission granted on Person $person.id " +
-                   "to $params.recipient", person.id
+        redirectShow "Permission " + params.permission + " granted on Person " +
+                    personInstance.id  + " to " + params.recipient,  personInstance.id
+        
     }
 
     private Person findInstance() {
-        def person = personService.get(params.long('id'))
-        if (!person) {
-            flash.message = "Person not found with id $params.id"
+        def personInstance = personInstanceService.get(params.long('id'))
+        if (!personInstance) {
+            flash.message = "Person not found with id " + params.id
             redirect action: index
         }
-        person
+        personInstance
+    }
+
+    
+    private boolean renderWithErrors(String view, Person personInstance) {
+        if (personInstance.hasErrors()) {
+            render view: view, model: [personInstance: personInstance]
+            return true
+        }
+        false
     }
 
     private void redirectShow(message, id) {
@@ -116,12 +128,5 @@ class PersonController {
         redirect action: show, id: id
     }
 
-    private boolean renderWithErrors(String view, Person person) {
-        if (person.hasErrors()) {
-            render view: view, model: [personInstance: person]
-            return true
-        }
-        false
-    }
-    def scaffold = Person
-} 
+ 
+}

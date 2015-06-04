@@ -60,8 +60,8 @@ class Account {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def accountService = ctx.accountService
-        return accountService.list()
+        def accountInstanceService = ctx.accountInstanceService
+        return accountInstanceService.list()
     }
     
     def beforeInsert() {

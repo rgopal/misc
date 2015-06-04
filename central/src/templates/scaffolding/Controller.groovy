@@ -7,7 +7,6 @@ import grails.plugin.springsecurity.annotation.Secured
 
 
 @Secured(['ROLE_USER'])
-
 class ${className}Controller {
 
     // remove "Instance" before calling a service

@@ -86,8 +86,8 @@ class Organization {
         def grailsApplication = new Organization().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def organizationService = ctx.organizationService
+        def organizationInstanceService = ctx.organizationInstanceService
       
-        return organizationService.list()
+        return organizationInstanceService.list()
     }
 }
