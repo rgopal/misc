@@ -7,7 +7,7 @@ import groovy.util.logging.Log4j
 class Program {
 
     String name
-  SortedSet catalogs
+    SortedSet catalogs
     static hasMany = [catalogs: Catalog, rankings: Ranking] 
     
     Person person
@@ -26,7 +26,7 @@ class Program {
 
     Date startDate = new Date()
     Date endDate
-     // these are common to all; state is managed by system
+    // these are common to all; state is managed by system
     Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated

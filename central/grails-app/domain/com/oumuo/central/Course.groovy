@@ -20,9 +20,12 @@ class Course {
     Integer ranking = 500           // automatically derived from multiple items
     Credential credential = Credential.NONE  
     AcademicStratum academicStratum = AcademicStratum.OTHER
-    AcademicMajor academicMajor = AcademicMajor.GENERAL 
-    Grade passingGrade = Grade.C
+    AcademicMajor academicMajor = AcademicMajor.GENERAL
+     
     Double passingPercentage
+    Grade passingGrade = Grade.C
+    
+    
     AcademicSession academicSession = AcademicSession.FREE_FORM
     Float fee = 0.0f
     Integer duration = 1  

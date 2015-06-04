@@ -54,7 +54,7 @@ class InitProgram {
                 academicStratum:AcademicStratum.ASSOCIATE,
                 academicMajor:AcademicMajor.CS,
                 ranking: 600,
-                minimumGPA: GPA.D,
+                minimumGPA: Grade.D,
                 credential:Credential.CERTIFICATE,
                 sessionFee: 2000.0,
                 organization: Organization.
@@ -74,7 +74,7 @@ class InitProgram {
                 academicStratum:AcademicStratum.HIGH,
                 academicMajor:AcademicMajor.SCIENCES,
                 ranking: 400,
-                minimumGPA : GPA.D,
+                minimumGPA : Grade.D,
                 credential:Credential.NONE,
                 sessionFee : 0.0,
                 organization: Organization.
@@ -86,7 +86,7 @@ class InitProgram {
                 academicStratum:AcademicStratum.MIDDLE,
                 academicMajor:AcademicMajor.GENERAL,
                 ranking : 800,
-                minimumGPA : GPA.F,
+                minimumGPA : Grade.F,
                 credential:Credential.NONE,
                 sessionFee : 0.0,
                 organization: Organization.
@@ -98,7 +98,7 @@ class InitProgram {
                 academicStratum:AcademicStratum.UNIVERSITY,
                 academicMajor:AcademicMajor.ARTS,
                 ranking : 950,
-                minimumGPA : GPA.NONE,
+                minimumGPA : Grade.NONE,
                 minimumPercentage : 55.0,
                 credential:Credential.DEGREE,
                 sessionFee : 20.0,
