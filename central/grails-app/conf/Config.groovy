@@ -223,7 +223,7 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/user/**':                       ['ROLE_ADMIN'],
         '/role/**':                       ['ROLE_ADMIN'],
         // the following stopped ROLE_USER to work if before /person
-        '/**/**':   ['ROLE_ADMIN'],    // CHECK THIS IN FUTURE TODO
+        '/**/**':   ['ROLE_USER'],    // CHECK THIS IN FUTURE TODO
         '/finance/**':        ['ROLE_FINANCE', 'isFullyAuthenticated()']
 ]
 

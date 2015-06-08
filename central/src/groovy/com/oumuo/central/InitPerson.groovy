@@ -196,15 +196,6 @@ class InitPerson {
                 }
                 log.info "  loaded ${UserLogin.findByUsername(user.username).person.comments?.size()} comments" 
                 
-                // put them in all_users
-                
-                if (!(new UserLoginSecurityGroup(userLogin:
-                            user, securityGroup:
-                            SecurityGroup.findByName('all_users')).save(flush:true))) {
-                    log.warn "user $user not saved for all_users"
-                } else
-                log.trace "enrolled $user.username for all_users"
-            
                 log.debug "created user ${user.username}"
             }
         }
