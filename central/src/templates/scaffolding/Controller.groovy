@@ -39,7 +39,7 @@ class ${className}Controller {
     def save() {
         def ${propertyName} = ${serviceName}Service.create(params)
         if (!renderWithErrors('create', ${propertyName})) {
-            redirectShow "${className} ${propertyName}.id created", ${propertyName}.id
+            redirectShow "${className} " + ${propertyName}.id + " created", ${propertyName}.id
         }
     }
 
@@ -77,7 +77,7 @@ class ${className}Controller {
         ${serviceName}Service.update ${propertyName}, params
         
         if (!renderWithErrors('edit', ${propertyName})) {
-            redirectShow "${className} ${propertyName}.id updated", ${propertyName}.id
+            redirectShow "${className} " + ${propertyName}.id + " updated", ${propertyName}.id
         }
     }
     def delete() {

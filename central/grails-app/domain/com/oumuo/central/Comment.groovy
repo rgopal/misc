@@ -13,6 +13,7 @@ class Comment {
     // there will be multiple MtoM associations and Person is not null
 
     Organization organization
+    Course course
   
     // parent could be null
     Comment parentComment
@@ -32,7 +33,7 @@ class Comment {
     
     String toString(){
 
-    sequence + ". " + comment?.substring(0,Math.min(15, comment? comment.length():0))
+    sequence + " " + comment?.substring(0,Math.min(15, comment? comment.length():0))
     }
   
     static constraints = {
@@ -40,8 +41,9 @@ class Comment {
         sequence (nullable:true, display:false)
         
         // this allows the user to make parentComment null (and thus a new root)
-        parentComment (nullable:true, editable:false)
         person(editable:false)
+        parentComment (nullable:true, editable:false)
+        
         // in future make all other editable false as well
         comment (nullable:true)
         detailedComment (nullable:true)
@@ -49,7 +51,8 @@ class Comment {
         subComments()
 
         // this will become editable:false (same for other)
-        organization (editable:true, nullable: true)
+        organization (editable:false, nullable: true)
+        course (editable:false, nullable: true)
  
         status()
         dateCreated()

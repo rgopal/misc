@@ -14,7 +14,7 @@ class Course {
     Person person
     Organization organization
     SortedSet catalogs
-    static hasMany = [catalogs: Catalog] 
+    static hasMany = [catalogs: Catalog, comments: Comment] 
     
     // then proper fileds
     Integer ranking = 500           // automatically derived from multiple items
@@ -63,6 +63,7 @@ class Course {
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
         catalogs()
+        comments()
         
         credential()
         academicStratum()

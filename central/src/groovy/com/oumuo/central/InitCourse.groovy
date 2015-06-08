@@ -15,10 +15,9 @@ import org.springframework.security.core.authority.AuthorityUtils
 
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
+
 import com.oumuo.lookup.*
 import com.oumuo.lookup.UserRole as ROLE
-
-
 import org.apache.commons.logging.LogFactory
 import groovy.util.logging.Log4j
 
@@ -29,13 +28,6 @@ import groovy.util.logging.Log4j
 @Log4j
 class InitCourse {
     
-    // def sessionFactory
-    // def springSecurityService
-    def aclService  
-    def aclUtilService
-    def objectIdentityRetrievalStrategy
-    
-   
     void load () {
      
 
@@ -45,6 +37,7 @@ class InitCourse {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
+        def cronRanking = Person.findByUserName('cronRanking')
 
         def courses = [ 
             new Course(name: 'Computer Science I',
@@ -58,6 +51,13 @@ class InitCourse {
                 fee: 2000.0,
                 organization: Organization.
                     findByName('Montgomery County Community College')   
+            ).addToComments (
+                new Comment (
+                    comment: "course comment",
+                    person:Person.findByUserName('jfields'),
+                    detailedComment: "http://www.edx.com",
+                    commentType: ItemType.URL
+                )
             ),
           
             new Course(name: 'High School Physics',
@@ -111,18 +111,24 @@ class InitCourse {
             } else {     
                 // give permissions to two users
                 for (user in ['jfields', 'mjohns']) {
-                    log.trace "   starting ACL creations for $user}"
+                    log.trace "   starting ACL creations for $user"
                     InitSpringSecurity.grantACL(course, user)
+                    
+               
+                    for (comment in course.comments) {
+                        InitSpringSecurity.grantACL (comment, user)
+                    }
+                    
+                   
                 }
-             
-                log.debug "created Course ${course}"
+                log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
             }
+             
+            log.debug "created Course ${course}"
         }
-    
-        log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
-       
-        
     }
     
-
+   // log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
+              
 }
+    

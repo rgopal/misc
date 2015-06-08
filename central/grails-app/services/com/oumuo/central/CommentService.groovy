@@ -48,7 +48,7 @@ class CommentService {
                 log.warning ("create: error while getting new comment ${comment}: ${it}")
             }
         } else
-         log.trace "getNew: creating new comment for $comment.person"
+        log.trace "getNew: creating new comment for $comment.person"
         
         // check if it was created against an existin comment (becomes parent)  
         comment.parentComment = Comment.findById(params.comment?.id)
@@ -56,14 +56,16 @@ class CommentService {
         if (!comment.parentComment) {
             // this comment is a new root, created for a specific item.  We
             // are not repeating the association with other items for subcomments
-            
-            comment.organization = Organization.findById(params.organization?.id)
-          
-            log.trace "getNew: root comment $comment is created for a org $comment.organization "
+            if (params.organization)
+            comment.organization = Organization.findById(params.organization.id)
+            else if (params.course)
+            comment.course = Course.findById(params.course.id)
+            else
+            log.warn "getNew: root comment $comment cound not find organization, course "
             
             // now keep adding all new "owners" such as Organization, Course, etc.
         } else
-            log.trace "getNew: $comment is a subComment of $comment.parentComment"
+        log.trace "getNew: $comment is a subComment of $comment.parentComment"
         
         comment
       
