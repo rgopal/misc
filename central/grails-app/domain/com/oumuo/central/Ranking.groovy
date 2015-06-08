@@ -15,10 +15,14 @@ class Ranking {
     Boolean current = false
     Organization organization
     Program program
+    Course course
     
-    static hasMany =[organizationRankingItems: RankingItem, programRankingItems:RankingItem]
+    static hasMany =[organizationRankingItems: RankingItem, 
+        programRankingItems:RankingItem,
+        courseRankingItems:RankingItem]
     static mappedBy = [organizationRankingItems:'organizationRanking',
-        programRankingItems:'programRanking'] 
+        programRankingItems:'programRanking',
+        courseRankingItems:'courseRanking'] 
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)
@@ -55,8 +59,11 @@ class Ranking {
         person(editable:false)
         organization(editable:false, nullable:true)
         program(editable:false, nullable:true)
+        course(editable:false, nullable:true)
+        
         organizationRankingItems()
         programRankingItems()
+        courseRankingItems()
         
         overall(range:0..1000, editable:false)
         prestige(range:0..1000, editable:false) 
@@ -100,6 +107,12 @@ class Ranking {
                 log.trace "beforeInsert: seqeunce is $sequence with program "
             
             }
+             if (course) {
+                // use sequence number for organization
+                sequence = Course.findById(course.id).rankings.size()  + 1
+                log.trace "beforeInsert: seqeunce is $sequence with course "
+            
+            }
         }
         // don't forget to check for new records also
         checkMain()
@@ -119,7 +132,8 @@ class Ranking {
         updateCurrent(organization, 'com.oumuo.central.Organization')
         else if (program)
         updateCurrent(program, 'com.oumuo.central.Program')
-        
+          else if (course)
+        updateCurrent(course, 'com.oumuo.central.Course')
     }
     def updateCurrent(Object instance, String owner)
     {

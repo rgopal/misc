@@ -64,6 +64,12 @@ class InitCourse {
                     sequence:1,
                     reference: "http://www.edx.com"
                 )
+            ).addToRankings (
+                new Ranking (
+                    sequence: 1,            // Has to be here, beforeInsert can't deal automated
+                    name:'July 2015 Ranking',
+                    person:cronRanking
+                )
             ),
           
             new Course(name: 'High School Physics',
@@ -128,11 +134,14 @@ class InitCourse {
                     for (courseObjective in course.courseObjectives) {
                         InitSpringSecurity.grantACL (courseObjective, user)
                     }
-                    
+                    for (ranking in course.rankings) {
+                        InitSpringSecurity.grantACL (ranking, user)
+                    }
                    
                 }
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
                 log.info "  loaded ${Course.findById(course.id).courseObjectives?.size()} course Objectives"
+                log.info "  loaded ${Course.findById(course.id).rankings?.size()}  Rankings"
             }
              
             log.debug "created Course ${course}"

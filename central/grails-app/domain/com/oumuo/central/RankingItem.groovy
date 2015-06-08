@@ -10,6 +10,7 @@ class RankingItem {
     String name
     Ranking organizationRanking     // future would have more rankings
     Ranking programRanking          //
+    Ranking courseRanking
     
     static belongsTo = [person:Person]
     
@@ -41,6 +42,7 @@ class RankingItem {
         person(editable:false)
         organizationRanking(editable:false, nullable:true)
         programRanking(editable:false, nullable:true)
+         courseRanking(editable:false, nullable:true)
         
         overall(range:0..1000)
         prestige(range:0..1000) 

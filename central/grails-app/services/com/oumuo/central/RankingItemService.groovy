@@ -62,8 +62,12 @@ class RankingItemService {
             
         } else if (ranking.organization) {
             // or for the parent Ranking has an organization (can't be both
-            log.trace ("getNew: found program $ranking.organization")
+            log.trace ("getNew: found organization $ranking.organization")
             rankingItem.organizationRanking = ranking   
+        } else if (ranking.course) {
+            // or for the parent Ranking has an organization (can't be both
+            log.trace ("getNew: found course $ranking.course")
+            rankingItem.courseRanking = ranking   
         }
         else
             log.warn "getNew: did not find either prgoram or organization in Ranking"

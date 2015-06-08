@@ -40,21 +40,29 @@ class InitRankingItem {
   
         def rankingItems = [ 
             new RankingItem(
-                    name: 'My May 2015 Ranking',
-                    person:Person.findByUserName('rpandey'),
-                    organizationRanking:
-                        Organization.findByName('Montgomery County Community College').
-                            rankings.find{ it.name == 'May 2015 Ranking'}
+                name: 'My May 2015 Ranking',
+                person:Person.findByUserName('rpandey'),
+                organizationRanking:
+                Organization.findByName('Montgomery County Community College').
+                    rankings.find{ it.name == 'May 2015 Ranking'}
                     
-                ),
-                 new RankingItem(
-                    name: 'My June 2015 Ranking',
-                    person:Person.findByUserName('rpandey'),
-                    programRanking:
-                        Program.findByName('Computer Science Diploma').
-                            rankings.find{ it.name == 'June 2015 Ranking'}
+            ),
+            new RankingItem(
+                name: 'My July 2015 Ranking',
+                person:Person.findByUserName('rpandey'),
+                courseRanking:
+                Course.findByName('Computer Science I').
+                    rankings.find{ it.name == 'July 2015 Ranking'}
                     
-                )
+            ),
+            new RankingItem(
+                name: 'My June 2015 Ranking',
+                person:Person.findByUserName('rpandey'),
+                programRanking:
+                Program.findByName('Computer Science Diploma').
+                    rankings.find{ it.name == 'June 2015 Ranking'}
+                    
+            )
      
      
         ]

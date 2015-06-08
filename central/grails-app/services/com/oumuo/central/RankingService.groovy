@@ -49,6 +49,7 @@ class RankingService {
         
         ranking.organization = Organization.findById(params.organization?.id)
         ranking.program = Program.findById(params.program?.id)
+        ranking.course = Course.findById(params.course?.id)
  
   
         // check for other domains which would have ranking (only one would be
