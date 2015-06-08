@@ -16,6 +16,7 @@ class ${className}Controller {
     <% def serviceName = propertyName.replaceFirst(/Instance$/, "") %>
     
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    def line = 1
     def ${serviceName}Service
 
     def index () {
@@ -86,7 +87,7 @@ class ${className}Controller {
         try {
             ${serviceName}Service.delete ${propertyName}
             flash.message = "${className} " + params.id + " deleted"
-            redirect action: index
+            redirect action: "index"
         }
         catch (DataIntegrityViolationException e) {
             redirectShow "${className} " + params.id + " could not be deleted", params.id
@@ -113,7 +114,7 @@ class ${className}Controller {
         def ${propertyName} = ${serviceName}Service.get(params.long('id'))
         if (!${propertyName}) {
             flash.message = "${className} not found with id " + params.id
-            redirect action: index
+            redirect action: "index"
         }
         ${propertyName}
     }
@@ -126,10 +127,15 @@ class ${className}Controller {
         }
         false
     }
+    
+    
+    
+    
+    
 
     private void redirectShow(message, id) {
         flash.message = message
-        redirect action: show, id: id
+        redirect action: "show", id: id
     }
 
  
