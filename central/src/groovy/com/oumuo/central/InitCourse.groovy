@@ -58,6 +58,12 @@ class InitCourse {
                     detailedComment: "http://www.edx.com",
                     commentType: ItemType.URL
                 )
+            ).addToCourseObjectives (
+                new CourseObjective (
+                    objectiveType: ObjectiveType.FACTS,
+                    sequence:1,
+                    reference: "http://www.edx.com"
+                )
             ),
           
             new Course(name: 'High School Physics',
@@ -119,16 +125,21 @@ class InitCourse {
                         InitSpringSecurity.grantACL (comment, user)
                     }
                     
+                    for (courseObjective in course.courseObjectives) {
+                        InitSpringSecurity.grantACL (courseObjective, user)
+                    }
+                    
                    
                 }
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
+                log.info "  loaded ${Course.findById(course.id).courseObjectives?.size()} course Objectives"
             }
              
             log.debug "created Course ${course}"
         }
     }
     
-   // log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
+    // log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
               
 }
     

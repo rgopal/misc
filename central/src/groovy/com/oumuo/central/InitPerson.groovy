@@ -215,12 +215,21 @@ class InitPerson {
         }
         
         def jfields = UserLogin.findByUsername('jfields')
+        for (name in ['rpandey']) {
+           
+            if (!(new UserLoginSecurityGroup(userLogin:
+                        UserLogin.findByUsername(name), securityGroup:
+                        SecurityGroup.findByName('all_power_users')).save(flush:true))) {
+                log.warn "us $user not saved for all_power_users"
+            } else
+            log.trace "enrolled $name for all_power_users"
+        }
         
         for (name in ['jfields', 'mjohns', 'jsmith']) {
            
             if (!(new UserLoginSecurityGroup(userLogin:
                         UserLogin.findByUsername(name), securityGroup:
-                        SecurityGroup.findByName('all_power_users')).save(flush:true))) {
+                        SecurityGroup.findByName('all_content_creators')).save(flush:true))) {
                 log.warn "us $user not saved for all_content_creators"
             } else
             log.trace "enrolled $name for all_content_creators"
