@@ -1,13 +1,19 @@
 package com.oumuo.lookup
-import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.security.acls.model.Permission
+\
 import grails.plugin.springsecurity.annotation.Secured
-import groovy.util.logging.Log4j
 
-@Log4j
+
 @Secured(['ROLE_USER'])
 class WebSiteController {
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond WebSite.list(params), model:[webSiteInstanceCount: WebSite.count()]
+    }
 
+    def show(WebSite webSiteInstance) {
+        respond webSiteInstance
+    }
+    
     // default security
     def scaffold = WebSite
 }
