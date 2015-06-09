@@ -39,7 +39,7 @@ class StandardizedTestService {
             }
         } else {
             standardizedTest.courseRequirement = CourseRequirement.findById(params.courseRequirement.id)
-            log.trace "getNew: creating new standardizedTest for $courseRequirement"
+            log.trace "getNew: creating new standardizedTest for $standardizedTest"
         }
         
         

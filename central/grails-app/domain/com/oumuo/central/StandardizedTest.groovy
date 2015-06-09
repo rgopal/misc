@@ -9,6 +9,7 @@ class StandardizedTest {
    
     static belongsTo = [courseRequirement: CourseRequirement]
     Long sequence
+    Float score = 600.0f
     Float minScore = 200.0f
     Float maxScore = 800.0f
   
@@ -32,6 +33,7 @@ class StandardizedTest {
         sequence (nullable:true, editable:false, display:true)        
         courseRequirement(editable:false)
       
+        score(min:0.0f, max:800.0f)
         minScore()
         maxScore()
         reference(nullable:true, url:true)
@@ -51,7 +53,7 @@ class StandardizedTest {
         if (!sequence) {
 
             // InitCourse could uses explict 1 for sequence
-            sequence = Course.findById(course.id).standardizedTests.size() + 1
+            sequence = CourseRequirement.findById(courseRequirement.id).standardizedTests.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }
