@@ -75,6 +75,11 @@ class InitCourse {
                     openness: 800,
                     sequence:1,
                     reference: "http://www.coursera.com"
+                ).addToStandardizedTests (
+                    new StandardizedTest(
+                        sequence:1,
+                        score:700.0f        
+                    )
                 )
             ),
           
@@ -142,6 +147,10 @@ class InitCourse {
                     }
                     for (courseRequirement in course.courseRequirements) {
                         InitSpringSecurity.grantACL (courseRequirement, user)
+                        for (standardizedTest in courseRequirement.standardizedTests) {
+                            InitSpringSecurity.grantACL (standardizedTest, user)
+                        }
+                        log.info "  loaded ${CourseRequirement.findById(courseRequirement.id).standardizedTests?.size()} course Requirement standardized Tests"
                     }
                     for (ranking in course.rankings) {
                         InitSpringSecurity.grantACL (ranking, user)
@@ -151,6 +160,7 @@ class InitCourse {
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
                 log.info "  loaded ${Course.findById(course.id).courseObjectives?.size()} course Objectives"
                 log.info "  loaded ${Course.findById(course.id).courseRequirements?.size()} course Requirements"
+                
                 log.info "  loaded ${Course.findById(course.id).rankings?.size()}  Rankings"
             }
              
