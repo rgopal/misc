@@ -32,22 +32,18 @@ class CourseObjectiveService {
     @PreAuthorize("hasRole('ROLE_CONTENT_CREATOR')")
     CourseObjective getNew(Map params) {
         def courseObjective = new CourseObjective()
+    
         
-        // first find the person who is authoring the comment
-        courseObjective.person = Person.findByUserName (
-            springSecurityService.authentication.name
-        )
-        
-        
-        // this has to be non null (since comment belongsTo Person
-        if (!courseObjective.person) {
+        // this has to be non null (since CourseRequirement belongsTo Course
+        if (!params.course) {
             courseObjective.errors.allErrors.each {
                 log.warning ("create: error while getting new courseObjective ${courseObjective}: ${it}")
             }
-        } else
-        log.trace "getNew: creating new courseObjective for $courseObjective.person"
-         
-        courseObjective.organization = Organization.findById(params.organization?.id)
+        } else {
+            courseObjective.course = Course.findById(params.course.id)
+            log.trace "getNew: creating new courseObjective for $courseObjective"
+        }
+        
        
         
         log.trace "getNew: new courseObjective $courseObjective instance created"

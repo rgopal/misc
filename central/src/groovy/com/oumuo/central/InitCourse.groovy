@@ -70,6 +70,12 @@ class InitCourse {
                     name:'July 2015 Ranking',
                     person:cronRanking
                 )
+            ).addToCourseRequirements (
+                new CourseRequirement (
+                    openness: 800,
+                    sequence:1,
+                    reference: "http://www.coursera.com"
+                )
             ),
           
             new Course(name: 'High School Physics',
@@ -134,6 +140,9 @@ class InitCourse {
                     for (courseObjective in course.courseObjectives) {
                         InitSpringSecurity.grantACL (courseObjective, user)
                     }
+                    for (courseRequirement in course.courseRequirements) {
+                        InitSpringSecurity.grantACL (courseRequirement, user)
+                    }
                     for (ranking in course.rankings) {
                         InitSpringSecurity.grantACL (ranking, user)
                     }
@@ -141,6 +150,7 @@ class InitCourse {
                 }
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
                 log.info "  loaded ${Course.findById(course.id).courseObjectives?.size()} course Objectives"
+                log.info "  loaded ${Course.findById(course.id).courseRequirements?.size()} course Requirements"
                 log.info "  loaded ${Course.findById(course.id).rankings?.size()}  Rankings"
             }
              
