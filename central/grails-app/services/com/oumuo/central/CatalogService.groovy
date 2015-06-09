@@ -73,7 +73,7 @@ class CatalogService {
             def location = catalog.parentCatalog.subCatalogs ? catalog.parentCatalog.subCatalogs.size()+ 1 : 1
             catalog.sequence = catalog.parentCatalog.sequence + "." + location.toString()
             catalog.program = catalog.parentCatalog.program  // for allCatalogs to work
-            log.trace "getNew: $catalog sequence $catalog.sequence is subCatalog of $catalog.parentCatalog"
+            log.trace "getNew: catalog sequence $catalog.sequence is subCatalog of $catalog.parentCatalog"
         }
         catalog
       
