@@ -52,8 +52,13 @@ class CourseRequirement {
     Date dateCreated
     Date lastUpdated
 
-    String toString(){  
-    "${sequence} "
+    String toString(){ 
+       
+         def tag = ""
+        if (current == true) {
+            tag = " *"
+        }
+        " $sequence  $tag" 
     }
     // only one Course can own an CourseRequirement (owner) with cascaded deletes
     // without belongsTo, an requirementType can be associated with multiple courses
@@ -67,37 +72,37 @@ class CourseRequirement {
     
         standardizedTests()
        
-        academicLevel()
-        academicStratum()
+        academicLevel(nullable:true)
+        academicStratum(nullable:true)
             
-        age()
-        yearsOfEduction()
-        gpa()
-        gpaMajor()
+        age(nullable:true)
+        yearsOfEduction(nullable:true)
+        gpa(nullable:true)
+        gpaMajor(nullable:true)
         
-        openness(min:0, max:1000)
-        conscientiousness(min:0, max:1000)
-        extraversion (min:0, max:1000)
-        agreeableness(min:0, max:1000)
-        neuroticism(min:0, max:1000)
+        openness(min:0, max:1000, nullable:true)
+        conscientiousness(min:0, max:1000, nullable:true)
+        extraversion (min:0, max:1000, nullable:true)
+        agreeableness(min:0, max:1000, nullable:true)
+        neuroticism(min:0, max:1000, nullable:true)
 
         // multiple intelligence
     
-        verbal(min:0, max:1000)
-        logical(min:0, max:1000)
-        spatial(min:0, max:1000)
-        musical(min:0, max:1000)
-        intraPersonal(min:0, max:1000)
-        interPersonal(min:0, max:1000)
-        bodilyKinesthetic(min:0, max:1000)
-        linguistic(min:0, max:1000)
-        naturalist(min:0, max:1000)
-        existential(min:0, max:1000)
+        verbal(min:0, max:1000, nullable:true)
+        logical(min:0, max:1000, nullable:true)
+        spatial(min:0, max:1000, nullable:true)
+        musical(min:0, max:1000, nullable:true)
+        intraPersonal(min:0, max:1000, nullable:true)
+        interPersonal(min:0, max:1000, nullable:true)
+        bodilyKinesthetic(min:0, max:1000, nullable:true)
+        linguistic(min:0, max:1000, nullable:true)
+        naturalist(min:0, max:1000, nullable:true)
+        existential(min:0, max:1000, nullable:true)
     
-        intelligenceQuotient(min:0, max:1000)
-        emotionalQuotient(min:0, max:1000)
-        cognitiveQuotient(min:0, max:1000)
-        meyerBrigg (matches:/[EI\-\*][SN-\\*][TF\-\*][JP\-\*]/)
+        intelligenceQuotient(min:0, max:1000, nullable:true)
+        emotionalQuotient(min:0, max:1000, nullable:true)
+        cognitiveQuotient(min:0, max:1000, nullable:true)
+        meyerBrigg (matches:/[EI\-\*][SN-\\*][TF\-\*][JP\-\*]/, nullable:true)
     
         status()
         dateCreated()
@@ -156,4 +161,4 @@ class CourseRequirement {
         }
        
     }
-}
+    }
