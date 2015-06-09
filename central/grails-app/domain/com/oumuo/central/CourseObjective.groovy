@@ -23,7 +23,7 @@ class CourseObjective {
     String toString(){  
     "${sequence} ${objectiveType} "
     }
-    // only one Course can own an CourseRole (owner) with cascaded deletes
+    // only one Course can own an CourseObjective (owner) with cascaded deletes
     // without belongsTo, an objectiveType can be associated with multiple courses
     // akin to a lookup field (instead of true master-detail
    
@@ -37,7 +37,7 @@ class CourseObjective {
         objectiveText(nullable:true)
         academicLevel()
         reference(nullable:true)
-       reference(nullable:true, url: true) 
+        reference(nullable:true, url: true) 
        
         status()
         dateCreated()
