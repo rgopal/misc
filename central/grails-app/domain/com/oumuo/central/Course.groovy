@@ -15,8 +15,8 @@ class Course {
     Organization organization
     SortedSet catalogs
     static hasMany = [catalogs: Catalog, comments: Comment, 
-        courseObjectives: CourseObjective,
-        courseRequirements: CourseRequirement,
+        objectives: Objective,
+        requirements: Requirement,
     rankings:Ranking] 
     
     // then proper fileds
@@ -67,8 +67,8 @@ class Course {
         organization (nullable:true, editable:true)
         catalogs()
         comments()
-        courseObjectives()
-        courseRequirements()
+        objectives()
+        requirements()
         rankings()
         
         credential(nullable:true)

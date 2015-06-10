@@ -7,7 +7,7 @@ import groovy.util.logging.Log4j
 @Log4j
 class StandardizedTest {
    
-    static belongsTo = [courseRequirement: CourseRequirement]
+    static belongsTo = [requirement: Requirement]
     Long sequence
     Float score 
 
@@ -30,7 +30,7 @@ class StandardizedTest {
     static constraints = {
         // named association so not needed owner()
         sequence (nullable:true, editable:false, display:true)        
-        courseRequirement(editable:false)
+        requirement(editable:false)
       
         score(min:0.0f, max:1000.0f, nullable:true)
   
@@ -51,7 +51,7 @@ class StandardizedTest {
         if (!sequence) {
 
             // InitCourse could uses explict 1 for sequence
-            sequence = CourseRequirement.findById(courseRequirement.id).standardizedTests.size() + 1
+            sequence = Requirement.findById(requirement.id).standardizedTests.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }

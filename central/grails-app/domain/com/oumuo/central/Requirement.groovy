@@ -5,7 +5,7 @@ import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
-class CourseRequirement {
+class Requirement {
    
     static belongsTo = [course: Course]
     static hasMany = [standardizedTests: StandardizedTest]
@@ -62,7 +62,7 @@ class CourseRequirement {
         }
         " $sequence  $tag" 
     }
-    // only one Course can own an CourseRequirement (owner) with cascaded deletes
+    // only one Course can own an Requirement (owner) with cascaded deletes
     // without belongsTo, an requirementType can be associated with multiple courses
     // akin to a lookup field (instead of true master-detail
    
@@ -115,14 +115,14 @@ class CourseRequirement {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def courseRequirementService = ctx.courseRequirementService
-        return courseRequirementService.list()
+        def requirementService = ctx.requirementService
+        return requirementService.list()
     }
     def beforeInsert() {
         if (!sequence) {
 
             // InitCourse could uses explict 1 for sequence
-            sequence = Course.findById(course.id).courseRequirements.size() + 1
+            sequence = Course.findById(course.id).requirements.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }
@@ -139,11 +139,11 @@ class CourseRequirement {
        
     }
     def checkMain() {
-        // does not work other = CourseRequirement.findByCourseAndMain(this.course.id, current:true)
+        // does not work other = Requirement.findByCourseAndMain(this.course.id, current:true)
         
-        // find all records with current to be true and not equal to current courseRequirement record
-        log.trace "checkMain: courseRequirements ${Course.findById(course.id).courseRequirements.findAll {it.current == true}}"
-        def other = Course.findById(course.id).courseRequirements.findAll {it.current == true}
+        // find all records with current to be true and not equal to current requirement record
+        log.trace "checkMain: requirements ${Course.findById(course.id).requirements.findAll {it.current == true}}"
+        def other = Course.findById(course.id).requirements.findAll {it.current == true}
   
         // beforeInsert will not select the current record, but beforeUpdate will
        
@@ -152,14 +152,14 @@ class CourseRequirement {
         log.trace "checkMain: other after removing this - $other"
         if (other.size() > 1) {
             // should be 1 or zero
-            log.warn "checkMain: ${other.size()} courseRequirements found"
+            log.warn "checkMain: ${other.size()} requirements found"
         } else if (other.size() == 1) {
       
             other[0].current = false;
             
             log.trace "checkMain: reseted other $other[0] to false"
         } else {
-            log.trace "checkMain: no other CourseRequirement with current = true"
+            log.trace "checkMain: no other Requirement with current = true"
         }
        
     }

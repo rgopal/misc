@@ -33,12 +33,12 @@ class StandardizedTestService {
     StandardizedTest getNew(Map params) {
         def standardizedTest = new StandardizedTest()
         
-       if (!params.courseRequirement) {
+       if (!params.requirement) {
             standardizedTest.errors.allErrors.each {
                 log.warning ("create: error while getting new StandardizedTest ${standardizedTest}: ${it}")
             }
         } else {
-            standardizedTest.courseRequirement = CourseRequirement.findById(params.courseRequirement.id)
+            standardizedTest.requirement = Requirement.findById(params.requirement.id)
             log.trace "getNew: creating new standardizedTest for $standardizedTest"
         }
         

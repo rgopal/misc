@@ -58,8 +58,8 @@ class InitCourse {
                     detailedComment: "http://www.edx.com",
                     commentType: ItemType.URL
                 )
-            ).addToCourseObjectives (
-                new CourseObjective (
+            ).addToObjectives (
+                new Objective (
                     objectiveType: ObjectiveType.FACTS,
                     sequence:1,
                     reference: "http://www.edx.com"
@@ -70,8 +70,8 @@ class InitCourse {
                     name:'July 2015 Ranking',
                     person:cronRanking
                 )
-            ).addToCourseRequirements (
-                new CourseRequirement (
+            ).addToRequirements (
+                new Requirement (
                     openness: 800,
                     sequence:1,
                     reference: "http://www.coursera.com"
@@ -142,15 +142,15 @@ class InitCourse {
                         InitSpringSecurity.grantACL (comment, user)
                     }
                     
-                    for (courseObjective in course.courseObjectives) {
-                        InitSpringSecurity.grantACL (courseObjective, user)
+                    for (objective in course.objectives) {
+                        InitSpringSecurity.grantACL (objective, user)
                     }
-                    for (courseRequirement in course.courseRequirements) {
-                        InitSpringSecurity.grantACL (courseRequirement, user)
-                        for (standardizedTest in courseRequirement.standardizedTests) {
+                    for (requirement in course.requirements) {
+                        InitSpringSecurity.grantACL (requirement, user)
+                        for (standardizedTest in requirement.standardizedTests) {
                             InitSpringSecurity.grantACL (standardizedTest, user)
                         }
-                        log.info "  loaded ${CourseRequirement.findById(courseRequirement.id).standardizedTests?.size()} course Requirement standardized Tests"
+                        log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} course Requirement standardized Tests"
                     }
                     for (ranking in course.rankings) {
                         InitSpringSecurity.grantACL (ranking, user)
@@ -158,8 +158,8 @@ class InitCourse {
                    
                 }
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
-                log.info "  loaded ${Course.findById(course.id).courseObjectives?.size()} course Objectives"
-                log.info "  loaded ${Course.findById(course.id).courseRequirements?.size()} course Requirements"
+                log.info "  loaded ${Course.findById(course.id).objectives?.size()} course Objectives"
+                log.info "  loaded ${Course.findById(course.id).requirements?.size()} course Requirements"
                 
                 log.info "  loaded ${Course.findById(course.id).rankings?.size()}  Rankings"
             }

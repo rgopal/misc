@@ -5,7 +5,7 @@ import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
-class CourseObjective {
+class Objective {
    
     static belongsTo = [course: Course]
     Long sequence
@@ -24,7 +24,7 @@ class CourseObjective {
     String toString(){  
     "${sequence} ${objectiveType} "
     }
-    // only one Course can own an CourseObjective (owner) with cascaded deletes
+    // only one Course can own an Objective (owner) with cascaded deletes
     // without belongsTo, an objectiveType can be associated with multiple courses
     // akin to a lookup field (instead of true master-detail
    
@@ -50,14 +50,14 @@ class CourseObjective {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def objectiveService = ctx.courseObjectiveService
+        def objectiveService = ctx.objectiveService
         return objectiveService.list()
     }
     def beforeInsert() {
         if (!sequence) {
 
             // InitCourse could uses explict 1 for sequence
-            sequence = Course.findById(course.id).courseObjectives.size() + 1
+            sequence = Course.findById(course.id).objectives.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }
