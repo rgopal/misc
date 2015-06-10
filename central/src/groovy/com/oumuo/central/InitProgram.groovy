@@ -65,6 +65,17 @@ class InitProgram {
                     name:'June 2015 Ranking',
                     person:cronRanking
                 )  
+            ).addToRequirements (
+                new Requirement (
+                    openness: 820,
+                    sequence:1,
+                    reference: "http://www.coua.com"
+                ).addToStandardizedTests (
+                    new StandardizedTest(
+                        sequence:1,
+                        score:620.0f        
+                    )
+                )
             ),
        
           
@@ -127,6 +138,15 @@ class InitProgram {
                         InitSpringSecurity.grantACL (ranking, user)
                     }
                     log.info "  loaded ${Program.findById(program.id).rankings?.size()} rankings" 
+                    for (requirement in program.requirements) {
+                        InitSpringSecurity.grantACL (requirement, user)
+                        for (standardizedTest in requirement.standardizedTests) {
+                            InitSpringSecurity.grantACL (standardizedTest, user)
+                        }
+                        log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} program Requirement standardized Tests"
+                    }
+                    log.info "  loaded ${Program.findById(program.id).requirements?.size()} program Requirements"
+                
                 }
             }
             log.debug "created Program ${program}"

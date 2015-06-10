@@ -10,6 +10,7 @@ class Requirement {
     // does not appear in show person - static belongsTo = [course: Course]
     
     Course course
+    Program program
     static hasMany = [standardizedTests: StandardizedTest]
   
     Person person
@@ -74,6 +75,7 @@ class Requirement {
         sequence (nullable:true, editable:false, display:true)
        
         course(editable:false, nullable:true)
+        program(editable:false, nullable:true)
         person(editable:false, nullable:true)
     
         standardizedTests()
@@ -133,6 +135,12 @@ class Requirement {
                 log.trace "beforeInsert: sequence is $sequence with person "
             
             }
+            if (program) {
+                // use sequence number for organization
+                sequence = Program.findById(program.id).requirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence with program "
+            
+            }
              if (course) {
                 // use sequence number for organization
                 sequence = Course.findById(course.id).requirements?.size()  + 1
@@ -157,6 +165,8 @@ class Requirement {
         log.trace "checkMain: $person and $course will both be checked"
         if (person)
         updateCurrent(person, 'com.oumuo.central.Person', "capabilitys")
+        else if (program)
+        updateCurrent(program, 'com.oumuo.central.Program', "requirements")
         else if (course)
         updateCurrent(course, 'com.oumuo.central.Course', "requirements")
         else

@@ -41,6 +41,9 @@ class RequirementService {
         } else if (params.person) {
             requirement.person = Person.findById(params.person.id)
             log.trace "getNew: creating new requirement for $requirement.person"
+        } else if (params.program) {
+            requirement.program = Program.findById(params.program.id)
+            log.trace "getNew: creating new requirement for $requirement.program"
         } 
         else {
             requirement.errors.allErrors.each {

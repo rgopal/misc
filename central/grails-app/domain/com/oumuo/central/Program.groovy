@@ -8,7 +8,7 @@ class Program {
 
     String name
     SortedSet catalogs
-    static hasMany = [catalogs: Catalog, rankings: Ranking] 
+    static hasMany = [catalogs: Catalog, rankings: Ranking, requirements: Requirement] 
     
     Person person
     Organization organization
@@ -47,6 +47,7 @@ class Program {
         // still not happy TODO this was supposed to be a singleton
         catalogs()
         rankings()
+        requirements()
         
         credential(nullable:true)
         academicStratum(nullable:true)
