@@ -57,6 +57,17 @@ class InitPerson {
                     dateOfBirth:Date.parse('dd-MM-yyyy','01-09-1960'), 
                     preferredLanguage:Language.ENGLISH,
                     homeEmail:'john.smith@gmail.com'
+                ).addToCapabilitys (
+                    new Requirement (
+                        openness: 900,
+                        sequence:1,
+                        reference: "http://www.mit.edu"
+                    ).addToStandardizedTests (
+                        new StandardizedTest(
+                            sequence:1,
+                            score:750.0f        
+                        )
+                    )
                 )
             ),
           
@@ -194,8 +205,16 @@ class InitPerson {
                 for (comment in user.person.comments) {
                     InitSpringSecurity.grantACL (comment, user.username)
                 }
-                log.info "  loaded ${UserLogin.findByUsername(user.username).person.comments?.size()} comments" 
                 
+                for (capability in user.person.capabilitys) {
+                    InitSpringSecurity.grantACL (capability, user.username)
+                    for (standardizedTest in capability.standardizedTests) {
+                        InitSpringSecurity.grantACL (standardizedTest, user.username)
+                    }
+                    log.info "  loaded ${Requirement.findById(capability.id).standardizedTests?.size()} person capability standardized Tests"
+                }
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.comments?.size()} comments" 
+                log.info "  loaded ${UserLogin.findByUsername(user.username).person.capabilitys?.size()} person capabilitys"
                 log.debug "created user ${user.username}"
             }
         }

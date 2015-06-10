@@ -1,15 +1,18 @@
 package com.oumuo.central
 
-
+// used as both requirement (for course, program) and capability (student/teacher)
 import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
 class Requirement {
    
-    static belongsTo = [course: Course]
+    // does not appear in show person - static belongsTo = [course: Course]
+    
+    Course course
     static hasMany = [standardizedTests: StandardizedTest]
   
+    Person person
 
     Boolean current = false
     Long sequence
@@ -56,7 +59,7 @@ class Requirement {
 
     String toString(){ 
        
-         def tag = ""
+        def tag = ""
         if (current == true) {
             tag = " *"
         }
@@ -68,9 +71,10 @@ class Requirement {
    
     static constraints = {
         // named association so not needed owner()
-        sequence (nullable:true, display:false)
+        sequence (nullable:true, editable:false, display:true)
        
-        course(editable:false)
+        course(editable:false, nullable:true)
+        person(editable:false, nullable:true)
     
         standardizedTests()
        
@@ -119,17 +123,25 @@ class Requirement {
         return requirementService.list()
     }
     def beforeInsert() {
-        if (!sequence) {
-
-            // InitCourse could uses explict 1 for sequence
-            sequence = Course.findById(course.id).requirements.size() + 1
-            log.trace "beforeInsert: sequence updated to $sequence"
+      if (!sequence) {
+            // Init* even when does not provide seqeuence, it gets initialzied
+            // to 2, so better to check for all prepopuldated records.
+         
+            if (person) {
+                // use sequence number for organization
+                sequence = Person.findById(person.id).capabilitys?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence with person "
             
+            }
+             if (course) {
+                // use sequence number for organization
+                sequence = Course.findById(course.id).requirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence with course "
+            
+            }
         }
-        // if this has become current then other should becomem false
-        if (this.current == true) {
-            checkMain()
-        }
+        // don't forget to check for new records also
+        checkMain()
         
     }
     def beforeUpdate () {
@@ -139,28 +151,45 @@ class Requirement {
        
     }
     def checkMain() {
-        // does not work other = Requirement.findByCourseAndMain(this.course.id, current:true)
         
-        // find all records with current to be true and not equal to current requirement record
-        log.trace "checkMain: requirements ${Course.findById(course.id).requirements.findAll {it.current == true}}"
-        def other = Course.findById(course.id).requirements.findAll {it.current == true}
+        // Requirement is for Person, Course, etc. so find for each type
+          
+        log.trace "checkMain: $person and $course will both be checked"
+        if (person)
+        updateCurrent(person, 'com.oumuo.central.Person', "capabilitys")
+        else if (course)
+        updateCurrent(course, 'com.oumuo.central.Course', "requirements")
+        else
+        log.warn "checkMain: neither course nor person non null"
+    }
+    def updateCurrent(Object instance, String owner, String name)
+    {
+        def grailsApplication = new Account().domainClass.grailsApplication
+        def claz = grailsApplication.getClassForName(owner)
+        
+      
+        if (instance) {
+            log.trace "updateCurrent: $name ${claz} ${instance} for $instance.id "
+            def other = claz.findById(
+                instance.id)."${name}".findAll {it.current == true}
   
-        // beforeInsert will not select the current record, but beforeUpdate will
+            log.trace "updateCurrent: other before subtraction $other"
+            // beforeInsert will not select the current record, but beforeUpdate will
        
-        other = other - this
+            other = other - this
       
-        log.trace "checkMain: other after removing this - $other"
-        if (other.size() > 1) {
-            // should be 1 or zero
-            log.warn "checkMain: ${other.size()} requirements found"
-        } else if (other.size() == 1) {
+            log.trace "updateCurrent: other $claz after removing this - $other"
+            if (other.size() > 1) {
+                // should be 1 or zero
+                log.warn "updateCurrent: ${other.size()} $name found"
+            } else if (other.size() == 1) {
       
-            other[0].current = false;
+                other[0].current = false;
             
-            log.trace "checkMain: reseted other $other[0] to false"
-        } else {
-            log.trace "checkMain: no other Requirement with current = true"
-        }
-       
+                log.trace "setCurrent: reseted other $claz $other[0] to false"
+            } else {
+                log.trace "setCurrent: no other $claz Ranking with current = true"
+            }
+        } 
     }
-    }
+}

@@ -33,16 +33,20 @@ class RequirementService {
     Requirement getNew(Map params) {
         def requirement = new Requirement()
         
-        
-        if (!params.course) {
+        // used as requirement for course/program etc.
+        // and capability for student/teacher
+        if (params.course) {
+            requirement.course = Course.findById(params.course.id)
+            log.trace "getNew: creating new requirement for $requirement.course"
+        } else if (params.person) {
+            requirement.person = Person.findById(params.person.id)
+            log.trace "getNew: creating new requirement for $requirement.person"
+        } 
+        else {
             requirement.errors.allErrors.each {
                 log.warning ("create: error while getting new requirement ${requirement}: ${it}")
             }
-        } else {
-            requirement.course = Course.findById(params.course.id)
-            log.trace "getNew: creating new requirement for $requirement"
         }
-        
         
         log.trace "getNew: new requirement $requirement instance created"
         requirement
@@ -73,6 +77,8 @@ class RequirementService {
 
     @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Requirement', read) or hasPermission(#id, 'com.oumuo.central.Requirement', admin) or hasRole('ROLE_USER')")
     Requirement get(long id) {
+       // TODO: for capability this should only be accessible to the user 
+       // may be check for person and if it is non null then check for user or read_all
         Requirement.get id
     }
 

@@ -15,6 +15,14 @@ class Person {
         public String getDefaultMessage() { name() }    // default is name itself
     }
  
+      // associations
+    static hasMany = [accounts:Account, personRoles: PersonRole, 
+        staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
+        rankings:Ranking,  // REMOVED rankingItems:RankingItem,
+        capabilitys: Requirement]
+
+    static belongsTo = [userLogin: UserLogin]
+    
    
     // class unique fields
     // String login
@@ -50,13 +58,7 @@ class Person {
     // NOT WORKING UserLogin userLogin  //hasOne led to null issue
 
    
-    // associations
-    static hasMany = [accounts:Account, personRoles: PersonRole, 
-        staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
-        rankings:Ranking, rankingItems:RankingItem]
-
-    static belongsTo = [userLogin: UserLogin]
-    
+  
     String toString(){
 
          "$name"
@@ -82,7 +84,8 @@ class Person {
         programs()
         catalogs()
         rankings()
-        rankingItems()
+        // won't work - go through ranking - rankingItems()
+        capabilitys()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)

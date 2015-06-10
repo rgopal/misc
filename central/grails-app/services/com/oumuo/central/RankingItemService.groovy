@@ -48,7 +48,8 @@ class RankingItemService {
         log.trace "getNew: creating new rankingItem for person $rankingItem.person"
         println params.collect{it}.join('\n')
         
-        // find the parent Ranking object for this item
+        // find the parent Ranking object for this item (don't directly create it from person)
+        //TODO: remove from Person association??
         def ranking = Ranking.findById(params.ranking.id)
         println ranking.properties.collect{it}
           
