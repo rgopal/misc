@@ -65,13 +65,13 @@ class Ranking {
         programRankingItems()
         courseRankingItems()
         
-        overall(range:0..1000, editable:false)
-        prestige(range:0..1000, editable:false) 
-        learning(range:0..1000, editable:false) 
-        affordability(range:0..1000, editable:false) 
-        recommendation(range:0..1000, editable:false) 
-        improvement(range:0..1000, editable:false) 
-        jobPlacement(range:0..1000, editable:false)
+        overall(range:0..1000, editable:false, nullable:true)
+        prestige(range:0..1000, editable:false, nullable:true) 
+        learning(range:0..1000, editable:false, nullable:true) 
+        affordability(range:0..1000, editable:false, nullable:true) 
+        recommendation(range:0..1000, editable:false, nullable:true) 
+        improvement(range:0..1000, editable:false, nullable:true) 
+        jobPlacement(range:0..1000, editable:false, nullable:true)
 
 
         expiryDate(nullable:true)

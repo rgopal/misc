@@ -12,21 +12,20 @@ import groovy.util.logging.Log4j
 // that program.
 
 class Catalog implements Comparable {
-
+   
+    // each level is sorted
+    SortedSet subCatalogs
+    static hasMany = [ subCatalogs: Catalog ] 
+    Program program                 // weaker for sharing catalogs
+    // parent could be null
+    Catalog parentCatalog
+    
     String name
     String sequence
     Person person
     Course course
     CourseType courseType = CourseType.REQUIRED
    
-    // parent could be null
-    Catalog parentCatalog
-    
-    // each level is sorted
-    SortedSet subCatalogs
-    static hasMany = [ subCatalogs: Catalog ] 
-   
-    Program program                 // weaker for sharing catalogs
     //static belongsTo = [ program: Program ]
     static transients = ['allSubCatalogs']
      
@@ -59,7 +58,7 @@ class Catalog implements Comparable {
         person(editable:false, nullable:false)
         // in future make all other editable false as well
         course (nullable:true)
-        courseType () 
+        courseType (nullable:true) 
         
         subCatalogs()
 

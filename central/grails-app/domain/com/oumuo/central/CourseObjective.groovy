@@ -10,7 +10,7 @@ class CourseObjective {
     static belongsTo = [course: Course]
     Long sequence
  
-    ObjectiveType objectiveType
+    ObjectiveType objectiveType = ObjectiveType.OTHER
     String objectiveText
     AcademicLevel academicLevel = AcademicLevel.COL1
     AcademicStratum academicStratum = AcademicStratum.COLLEGE
@@ -32,13 +32,12 @@ class CourseObjective {
         // named association so not needed owner()
         sequence (nullable:true, display:false)
         
-        course(editable:false)
-      
+        course(editable:false, nullable:true)
       
         objectiveType()
         objectiveText(nullable:true)
-        academicLevel()
-        academicStratum()
+        academicLevel(nullable:true)
+        academicStratum(nullable:true)
       
         reference(nullable:true, url: true) 
        

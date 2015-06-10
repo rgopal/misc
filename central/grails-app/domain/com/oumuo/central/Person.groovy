@@ -27,9 +27,9 @@ class Person {
     
     String addressLine1
     String addressLine2
-    String city = 'Germantown'
-    String state  = 'Maryland'
-    String zip = '20878'
+    String city 
+    String state 
+    String zip 
     Country country = Country.USA
     Language preferredLanguage = Language.ENGLISH
 

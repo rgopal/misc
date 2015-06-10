@@ -48,7 +48,7 @@ class Organization {
         
         status ()
         preferredLanguage(nullable:false)
-        academicStratum()
+        academicStratum(nullable:true)
         organizationType()
 
         workEmail(nullable:true, email:true)

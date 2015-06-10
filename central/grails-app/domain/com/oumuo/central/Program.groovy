@@ -12,7 +12,7 @@ class Program {
     
     Person person
     Organization organization
-    Integer ranking = 500           // automatically derived from multiple items
+    Integer ranking            // automatically derived from multiple items
     Credential credential = Credential.NONE  
     AcademicStratum academicStratum = AcademicStratum.OTHER
     AcademicMajor academicMajor = AcademicMajor.GENERAL 
@@ -48,14 +48,14 @@ class Program {
         catalogs()
         rankings()
         
-        credential()
-        academicStratum()
-        academicMajor()
-        minimumGrade()
+        credential(nullable:true)
+        academicStratum(nullable:true)
+        academicMajor(nullable:true)
+        minimumGrade(nullable:true)
         minimumPercentage(min:0.0d, max:100.0d, nullable:true)
-        academicSession()
+        academicSession(nullable:true)
         sessionFee(nullable:true)
-        ranking(range:0..1000, editable:false)
+        ranking(range:0..1000, editable:false, nullable:true)
  
         startDate(nullable:true)
         endDate(nullable:true)

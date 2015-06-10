@@ -15,6 +15,7 @@ class RankingItem {
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)
+    // Start with middle point (but could be null also)
 
     Integer overall = 500
     Integer prestige = 500
@@ -44,13 +45,13 @@ class RankingItem {
         programRanking(editable:false, nullable:true)
          courseRanking(editable:false, nullable:true)
         
-        overall(range:0..1000)
-        prestige(range:0..1000) 
-        learning(range:0..1000) 
-        affordability(range:0..1000) 
-        recommendation(range:0..1000) 
-        improvement(range:0..1000) 
-        jobPlacement(range:0..1000)
+        overall(range:0..1000, nullable:true)
+        prestige(range:0..1000, nullable:true) 
+        learning(range:0..1000, nullable:true) 
+        affordability(range:0..1000, nullable:true) 
+        recommendation(range:0..1000, nullable:true) 
+        improvement(range:0..1000, nullable:true) 
+        jobPlacement(range:0..1000, nullable:true)
 
         expiryDate(nullable:true)
         status()

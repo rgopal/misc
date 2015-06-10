@@ -14,30 +14,32 @@ class CourseRequirement {
     Boolean current = false
     Long sequence
         
-    AcademicLevel academicLevel = AcademicLevel.COL1
-    AcademicStratum academicStratum = AcademicStratum.COLLEGE
+    AcademicLevel academicLevel 
+    AcademicStratum academicStratum 
     
-    Integer age = 15
-    Integer yearsOfEduction = 12
-    Float gpa = 2.0f
-    AcademicMajor gpaMajor = AcademicMajor.CS
+    Integer age 
+    Integer yearsOfEduction
+    Float gpa 
+    AcademicMajor gpaMajor
+    
+    // minimum value should be explicitly set (but could be null)
     
     // Personality 
     Integer openness = 500
     Integer conscientiousness = 500
-    Integer extraversion = 500
+    Integer extraversion  = 500
     Integer agreeableness = 500
-    Integer neuroticism = 500
+    Integer neuroticism  = 500
 
     // multiple intelligence
     
-    Integer verbal = 500
+    Integer verbal  = 500
     Integer logical = 500
     Integer spatial = 500
     Integer musical = 500
     Integer intraPersonal = 500
     Integer interPersonal = 500
-    Integer bodilyKinesthetic = 500
+    Integer bodilyKinesthetic  = 500
     Integer linguistic = 500
     Integer naturalist = 500
     Integer existential = 500
@@ -45,7 +47,7 @@ class CourseRequirement {
     Integer intelligenceQuotient = 500
     Integer emotionalQuotient = 500
     Integer cognitiveQuotient = 500
-    String meyerBrigg = 'ENTJ'
+    String meyerBrigg = "ENTJ"
         
     
     Status status = Status.ACTIVE

@@ -4,14 +4,7 @@ import groovy.util.logging.Log4j
 
 @Log4j
 class Comment {
-
-    String comment
-    String sequence
-    String detailedComment;
-    ItemType commentType = ItemType.TEXT
   
-    // there will be multiple MtoM associations and Person is not null
-
     Organization organization
     Course course
   
@@ -21,6 +14,12 @@ class Comment {
     static belongsTo = [ person: Person ]
     static transients = ['allSubComments']
    
+    String comment
+    String sequence
+    String detailedComment;
+    ItemType commentType = ItemType.TEXT
+  
+    // there will be multiple MtoM associations and Person is not null
     
     // these are common to all; state is managed by system
     Status status = Status.ACTIVE
@@ -33,7 +32,7 @@ class Comment {
     
     String toString(){
 
-    sequence + " " + comment?.substring(0,Math.min(15, comment? comment.length():0))
+        sequence + " " + comment?.substring(0,Math.min(15, comment? comment.length():0))
     }
   
     static constraints = {
@@ -43,17 +42,16 @@ class Comment {
         // this allows the user to make parentComment null (and thus a new root)
         person(editable:false)
         parentComment (nullable:true, editable:false)
-        
+        // this will become editable:false (same for other)
+        organization (editable:false, nullable: true)
+        course (editable:false, nullable: true)
+        subComments()
+
         // in future make all other editable false as well
         comment (nullable:true)
         detailedComment (nullable:true)
         commentType ()   
-        subComments()
-
-        // this will become editable:false (same for other)
-        organization (editable:false, nullable: true)
-        course (editable:false, nullable: true)
- 
+   
         status()
         dateCreated()
         lastUpdated()

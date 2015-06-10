@@ -9,9 +9,8 @@ class StandardizedTest {
    
     static belongsTo = [courseRequirement: CourseRequirement]
     Long sequence
-    Float score = 600.0f
-    Float minScore = 200.0f
-    Float maxScore = 800.0f
+    Float score 
+
   
     String reference
 
@@ -33,9 +32,8 @@ class StandardizedTest {
         sequence (nullable:true, editable:false, display:true)        
         courseRequirement(editable:false)
       
-        score(min:0.0f, max:800.0f)
-        minScore()
-        maxScore()
+        score(min:0.0f, max:1000.0f, nullable:true)
+  
         reference(nullable:true, url:true)
         status()
         dateCreated()
