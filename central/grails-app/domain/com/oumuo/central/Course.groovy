@@ -14,10 +14,15 @@ class Course {
     Person person
     Organization organization
     SortedSet catalogs
+    
     static hasMany = [catalogs: Catalog, comments: Comment, 
         objectives: Objective,
-        requirements: Requirement,
-    rankings:Ranking] 
+         teachingRequirements: Requirement,
+         requirements: Requirement,   
+        rankings:Ranking] 
+    static mappedBy = [
+            teachingRequirements:'teaching',
+            requirements: 'learning' ]
     
     // then proper fileds
     Integer ranking = 500           // automatically derived from multiple items
@@ -69,6 +74,7 @@ class Course {
         comments()
         objectives()
         requirements()
+        teachingRequirements()
         rankings()
         
         credential(nullable:true)

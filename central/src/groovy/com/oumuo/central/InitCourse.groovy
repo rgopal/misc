@@ -81,6 +81,17 @@ class InitCourse {
                         score:700.0f        
                     )
                 )
+            ).addToTeachingRequirements (
+                new Requirement (
+                    openness: 855,
+                    sequence:1,
+                    reference: "http://www.coursera.com"
+                ).addToStandardizedTests (
+                    new StandardizedTest(
+                        sequence:1,
+                        score:780.0f        
+                    )
+                )
             ),
           
             new Course(name: 'High School Physics',
@@ -152,6 +163,13 @@ class InitCourse {
                         }
                         log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} course Requirement standardized Tests"
                     }
+                     for (requirement in course.teachingRequirements) {
+                        InitSpringSecurity.grantACL (requirement, user)
+                        for (standardizedTest in requirement.standardizedTests) {
+                            InitSpringSecurity.grantACL (standardizedTest, user)
+                        }
+                        log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} course teaching Requirement standardized Tests"
+                    }
                     for (ranking in course.rankings) {
                         InitSpringSecurity.grantACL (ranking, user)
                     }
@@ -160,7 +178,7 @@ class InitCourse {
                 log.info "  loaded ${Course.findById(course.id).comments?.size()} comment"
                 log.info "  loaded ${Course.findById(course.id).objectives?.size()} course Objectives"
                 log.info "  loaded ${Course.findById(course.id).requirements?.size()} course Requirements"
-                
+                 log.info "  loaded ${Course.findById(course.id).teachingRequirements?.size()} course teaching Requirements"
                 log.info "  loaded ${Course.findById(course.id).rankings?.size()}  Rankings"
             }
              

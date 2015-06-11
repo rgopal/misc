@@ -9,7 +9,8 @@ class Requirement {
    
     // does not appear in show person - static belongsTo = [course: Course]
     
-    Course course
+    Course learning
+    Course teaching
     Program program
     static hasMany = [standardizedTests: StandardizedTest]
   
@@ -74,7 +75,8 @@ class Requirement {
         // named association so not needed owner()
         sequence (nullable:true, editable:false, display:true)
        
-        course(editable:false, nullable:true)
+        learning(editable:false, nullable:true)
+        teaching(editable:false, nullable:true)
         program(editable:false, nullable:true)
         person(editable:false, nullable:true)
     
@@ -125,7 +127,7 @@ class Requirement {
         return requirementService.list()
     }
     def beforeInsert() {
-      if (!sequence) {
+        if (!sequence) {
             // Init* even when does not provide seqeuence, it gets initialzied
             // to 2, so better to check for all prepopuldated records.
          
@@ -141,10 +143,16 @@ class Requirement {
                 log.trace "beforeInsert: sequence is $sequence with program "
             
             }
-             if (course) {
+            if (learning) {
                 // use sequence number for organization
-                sequence = Course.findById(course.id).requirements?.size()  + 1
-                log.trace "beforeInsert: sequence is $sequence with course "
+                sequence = Course.findById(learning.id).requirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence with course for learning "
+            
+            }
+            if (teaching) {
+                // use sequence number for organization
+                sequence = Course.findById(teaching.id).teachingRequirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence with course for teaching "
             
             }
         }
@@ -162,13 +170,15 @@ class Requirement {
         
         // Requirement is for Person, Course, etc. so find for each type
           
-        log.trace "checkMain: $person and $course will both be checked"
+        log.trace "checkMain: $person $learning $teaching $program will  be checked"
         if (person)
         updateCurrent(person, 'com.oumuo.central.Person', "capabilitys")
         else if (program)
         updateCurrent(program, 'com.oumuo.central.Program', "requirements")
-        else if (course)
-        updateCurrent(course, 'com.oumuo.central.Course', "requirements")
+        else if (learning)
+        updateCurrent(learning, 'com.oumuo.central.Course', "requirements")
+        else if (teaching)
+        updateCurrent(teaching, 'com.oumuo.central.Course', "teachingRequirements")
         else
         log.warn "checkMain: neither course nor person non null"
     }

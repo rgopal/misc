@@ -33,11 +33,18 @@ class RequirementService {
     Requirement getNew(Map params) {
         def requirement = new Requirement()
         
+        // println Course.findById(params.cou.id)
+        println "Requirements Service " + params.collect{it}.join('\n')
+        println Course.findById(params.course.id).properties.collect{it}.join('\n')
+        
         // used as requirement for course/program etc.
         // and capability for student/teacher
+        
+        //TODO: resolve teaching by changing GSP file and then set teaching
+        // as the case may be
         if (params.course) {
-            requirement.course = Course.findById(params.course.id)
-            log.trace "getNew: creating new requirement for $requirement.course"
+            requirement.learning = Course.findById(params.course.id)
+            log.trace "getNew: creating new requirement for $requirement.learning"
         } else if (params.person) {
             requirement.person = Person.findById(params.person.id)
             log.trace "getNew: creating new requirement for $requirement.person"

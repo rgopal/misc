@@ -71,7 +71,7 @@ class RankingItemService {
             rankingItem.courseRanking = ranking   
         }
         else
-            log.warn "getNew: did not find either prgoram or organization in Ranking"
+            log.warn "getNew: did not find either prgoram, course or organization in Ranking"
             
         rankingItem
       
