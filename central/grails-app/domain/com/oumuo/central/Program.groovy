@@ -8,7 +8,8 @@ class Program {
 
     String name
     SortedSet catalogs
-    static hasMany = [catalogs: Catalog, rankings: Ranking, requirements: Requirement] 
+    static hasMany = [catalogs: Catalog, rankings: Ranking, requirements: Requirement,
+    courseRelations: CourseRelation] 
     
     Person person
     Organization organization
@@ -48,6 +49,7 @@ class Program {
         catalogs()
         rankings()
         requirements()
+        courseRelations()
         
         credential(nullable:true)
         academicStratum(nullable:true)
