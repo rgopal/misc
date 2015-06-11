@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
-
+import org.codehaus.groovy.grails.web.util.WebUtils
 class RequirementService {
 
     def aclPermissionFactory
@@ -33,18 +33,32 @@ class RequirementService {
     Requirement getNew(Map params) {
         def requirement = new Requirement()
         
+      
+
+        def grailsWebRequest = WebUtils.retrieveGrailsWebRequest()
+        // request is the HttpServletRequest
+        def flash = grailsWebRequest.attributes.getFlashScope()
         // println Course.findById(params.cou.id)
         println "Requirements Service " + params.collect{it}.join('\n')
+        println "Requirements Service " + flash.collect{it}.join('\n')
         println Course.findById(params.course.id).properties.collect{it}.join('\n')
         
         // used as requirement for course/program etc.
         // and capability for student/teacher
         
-        //TODO: resolve teaching by changing GSP file and then set teaching
-        // as the case may be
+        //resolve teaching by changing GSP file and then set teaching
+        // as the case may be (renderEditor had to be changed to add 
+        // new OneToManyProperty to disambiguate 
         if (params.course) {
+            if (params.oneToManyPropertyName == "teachingRequirements")
+            requirement.teaching = Course.findById(params.course.id)
+            else if (params.oneToManyPropertyName == "requirements")
             requirement.learning = Course.findById(params.course.id)
-            log.trace "getNew: creating new requirement for $requirement.learning"
+            else
+            log.warn "getNew: $oneToManyPropertyName has to be either requirements or teachingRequirements"
+            
+            
+            log.trace "getNew: creating new requirement for $params.oneToManyPropertyName"
         } else if (params.person) {
             requirement.person = Person.findById(params.person.id)
             log.trace "getNew: creating new requirement for $requirement.person"
@@ -87,8 +101,8 @@ class RequirementService {
 
     @PreAuthorize("hasPermission(#id, 'com.oumuo.central.Requirement', read) or hasPermission(#id, 'com.oumuo.central.Requirement', admin) or hasRole('ROLE_USER')")
     Requirement get(long id) {
-       // TODO: for capability this should only be accessible to the user 
-       // may be check for person and if it is non null then check for user or read_all
+        // TODO: for capability this should only be accessible to the user 
+        // may be check for person and if it is non null then check for user or read_all
         Requirement.get id
     }
 
