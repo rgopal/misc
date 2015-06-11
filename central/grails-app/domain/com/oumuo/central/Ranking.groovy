@@ -34,6 +34,16 @@ class Ranking {
     Integer recommendation = 500
     Integer improvement = 500
     Integer jobPlacement = 500
+    Integer presentation = 500
+    Integer content = 500
+    Integer assistance = 500
+    Integer convenience = 500
+    Integer collaboration = 500
+    Integer assessment = 500
+    Integer certification = 500
+    Integer effort = 500
+    Integer difficulty = 500
+    Integer popularity = 500
 
     Date expiryDate
     
@@ -72,6 +82,16 @@ class Ranking {
         recommendation(range:0..1000, editable:false, nullable:true) 
         improvement(range:0..1000, editable:false, nullable:true) 
         jobPlacement(range:0..1000, editable:false, nullable:true)
+             presentation (range:0..1000, editable:false, nullable:true)
+     content(range:0..1000, editable:false, nullable:true)
+     assistance (range:0..1000, editable:false, nullable:true)
+     convenience (range:0..1000, editable:false, nullable:true)
+     collaboration (range:0..1000, editable:false, nullable:true)
+     assessment (range:0..1000, editable:false, nullable:true)
+     certification (range:0..1000, editable:false, nullable:true)
+     effort(range:0..1000, editable:false, nullable:true)
+     difficulty (range:0..1000, editable:false, nullable:true)
+      popularity (range:0..1000, editable:false, nullable:true)
 
 
         expiryDate(nullable:true)
