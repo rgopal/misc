@@ -60,7 +60,7 @@ class InitPerson {
                 ).addToCapabilitys (
                     new Requirement (
                         openness: 900,
-                        sequence:1,
+                       // sequence:1,
                         reference: "http://www.mit.edu"
                     ).addToStandardizedTests (
                         new StandardizedTest(

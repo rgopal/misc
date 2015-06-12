@@ -50,10 +50,14 @@ class RequirementService {
         // as the case may be (renderEditor had to be changed to add 
         // new OneToManyProperty to disambiguate 
         if (params.course) {
-            if (params.oneToManyPropertyName == "teachingRequirements")
-            requirement.teaching = Course.findById(params.course.id)
-            else if (params.oneToManyPropertyName == "requirements")
-            requirement.learning = Course.findById(params.course.id)
+            if (params.oneToManyPropertyName == "teachingRequirements") {
+                // requirement.teaching = Course.findById(params.course.id)
+                Course.findById(params.course.id).addToTeachingRequirements(requirement)
+            }
+            else if (params.oneToManyPropertyName == "requirements") {
+                // requirement.learning = Course.findById(params.course.id)
+                Course.findById(params.course.id).addToRequirements(requirement)
+            }
             else
             log.warn "getNew: $oneToManyPropertyName has to be either requirements or teachingRequirements"
             
