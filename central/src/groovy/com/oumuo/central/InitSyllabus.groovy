@@ -86,8 +86,7 @@ class InitSyllabus {
             log.debug "created Syllabus ${syllabus}"
         }
     }
-    
-    // log.info ("load: loaded ${Syllabus.count()} out of ${syllabuss.size()} syllabuss")
-              
+    // TODO log.info ("load: loaded " + Syllabus.count() + " out of " + syllabuss.size() + " syllabuss")
+             
 }
     

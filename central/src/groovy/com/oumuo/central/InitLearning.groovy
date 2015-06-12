@@ -44,19 +44,19 @@ class InitLearning {
                 name: 'Introduction',
         
                 hierarchy: Hierarchy.AREA,
-                Organization: Organization.findByName('Montgomery County Community College')
+                organization: Organization.findByName('Montgomery County Community College')
                 ),
                  new Learning(
                 name: 'Data Structures',
               
                 hierarchy: Hierarchy.AREA,
-                Organization: Organization.findByName('Montgomery County Community College')
+                organization: Organization.findByName('Montgomery County Community College')
                 ),
                   new Learning(
                 name: 'Trees',
               
                 hierarchy: Hierarchy.TOPIC,
-                Organization: Organization.findByName('Montgomery County Community College')
+                organization: Organization.findByName('Montgomery County Community College')
                 )
                
         ]
