@@ -16,6 +16,8 @@ class Catalog implements Comparable {
     // each level is sorted
     SortedSet subCatalogs
     static hasMany = [ subCatalogs: Catalog ] 
+    static mappedBy = [subCatalogs: 'parentCatalog']
+    
     Program program                 // weaker for sharing catalogs
     // parent could be null
     Catalog parentCatalog

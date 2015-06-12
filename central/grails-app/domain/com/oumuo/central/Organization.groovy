@@ -9,7 +9,7 @@ class Organization {
     
     // associations
     static hasMany = [staffings:Staffing, comments: Comment, programs:Program, 
-        courses:Course, rankings:Ranking]
+        courses:Course, rankings:Ranking, learnings: Learning]
 
     String addressLine1
     String addressLine2
@@ -44,6 +44,7 @@ class Organization {
         comments()
         programs()
         courses()
+        learnings()
         rankings()
         
         status ()

@@ -11,11 +11,12 @@ class Course {
     
     String name
     //  keep all associations first
+    // course can be in multiple programs so no program association
     Person person
     Organization organization
-    SortedSet catalogs
+    SortedSet syllabuss
     
-    static hasMany = [catalogs: Catalog, comments: Comment, 
+    static hasMany = [syllabuss: Syllabus, comments: Comment, 
         objectives: Objective,
          teachingRequirements: Requirement,
          requirements: Requirement,   
@@ -70,7 +71,7 @@ class Course {
         name (nullable:false)
         person (nullable:false, editable:false)
         organization (nullable:true, editable:true)
-        catalogs()
+        syllabuss()
         comments()
         objectives()
         requirements()

@@ -10,6 +10,8 @@ import com.oumuo.central.InitCourse
 import com.oumuo.central.InitCatalog
 import com.oumuo.central.InitRankingItem
 import com.oumuo.central.InitCourseRelation
+import com.oumuo.central.InitLearning
+import com.oumuo.central.InitSyllabus
 
 class BootStrap {
     def aclService
@@ -40,6 +42,8 @@ class BootStrap {
         new InitCatalog().load()
         new InitRankingItem().load()
         new InitCourseRelation().load()
+        new InitLearning().load()
+        new InitSyllabus().load()
     }
    
     def destory = {
