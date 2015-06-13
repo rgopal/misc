@@ -8,6 +8,7 @@ class Comment {
     Organization organization
     Course course
     Assessment assessment
+    Learning learning
   
     // parent could be null
     Comment parentComment
@@ -47,6 +48,7 @@ class Comment {
         organization (editable:false, nullable: true)
         course (editable:false, nullable: true)
         assessment (editable:false, nullable: true)
+         learning (editable:false, nullable: true)
         subComments()
 
         // in future make all other editable false as well

@@ -7,9 +7,10 @@ class LearningAssessment {
   
     Learning learning
     Assessment assessment
+    Program program
     // Does not make sense String sequence
   
-    static belongsTo = [program: Program]
+    // static belongsTo = [program: Program]
     
     TimeRelation timeRelation = TimeRelation.BEFORE
 
@@ -33,9 +34,7 @@ class LearningAssessment {
     }
   
     static constraints = {
-     
-        program()
-      
+    
         learning (editable:true)
         assessment (editable:true)
         timeRelation (nullable:false)

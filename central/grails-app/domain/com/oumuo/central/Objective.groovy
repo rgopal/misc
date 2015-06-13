@@ -9,6 +9,7 @@ class Objective {
    
     Course course
     Assessment assessment
+    Learning learning
     Long sequence
  
     LearningType objectiveType = LearningType.OTHER
@@ -35,6 +36,7 @@ class Objective {
         
         course(editable:false, nullable:true)
         assessment(editable:false, nullable:true)
+        learning(editable:false, nullable:true)
       
         objectiveType()
         objectiveText(nullable:true)
@@ -63,6 +65,8 @@ class Objective {
             sequence = Course.findById(course.id).objectives.size() + 1
             else if (assessment)
             sequence = Assessment.findById(assessment.id).objectives.size() + 1
+             else if (learning)
+            sequence = Learning.findById(assessment.id).objectives.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }
