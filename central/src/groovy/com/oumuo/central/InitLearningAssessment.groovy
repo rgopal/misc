@@ -43,21 +43,22 @@ class InitLearningAssessment {
             new LearningAssessment(
                 learning: Learning.findByName('Introduction'),
                 assessment: Assessment.findByName('Introduction Test'),
-                timeRelation: Relation.BEFORE,
+                timeRelation: TimeRelation.BEFORE,
+                
                 passingGrade: Grade.C,
                 program: Program.findByName('Computer Science Diploma')
             ),
               new LearningAssessment(
                 learning: Learning.findByName('Data Structures'),
                 assessment: Assessment.findByName('Data Structures Test'),
-                timeRelation: Relation.BEFORE,
+                timeRelation: TimeRelation.BEFORE,
                 passingGrade: Grade.D,
                 program: Program.findByName('Computer Science Diploma')
             ),
              new LearningAssessment(
                 learning: Learning.findByName('Trees'),
                 assessment: Assessment.findByName('Trees Quiz'),
-                timeRelation: Relation.BEFORE,
+                timeRelation: TimeRelation.BEFORE,
                 passingGrade: Grade.B,
                 program: Program.findByName('Computer Science Diploma')
             )

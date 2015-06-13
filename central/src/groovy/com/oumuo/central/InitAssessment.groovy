@@ -43,16 +43,18 @@ class InitAssessment {
             new Assessment(
                 name: 'Introduction Test',
                 assessmentType: AssessmentType.TEST,
-             
+             totalPoints: 100.0f,
                 organization: Organization.findByName('Montgomery County Community College')
                 ),
                  new Assessment(
                 name: 'Data Structures Test',
               assessmentType: AssessmentType.TEST,
+              totalPoints: 100.0f,
                 organization: Organization.findByName('Montgomery County Community College')
                 ),
                   new Assessment(
                 name: 'Trees Quiz',
+                totalPoints: 100.0f,
               assessmentType: AssessmentType.QUIZ,
             
                 organization: Organization.findByName('Montgomery County Community College')
