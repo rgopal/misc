@@ -7,10 +7,11 @@ import groovy.util.logging.Log4j
 @Log4j
 class Objective {
    
-    static belongsTo = [course: Course]
+    Course course
+    Assessment assessment
     Long sequence
  
-    ObjectiveType objectiveType = ObjectiveType.OTHER
+    LearningType objectiveType = LearningType.OTHER
     String objectiveText
     AcademicLevel academicLevel = AcademicLevel.COL1
     AcademicStratum academicStratum = AcademicStratum.COLLEGE
@@ -33,6 +34,7 @@ class Objective {
         sequence (nullable:true, display:false)
         
         course(editable:false, nullable:true)
+        assessment(editable:false, nullable:true)
       
         objectiveType()
         objectiveText(nullable:true)
@@ -57,7 +59,10 @@ class Objective {
         if (!sequence) {
 
             // InitCourse could uses explict 1 for sequence
+            if (course)
             sequence = Course.findById(course.id).objectives.size() + 1
+            else if (assessment)
+            sequence = Assessment.findById(assessment.id).objectives.size() + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }

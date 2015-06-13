@@ -16,6 +16,7 @@ class Ranking {
     Organization organization
     Program program
     Course course
+    Assessment assessment
     
     static hasMany =[organizationRankingItems: RankingItem, 
         programRankingItems:RankingItem,
@@ -28,6 +29,8 @@ class Ranking {
     // Person owner (does not work well with sequence updates)
 
     Integer overall = 500
+    Integer utility = 500
+    Integer complexity = 500
     Integer prestige = 500
     Integer learning = 500
     Integer affordability = 500
@@ -39,7 +42,7 @@ class Ranking {
     Integer assistance = 500
     Integer convenience = 500
     Integer collaboration = 500
-    Integer assessment = 500
+    Integer testing = 500       // collides with collaboration so
     Integer certification = 500
     Integer effort = 500
     Integer difficulty = 500
@@ -70,28 +73,31 @@ class Ranking {
         organization(editable:false, nullable:true)
         program(editable:false, nullable:true)
         course(editable:false, nullable:true)
+        assessment(editable:false, nullable:true)
         
         organizationRankingItems()
         programRankingItems()
         courseRankingItems()
         
         overall(range:0..1000, editable:false, nullable:true)
+        utility (range:0..1000, editable:false, nullable:true)
+        complexity (range:0..1000, editable:false, nullable:true)
         prestige(range:0..1000, editable:false, nullable:true) 
         learning(range:0..1000, editable:false, nullable:true) 
         affordability(range:0..1000, editable:false, nullable:true) 
         recommendation(range:0..1000, editable:false, nullable:true) 
         improvement(range:0..1000, editable:false, nullable:true) 
         jobPlacement(range:0..1000, editable:false, nullable:true)
-             presentation (range:0..1000, editable:false, nullable:true)
-     content(range:0..1000, editable:false, nullable:true)
-     assistance (range:0..1000, editable:false, nullable:true)
-     convenience (range:0..1000, editable:false, nullable:true)
-     collaboration (range:0..1000, editable:false, nullable:true)
-     assessment (range:0..1000, editable:false, nullable:true)
-     certification (range:0..1000, editable:false, nullable:true)
-     effort(range:0..1000, editable:false, nullable:true)
-     difficulty (range:0..1000, editable:false, nullable:true)
-      popularity (range:0..1000, editable:false, nullable:true)
+        presentation (range:0..1000, editable:false, nullable:true)
+        content(range:0..1000, editable:false, nullable:true)
+        assistance (range:0..1000, editable:false, nullable:true)
+        convenience (range:0..1000, editable:false, nullable:true)
+        collaboration (range:0..1000, editable:false, nullable:true)
+        testing (range:0..1000, editable:false, nullable:true)
+        certification (range:0..1000, editable:false, nullable:true)
+        effort(range:0..1000, editable:false, nullable:true)
+        difficulty (range:0..1000, editable:false, nullable:true)
+        popularity (range:0..1000, editable:false, nullable:true)
 
 
         expiryDate(nullable:true)
@@ -127,10 +133,16 @@ class Ranking {
                 log.trace "beforeInsert: seqeunce is $sequence with program "
             
             }
-             if (course) {
+            if (course) {
                 // use sequence number for organization
                 sequence = Course.findById(course.id).rankings.size()  + 1
                 log.trace "beforeInsert: seqeunce is $sequence with course "
+            
+            }
+            if (assessment) {
+                // use sequence number for organization
+                sequence = Assessment.findById(assessment.id).rankings.size()  + 1
+                log.trace "beforeInsert: seqeunce is $sequence with assessment "
             
             }
         }
@@ -152,8 +164,10 @@ class Ranking {
         updateCurrent(organization, 'com.oumuo.central.Organization')
         else if (program)
         updateCurrent(program, 'com.oumuo.central.Program')
-          else if (course)
+        else if (course)
         updateCurrent(course, 'com.oumuo.central.Course')
+        else if (assessment)
+        updateCurrent(assessment, 'com.oumuo.central.Assessment')
     }
     def updateCurrent(Object instance, String owner)
     {

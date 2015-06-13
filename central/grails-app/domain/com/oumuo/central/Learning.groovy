@@ -16,7 +16,8 @@ class Learning {
     static hasMany = [comments: Comment, 
         objectives: Objective,
          teachingRequirements: Requirement,
-         requirements: Requirement,   
+         requirements: Requirement,  
+         learningAssessments: LearningAssessment,
         rankings:Ranking] 
     static mappedBy = [
             teachingRequirements:'teachingSection',
@@ -27,7 +28,9 @@ class Learning {
     AcademicStratum academicStratum = AcademicStratum.OTHER
     AcademicLevel academicLevel
      
+    LearningType learningType = LearningType.OTHER
     
+    // Language is in content
     Integer duration = 1  
     AcademicSession durationUnit = AcademicSession.SEMESTER
     
@@ -52,11 +55,13 @@ class Learning {
         comments()
         objectives()
         requirements()
+        learningAssessments()
         teachingRequirements()
      
         hierarchy()
         academicLevel(nullable:true)
         academicStratum(nullable:true)
+        learningType(nullable:true)
         
         duration(nullable:true)
         durationUnit(nullable:true)

@@ -33,7 +33,7 @@ class CourseService {
     Course getNew(Map params) {
         def course = new Course()
         
-        // first find the person who is authoring the comment
+      /*  // first find the person who is authoring the comment
         course.person = Person.findByUserName (
             springSecurityService.authentication.name
         )
@@ -46,8 +46,9 @@ class CourseService {
             }
         } else
         log.trace "getNew: creating new course for $course.person"
-         
-        course.organization = Organization.findById(params.organization?.id)
+        
+        */
+        Organization.findById(params.organization?.id).addToCourses(course)
        
         
         log.trace "getNew: new course $course instance created"

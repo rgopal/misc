@@ -12,7 +12,8 @@ class Course {
     String name
     //  keep all associations first
     // course can be in multiple programs so no program association
-    Person person
+    // Better to use course Authorship for multiple persons
+  
     Organization organization
     SortedSet syllabuss
     
@@ -31,7 +32,7 @@ class Course {
     AcademicStratum academicStratum = AcademicStratum.OTHER
     AcademicMajor academicMajor = AcademicMajor.GENERAL
      
-    Double passingPercentage
+    Float passingPercentage
     Grade passingGrade = Grade.C
     
     
@@ -43,13 +44,13 @@ class Course {
     Integer effortRequired = 40 
     DurationUnit effortUnit = DurationUnit.HOURS
     GradeType gradeType = GradeType.LETTER 
-    LearningType learningType = LearningType.ONLINE 
+    TeachingType learningType = TeachingType.ONLINE 
   
     String synopsis
     String objective
     String content 
     String background
-    String assessment
+    String testing
     String certification
     
     Date startDate = new Date()
@@ -69,7 +70,7 @@ class Course {
         // named association so not needed owner()
         
         name (nullable:false)
-        person (nullable:false, editable:false)
+     
         organization (nullable:true, editable:true)
         syllabuss()
         comments()
@@ -82,7 +83,7 @@ class Course {
         academicStratum(nullable:true)
         academicMajor(nullable:true)
         passingGrade(nullable:true)
-        passingPercentage(min:0.0d, max:100.0d, nullable:true)
+        passingPercentage(min:0.0f, max:100.0f, nullable:true)
         gradeType(nullable:true)
         academicSession(nullable:true)
         duration(nullable:true)
@@ -96,7 +97,7 @@ class Course {
         objective(nullable:true) 
         content(nullable:true)
         background(nullable:true)
-        assessment(nullable:true) 
+        testing(nullable:true) 
         certification (nullable:true)
         
         startDate(nullable:true)

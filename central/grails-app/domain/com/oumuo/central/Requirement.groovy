@@ -11,6 +11,7 @@ class Requirement {
     
     Course learning
     Course teaching
+    // Section is called Learnin
     Learning learningSection
     Learning teachingSection
     Program program

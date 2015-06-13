@@ -35,18 +35,12 @@ class ObjectiveService {
     
         
         // this has to be non null (since CourseRequirement belongsTo Course
-        if (!params.course) {
-            objective.errors.allErrors.each {
-                log.warning ("create: error while getting new objective ${objective}: ${it}")
-            }
-        } else {
-            objective.course = Course.findById(params.course.id)
-            log.trace "getNew: creating new objective for $objective"
-        }
-        
-       
-        
-        log.trace "getNew: new objective $objective instance created"
+        if (params.course) 
+        Course.findById(params.course.id).addToObjectives(course)
+        else if (params.assessment)
+        Assessment.findById(params.assessment.id).addToObjectives(assessment)
+   
+        log.trace "getNew: new objective $objective instance created for $params.course or $params.assessment"
         objective
     }
     // called from save of controller (with params returned from form)

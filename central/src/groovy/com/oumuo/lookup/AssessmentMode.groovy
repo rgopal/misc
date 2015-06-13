@@ -10,11 +10,11 @@ package com.oumuo.lookup
  *
  * @author rgopal-lt
  */
-
-enum ObjectiveType implements org.springframework.context.MessageSourceResolvable {
+   enum AssessmentMode implements org.springframework.context.MessageSourceResolvable {
  
-      SKILL, KNOWLEDGE, CAPABILITY, FACTS, INFORMATION, TECHNIQUE, PROCEDURE, OTHER
+       ONLINE, CLASS, HOME, EMAIL, INTERACTIVE, PROCTORED 
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself
     }
+

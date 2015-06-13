@@ -57,10 +57,11 @@ class CommentService {
             // this comment is a new root, created for a specific item.  We
             // are not repeating the association with other items for subcomments
             if (params.organization)
-            comment.organization = Organization.findById(params.organization.id)
+            Organization.findById(params.organization.id).addToComments(comment)
             else if (params.course)
-            comment.course = Course.findById(params.course.id)
-            else
+            Course.findById(params.course.id).addToComments(comment)
+            else if (params.assessment)
+            Assessment.findById(params.assessment.id).addToComments(comment)
             log.warn "getNew: root comment $comment cound not find organization, course "
             
             // now keep adding all new "owners" such as Organization, Course, etc.

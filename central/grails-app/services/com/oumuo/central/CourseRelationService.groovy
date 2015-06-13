@@ -35,7 +35,7 @@ class CourseRelationService {
         
      
          
-        courseRelation.program = Program.findById(params.program?.id)
+        Program.findById(params.program?.id).addToCourseRelations(courseRelation)
        
         
         log.trace "getNew: new courseRelation $courseRelation instance created for $courseRelation.program"

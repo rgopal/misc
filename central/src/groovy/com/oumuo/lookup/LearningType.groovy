@@ -10,11 +10,11 @@ package com.oumuo.lookup
  *
  * @author rgopal-lt
  */
-   enum LearningType implements org.springframework.context.MessageSourceResolvable {
+
+enum LearningType implements org.springframework.context.MessageSourceResolvable {
  
-       LECTURE, ONLINE, POSTAL, BROADCAST, TUTORING, VIDEO, AUDIO, BOOK 
+      SKILL, KNOWLEDGE, CAPABILITY, FACTS, INFORMATION, TECHNIQUE, PROCEDURE, OTHER
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself
     }
-

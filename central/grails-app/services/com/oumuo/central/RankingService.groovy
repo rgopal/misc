@@ -45,12 +45,17 @@ class RankingService {
                 log.warning ("getNew: error while getting new ranking ${ranking}: ${it}")
             }
         } else
-            log.trace "getNew: creating new ranking for person $ranking.person"
+        log.trace "getNew: creating new ranking for person $ranking.person"
         
-        ranking.organization = Organization.findById(params.organization?.id)
-        ranking.program = Program.findById(params.program?.id)
-        ranking.course = Course.findById(params.course?.id)
- 
+        // used by many domains (only one at a time from web)
+        if (params.organization) 
+        Organization.findById(params.organization?.id).addToRankings(ranking)
+        else if (params.program)
+        Program.findById(params.program?.id).addToRankings(ranking)
+        else if (params.course)
+        Course.findById(params.course?.id).addToRankings(ranking)
+        else if (params.assessment)
+        Assessment.findById(params.assessment?.id).addToRankings(ranking)
   
         // check for other domains which would have ranking (only one would be
         // with non null value in params

@@ -41,7 +41,7 @@ class InitCourse {
 
         def courses = [ 
             new Course(name: 'Computer Science I',
-                person:Person.findByUserName('jfields'),
+              
                 academicSession:AcademicSession.SEMESTER,
                 academicStratum:AcademicStratum.ASSOCIATE,
                 academicMajor:AcademicMajor.CS,
@@ -60,7 +60,7 @@ class InitCourse {
                 )
             ).addToObjectives (
                 new Objective (
-                    objectiveType: ObjectiveType.FACTS,
+                    learningType: LearningType.FACTS,
                     sequence:1,
                     reference: "http://www.edx.com"
                 )
@@ -95,7 +95,7 @@ class InitCourse {
             ),
           
             new Course(name: 'High School Physics',
-                person:Person.findByUserName('jfields'),
+                
                 academicSession:AcademicSession.MONTH,
                 academicStratum:AcademicStratum.HIGH,
                 academicMajor:AcademicMajor.SCIENCES,
@@ -107,7 +107,7 @@ class InitCourse {
                     findByName('Quince Orchard High School')   
             ),
             new Course(name: 'Middle School English Drama',
-                person:Person.findByUserName('jfields'),
+        
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.MIDDLE,
                 academicMajor:AcademicMajor.GENERAL,
@@ -119,7 +119,7 @@ class InitCourse {
                     findByName('RidgeView Middle School')   
             ),
             new Course(name: 'लखनऊ विश्वविद्यालय कला 1',
-                person:Person.findByUserName('jfields'),
+           
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.UNIVERSITY,
                 academicMajor:AcademicMajor.ARTS,

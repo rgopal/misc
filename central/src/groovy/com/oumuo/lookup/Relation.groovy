@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
    enum Relation implements org.springframework.context.MessageSourceResolvable {
  
-       SAME_AS, PART_OF, INCLUDES, SIMILAR, RELATED, PRE_REQ,  
+       SAME_AS, PART_OF, INCLUDES, SIMILAR, RELATED, PRE_REQ, ALTERNATE, TRANSLATION, REFERENCE
         public Object[] getArguments() { [] as Object[] }
         public String[] getCodes() { [ name() ] }
         public String getDefaultMessage() { name() }    // default is name itself
