@@ -34,9 +34,14 @@ class LearningAssessmentService {
         def learningAssessment = new LearningAssessment()
         
      
-         
+        // could reach it by any one of the following
+        
+        if (params.program)
         Program.findById(params.program?.id).addToLearningAssessments(learningAssessment)
-       
+        else if (params.learning)
+        Learning.findById(params.learning?.id).addToLearningAssessments(learningAssessment)
+        else if (params.assessment)
+        Assessment.findById(params.assessment?.id).addToLearningAssessments(learningAssessment)
         
         log.trace "getNew: new learningAssessment $learningAssessment instance created for $learningAssessment.program"
         learningAssessment
