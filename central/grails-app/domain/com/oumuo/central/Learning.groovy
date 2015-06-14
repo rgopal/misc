@@ -18,6 +18,7 @@ class Learning {
          teachingRequirements: Requirement,
          requirements: Requirement,  
          learningAssessments: LearningAssessment,
+         contents: Content,
         rankings:Ranking] 
     static mappedBy = [
             teachingRequirements:'teachingSection',
@@ -55,6 +56,7 @@ class Learning {
         comments()
         objectives()
         requirements()
+        contents()
         learningAssessments()
         teachingRequirements()
      

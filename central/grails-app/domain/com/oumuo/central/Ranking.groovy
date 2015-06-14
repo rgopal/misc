@@ -16,6 +16,7 @@ class Ranking {
     Organization organization
     Program program
     Course course
+    Learning learning
     Assessment assessment
     
     static hasMany =[organizationRankingItems: RankingItem, 
@@ -32,7 +33,7 @@ class Ranking {
     Integer utility = 500
     Integer complexity = 500
     Integer prestige = 500
-    Integer learning = 500
+    Integer education = 500
     Integer affordability = 500
     Integer recommendation = 500
     Integer improvement = 500
@@ -73,6 +74,7 @@ class Ranking {
         organization(editable:false, nullable:true)
         program(editable:false, nullable:true)
         course(editable:false, nullable:true)
+         learning(editable:false, nullable:true)
         assessment(editable:false, nullable:true)
         
         organizationRankingItems()
@@ -83,7 +85,7 @@ class Ranking {
         utility (range:0..1000, editable:false, nullable:true)
         complexity (range:0..1000, editable:false, nullable:true)
         prestige(range:0..1000, editable:false, nullable:true) 
-        learning(range:0..1000, editable:false, nullable:true) 
+        education(range:0..1000, editable:false, nullable:true) 
         affordability(range:0..1000, editable:false, nullable:true) 
         recommendation(range:0..1000, editable:false, nullable:true) 
         improvement(range:0..1000, editable:false, nullable:true) 
