@@ -16,7 +16,8 @@ class Assessment {
     
     static hasMany = [comments: Comment, 
         objectives: Objective,
-        learningAssessments: LearningAssessment,     
+        learningAssessments: LearningAssessment,
+        assessmentItems: AssessmentItem,
         rankings:Ranking] 
 
     
@@ -61,6 +62,7 @@ class Assessment {
         organization (nullable:true, editable:true)
         learningAssessments()
   
+        assessmentItems()
         comments()
         objectives()
      

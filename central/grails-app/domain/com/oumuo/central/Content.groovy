@@ -16,6 +16,8 @@ class Content {
   
     Organization organization
     Learning learning
+    AssessmentItem assessmentItemQuestion
+    AssessmentItem assessmentItemAnswer
     
     // through Learning/Assessment static hasMany = [comments: Comment]
     String content
@@ -53,8 +55,9 @@ class Content {
      
         organization (nullable:true, editable:true)
         learning (nullable:true, editable:true)
+        assessmentItemQuestion (nullable:true, editable:true)
+        assessmentItemAnswer (nullable:true, editable:true)
        
-  
         content(nullable:true)  // if embedded
         contentUrl (nullable:true,url: true)
 

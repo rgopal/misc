@@ -76,13 +76,22 @@ class InitSyllabus {
                     log.trace "   starting ACL creations for $user"
                     InitSpringSecurity.grantACL(syllabus, user)
                     
-               
-                    
-                   
                 }
-                
+                for (subSyllabus in syllabus.subSyllabuss) {
+                    if (!subSyllabus.save(flush:true)) { 
+                        subSyllabus.errors.allErrors.each {error ->
+                            log.warn "An error occured with ${subSyllabus} $error"
+                        }
+                    } else {     
+                        // give permissions to two users
+                        for (user in ['jfields', 'mjohns']) {
+                            log.trace "   starting ACL creations for $user"
+                            InitSpringSecurity.grantACL(subSyllabus, user)
+                    
+                        } 
+                    }
+                }
             }
-             
             log.debug "created Syllabus ${syllabus}"
         }
     }

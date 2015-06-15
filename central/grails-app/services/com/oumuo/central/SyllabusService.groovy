@@ -37,13 +37,25 @@ class SyllabusService {
     Syllabus getNew(Map params) {
      
         def syllabus = new Syllabus()
-        
- 
-        
         // check if it was created against an existin syllabus (becomes parent)  
         syllabus.parentSyllabus = Syllabus.findById(params.syllabus?.id)
-        
-        if (syllabus.parentSyllabus) {
+    
+        if (!syllabus.parentSyllabus) {
+                
+            syllabus.course = Course.findById(params.course?.id)
+            // start a new root TODO find the current number for each program       
+         
+            if (!syllabus.course) {
+                syllabus.sequence = "1"
+            } else
+            {
+                syllabus.sequence = syllabus.course.syllabuss.size() + 1
+            }
+            log.trace "getNew: root syllabus $syllabus is created for a course $syllabus.course "
+ 
+        } 
+      
+        else {
           
             // not a root so get the sequence from other siblings and program
             def location = syllabus.parentSyllabus.subSyllabuss ? syllabus.parentSyllabus.subSyllabuss.size()+ 1 : 1
