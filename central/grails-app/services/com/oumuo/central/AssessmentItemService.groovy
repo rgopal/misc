@@ -40,12 +40,14 @@ class AssessmentItemService {
         
  
         
-        // check if it was created against an existin assessmentItem (becomes parent)  
-        assessmentItem.parentAssessmentItem = AssessmentItem.findById(params.assessmentItem?.id)
+        // check if it was created against an existin assessmentItem (becomes parent) 
+        AssessmentItem.findById(params.assessmentItem?.id).addToSubAssessmentItems(assessmentItem)
+        
+        // assessmentItem.parentAssessmentItem = AssessmentItem.findById(params.assessmentItem?.id)
         // question and answer contents are added manually through the GUI or program
         
         if (!assessmentItem.parentAssessmentItem) {
-                  assessmentItem.assessment = Assessment.findById(params.assessment?.id)
+                  Assessment.findById(params.assessment?.id).addToAssessmentItems(assessmentItem)
             // start a new root TODO find the current number for each program       
          
             if (!assessmentItem.assessment) {

@@ -39,10 +39,13 @@ class SyllabusService {
         def syllabus = new Syllabus()
         // check if it was created against an existin syllabus (becomes parent)  
         syllabus.parentSyllabus = Syllabus.findById(params.syllabus?.id)
+      
+        Syllabus.findById(params.syllabus?.id).addToSyllabuss(syllabus)
     
         if (!syllabus.parentSyllabus) {
-                
-            syllabus.course = Course.findById(params.course?.id)
+             
+            if (params.course)
+            Course.findById(params.course?.id).addToSyllabuss(syllabus)
             // start a new root TODO find the current number for each program       
          
             if (!syllabus.course) {

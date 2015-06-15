@@ -48,7 +48,7 @@ class InitAssessmentItem {
                 sequence: "1",
                 effort: 10,
                 effortUnit: DurationUnit.MINUTES,
-                assessment: Assessment.findByName('Introudction Test'),
+                assessment: Assessment.findByName('Introduction Test'),
                 
                 
                 
