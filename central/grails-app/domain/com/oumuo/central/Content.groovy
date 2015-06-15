@@ -19,7 +19,7 @@ class Content {
     
     // through Learning/Assessment static hasMany = [comments: Comment]
     String content
-    String contentUrl
+    URL contentUrl
     // no sequence
     ContentType contentType = ContentType.SLIDES
     ContentRole contentRole = ContentRole.PRIMARY

@@ -36,7 +36,9 @@
 						<g:each in="\${${propertyName}.${p.name}}" var="${p.name[0]}">
 						<span class="property-value" aria-labelledby="${p.name}-label"><g:link controller="${p.referencedDomainClass?.propertyName}" action="show" id="\${${p.name[0]}.id}">\${${p.name[0]}?.encodeAsHTML()}</g:link></span>
 						</g:each>
-					<%  } else if (p.manyToOne || p.oneToOne) { %>
+					<%  } else if (p.type == URL) { %>
+						<span class="property-value" aria-labelledby="${p.name}-label"><g:link  url="\${${propertyName}?.${p.name}}">\${${propertyName}?.${p.name}?.encodeAsHTML()}</g:link></span>
+                                        <%  } else if (p.manyToOne || p.oneToOne) { %>
 						<span class="property-value" aria-labelledby="${p.name}-label"><g:link controller="${p.referencedDomainClass?.propertyName}" action="show" id="\${${propertyName}?.${p.name}?.id}">\${${propertyName}?.${p.name}?.encodeAsHTML()}</g:link></span>
 					<%  } else if (p.type == Boolean || p.type == boolean) { %>
 						<span class="property-value" aria-labelledby="${p.name}-label"><g:formatBoolean boolean="\${${propertyName}?.${p.name}}" /></span>

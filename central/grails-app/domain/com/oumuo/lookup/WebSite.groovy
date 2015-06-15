@@ -9,7 +9,7 @@ class WebSite {
   
     // Person owner (does not work well with sequence updates)
  
-    String url
+    URL url
     boolean loginSupported = false
     Date dateCreated
     Date lastUpdated
