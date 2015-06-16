@@ -45,15 +45,16 @@ class InitSyllabus {
                 course:Course.findByName('Computer Science I'),
                 learning: Learning.findByName('Introduction')
                 
-            ),
-            new Syllabus(name: 'CS 2',
-                sequence: "2",
+            ).addToSubSyllabuss( 
+                new Syllabus(name: 'CS 1.1',
+                sequence: "1.1",
                 course:Course.findByName('Computer Science I'),
                 learning: Learning.findByName('Data Structures')
+                )
                 
             ).addToSubSyllabuss(
-                new Syllabus(name: 'CS 2.l',
-                    sequence: "2.1",
+                new Syllabus(name: 'CS 1.1.l',
+                    sequence: "1.1.1",
                     course:Course.findByName('Computer Science I'),
                     learning: Learning.findByName('Trees')
                 

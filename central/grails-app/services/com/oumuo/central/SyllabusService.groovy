@@ -39,6 +39,9 @@ class SyllabusService {
         // check if it was created against an existin syllabus (becomes parent)  
         // not needed sicne addTo..syllabus.parentSyllabus = Syllabus.findById(params.syllabus?.id)
       
+           // parent is already linked to parentSyllabus field should be ready
+           
+            
         if (params.syllabus) {
              
            
@@ -51,26 +54,30 @@ class SyllabusService {
         // add the current as a child to the parent found from table
             parent.addToSubSyllabuss(syllabus)
             
+                       if (syllabus.parentSyllabus.course)
+            Course.findById(syllabus.parentSyllabus.course.id).addToSyllabuss(syllabus)
+            else
+            log.warn "getNew: $syllabus parent $syllabus.parentSyllabus has no course"
+            
             log.trace "getNew: child syllabus $syllabus is created for a course $syllabus.parentSyllabus with $syllabus.sequence "
  
         } 
       
         else {
-            // this is the root
-           syllabus.sequence = "1"
-   
             
-            log.trace "getNew: root syllabus $syllabus is created for $syllabus.course"
+             if (params.course)
+            
+            // this is the root so add 1 to all other root items findAll{!it.parentSyllabus}
+           syllabus.sequence = 
+           Course.findById(params.course.id).syllabuss.findAll{!it.parentSyllabus}.size() + 1
+   
+            Course.findById(params.course?.id).addToSyllabuss(syllabus)
+            log.trace "getNew: root syllabus $syllabus is created for $syllabus.course with $syllabus.sequence"
         }
         
          // now see if need to copy course from its parent
-            // parent is already linked to parentSyllabus field should be ready
-            if (params.course)
-            Course.findById(params.course?.id).addToSyllabuss(syllabus)
-            else if (syllabus.parentSyllabus.course)
-            Course.findById(syllabus.parentSyllabus.course.id).addToSyllabuss(syllabus)
-            else
-            log.warn "getNew: $syllabus parent $syllabus.parentSyllabus has no course"
+         
+ 
             
         syllabus
       
