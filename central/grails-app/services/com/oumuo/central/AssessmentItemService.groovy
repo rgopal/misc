@@ -27,7 +27,7 @@ class AssessmentItemService {
         aclUtilService.addPermission assessmentItem, username, permission
     }
 
-    // A assessmentItem of courses will be created for a program so that will be non
+    // A assessmentItem of assessments will be created for a program so that will be non
     // null.   A assessmentItem is a hiearchical structure with self references.  When
     // a new instance is created then it gets its sequence based on parent and
     // older siblings and the owner is the person creating it.  Possible that
@@ -38,35 +38,41 @@ class AssessmentItemService {
      
         def assessmentItem = new AssessmentItem()
         
- 
-        
-        // check if it was created against an existin assessmentItem (becomes parent) 
-        AssessmentItem.findById(params.assessmentItem?.id).addToSubAssessmentItems(assessmentItem)
-        
-        // assessmentItem.parentAssessmentItem = AssessmentItem.findById(params.assessmentItem?.id)
-        // question and answer contents are added manually through the GUI or program
-        
-        if (!assessmentItem.parentAssessmentItem) {
-                  Assessment.findById(params.assessment?.id).addToAssessmentItems(assessmentItem)
-            // start a new root TODO find the current number for each program       
-         
-            if (!assessmentItem.assessment) {
-                assessmentItem.sequence = "1"
-            } else
-            {
-                assessmentItem.sequence = assessmentItem.assessment.assessmentItems.size() + 1
-            }
-            log.trace "getNew: root assessmentItem $assessmentItem is created for a assessment $assessmentItem.assessment "
- 
+ if (params.assessmentItem) {
+             
+           
+            def parent = AssessmentItem.findById(params.assessmentItem.id)
+           
+            // this is still now saved to add 1
+          def location = parent.subAssessmentItems ? parent.subAssessmentItems.size() +1 : 1
+            assessmentItem.sequence = parent.sequence + "." + location.toString()
+                
+        // add the current as a child to the parent found from table
+            parent.addToSubAssessmentItems(assessmentItem)
             
-        }else {
-          
-            // not a root so get the sequence from other siblings and program
-            def location = assessmentItem.parentAssessmentItem.subAssessmentItems ? assessmentItem.parentAssessmentItem.subAssessmentItems.size()+ 1 : 1
-            assessmentItem.sequence = assessmentItem.parentAssessmentItem.sequence + "." + location.toString()
+                       if (assessmentItem.parentAssessmentItem.assessment)
+            Assessment.findById(assessmentItem.parentAssessmentItem.assessment.id).addToAssessmentItems(assessmentItem)
+            else
+            log.warn "getNew: $assessmentItem parent $assessmentItem.parentAssessmentItem has no assessment"
             
-            log.trace "getNew: assessmentItem sequence $assessmentItem.sequence is subAssessmentItem of $assessmentItem.parentAssessmentItem"
+            log.trace "getNew: child assessmentItem $assessmentItem is created for a assessment $assessmentItem.parentAssessmentItem with $assessmentItem.sequence "
+ 
+        } 
+      
+        else {
+            
+             if (params.assessment)
+            
+            // this is the root so add 1 to all other root items findAll{!it.parentAssessmentItem}
+           assessmentItem.sequence = 
+           Assessment.findById(params.assessment.id).assessmentItems.findAll{!it.parentAssessmentItem}.size() + 1
+   
+            Assessment.findById(params.assessment?.id).addToAssessmentItems(assessmentItem)
+            log.trace "getNew: root assessmentItem $assessmentItem is created for $assessmentItem.assessment with $assessmentItem.sequence"
         }
+        
+         // now see if need to copy assessment from its parent
+         
         assessmentItem
       
     }
