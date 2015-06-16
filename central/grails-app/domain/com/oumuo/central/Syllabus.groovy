@@ -59,7 +59,6 @@ class Syllabus implements Comparable {
         // in future make all other editable false as well
         course (nullable:true)
         learning()
-       
         
         subSyllabuss()
 

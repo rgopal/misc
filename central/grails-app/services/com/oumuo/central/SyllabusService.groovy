@@ -27,45 +27,51 @@ class SyllabusService {
         aclUtilService.addPermission syllabus, username, permission
     }
 
-    // A syllabus of courses will be created for a program so that will be non
-    // null.   A syllabus is a hiearchical structure with self references.  When
+    // A syllabus of learning  created for a course so that will
+    //  A syllabus is a hiearchical structure with self references.  When
     // a new instance is created then it gets its sequence based on parent and
-    // older siblings and the owner is the person creating it.  Possible that
-    // root created by one person and children by others.
+    // older siblings and a referenec to the course
     
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     Syllabus getNew(Map params) {
      
         def syllabus = new Syllabus()
         // check if it was created against an existin syllabus (becomes parent)  
-        syllabus.parentSyllabus = Syllabus.findById(params.syllabus?.id)
+        // not needed sicne addTo..syllabus.parentSyllabus = Syllabus.findById(params.syllabus?.id)
       
-        Syllabus.findById(params.syllabus?.id).addToSyllabuss(syllabus)
-    
-        if (!syllabus.parentSyllabus) {
+        if (params.syllabus) {
              
-            if (params.course)
-            Course.findById(params.course?.id).addToSyllabuss(syllabus)
-            // start a new root TODO find the current number for each program       
-         
-            if (!syllabus.course) {
-                syllabus.sequence = "1"
-            } else
-            {
-                syllabus.sequence = syllabus.course.syllabuss.size() + 1
-            }
-            log.trace "getNew: root syllabus $syllabus is created for a course $syllabus.course "
+           
+            def parent = Syllabus.findById(params.syllabus.id)
+           
+            // this is still now saved to add 1
+          def location = parent.subSyllabuss ? parent.subSyllabuss.size() +1 : 1
+            syllabus.sequence = parent.sequence + "." + location.toString()
+                
+        // add the current as a child to the parent found from table
+            parent.addToSubSyllabuss(syllabus)
+            
+            log.trace "getNew: child syllabus $syllabus is created for a course $syllabus.parentSyllabus with $syllabus.sequence "
  
         } 
       
         else {
-          
-            // not a root so get the sequence from other siblings and program
-            def location = syllabus.parentSyllabus.subSyllabuss ? syllabus.parentSyllabus.subSyllabuss.size()+ 1 : 1
-            syllabus.sequence = syllabus.parentSyllabus.sequence + "." + location.toString()
+            // this is the root
+           syllabus.sequence = "1"
+   
             
-            log.trace "getNew: syllabus sequence $syllabus.sequence is subSyllabus of $syllabus.parentSyllabus"
+            log.trace "getNew: root syllabus $syllabus is created for $syllabus.course"
         }
+        
+         // now see if need to copy course from its parent
+            // parent is already linked to parentSyllabus field should be ready
+            if (params.course)
+            Course.findById(params.course?.id).addToSyllabuss(syllabus)
+            else if (syllabus.parentSyllabus.course)
+            Course.findById(syllabus.parentSyllabus.course.id).addToSyllabuss(syllabus)
+            else
+            log.warn "getNew: $syllabus parent $syllabus.parentSyllabus has no course"
+            
         syllabus
       
     }
