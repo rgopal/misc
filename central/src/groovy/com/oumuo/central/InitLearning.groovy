@@ -45,19 +45,19 @@ class InitLearning {
         
                 hierarchy: Hierarchy.AREA,
                 organization: Organization.findByName('Montgomery County Community College')
-                ),
-                 new Learning(
+            ),
+            new Learning(
                 name: 'Data Structures',
               
                 hierarchy: Hierarchy.AREA,
                 organization: Organization.findByName('Montgomery County Community College')
-                ),
-                  new Learning(
+            ),
+            new Learning(
                 name: 'Trees',
               
                 hierarchy: Hierarchy.TOPIC,
                 organization: Organization.findByName('Montgomery County Community College')
-                )
+            )
                
         ]
         
@@ -85,9 +85,10 @@ class InitLearning {
              
             log.debug "created Learning ${learning}"
         }
-    }
     
-    // log.info ("load: loaded ${Learning.count()} out of ${learnings.size()} learnings")
+    
+        log.info ("load: loaded ${Learning.count()} out of ${learnings.size()} learnings")
+    }
               
 }
     

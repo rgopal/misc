@@ -6,7 +6,7 @@ import groovy.util.logging.Log4j
 
 // This could be truely standalone and not part of any program or course
 
-class Learning {
+class Learning extends Material{
     
     String name
     //  keep all associations first
@@ -36,10 +36,6 @@ class Learning {
     AcademicSession durationUnit = AcademicSession.SEMESTER
     
 
-    // these are common to all; state is managed by system
-    Status status = Status.ACTIVE
-    Date dateCreated
-    Date lastUpdated
 
     String toString(){
 
@@ -67,10 +63,7 @@ class Learning {
         
         duration(nullable:true)
         durationUnit(nullable:true)
-     
-        status()
-        dateCreated()
-        lastUpdated()
+    
     }
 
 

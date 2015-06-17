@@ -89,9 +89,9 @@ class InitLearningAssessment {
              
             log.debug "created LearningAssessment ${learningAssessment}"
         }
-    }
+    log.info ("load: loaded ${LearningAssessment.count()} out of ${learningAssessments.size()} learningAssessments")
     
-    // log.info ("load: loaded ${LearningAssessment.count()} out of ${learningAssessments.size()} learningAssessments")
+    }
               
 }
     

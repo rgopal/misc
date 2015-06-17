@@ -86,9 +86,10 @@ class InitAssessment {
              
             log.debug "created Assessment ${assessment}"
         }
-    }
     
-    // log.info ("load: loaded ${Assessment.count()} out of ${assessments.size()} assessments")
+    
+    log.info ("load: loaded ${Assessment.count()} out of ${assessments.size()} assessments")
               
+    }
 }
     

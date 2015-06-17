@@ -19,7 +19,8 @@ class Person {
     static hasMany = [accounts:Account, personRoles: PersonRole, 
         staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
         rankings:Ranking,  // REMOVED rankingItems:RankingItem,
-        capabilitys: Requirement]
+        capabilitys: Requirement,
+        authorships: Authorship]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -86,6 +87,7 @@ class Person {
         rankings()
         // won't work - go through ranking - rankingItems()
         capabilitys()
+        authorships()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)

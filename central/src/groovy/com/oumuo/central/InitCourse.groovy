@@ -195,9 +195,11 @@ class InitCourse {
              
             log.debug "created Course ${course}"
         }
-    }
     
-    // log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
+    
+    log.info ("load: loaded ${Course.count()} out of ${courses.size()} courses")
+    
+    }
               
 }
     

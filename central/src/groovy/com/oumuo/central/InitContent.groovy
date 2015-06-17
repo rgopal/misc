@@ -99,9 +99,9 @@ class InitContent {
              
             log.debug "created Content ${content}"
         }
-    }
+    log.info ("load: loaded ${Content.count()} out of ${contents.size()} contents")
     
-    // log.info ("load: loaded ${Content.count()} out of ${contents.size()} contents")
+    }
               
 }
     

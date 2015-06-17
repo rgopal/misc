@@ -74,9 +74,9 @@ class InitCourseRelation {
              
             log.debug "created CourseRelation ${courseRelation}"
         }
-    }
+    log.info ("load: loaded ${CourseRelation.count()} out of ${courseRelations.size()} courseRelations")
     
-    // log.info ("load: loaded ${CourseRelation.count()} out of ${courseRelations.size()} courseRelations")
+    }
               
 }
     

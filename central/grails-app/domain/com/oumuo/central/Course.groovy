@@ -7,7 +7,7 @@ import groovy.util.logging.Log4j
 // this associated with either or both of Person and Organization, but a Person
 // does this on their own so it is not null 
 
-class Course {
+class Course extends Material {
     
     String name
     //  keep all associations first
@@ -57,10 +57,10 @@ class Course {
     Date endDate
     
     // these are common to all; state is managed by system
-    Status status = Status.ACTIVE
+ /*   Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
-
+*/
     String toString(){
 
     "${name} "
@@ -102,10 +102,7 @@ class Course {
         
         startDate(nullable:true)
         endDate(nullable:true)
-        
-        status()
-        dateCreated()
-        lastUpdated()
+    
     }
 
 
