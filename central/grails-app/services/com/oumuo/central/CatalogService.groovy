@@ -27,7 +27,7 @@ class CatalogService {
         aclUtilService.addPermission catalog, username, permission
     }
 
-    // A catalog of courses will be created for a program so that will be non
+    // A catalog of programs will be created for a program so that will be non
     // null.   A catalog is a hiearchical structure with self references.  When
     // a new instance is created then it gets its sequence based on parent and
     // older siblings and the owner is the person creating it.  Possible that
@@ -38,43 +38,39 @@ class CatalogService {
      
         def catalog = new Catalog()
         
-        // first find the person who is authoring the catalog
-        catalog.person = Person.findByUserName (
-            springSecurityService.authentication.name
-        )
-        
-        // this has to be non null (not using belongsTo for flexibility)
-        if (!catalog.person) {
-            catalog.errors.allErrors.each {
-                log.warning ("create: error while getting new catalog ${catalog}: ${it}")
-            }
-        } else
-            log.trace "getNew: creating new catalog for $catalog.person"
-        
-        // check if it was created against an existin catalog (becomes parent)  
-        catalog.parentCatalog = Catalog.findById(params.catalog?.id)
-        
-        if (!catalog.parentCatalog) {
-         
-     
-            catalog.program = Program.findById(params.program?.id)
-             // start a new root TODO find the current number for each program       
-         
-            if (!catalog.program) {
-                   catalog.sequence = "1"
-            } else
-            {
-                catalog.sequence = catalog.program.catalogs.size() + 1
-            }
-            log.trace "getNew: root catalog $catalog is created for a org $catalog.program "
+         if (params.catalog) {
+             
+           
+            def parent = Catalog.findById(params.catalog.id)
+           
+            // this is still now saved to add 1
+          def location = parent.subCatalogs ? parent.subCatalogs.size() +1 : 1
+            catalog.sequence = parent.sequence + "." + location.toString()
+                
+        // add the current as a child to the parent found from table
+            parent.addToSubCatalogs(catalog)
             
-        } else {
-            // not a root so get the sequence from other siblings and program
-            def location = catalog.parentCatalog.subCatalogs ? catalog.parentCatalog.subCatalogs.size()+ 1 : 1
-            catalog.sequence = catalog.parentCatalog.sequence + "." + location.toString()
-            catalog.program = catalog.parentCatalog.program  // for allCatalogs to work
-            log.trace "getNew: catalog sequence $catalog.sequence is subCatalog of $catalog.parentCatalog"
+                       if (catalog.parentCatalog.program)
+            Program.findById(catalog.parentCatalog.program.id).addToCatalogs(catalog)
+            else
+            log.warn "getNew: $catalog parent $catalog.parentCatalog has no program"
+            
+            log.trace "getNew: child catalog $catalog is created for a program $catalog.parentCatalog with $catalog.sequence "
+ 
+        } 
+      
+        else {
+            
+             if (params.program)
+            
+            // this is the root so add 1 to all other root items findAll{!it.parentCatalog}
+           catalog.sequence = 
+           Program.findById(params.program.id).catalogs.findAll{!it.parentCatalog}.size() + 1
+   
+            Program.findById(params.program?.id).addToCatalogs(catalog)
+            log.trace "getNew: root catalog $catalog is created for $catalog.program with $catalog.sequence"
         }
+        
         catalog
       
     }

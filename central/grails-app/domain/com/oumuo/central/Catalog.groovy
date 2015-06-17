@@ -24,7 +24,7 @@ class Catalog implements Comparable {
     
     String name
     String sequence
-    Person person
+    // no need Person person
     Course course
     CourseType courseType = CourseType.REQUIRED
    
@@ -57,7 +57,7 @@ class Catalog implements Comparable {
         program(nullable:false)       
         // this allows the user to make parentCatalog null (and thus a new root)
         parentCatalog (nullable:true, editable:false)
-        person(editable:false, nullable:false)
+        // No need for this - person(editable:false, nullable:false)
         // in future make all other editable false as well
         course (nullable:true)
         courseType (nullable:true) 

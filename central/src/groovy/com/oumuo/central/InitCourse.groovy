@@ -93,7 +93,18 @@ class InitCourse {
                     )
                 )
             ),
-          
+          new Course(name: 'Computer Science II',
+              
+                academicSession:AcademicSession.SEMESTER,
+                academicStratum:AcademicStratum.ASSOCIATE,
+                academicMajor:AcademicMajor.CS,
+                ranking: 700,
+                passingGrade: Grade.B,
+                credential:Credential.CERTIFICATE,
+                fee: 2020.0,
+                organization: Organization.
+                    findByName('Montgomery County Community College')   
+            ),
             new Course(name: 'High School Physics',
                 
                 academicSession:AcademicSession.MONTH,

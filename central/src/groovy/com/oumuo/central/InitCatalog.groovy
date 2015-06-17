@@ -45,17 +45,34 @@ class InitCatalog {
 
         def catalogs = [ 
             new Catalog(name: 'Computer Science Diploma Catalog',
-                sequence: "1",
-                person:Person.findByUserName('jfields'),
-                course:Course.findByName('Computer Science I'),
+                sequence: "1",         
+                // null for top item course:Course.findByName('Computer Science I'),
                 courseType:CourseType.REQUIRED,
                 program: Program.
                     findByName('Computer Science Diploma')   
+            ).addToSubCatalogs(
+                new Catalog(name: 'Computer Science Diploma Catalog 1.1',
+                    sequence: "1.1",
+               
+                    course:Course.findByName('Computer Science I'),
+                    courseType:CourseType.REQUIRED,
+                    program: Program.
+                        findByName('Computer Science Diploma')   
+                )
+            ).addToSubCatalogs(
+                new Catalog(name: 'Computer Science Diploma Catalog 1.2',
+                    sequence: "1.2",
+               
+                    course:Course.findByName('Computer Science II'),
+                    courseType:CourseType.REQUIRED,
+                    program: Program.
+                        findByName('Computer Science Diploma')   
+                )
             ),
           
             new Catalog(name: 'High School Physics Help Catalog',
                 sequence: "2",
-                person:Person.findByUserName('jfields'),
+             
                 course:Course.findByName('High School Physics'),
                 courseType:CourseType.REQUIRED,
                 program: Program.
@@ -63,7 +80,7 @@ class InitCatalog {
             ),
             new Catalog(name: 'Middle School English Catalog',
                 sequence: "3",
-                person:Person.findByUserName('jfields'),
+               
                 course:Course.findByName('Middle School English Drama'),
                 courseType:CourseType.REQUIRED,
                 program: Program.
@@ -71,7 +88,7 @@ class InitCatalog {
             ),
             new Catalog(name: 'लखनऊ विश्वविद्यालय कला संकाय Catalog',
                 sequence: "4",
-                person:Person.findByUserName('jfields'),
+            
                 course:Course.findByName('लखनऊ विश्वविद्यालय कला 1'),
                 courseType:CourseType.REQUIRED,
                 program: Program.
@@ -97,6 +114,21 @@ class InitCatalog {
                     InitSpringSecurity.grantACL(catalog, user)
                 }
              
+                for (subCatalog in catalog.subCatalogs) {
+                    if (!subCatalog.save(flush:true)) { 
+                        subCatalog.errors.allErrors.each {error ->
+                            log.warn "An error occured with ${subCatalog} $error"
+                        }
+                    } else {     
+                        // give permissions to two users
+                        for (user in ['jfields']) {
+                            log.trace "   starting ACL creations for $user"
+                            InitSpringSecurity.grantACL(subCatalog, user)
+                    
+                        } 
+                    }
+                }
+                
                 log.debug "created Catalog ${catalog}"
             }
         }
