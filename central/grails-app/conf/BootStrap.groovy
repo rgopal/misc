@@ -17,6 +17,7 @@ import com.oumuo.central.InitLearningAssessment
 import com.oumuo.central.InitContent
 import com.oumuo.central.InitAssessmentItem
 import com.oumuo.central.InitAuthorship
+import com.oumuo.central.InitTerm
 
 class BootStrap {
     def aclService
@@ -54,6 +55,7 @@ class BootStrap {
         new InitContent().load()
         new InitAssessmentItem().load()
         new InitAuthorship().load()
+          new InitTerm().load()
         
     }
    

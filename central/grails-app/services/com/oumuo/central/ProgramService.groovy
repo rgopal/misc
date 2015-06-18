@@ -33,7 +33,7 @@ class ProgramService {
     Program getNew(Map params) {
         def program = new Program()
         
-        // first find the person who is authoring the comment
+       /* // first find the person who is authoring the comment
         program.person = Person.findByUserName (
             springSecurityService.authentication.name
         )
@@ -47,6 +47,9 @@ class ProgramService {
         } else
         log.trace "getNew: creating new program for $program.person"
          
+        */
+       
+        // don't care if it is null
         program.organization = Organization.findById(params.organization?.id)
        
         

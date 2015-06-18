@@ -11,9 +11,10 @@ class Program {
     static hasMany = [catalogs: Catalog, rankings: Ranking, requirements: Requirement,
         learningAssessments: LearningAssessment,
     courseRelations: CourseRelation,
-    authorships:Authorship] 
+    authorships:Authorship,
+terms: Term] 
     
-    Person person
+    // REMOVED Person person
     Organization organization
     Integer ranking            // automatically derived from multiple items
     Credential credential = Credential.NONE  
@@ -22,7 +23,7 @@ class Program {
     Grade minimumGrade = Grade.C
     Double minimumPercentage
     AcademicSession academicSession = AcademicSession.FREE_FORM
-    Float sessionFee = 0.0f
+    Float termFee = 0.0f
 
       
     // spent a lot of time when it was pure Catalog catalog -- this transient problem Catalog 5/10
@@ -43,10 +44,9 @@ class Program {
         // named association so not needed owner()
         
         name (nullable:false)
-        person (nullable:false, editable:false)
+     
         organization (nullable:true, editable:true)
     
- 
         // still not happy TODO this was supposed to be a singleton
         catalogs()
         rankings()
@@ -54,6 +54,7 @@ class Program {
         learningAssessments()
         courseRelations()
         authorships()
+        terms()
         
         credential(nullable:true)
         academicStratum(nullable:true)
@@ -61,7 +62,7 @@ class Program {
         minimumGrade(nullable:true)
         minimumPercentage(min:0.0d, max:100.0d, nullable:true)
         academicSession(nullable:true)
-        sessionFee(nullable:true)
+        termFee(nullable:true)
         ranking(range:0..1000, editable:false, nullable:true)
  
         startDate(nullable:true)
