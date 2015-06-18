@@ -56,7 +56,7 @@ class AuthorshipService {
         else if (params.assessment)
         Assessment.findById(params.assessment?.id).addToAuthorships(authorship)
           else if (params.program)
-        Program.findById(params.assessment?.id).addToAuthorships(authorship)
+        Program.findById(params.program?.id).addToAuthorships(authorship)
         
         log.trace "getNew: new authorship $authorship instance created"
         authorship

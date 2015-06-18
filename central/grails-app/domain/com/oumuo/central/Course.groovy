@@ -7,7 +7,7 @@ import groovy.util.logging.Log4j
 // this associated with either or both of Person and Organization, but a Person
 // does this on their own so it is not null 
 
-class Course extends Material {
+class Course {
     
     String name
     //  keep all associations first
@@ -21,7 +21,8 @@ class Course extends Material {
         objectives: Objective,
          teachingRequirements: Requirement,
          requirements: Requirement,   
-        rankings:Ranking] 
+        rankings:Ranking,
+        authorships:Authorship] 
     static mappedBy = [
             teachingRequirements:'teaching',
             requirements: 'learning' ]
@@ -57,10 +58,10 @@ class Course extends Material {
     Date endDate
     
     // these are common to all; state is managed by system
- /*   Status status = Status.ACTIVE
+    Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
-*/
+
     String toString(){
 
     "${name} "
@@ -78,6 +79,7 @@ class Course extends Material {
         requirements()
         teachingRequirements()
         rankings()
+        authorships()
         
         credential(nullable:true)
         academicStratum(nullable:true)
@@ -102,7 +104,10 @@ class Course extends Material {
         
         startDate(nullable:true)
         endDate(nullable:true)
-    
+        
+        status()
+        dateCreated()
+        lastUpdated()
     }
 
 

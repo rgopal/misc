@@ -7,7 +7,7 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 
-class CourseService extends MaterialService {
+class CourseService {
 
     def aclPermissionFactory
     def aclService

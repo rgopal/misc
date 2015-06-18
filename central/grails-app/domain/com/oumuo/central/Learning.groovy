@@ -6,7 +6,7 @@ import groovy.util.logging.Log4j
 
 // This could be truely standalone and not part of any program or course
 
-class Learning extends Material{
+class Learning {
     
     String name
     //  keep all associations first
@@ -19,7 +19,8 @@ class Learning extends Material{
          requirements: Requirement,  
          learningAssessments: LearningAssessment,
          contents: Content,
-        rankings:Ranking] 
+        rankings:Ranking,
+        authorships:Authorship] 
     static mappedBy = [
             teachingRequirements:'teachingSection',
             requirements: 'learningSection' ]
@@ -36,6 +37,10 @@ class Learning extends Material{
     AcademicSession durationUnit = AcademicSession.SEMESTER
     
 
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated
+    Date lastUpdated
 
     String toString(){
 
@@ -55,6 +60,8 @@ class Learning extends Material{
         contents()
         learningAssessments()
         teachingRequirements()
+        rankings()
+        authorships()
      
         hierarchy()
         academicLevel(nullable:true)
@@ -63,7 +70,10 @@ class Learning extends Material{
         
         duration(nullable:true)
         durationUnit(nullable:true)
-    
+     
+        status()
+        dateCreated()
+        lastUpdated()
     }
 
 

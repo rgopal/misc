@@ -4,13 +4,14 @@ import groovy.util.logging.Log4j
 
 @Log4j
 
-class Program extends Material{
+class Program {
 
     String name
     SortedSet catalogs
     static hasMany = [catalogs: Catalog, rankings: Ranking, requirements: Requirement,
         learningAssessments: LearningAssessment,
-    courseRelations: CourseRelation] 
+    courseRelations: CourseRelation,
+    authorships:Authorship] 
     
     Person person
     Organization organization
@@ -28,7 +29,10 @@ class Program extends Material{
 
     Date startDate = new Date()
     Date endDate
-
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated
+    Date lastUpdated
 
     String toString(){
 
@@ -49,6 +53,7 @@ class Program extends Material{
         requirements()
         learningAssessments()
         courseRelations()
+        authorships()
         
         credential(nullable:true)
         academicStratum(nullable:true)
@@ -62,7 +67,9 @@ class Program extends Material{
         startDate(nullable:true)
         endDate(nullable:true)
         
-    
+        status()
+        dateCreated()
+        lastUpdated()
     }
 
 

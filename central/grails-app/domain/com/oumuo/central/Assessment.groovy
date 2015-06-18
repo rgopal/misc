@@ -6,7 +6,7 @@ import groovy.util.logging.Log4j
 
 // Structure comes from LearningAssessment linked with Learning (Syllabus)
 
-class Assessment extends Material {
+class Assessment {
     
     String name
     //  keep all associations first
@@ -18,7 +18,8 @@ class Assessment extends Material {
         objectives: Objective,
         learningAssessments: LearningAssessment,
         assessmentItems: AssessmentItem,
-        rankings:Ranking] 
+        rankings:Ranking,
+        authorships:Authorship] 
 
     
     // then proper fileds
@@ -43,6 +44,12 @@ class Assessment extends Material {
     Integer effortRequired = 1 
     DurationUnit effortUnit = DurationUnit.HOURS
    
+
+    // these are common to all; state is managed by system
+    Status status = Status.ACTIVE
+    Date dateCreated
+    Date lastUpdated
+
     String toString(){
 
     "${name} "
@@ -61,6 +68,8 @@ class Assessment extends Material {
         objectives()
      
         rankings()
+        authorships()
+        
               name (nullable:false)
         academicStratum(nullable:true)
         academicMajor(nullable:true)
@@ -75,7 +84,9 @@ class Assessment extends Material {
         
         ranking(range:0..1000, editable:false, nullable:true)
  
-     
+        status()
+        dateCreated()
+        lastUpdated()
     }
 
 
