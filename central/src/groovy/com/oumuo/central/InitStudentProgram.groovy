@@ -9,6 +9,7 @@ package com.oumuo.central
 
 import org.springframework.security.authentication. UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
+import grails.converters.*
 
 
 import org.springframework.security.core.context.SecurityContextHolder as SCH
@@ -67,6 +68,21 @@ class InitStudentProgram {
         // save all the studentProgramss and create ACLs
         for (studentProgram in studentPrograms) {     
             log.trace "processing  studentProgram ${studentProgram} "
+            
+            // first deep clone program
+            
+           def newProgram = InitSpringSecurity.deepClone(studentProgram.program)
+           
+         
+
+            JSON.use("deep") 
+            def converter = newProgram as JSON
+            converter.prettyPrint = true
+            def json = converter.toString()
+
+           log.trace "load: cloned program " + json
+           
+           //studentProgram.program = newProgram
        
             if (!studentProgram.save(flush:true)) { 
                 studentProgram.errors.allErrors.each {error ->
