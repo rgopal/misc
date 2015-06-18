@@ -12,7 +12,8 @@ class Program {
         learningAssessments: LearningAssessment,
     courseRelations: CourseRelation,
     authorships:Authorship,
-terms: Term] 
+terms: Term,
+studentPrograms: StudentProgram] 
     
     // REMOVED Person person
     Organization organization
@@ -55,6 +56,7 @@ terms: Term]
         courseRelations()
         authorships()
         terms()
+        studentPrograms()
         
         credential(nullable:true)
         academicStratum(nullable:true)

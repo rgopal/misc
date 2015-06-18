@@ -17,10 +17,11 @@ class Person {
  
       // associations
     static hasMany = [accounts:Account, personRoles: PersonRole, 
-        staffings:Staffing, comments:Comment, programs:Program, catalogs:Catalog,
+        staffings:Staffing, comments:Comment, 
         rankings:Ranking,  // REMOVED rankingItems:RankingItem,
         capabilitys: Requirement,
-        authorships: Authorship]
+        authorships: Authorship,
+        studentPrograms: StudentProgram]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -82,12 +83,13 @@ class Person {
         staffings()
         accounts ()
         comments ()
-        programs()
-        catalogs()
+       
+       
         rankings()
         // won't work - go through ranking - rankingItems()
         capabilitys()
         authorships()
+        studentPrograms()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)

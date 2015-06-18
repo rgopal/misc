@@ -34,7 +34,9 @@ class AuthorshipService {
         def authorship = new Authorship()
         
      
-               // first find the person who is authoring the comment
+        // first find the person who is authoring the comment. Eventually this
+        // will be done when some one creates a course (then related Authorship
+        // also gets created.
         authorship.person = Person.findByUserName (
             springSecurityService.authentication.name
         )
