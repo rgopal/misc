@@ -69,8 +69,9 @@ class InitStudentProgram {
             log.trace "processing  studentProgram ${studentProgram} "
             
             // first deep clone program
-           def program = Program.
-                    findByName('Computer Science Diploma')
+           def program = Program.findById(1,[lazy:[catalogs:false]])
+       
+                  //  findByName('Computer Science Diploma')
            JSON.use("deep") 
            
             def converter = program as JSON

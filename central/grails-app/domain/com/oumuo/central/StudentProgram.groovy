@@ -45,8 +45,10 @@ class StudentProgram {
     static constraints = {
     
         name(nullable:false)
-        person (editable:true, nullable:true)
-        program (editable:true, nullable:true)
+        
+        // this is created by a program 
+        person (editable:false, nullable:true)
+        program (editable:false, nullable:true)
 
          paymentDate (nullable:true)
      paymentState (nullable:true)
