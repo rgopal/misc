@@ -189,6 +189,7 @@ class InitSpringSecurity {
             if (notCloneable && prop.name in notCloneable)
             continue
 
+            log.trace "deepClone: property $prop.name association $prop.association"
             if (prop.association) {
 
                 if (prop.owningSide) {

@@ -82,7 +82,15 @@ class InitStudentProgram {
 
            log.trace "load: cloned program " + json
            
-           //studentProgram.program = newProgram
+            // first save the new program or else hibernate will complain
+           if (!newProgram.save(flush:true)) {
+               newProgram.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${newProgram} $error"
+                }
+           }
+           
+            // now save the newly created studentProgram
+           studentProgram.program = newProgram
        
             if (!studentProgram.save(flush:true)) { 
                 studentProgram.errors.allErrors.each {error ->
