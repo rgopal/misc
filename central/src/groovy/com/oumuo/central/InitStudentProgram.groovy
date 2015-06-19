@@ -69,8 +69,11 @@ class InitStudentProgram {
             log.trace "processing  studentProgram ${studentProgram} "
             
             // first deep clone program
-           def program = Program.findById(1,[lazy:[catalogs:false]])
-       
+           def program = Program.findByName('Computer Science Diploma')
+           if (program.getCatalogs())
+                log.trace "load: size of catalogs " + program.catalogs.size()
+           else
+                log.warn "load: lazy fetching is not working for $program"
                   //  findByName('Computer Science Diploma')
            JSON.use("deep") 
            
