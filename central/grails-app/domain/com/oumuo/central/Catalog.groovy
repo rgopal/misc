@@ -54,7 +54,7 @@ class Catalog implements Comparable {
         // named association so not needed owner()
         sequence (nullable:true, display:true, editable:false)
         name(nullable:false)
-        program(nullable:false)       
+        program(editable:false, nullable:true)       
         // this allows the user to make parentCatalog null (and thus a new root)
         parentCatalog (nullable:true, editable:false)
         // No need for this - person(editable:false, nullable:false)

@@ -193,8 +193,10 @@ class InitSpringSecurity {
             if (prop.association) {
 
                 if (prop.owningSide) {
+                    
                     //we have to deep clone owned associations
                     if (prop.oneToOne) {
+                        log.trace "grantDeepACL: 0wningSide     oneToOne"
                         def newAssociationInstance = deepClone(domainInstanceToClone?."${prop.name}")
                         newDomainInstance."${prop.name}" = newAssociationInstance
                     } else {
@@ -220,7 +222,7 @@ class InitSpringSecurity {
                         //println "${prop.owningSide} - ${prop.name} - ${prop.oneToMany}"
                         //return
                         if (prop.manyToOne) {
-
+                            log.trace "deepClone: NOT 0wningSide Bidirectional"
                             newDomainInstance."${prop.name}" = domainInstanceToClone."${prop.name}"
                             def owningInstance = domainInstanceToClone."${prop.name}"
                             // Need to find the collection.
@@ -238,7 +240,9 @@ class InitSpringSecurity {
                         }
 
                         else if (prop.oneToMany) {
+                            log.trace "deepClone: NOT 0wningSide Bidirectional O2M"
                             domainInstanceToClone."${prop.name}".each { associationInstance ->
+                                log.trace"deepClone:             $associationInstance"
                                 def newAssociationInstance = deepClone(associationInstance)
                                 newDomainInstance."addTo${prop.name.capitalize()}"(newAssociationInstance)
                             }
@@ -256,5 +260,98 @@ class InitSpringSecurity {
         }
 
         return newDomainInstance
+    }
+    static void grantDeepACL (domainInstanceToClone, user) {
+
+        //TODO: PRECISA ENTENDER ISSO! MB-249 no youtrack
+        //Algumas classes chegam aqui com nome da classe + _$$_javassist_XX
+        log.trace "grantDeepACL for instance $domainInstanceToClone"
+        
+        if (domainInstanceToClone.getClass().name.contains("_javassist"))
+        return
+
+        grantACL (domainInstanceToClone, user)
+        
+        //Our target instance for the instance we want to deep ACL
+        // recursion (newDomainInstance is not used
+        def newDomainInstance = domainInstanceToClone.getClass().newInstance()
+
+        //Returns a DefaultGrailsDomainClass (as interface GrailsDomainClass) for inspecting properties
+        GrailsClass domainClass = domainInstanceToClone.domainClass.grailsApplication.getDomainClass(newDomainInstance.getClass().name)
+
+        def notCloneable = domainClass.getPropertyValue("notCloneable")
+
+        for(DefaultGrailsDomainClassProperty prop in domainClass?.getPersistentProperties()) {
+            if (notCloneable && prop.name in notCloneable)
+            continue
+
+            log.trace "grantDeepACL: property $prop.name " 
+            if (prop.association) {
+
+                log.trace "grantDeepACL:      ${prop}"
+                if (prop.owningSide) {
+                    //we have to deep clone owned associations
+                    if (prop.oneToOne) {
+                        log.trace "grantDeepACL: 0wningSide     oneToOne"
+                        grantDeepACL(domainInstanceToClone?."${prop.name}", user)
+                       
+                    } else {
+                        log.trace "grantDeepACL:    owningSide NOT  oneToOne"
+                        domainInstanceToClone."${prop.name}".each { associationInstance ->
+                            grantDeepACL(associationInstance, user)
+
+                        }
+                    }
+                } else {
+
+                    if (!prop.bidirectional) {
+
+                            log.trace "grantDeepACL: NOT 0wningSide NOT Bidirectional"
+                        //If the association isn't owned or the owner, then can grant ACL.
+                        grantACL(domainInstanceToClone."${prop.name}", user)
+                    }
+                    // @@JR
+                    // Yes bidirectional and not owning. E.g. clone Report, belongsTo Organisation which hasMany
+                    // manyToOne. Just add to the owning objects collection.
+                    else {
+                        //println "${prop.owningSide} - ${prop.name} - ${prop.oneToMany}"
+                        //return
+                        log.trace "grantDeepACL: NOT 0wningSide Bidirectional"
+                        if (prop.manyToOne) {
+                            
+                                log.warn "grantDeepACL: NOT 0wningSide Bidirectional M21 NOOP"
+                            newDomainInstance."${prop.name}" = domainInstanceToClone."${prop.name}"
+                            def owningInstance = domainInstanceToClone."${prop.name}"
+                            // Need to find the collection.
+                            String otherSide = prop.otherSide.name.capitalize()
+                            //println otherSide
+                            //owningInstance."addTo${otherSide}"(newDomainInstance)
+                        }
+                        else if (prop.manyToMany) {
+                            log.trace "grantDeepACL: NOT 0wningSide Bidirectional M2M"
+                            //newDomainInstance."${prop.name}" = [] as Set
+
+                            domainInstanceToClone."${prop.name}".each {
+
+                                //newDomainInstance."${prop.name}".add(it)
+                                log.warn ("deepACL: in manyToMany NOOP for $it")
+                            }
+                        }
+
+                        else if (prop.oneToMany) {
+                            log.trace "grantDeepACL: NOT 0wningSide Bidirectional O2M size " 
+                           
+                            domainInstanceToClone."${prop.name}".each { associationInstance ->
+                                log.trace "grantDeepACL:              $associationInstance"
+                                grantDeepACL(associationInstance, user)
+                                
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+
+       
     }
 }

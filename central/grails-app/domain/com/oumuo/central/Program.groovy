@@ -12,8 +12,8 @@ class Program {
         learningAssessments: LearningAssessment,
     courseRelations: CourseRelation,
     authorships:Authorship,
-terms: Term,
-studentPrograms: StudentProgram] 
+    terms: Term,
+    studentPrograms: StudentProgram] 
     
     // REMOVED Person person
     Organization organization

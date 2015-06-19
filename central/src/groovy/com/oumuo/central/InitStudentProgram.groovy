@@ -57,9 +57,8 @@ class InitStudentProgram {
                 perPeriod : AcademicSession.WEEK,
                 state :State.STARTED,
      
-                totalFee: 2000.0,
-                program: Program.
-                    findByName('Computer Science Diploma')
+                totalFee: 2000.0
+                
             )
             
         ]
@@ -70,15 +69,26 @@ class InitStudentProgram {
             log.trace "processing  studentProgram ${studentProgram} "
             
             // first deep clone program
+           def program = Program.
+                    findByName('Computer Science Diploma')
+           JSON.use("deep") 
+           
+            def converter = program as JSON
+            converter.prettyPrint = true
+            def json = converter.toString()
             
-           def newProgram = InitSpringSecurity.deepClone(studentProgram.program)
+            // not copying all associations (lazy problem)?
+            
+            log.trace "load: old program " + json
+            
+           def newProgram = InitSpringSecurity.deepClone(program)
            
          
 
-            JSON.use("deep") 
-            def converter = newProgram as JSON
+            
+            converter = newProgram as JSON
             converter.prettyPrint = true
-            def json = converter.toString()
+             json = converter.toString()
 
            log.trace "load: cloned program " + json
            
@@ -91,6 +101,12 @@ class InitStudentProgram {
            
             // now save the newly created studentProgram
            studentProgram.program = newProgram
+           
+           // now save ACLs for newly created studentProgram
+           for (user in ['jfields', 'mjohns']) {
+                    log.trace "   starting ACL creations for $user on $newProgram"
+                    InitSpringSecurity.grantDeepACL(newProgram, user)
+           }
        
             if (!studentProgram.save(flush:true)) { 
                 studentProgram.errors.allErrors.each {error ->

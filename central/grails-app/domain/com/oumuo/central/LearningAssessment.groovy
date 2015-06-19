@@ -38,7 +38,7 @@ class LearningAssessment {
         learning (editable:true)
         assessment (editable:true)
         timeRelation (nullable:false)
-        program(editable:true)      // so that you can create from learning or assessment
+        program(editable:true, nullable:true)      // so that you can create from learning or assessment
         weight(nullable:true)
         
         passingGradeType()
