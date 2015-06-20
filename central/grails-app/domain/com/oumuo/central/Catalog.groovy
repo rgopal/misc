@@ -45,6 +45,16 @@ class Catalog implements Comparable {
         return subCatalogs ? subCatalogs*.allSubCatalogs.flatten() + subCatalogs : []
     }
     
+    // add program name to sub catalog (so that entire tree shows
+    void addRootProgram(Program rProgram) {
+        log.trace "addRootProgram rProgram is ${rProgram.id} for Catalog ${this.id}"
+      
+            this.program = rProgram
+            // recursively do it for all subcatalogs
+        if (this.subCatalogs) {
+            subCatalogs*.addRootProgram(rProgram)
+        }
+    }
     String toString(){
 
         sequence + " " + name?.substring(0,Math.min(15, name? name.length():0))

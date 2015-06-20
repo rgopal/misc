@@ -88,6 +88,7 @@ class InitStudentProgram {
             
            def newProgram = InitSpringSecurity.deepClone(program)
            
+        
            // not all fields are copied so keep a link to the original
            studentProgram.clonedFromProgram = program
            
@@ -105,6 +106,12 @@ class InitStudentProgram {
                 }
            }
            
+                // explictly create root program for all subcatalogs
+            // add this after it has been saved (to get id)
+           for (catalog in newProgram.catalogs)
+                catalog.addRootProgram(newProgram)
+                
+           
             // now save the newly created studentProgram
            studentProgram.program = newProgram
            
@@ -119,6 +126,11 @@ class InitStudentProgram {
                     log.warn "An error occured with ${studentProgram} $error"
                 }
             } else {     
+                    // explictly create root program for all subcatalogs
+            // add this after it has been saved (to get id)
+           for (catalog in newProgram.catalogs)
+                catalog.addRootProgram(newProgram)
+                
                 // give permissions to two users
                 for (user in ['jfields', 'mjohns']) {
                     log.trace "   starting ACL creations for $user}"
