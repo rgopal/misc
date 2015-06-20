@@ -70,12 +70,13 @@ class InitStudentProgram {
             
             // first deep clone program
            def program = Program.findByName('Computer Science Diploma')
-           if (program.getCatalogs())
+           if (program.catalogs)
                 log.trace "load: size of catalogs " + program.catalogs.size()
            else
                 log.warn "load: lazy fetching is not working for $program"
                   //  findByName('Computer Science Diploma')
-           JSON.use("deep") 
+          
+            JSON.use("deep") 
            
             def converter = program as JSON
             converter.prettyPrint = true
@@ -83,12 +84,10 @@ class InitStudentProgram {
             
             // not copying all associations (lazy problem)?
             
-            log.trace "load: old program " + json
+           // log.trace "load: old program " + json
             
            def newProgram = InitSpringSecurity.deepClone(program)
            
-         
-
             
             converter = newProgram as JSON
             converter.prettyPrint = true

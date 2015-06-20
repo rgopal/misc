@@ -39,37 +39,53 @@ class InitAssessment {
 
         def cronRanking = Person.findByUserName('cronRanking')
 
+        def organizations = [
+            'Montgomery County Community College',
+            'Montgomery County Community College',
+        'Montgomery County Community College'
+        ]
         def assessments = [ 
             new Assessment(
                 name: 'Introduction Test',
                 assessmentType: AssessmentType.TEST,
-             totalPoints: 100.0f,
-                organization: Organization.findByName('Montgomery County Community College')
-                ),
-                 new Assessment(
+                totalPoints: 100.0f
+       
+            ),
+            new Assessment(
                 name: 'Data Structures Test',
-              assessmentType: AssessmentType.TEST,
-              totalPoints: 100.0f,
-                organization: Organization.findByName('Montgomery County Community College')
-                ),
-                  new Assessment(
+                assessmentType: AssessmentType.TEST,
+                totalPoints: 100.0f
+    
+            ),
+            new Assessment(
                 name: 'Trees Quiz',
                 totalPoints: 100.0f,
-              assessmentType: AssessmentType.QUIZ,
+                assessmentType: AssessmentType.QUIZ
             
-                organization: Organization.findByName('Montgomery County Community College')
-                )
+            
+            )
                
         ]
         
        
-        // save all the assessmentss and create ACLs
-        for (assessment in assessments) {     
+        // save all the assessmentss and create ACLs through parent
+        // or else won't find in the corresponding O2M association
+        
+        def i = 0
+        for (assessment in assessments) {    
             log.trace "processing  assessment ${assessment} "
+            
+            def organization  = Organization.findByName(organizations[i])
+            if (!organization) {
+                log.warn "load: could not find organization $organizations[i] for i = i"
+                return 
+            } else 
+            organization.addToAssessments(assessment)
+            i++
        
-            if (!assessment.save(flush:true)) { 
-                assessment.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${assessment} $error"
+            if (!organization.save(flush:true)) { 
+                organization.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${organization} $error"
                 }
             } else {     
                 // give permissions to two users
@@ -88,7 +104,7 @@ class InitAssessment {
         }
     
     
-    log.info ("load: loaded ${Assessment.count()} out of ${assessments.size()} assessments")
+        log.info ("load: loaded ${Assessment.count()} out of ${assessments.size()} assessments")
               
     }
 }

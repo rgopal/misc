@@ -43,30 +43,37 @@ class InitCatalog {
         log.trace "SCH ${SCH.context.authentication}"
 
 
+        def programs = [
+            'Computer Science Diploma',
+            'Computer Science Diploma',
+            'Computer Science Diploma',
+            'Computer Science Diploma',
+            'Middle School English',
+            'लखनऊ विश्वविद्यालय कला संकाय'
+            
+        ]
+        
         def catalogs = [ 
             new Catalog(name: 'Computer Science Diploma Catalog',
                 sequence: "1",         
                 // null for top item course:Course.findByName('Computer Science I'),
-                courseType:CourseType.REQUIRED,
-                program: Program.
-                    findByName('Computer Science Diploma')   
+                courseType:CourseType.REQUIRED
+                
             ).addToSubCatalogs(
                 new Catalog(name: 'Computer Science Diploma Catalog 1.1',
                     sequence: "1.1",
                
                     course:Course.findByName('Computer Science I'),
-                    courseType:CourseType.REQUIRED,
-                    program: Program.
-                        findByName('Computer Science Diploma')   
+                    courseType:CourseType.REQUIRED
+                
                 )
             ).addToSubCatalogs(
                 new Catalog(name: 'Computer Science Diploma Catalog 1.2',
                     sequence: "1.2",
                
                     course:Course.findByName('Computer Science II'),
-                    courseType:CourseType.REQUIRED,
-                    program: Program.
-                        findByName('Computer Science Diploma')   
+                    courseType:CourseType.REQUIRED
+                      
                 )
             ),
           
@@ -74,38 +81,48 @@ class InitCatalog {
                 sequence: "2",
              
                 course:Course.findByName('High School Physics'),
-                courseType:CourseType.REQUIRED,
-                program: Program.
-                    findByName('High School Physics Help')   
+                courseType:CourseType.REQUIRED
+              
             ),
             new Catalog(name: 'Middle School English Catalog',
                 sequence: "3",
                
                 course:Course.findByName('Middle School English Drama'),
-                courseType:CourseType.REQUIRED,
-                program: Program.
-                    findByName('Middle School English')   
+                courseType:CourseType.REQUIRED
+               
             ),
             new Catalog(name: 'लखनऊ विश्वविद्यालय कला संकाय Catalog',
                 sequence: "4",
             
                 course:Course.findByName('लखनऊ विश्वविद्यालय कला 1'),
-                courseType:CourseType.REQUIRED,
-                program: Program.
-                    findByName('लखनऊ विश्वविद्यालय कला संकाय')   
+                courseType:CourseType.REQUIRED
+               
             )
         ]
         
+       // assert (catalogs.size() - 2  == programs.size())
        
         // save all the catalogs and create ACLs
+        def i = 0
         for (catalog in catalogs) {     
             log.trace "processing  catalog ${catalog} "
        
             log.trace catalog.properties.collect{it}.join('\n')
+            def program = Program.findByName(programs[i])
+            if (!program) {
+                log.warn "load: could not find program $programs[i]"
+                return
+            }
+                
+            // now add catalog (so that GORM is happy.  Just back pointer from
+            // catalog does not get retainend probably in this session (gsp was
+            // working
             
-            if (!catalog.save()) { 
+            program.addToCatalogs(catalog)
+            
+            if (!program.save(flush:true)) { 
                 catalog.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${catalog} $error"
+                    log.warn "An error occured with $program ${catalog} $error"
                 }
             } else {     
                 // give permissions to one user
@@ -135,7 +152,7 @@ class InitCatalog {
     
         log.info ("load: loaded ${Catalog.count()} out of ${catalogs.size()} catalogs")
        
-        
+       i++ 
     }
     
 

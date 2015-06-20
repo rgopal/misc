@@ -49,7 +49,7 @@ class InitProgram {
  
         def programs = [ 
             new Program(name: 'Computer Science Diploma',
-                person:Person.findByUserName('jfields'),
+        
                 academicSession:AcademicSession.SEMESTER,
                 academicStratum:AcademicStratum.ASSOCIATE,
                 academicMajor:AcademicMajor.CS,
@@ -80,7 +80,7 @@ class InitProgram {
        
           
             new Program(name: 'High School Physics Help',
-                person:Person.findByUserName('jfields'),
+             
                 academicSession:AcademicSession.MONTH,
                 academicStratum:AcademicStratum.HIGH,
                 academicMajor:AcademicMajor.SCIENCES,
@@ -92,7 +92,7 @@ class InitProgram {
                     findByName('Quince Orchard High School')   
             ),
             new Program(name: 'Middle School English',
-                person:Person.findByUserName('jfields'),
+       
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.MIDDLE,
                 academicMajor:AcademicMajor.GENERAL,
@@ -104,7 +104,7 @@ class InitProgram {
                     findByName('RidgeView Middle School')   
             ),
             new Program(name: 'लखनऊ विश्वविद्यालय कला संकाय',
-                person:Person.findByUserName('jfields'),
+          
                 academicSession:AcademicSession.YEAR,
                 academicStratum:AcademicStratum.UNIVERSITY,
                 academicMajor:AcademicMajor.ARTS,

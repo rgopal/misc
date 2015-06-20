@@ -308,6 +308,7 @@ class InitSpringSecurity {
 
                             log.trace "grantDeepACL: NOT 0wningSide NOT Bidirectional"
                         //If the association isn't owned or the owner, then can grant ACL.
+                        if (domainInstanceToClone."${prop.name}")
                         grantACL(domainInstanceToClone."${prop.name}", user)
                     }
                     // @@JR
