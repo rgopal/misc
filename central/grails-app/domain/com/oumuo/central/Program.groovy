@@ -14,6 +14,9 @@ class Program {
     authorships:Authorship,
     terms: Term,
     studentPrograms: StudentProgram] 
+
+    static notCloneable = ['studentPrograms', 'authorships', 'terms', 'learningAssessments', 'courseRelations',
+                'rankings', 'requirements']
     
     // REMOVED Person person
     Organization organization

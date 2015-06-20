@@ -11,7 +11,8 @@ class StudentProgram {
     
     String name
     Person person
-    Program program
+    Program program  // the new program for a student
+    Program clonedFromProgram // when it was created from (not all fields)
     
     Date paymentDate
     PaymentState paymentState
@@ -49,6 +50,7 @@ class StudentProgram {
         // this is created by a program 
         person (editable:false, nullable:true)
         program (editable:false, nullable:true)
+        clonedFromProgram (editable:false, nullable:true)
 
          paymentDate (nullable:true)
      paymentState (nullable:true)

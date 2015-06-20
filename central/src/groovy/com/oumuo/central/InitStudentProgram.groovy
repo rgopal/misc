@@ -84,17 +84,20 @@ class InitStudentProgram {
             
             // not copying all associations (lazy problem)?
             
-           // log.trace "load: old program " + json
+           log.trace "load: old program " + json
             
            def newProgram = InitSpringSecurity.deepClone(program)
            
-            
+           // not all fields are copied so keep a link to the original
+           studentProgram.clonedFromProgram = program
+           
+           /* 
             converter = newProgram as JSON
             converter.prettyPrint = true
              json = converter.toString()
 
            log.trace "load: cloned program " + json
-           
+           */
             // first save the new program or else hibernate will complain
            if (!newProgram.save(flush:true)) {
                newProgram.errors.allErrors.each {error ->

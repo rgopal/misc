@@ -43,6 +43,9 @@ class InitCatalog {
         log.trace "SCH ${SCH.context.authentication}"
 
 
+        // do need to put program for sub catalogs but not directly for
+        // catalogs which need to added from the program (or else they 
+        // won't show up
         def programs = [
             'Computer Science Diploma',
             'Computer Science Diploma',
@@ -64,7 +67,8 @@ class InitCatalog {
                     sequence: "1.1",
                
                     course:Course.findByName('Computer Science I'),
-                    courseType:CourseType.REQUIRED
+                    courseType:CourseType.REQUIRED,
+                    program: Program.findByName('Computer Science Diploma')
                 
                 )
             ).addToSubCatalogs(
@@ -72,7 +76,8 @@ class InitCatalog {
                     sequence: "1.2",
                
                     course:Course.findByName('Computer Science II'),
-                    courseType:CourseType.REQUIRED
+                    courseType:CourseType.REQUIRED,
+                    program: Program.findByName('Computer Science Diploma')
                       
                 )
             ),
