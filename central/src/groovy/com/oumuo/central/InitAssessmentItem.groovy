@@ -42,13 +42,17 @@ class InitAssessmentItem {
             AuthorityUtils.createAuthorityList(ROLE.ROLE_ADMIN.name()))
         log.trace "SCH ${SCH.context.authentication}"
 
+        def assessments = [
+            'Introduction Test',
+            'Introduction Test'
+        ]
 
         def assessmentItems = [ 
             new AssessmentItem(name: 'Introduction Test Item 1',
                 sequence: "1",
                 effort: 10,
-                effortUnit: DurationUnit.MINUTES,
-                assessment: Assessment.findByName('Introduction Test')
+                effortUnit: DurationUnit.MINUTES
+             
                 
                 
                 
@@ -56,9 +60,8 @@ class InitAssessmentItem {
                 new AssessmentItem(name: 'Introduction Test Item 1.a',
                     sequence: "1.1",
                     effort: 10,
-                effortUnit: DurationUnit.MINUTES,
-                assessment: Assessment.findByName('Introduction Test')
-                           
+                effortUnit: DurationUnit.MINUTES
+                      
                 )
             ),
           
@@ -66,15 +69,24 @@ class InitAssessmentItem {
         ]
         
        
+        def i = 0
         // save all the assessmentItems and create ACLs
-        for (assessmentItem in assessmentItems) {     
+        for (assessmentItem in assessmentItems) {  
+            
+            def assessment = Assessment.findByName(assessments[i])
+            if (!assessment) {
+                log.warn "load: could not find assessment assessment[i]"
+                return
+            }     
+            i++
+            assessment.addToAssessmentItems(assessmentItem)
             log.trace "processing  assessmentItem ${assessmentItem} "
        
             log.trace assessmentItem.properties.collect{it}.join('\n')
             
-            if (!assessmentItem.save()) { 
-                assessmentItem.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${assessmentItem} $error"
+            if (!assessment.save(flush:true)) { 
+                assessment.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${assessment} $error"
                 }
             } else {     
                 // give permissions to one user

@@ -110,20 +110,23 @@ class InitCatalog {
         // save all the catalogs and create ACLs
         def i = 0
         for (catalog in catalogs) {     
-            log.trace "processing  catalog ${catalog} "
-       
-            log.trace catalog.properties.collect{it}.join('\n')
+                    
             def program = Program.findByName(programs[i])
             if (!program) {
                 log.warn "load: could not find program $programs[i]"
                 return
-            }
-                
-            // now add catalog (so that GORM is happy.  Just back pointer from
+            }     
+            i++
+            program.addToCatalogs(catalog)
+              //// now add catalog (so that GORM is happy.  Just back pointer from
             // catalog does not get retainend probably in this session (gsp was
             // working
             
-            program.addToCatalogs(catalog)
+            
+          
+            log.trace catalog.properties.collect{it}.join('\n')
+            
+             log.trace "processing  catalog ${catalog} "
             
             if (!program.save(flush:true)) { 
                 catalog.errors.allErrors.each {error ->
@@ -156,8 +159,7 @@ class InitCatalog {
         }
     
         log.info ("load: loaded ${Catalog.count()} out of ${catalogs.size()} catalogs")
-       
-       i++ 
+  
     }
     
 
