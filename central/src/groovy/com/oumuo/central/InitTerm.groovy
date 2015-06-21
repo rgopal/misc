@@ -46,6 +46,14 @@ class InitTerm {
         log.trace "SCH ${SCH.context.authentication}"
 
         def cronRanking = Person.findByUserName('cronRanking')
+        
+        def programs = [
+            'Computer Science Diploma',
+            'Computer Science Diploma',
+            'High School Physics Help',
+            'Middle School English',
+            'लखनऊ विश्वविद्यालय कला संकाय'
+        ]
  
         def terms = [ 
             new Term(
@@ -58,79 +66,85 @@ class InitTerm {
                 program: Program.
                     findByName('Computer Science Diploma')
             ),
-              new Term(
+            new Term(
                 name: 'Computer Science Diploma - Spring 2016',
                 duration : 5,
                 durationUnit : DurationUnit.MONTHS,
                 state : State.PLANNED,
                 academicSession:AcademicSession.SEMESTER,      
-                fee: 20.0,
-                program: Program.
-                    findByName('Computer Science Diploma')
+                fee: 20.0
+               
             ),
             new Term(
-                 name: 'High School Physics Help - Fall 2015',
+                name: 'High School Physics Help - Fall 2015',
                 duration :5,
                 durationUnit : DurationUnit.MONTHS,
                 state : State.STARTED,
                 academicSession:AcademicSession.SEMESTER,      
-                fee: 600.0,
-                program: Program.
-                    findByName('High School Physics Help')  
+                fee: 600.0
             ),
-             new Term(
-                 name: 'Middle School English - Summer 2015',
+            new Term(
+                name: 'Middle School English - Summer 2015',
                 duration : 5,
                 durationUnit : DurationUnit.MONTHS,
                 state : State.IN_USE,
                 academicSession:AcademicSession.SEMESTER,      
-                fee: 1000.0,
-                program: Program.
-                    findByName('Middle School English')  
+                fee: 1000.0
+               
             ),
-               new Term(
-                 name: 'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015',
+            new Term(
+                name: 'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015',
                 duration : 5,
                 durationUnit :DurationUnit.MONTHS,
                 state : State.PAUSED,
                 academicSession:AcademicSession.SEMESTER,      
-                fee: 200.0,
-                program: Program.
-                    findByName('लखनऊ विश्वविद्यालय कला संकाय')  
+                fee: 200.0
+              
             )
             
         ]
         
+        
        
         // save all the termss and create ACLs
+        def i = 0
         for (term in terms) {     
+                    
+            def program = Program.findByName(programs[i])
+            if (!program) {
+                log.warn "load: could not find program $programs[i]"
+                return
+            }     
+            i++
+            program.addToTerms(term)
+            
             log.trace "processing  term ${term} "
        
-            if (!term.save(flush:true)) { 
-                term.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${term} $error"
+            if (!program.save(flush:true)) { 
+                program.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${program} $error"
                 }
             } else {     
                 // give permissions to two users
                 for (user in ['jfields', 'mjohns']) {
                     log.trace "   starting ACL creations for $user}"
                     InitSpringSecurity.grantACL(term, user)
-            /*
+                    /*
             
                     for (ranking in term.rankings) {
-                        InitSpringSecurity.grantACL (ranking, user)
+                    InitSpringSecurity.grantACL (ranking, user)
                     }
                     log.info "  loaded ${Term.findById(term.id).rankings?.size()} rankings" 
                    
                     for (requirement in term.requirements) {
-                        InitSpringSecurity.grantACL (requirement, user)
-                        for (standardizedTest in requirement.standardizedTests) {
-                            InitSpringSecurity.grantACL (standardizedTest, user)
-                        }
-                        log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} term Requirement standardized Tests"
+                    InitSpringSecurity.grantACL (requirement, user)
+                    for (standardizedTest in requirement.standardizedTests) {
+                    InitSpringSecurity.grantACL (standardizedTest, user)
+                    }
+                    log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} term Requirement standardized Tests"
                     }
                     log.info "  loaded ${Term.findById(term.id).requirements?.size()} term Requirements"
-                */
+                     */
                 }
             }
             log.debug "created Term ${term}"

@@ -43,7 +43,7 @@ class LearningAssessmentService {
         else if (params.assessment)
         Assessment.findById(params.assessment?.id).addToLearningAssessments(learningAssessment)
         
-        log.trace "getNew: new learningAssessment $learningAssessment instance created for $learningAssessment.program"
+        log.trace "getNew: new learningAssessment $learningAssessment instance created"
         learningAssessment
     }
     // called from save of controller (with params returned from form)

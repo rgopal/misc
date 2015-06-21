@@ -8,9 +8,10 @@ class Term {
 
     String name
   
-    // static hasMany = [] 
+    static hasMany = [clazss: Clazs] 
 
     Program program
+    
   
     Float fee = 0.0f
 
@@ -37,6 +38,7 @@ class Term {
         
         name (nullable:false)
         program(nullable:false, editable:false)
+        clazss()
         
         state()
         duration(nullable:true)

@@ -3,6 +3,9 @@ import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 @Log4j
+
+// Within a program learning is associated with assessment
+
 class LearningAssessment {
   
     Learning learning

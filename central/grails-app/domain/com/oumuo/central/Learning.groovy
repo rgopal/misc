@@ -11,7 +11,8 @@ class Learning {
     String name
     //  keep all associations first
   
-    Organization organization 
+    Organization organization
+    ClassSession classSession
     
     static hasMany = [comments: Comment, 
         objectives: Objective,
@@ -53,7 +54,7 @@ class Learning {
         name (nullable:false)
     
         organization (nullable:true, editable:true)
-      
+        classSession(nullable:true, editable:true)
         comments()
         objectives()
         requirements()
