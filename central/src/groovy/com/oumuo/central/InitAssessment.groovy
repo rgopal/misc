@@ -77,7 +77,7 @@ class InitAssessment {
             
             def organization  = Organization.findByName(organizations[i])
             if (!organization) {
-                log.warn "load: could not find organization $organizations[i] for i = i"
+                log.warn "load: could not find organization $organizations[i] for i = $i"
                 return 
             } else 
             organization.addToAssessments(assessment)

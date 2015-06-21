@@ -39,6 +39,11 @@ class InitLearning {
 
         def cronRanking = Person.findByUserName('cronRanking')
 
+        def organizations = [
+            'Montgomery County Community College',
+            'Montgomery County Community College',
+            'Montgomery County Community College'
+        ]
         def learnings = [ 
             new Learning(
                 name: 'Introduction',
@@ -61,14 +66,23 @@ class InitLearning {
                
         ]
         
+        def i = 0
        
         // save all the learningss and create ACLs
-        for (learning in learnings) {     
+        for (learning in learnings) {  
+            
+             def organization  = Organization.findByName(organizations[i])
+            if (!organization) {
+                log.warn "load: could not find organization $organizations[i] for i = $i"
+                return 
+            } else 
+            organization.addToLearnings(learning)
+            i++
             log.trace "processing  learning ${learning} "
        
-            if (!learning.save(flush:true)) { 
-                learning.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${learning} $error"
+            if (!organization.save(flush:true)) { 
+                organization.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${organization} $error"
                 }
             } else {     
                 // give permissions to two users

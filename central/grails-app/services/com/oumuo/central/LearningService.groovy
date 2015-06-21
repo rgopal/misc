@@ -34,10 +34,15 @@ class LearningService {
         def learning = new Learning()
        
          
-        learning.organization = Organization.findById(params.organization?.id)
+        if (params.organization)  
+        Organization.findById(params.organization?.id).addToLearnings(learning)
+        else if (params.classSession)  
+        Organization.findById(params.classSession?.id).addToLearnings(learning)
+        else 
+        log.warn "getNew: both organization and classSesssion are null for $learning"
        
         
-        log.trace "getNew: new learning $learning instance created for organization $organization"
+        log.trace "getNew: new learning $learning instance created for organization or classSession"
         learning
     }
     // called from save of controller (with params returned from form)

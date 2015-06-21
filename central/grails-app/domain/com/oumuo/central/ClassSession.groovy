@@ -79,6 +79,13 @@ class ClassSession implements Comparable {
         lastUpdated(nullable:true)
     }
 
+       def beforeInsert() {
+        if (!sequence) {
+            // InitPerson uses explict 1 for sequence
+            sequence = Clazs.findById(clazs.id).classSessions.size() + 1
+            log.trace "beforeInsert: sequence updated to $sequence"
+        }
+       }
     // beforeInsert is gone (included in ClassSessionService)
     
     // for classes with 1toM relation, may need to control the many side in

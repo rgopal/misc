@@ -69,88 +69,89 @@ class InitStudentProgram {
             log.trace "processing  studentProgram ${studentProgram} "
             
             // first deep clone program
-           def program = Program.findByName('Computer Science Diploma')
-           if (program.catalogs)
-                log.trace "load: size of catalogs " + program.catalogs.size()
-           else
-                log.warn "load: lazy fetching is not working for $program"
-                  //  findByName('Computer Science Diploma')
+            def program = Program.findByName('Computer Science Diploma')
+            if (program.catalogs)
+            log.trace "load: size of catalogs " + program.catalogs.size()
+            else
+            log.warn "load: lazy fetching is not working for $program"
+            //  findByName('Computer Science Diploma')
           
+            /*
             JSON.use("deep") 
            
             def converter = program as JSON
             converter.prettyPrint = true
             def json = converter.toString()
             
-            // not copying all associations (lazy problem)?
+         
             
-           log.trace "load: old program " + json
-            
-           def newProgram = InitSpringSecurity.deepClone(program)
+            log.trace "load: old program " + json
+             */
+            def newProgram = InitSpringSecurity.deepClone(program)
            
         
-           // not all fields are copied so keep a link to the original
-           studentProgram.clonedFromProgram = program
+            // not all fields are copied so keep a link to the original
+            studentProgram.clonedFromProgram = program
            
-           /* 
+            /* 
             converter = newProgram as JSON
             converter.prettyPrint = true
-             json = converter.toString()
+            json = converter.toString()
 
-           log.trace "load: cloned program " + json
-           */
+            log.trace "load: cloned program " + json
+             */
             // first save the new program or else hibernate will complain
-           if (!newProgram.save(flush:true)) {
-               newProgram.errors.allErrors.each {error ->
+            if (!newProgram.save(flush:true)) {
+                newProgram.errors.allErrors.each {error ->
                     log.warn "An error occured with ${newProgram} $error"
                 }
-           }
+            }
            
-                // explictly create root program for all subcatalogs
+            // explictly create root program for all subcatalogs
             // add this after it has been saved (to get id)
-           for (catalog in newProgram.catalogs)
-                catalog.addRootProgram(newProgram)
+            for (catalog in newProgram.catalogs)
+            catalog.addRootProgram(newProgram)
                 
            
             // now save the newly created studentProgram
-           studentProgram.program = newProgram
+            studentProgram.program = newProgram
            
-           // now save ACLs for newly created studentProgram
-           for (user in ['jfields', 'mjohns']) {
-                    log.trace "   starting ACL creations for $user on $newProgram"
-                    InitSpringSecurity.grantDeepACL(newProgram, user)
-           }
+            // now save ACLs for newly created studentProgram
+            for (user in ['jfields', 'mjohns']) {
+                log.trace "   starting ACL creations for $user on $newProgram"
+                InitSpringSecurity.grantDeepACL(newProgram, user)
+            }
        
             if (!studentProgram.save(flush:true)) { 
                 studentProgram.errors.allErrors.each {error ->
                     log.warn "An error occured with ${studentProgram} $error"
                 }
             } else {     
-                    // explictly create root program for all subcatalogs
-            // add this after it has been saved (to get id)
-           for (catalog in newProgram.catalogs)
+                // explictly create root program for all subcatalogs
+                // add this after it has been saved (to get id)
+                for (catalog in newProgram.catalogs)
                 catalog.addRootProgram(newProgram)
                 
                 // give permissions to two users
                 for (user in ['jfields', 'mjohns']) {
                     log.trace "   starting ACL creations for $user}"
                     InitSpringSecurity.grantACL(studentProgram, user)
-            /*
+                    /*
             
                     for (ranking in studentProgram.rankings) {
-                        InitSpringSecurity.grantACL (ranking, user)
+                    InitSpringSecurity.grantACL (ranking, user)
                     }
                     log.info "  loaded ${StudentProgram.findById(studentProgram.id).rankings?.size()} rankings" 
                    
                     for (requirement in studentProgram.requirements) {
-                        InitSpringSecurity.grantACL (requirement, user)
-                        for (standardizedTest in requirement.standardizedTests) {
-                            InitSpringSecurity.grantACL (standardizedTest, user)
-                        }
-                        log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} studentProgram Requirement standardized Tests"
+                    InitSpringSecurity.grantACL (requirement, user)
+                    for (standardizedTest in requirement.standardizedTests) {
+                    InitSpringSecurity.grantACL (standardizedTest, user)
+                    }
+                    log.info "  loaded ${Requirement.findById(requirement.id).standardizedTests?.size()} studentProgram Requirement standardized Tests"
                     }
                     log.info "  loaded ${StudentProgram.findById(studentProgram.id).requirements?.size()} studentProgram Requirements"
-                */
+                     */
                 }
             }
             log.debug "created StudentProgram ${studentProgram}"

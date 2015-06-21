@@ -52,7 +52,6 @@ class InitClazs {
             'Computer Science Diploma - Spring 2016',
             'High School Physics Help - Fall 2015',
             'Middle School English - Summer 2015',
-             'Middle School English - Summer 2015',
             'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015'
         ]
  

@@ -59,7 +59,7 @@ class Content {
         assessmentItemAnswer (nullable:true, editable:true)
        
         content(nullable:true)  // if embedded
-        contentUrl (nullable:true,url: true)
+        contentUrl (nullable:true)
 
         academicStratum(nullable:true)
         academicLevel(nullable:true)
