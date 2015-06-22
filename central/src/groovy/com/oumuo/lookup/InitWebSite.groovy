@@ -23,18 +23,18 @@ class InitWebSite {
        
     static void load () {
         def items = [ 
-            new WebSite(name: "Google", loginSupported: true, url: "http://www.google.com"),
-            new WebSite(name: "facebook", loginSupported: true, url: "http://www.facebook.com"),
-            new WebSite(name: "twitter", loginSupported: false, url: "http://www.twitter.com"),
-            new WebSite(name: "Coursera", loginSupported: true, url: "http://www.coursera.com"),
-            new WebSite(name: "edX", loginSupported: true, url: "http://www.edx.com"),
-            new WebSite(name: "Paypal", loginSupported: true, url: "http://www.paypal.com"),
+            new WebSite(name: "Google", loginSupported: true, siteUrl: "https://www.google.com"),
+            new WebSite(name: "facebook", loginSupported: true, siteUrl: "http://www.facebook.com"),
+            new WebSite(name: "twitter", loginSupported: false, siteUrl: "http://www.twitter.com"),
+            new WebSite(name: "Coursera", loginSupported: true, siteUrl: "http://www.coursera.com"),
+            new WebSite(name: "edX", loginSupported: true, siteUrl: "http://www.edx.com"),
+            new WebSite(name: "Paypal", loginSupported: true, siteUrl: "http://www.paypal.com"),
             
         ]
        
         for (item in items) {
             log.trace "load: loading $item"
-            if (!item.save()){ item.errors.allErrors.each {error ->
+            if (!item.save(flush:true)){ item.errors.allErrors.each {error ->
                     log.warn "An error occured with item: ${error}"
 
                 }

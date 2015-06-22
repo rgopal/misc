@@ -55,7 +55,7 @@ class Location {
         locationType(nullable:false)
         capacity(nullable:true)
     
-          locationUrl(nullable:true)
+          locationUrl(nullable:true, url:true)
      building (nullable:true)
      floor(nullable:true)
      room(nullable:true)
