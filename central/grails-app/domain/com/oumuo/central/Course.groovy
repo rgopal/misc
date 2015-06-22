@@ -23,6 +23,8 @@ class Course {
          requirements: Requirement,   
         rankings:Ranking,
         authorships:Authorship] 
+    
+    // no reference to CourseRelationship
     static mappedBy = [
             teachingRequirements:'teaching',
             requirements: 'learning' ]

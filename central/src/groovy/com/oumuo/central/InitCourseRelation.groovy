@@ -39,25 +39,36 @@ class InitCourseRelation {
 
         def cronRanking = Person.findByUserName('cronRanking')
 
+        def programs = [
+            'Computer Science Diploma'
+        ]
         def courseRelations = [ 
             new CourseRelation(
                 firstCourse: Course.findByName('Computer Science I'),
                 secondCourse: Course.findByName('High School Physics'),
                 relation: Relation.PRE_REQ,
-                passingGrade: Grade.C,
-                program: Program.findByName('Computer Science Diploma')
+                passingGrade: Grade.C
+           
                 )
                
         ]
         
-       
+       def i = 0
         // save all the courseRelationss and create ACLs
         for (courseRelation in courseRelations) {     
+            
+             def program  = Program.findByName(programs[i])
+            if (!program) {
+                log.warn "load: could not find program $programs[i] for i = $i"
+                return 
+            } else 
+            program.addToCourseRelations(courseRelation)
+            i++
             log.trace "processing  courseRelation ${courseRelation} "
        
-            if (!courseRelation.save(flush:true)) { 
-                courseRelation.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${courseRelation} $error"
+            if (!program.save(flush:true)) { 
+                program.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${program} $error"
                 }
             } else {     
                 // give permissions to two users
