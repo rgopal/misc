@@ -8,7 +8,8 @@ class Term {
 
     String name
   
-    static hasMany = [clazss: Clazs] 
+    static hasMany = [clazss: Clazs,
+    enrollments: Enrollment] 
 
     Program program
     
@@ -39,6 +40,7 @@ class Term {
         name (nullable:false)
         program(nullable:false, editable:false)
         clazss()
+        enrollments()
         
         state()
         duration(nullable:true)

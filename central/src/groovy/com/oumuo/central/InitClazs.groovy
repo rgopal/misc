@@ -57,7 +57,7 @@ class InitClazs {
  
         def clazss = [ 
             new Clazs(
-                name: 'Computer Science Diploma - Fall 2015 Class',
+                name: 'Computer Science I - Fall 2015 Class',
                 state :State.STARTED,
                 course: Course.
                     findByName('Computer Science I'),
@@ -74,7 +74,7 @@ class InitClazs {
                 language: Language.ENGLISH
             ),
             new Clazs(
-                name: 'Computer Science Diploma - Spring 2016 Class',
+                name: 'Computer Science I - Spring 2016 Class',
                 state :State.PLANNED,
                 course: Course.
                     findByName('Computer Science I'),
@@ -92,10 +92,10 @@ class InitClazs {
                
             ),
             new Clazs(
-                name: 'High School Physics Help - Fall 2015 Class',
+                name: 'High School Physics - Fall 2015 Class',
                     state :State.PLANNED,
                 course: Course.
-                    findByName('Computer Science I'),
+                    findByName('High School Physics'),
                 teachingType: TeachingType.ONLINE,   
                 recurring : true,
                 recurringDays : Recurring.MWF,
@@ -109,10 +109,10 @@ class InitClazs {
                 language: Language.ENGLISH
             ),
             new Clazs(
-                name: 'Middle School English - Summer 2015 Class',
+                name: 'Middle School English Drama - Summer 2015 Class',
                 state :State.PLANNED,
                 course: Course.
-                    findByName('Computer Science I'),
+                    findByName('Middle School English Drama'),
                 teachingType: TeachingType.ONLINE,   
                 recurring : true,
                 recurringDays : Recurring.MWF,
@@ -127,10 +127,10 @@ class InitClazs {
                
             ),
             new Clazs(
-                name: 'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015 Class',
+                name: 'लखनऊ विश्वविद्यालय कला 1 - Summer 2015 Class',
                  state :State.PLANNED,
                 course: Course.
-                    findByName('Computer Science I'),
+                    findByName('लखनऊ विश्वविद्यालय कला 1'),
                 teachingType: TeachingType.ONLINE,   
                 recurring : true,
                 recurringDays : Recurring.MWF,

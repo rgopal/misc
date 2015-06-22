@@ -48,41 +48,46 @@ class InitClassSession {
         def cronRanking = Person.findByUserName('cronRanking')
         
         def clazss = [
-            'Computer Science Diploma - Fall 2015 Class',
-            'Computer Science Diploma - Spring 2016 Class',
-            'High School Physics Help - Fall 2015 Class',
-            'Middle School English - Summer 2015 Class',
-            'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015 Class'
+            'Computer Science I - Fall 2015 Class',
+            'Computer Science I - Spring 2016 Class',
+            'High School Physics - Fall 2015 Class',
+            'Middle School English Drama - Summer 2015 Class',
+            'लखनऊ विश्वविद्यालय कला 1 - Summer 2015 Class'
         ]
  
         def classSessions = [ 
             new ClassSession(
                 sequence:'1',
-                name: 'Computer Science Diploma - Fall 2015 Class Session',
+                name: 'Computer Science I - Fall 2015 Class Session',
                 state :State.STARTED
              
+            ).addToInstructions (
+                new Instruction (
+                    learning: Learning.findByName ('Introduction'),
+                    state: State.STARTED
+                )
             ),
             new ClassSession(
                 sequence:'1',
-                name: 'Computer Science Diploma - Spring 2016 Class Session',
+                name: 'Computer Science I - Spring 2016 Class Session',
                 state :State.PLANNED
             ),
             new ClassSession(
                 sequence:'1', 
-                name: 'High School Physics Help - Fall 2015 Class Session',
+                name: 'High School Physics - Fall 2015 Class Session',
                 state :State.PLANNED
            
             ),
             new ClassSession(
                 sequence:'1',
-                name: 'Middle School English - Summer 2015 Class Sesssion',
+                name: 'Middle School English Drama - Summer 2015 Class Sesssion',
                 state :State.PLANNED
          
                
             ),
             new ClassSession(
                 sequence:'1',
-                name: 'लखनऊ विश्वविद्यालय कला संकाय - Summer 2015 Class Session',
+                name: 'लखनऊ विश्वविद्यालय कला 1 - Summer 2015 Class Session',
                 state :State.PLANNED
                
               
@@ -116,6 +121,13 @@ class InitClassSession {
                     log.trace "   starting ACL creations for $user}"
                     InitSpringSecurity.grantACL(classSession, user)
               
+                }
+                for (instruction in classSession.instructions) {
+                     for (user in ['jfields', 'mjohns']) {
+                    log.trace "   starting ACL creations for $instruction}"
+                    InitSpringSecurity.grantACL(instruction, user)
+              
+                }
                 }
             }
             log.debug "created ClassSession ${classSession}"

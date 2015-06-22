@@ -12,7 +12,7 @@ class Learning {
     //  keep all associations first
   
     Organization organization
-    ClassSession classSession
+    
     
     static hasMany = [comments: Comment, 
         objectives: Objective,
@@ -21,7 +21,8 @@ class Learning {
          learningAssessments: LearningAssessment,
          contents: Content,
         rankings:Ranking,
-        authorships:Authorship] 
+        authorships:Authorship,
+        instructions: Instruction] 
     static mappedBy = [
             teachingRequirements:'teachingSection',
             requirements: 'learningSection' ]
@@ -54,7 +55,7 @@ class Learning {
         name (nullable:false)
     
         organization (nullable:true, editable:true)
-        classSession(nullable:true, editable:true)
+     
         comments()
         objectives()
         requirements()
@@ -63,6 +64,7 @@ class Learning {
         teachingRequirements()
         rankings()
         authorships()
+        instructions()
      
         hierarchy()
         academicLevel(nullable:true)

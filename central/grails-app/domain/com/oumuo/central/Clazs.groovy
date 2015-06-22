@@ -12,7 +12,8 @@ class Clazs {
     Term term
     // Location location
     static hasMany = [
-        classSessions: ClassSession
+        classSessions: ClassSession,
+        enrollments: Enrollment
     ]
     
     TeachingType teachingType = TeachingType.ONLINE       // but a class could be different
@@ -50,6 +51,7 @@ class Clazs {
         course (editable:false, nullable:true)       // could be online or real
         term(editable:false, nullable:true) 
         classSessions()
+        enrollments()
         // Location location
     
         teachingType (nullable:true)       // but a class could be different

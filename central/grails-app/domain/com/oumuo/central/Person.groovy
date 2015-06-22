@@ -21,7 +21,8 @@ class Person {
         rankings:Ranking,  // REMOVED rankingItems:RankingItem,
         capabilitys: Requirement,
         authorships: Authorship,
-        studentPrograms: StudentProgram]
+        studentPrograms: StudentProgram,
+        enrollments: Enrollment]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -90,6 +91,7 @@ class Person {
         capabilitys()
         authorships()
         studentPrograms()
+        enrollments()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)

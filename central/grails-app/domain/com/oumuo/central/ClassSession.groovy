@@ -17,7 +17,8 @@ class ClassSession implements Comparable {
     
     Clazs clazs
     static hasMany = [
-        learnings: Learning
+        instructions: Instruction,
+        enrollments: Enrollment
        
     ]
     
@@ -29,6 +30,11 @@ class ClassSession implements Comparable {
     Date latestStart
     Date earliestEnd
     Date latestEnd
+    
+    Integer startHour
+    Integer startMinute
+    Integer duration
+    DurationUnit durationUnit
     
     Date actualStart
     Date actualEnd
@@ -62,13 +68,18 @@ class ClassSession implements Comparable {
              
         clazs(nullable:false, editable:false)
 
-        learnings()
+        instructions()
+        enrollments()
  
         earliestStart (nullable:true)
         latestStart(nullable:true)
         earliestEnd(nullable:true)
         latestEnd(nullable:true)
-    
+      startHour(nullable:true, range:0..24) 
+        startMinute(nullable:true, range:0..60) 
+        duration(nullable:true, min:0, max:3600)
+        durationUnit (nullable:true)
+        
         actualStart(nullable:true)
         actualEnd(nullable:true)
     

@@ -13,7 +13,8 @@ class Program {
     courseRelations: CourseRelation,
     authorships:Authorship,
     terms: Term,
-    studentPrograms: StudentProgram] 
+    studentPrograms: StudentProgram,
+    enrollments: Enrollment] 
 
     static notCloneable = ['studentPrograms', 'authorships', 'terms', 'learningAssessments', 'courseRelations',
                 'rankings', 'requirements']
@@ -60,6 +61,7 @@ class Program {
         authorships()
         terms()
         studentPrograms()
+        enrollments()
         
         credential(nullable:true)
         academicStratum(nullable:true)
