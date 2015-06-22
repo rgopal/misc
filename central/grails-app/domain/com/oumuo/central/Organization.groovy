@@ -11,7 +11,8 @@ class Organization {
     static hasMany = [staffings:Staffing, comments: Comment, programs:Program,
         assessments: Assessment,
   
-        courses:Course, rankings:Ranking, learnings: Learning]
+        courses:Course, rankings:Ranking, learnings: Learning,
+    locations: Location]
 
     String addressLine1
     String addressLine2
@@ -50,6 +51,7 @@ class Organization {
     
         learnings()
         rankings()
+        locations()
         
         status ()
         preferredLanguage(nullable:false)

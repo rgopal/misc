@@ -47,6 +47,12 @@ class InitProgram {
 
         def cronRanking = Person.findByUserName('cronRanking')
  
+        def organizations = [
+            'Montgomery County Community College',
+            'Quince Orchard High School',
+            'RidgeView Middle School',
+            'लखनऊ विश्वविद्यालय'
+        ]
         def programs = [ 
             new Program(name: 'Computer Science Diploma',
         
@@ -56,9 +62,8 @@ class InitProgram {
                 ranking: 600,
                 minimumGPA: Grade.D,
                 credential:Credential.CERTIFICATE,
-                sessionFee: 2000.0,
-                organization: Organization.
-                    findByName('Montgomery County Community College')
+                sessionFee: 2000.0
+             
             ).addToRankings (
                 new Ranking (
                     sequence: 1,
@@ -87,9 +92,8 @@ class InitProgram {
                 ranking: 400,
                 minimumGPA : Grade.D,
                 credential:Credential.NONE,
-                sessionFee : 0.0,
-                organization: Organization.
-                    findByName('Quince Orchard High School')   
+                sessionFee : 0.0
+                  
             ),
             new Program(name: 'Middle School English',
        
@@ -99,9 +103,8 @@ class InitProgram {
                 ranking : 800,
                 minimumGPA : Grade.F,
                 credential:Credential.NONE,
-                sessionFee : 0.0,
-                organization: Organization.
-                    findByName('RidgeView Middle School')   
+                sessionFee : 0.0
+         
             ),
             new Program(name: 'लखनऊ विश्वविद्यालय कला संकाय',
           
@@ -112,20 +115,28 @@ class InitProgram {
                 minimumGPA : Grade.NONE,
                 minimumPercentage : 55.0,
                 credential:Credential.DEGREE,
-                sessionFee : 20.0,
-                organization: Organization.
-                    findByName('लखनऊ विश्वविद्यालय')   
+                sessionFee : 20.0
+              
             )
         ]
         
+       def i = 0
        
         // save all the programss and create ACLs
-        for (program in programs) {     
+        for (program in programs) {    
+            def organization  = Organization.findByName(organizations[i])
+            if (!organization) {
+                log.warn "load: could not find organization $organizations[i] for i = $i"
+                return 
+            } else 
+            organization.addToPrograms(program)
+            i++
+            
             log.trace "processing  program ${program} "
        
-            if (!program.save(flush:true)) { 
-                program.errors.allErrors.each {error ->
-                    log.warn "An error occured with ${program} $error"
+            if (!organization.save(flush:true)) { 
+                organization.errors.allErrors.each {error ->
+                    log.warn "An error occured with ${organization} $error"
                 }
             } else {     
                 // give permissions to two users

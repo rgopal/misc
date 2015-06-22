@@ -21,7 +21,7 @@ class Content {
     
     // through Learning/Assessment static hasMany = [comments: Comment]
     String content
-    URL contentUrl
+    String contentUrl
     // no sequence
     ContentType contentType = ContentType.SLIDES
     ContentRole contentRole = ContentRole.PRIMARY
@@ -59,7 +59,7 @@ class Content {
         assessmentItemAnswer (nullable:true, editable:true)
        
         content(nullable:true)  // if embedded
-        contentUrl (nullable:true)
+        contentUrl (nullable:true, url:true)
 
         academicStratum(nullable:true)
         academicLevel(nullable:true)
