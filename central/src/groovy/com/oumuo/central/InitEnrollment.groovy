@@ -47,6 +47,7 @@ class InitEnrollment {
             'jsmith',
             'jsmith',
             'jsmith',
+            'jsmith',
             'jsmith'
         ]
         
@@ -55,37 +56,39 @@ class InitEnrollment {
 
         def enrollments = [ 
             new Enrollment(
-               
-                classSession: ClassSession.findByName('Computer Science I - Fall 2015 Class Session'),
-             
-                role: Role.PRIMARY
+          
+                enrollmentType: EnrollmentType.CREDIT
               
             ),
-             new Enrollment(
+            new Enrollment(
                 
-                clazs: Clazs.findByName('Computer Science I - Fall 2015 Class'),
-             
-                role: Role.JOINT
+              
+                enrollmentType: EnrollmentType.AUDIT
               
             ),
-              new Enrollment(
+            new Enrollment(
              
-                term: Term.findByName('Computer Science Diploma - Fall 2015'),
-                role: Role.SECONDARY
              
+                enrollmentType: EnrollmentType.PLANNED
+             
+              
+            ),
+            new Enrollment(
+             
+                enrollmentType: EnrollmentType.PLANNED,
               
             ),
              new Enrollment(
              
-                role: Role.PRIMARY,
-                program: Program.findByName('Computer Science Diploma')
+                enrollmentType: EnrollmentType.PLANNED,     // for Instruction
+              
             )
                
         ]
         
        
         // save all the enrollmentss and create ACLs
-         def i = 0
+        def i = 0
         for (enrollment in enrollments) {     
                     
             def person = Person.findByUserName(persons[i])
@@ -93,7 +96,7 @@ class InitEnrollment {
                 log.warn "load: could not find person $persons[i]"
                 return
             }     
-            i++
+            
             person.addToEnrollments(enrollment)
             
             log.trace "processing  enrollment ${enrollment} "
@@ -102,17 +105,38 @@ class InitEnrollment {
                 person.errors.allErrors.each {error ->
                     log.warn "An error occured with ${person} $error"
                 }
-            } else {     
-                
-                    log.trace "   starting ACL creations for $person"
-                    InitSpringSecurity.grantACL(enrollment, person.userName)
+            } else {            
+                log.trace "   starting ACL creations for $person"
+                InitSpringSecurity.grantACL(enrollment, person.userName)
                       
             }
              
+            // now other O2M association
+            if (i==0)
+                ClassSession.findByName('Computer Science I - Fall 2015 Class Session').
+                    addToEnrollments(enrollment).save(flush:true)
+            else if (i==1)
+            Clazs.findByName('Computer Science I - Fall 2015 Class').
+                addToEnrollments(enrollment).save(flush:true)
+            else if (i==2)
+            Term.findByName('Computer Science Diploma - Fall 2015').
+                addToEnrollments(enrollment).save(flush:true)
+            else if (i==3)
+            Program.findByName('Computer Science Diploma').
+                addToEnrollments(enrollment).save(flush:true)
+            else if (i==4)
+            ClassSession.findByName('Computer Science I - Fall 2015 Class Session').
+                instructions[0].
+                addToEnrollments(enrollment).save(flush:true)
+            
+            i++
             log.debug "created Enrollment ${enrollment}"
         }
-    log.info ("load: loaded ${Enrollment.count()} out of ${enrollments.size()} enrollments")
-}
+        //
+        
+       
+        log.info ("load: loaded ${Enrollment.count()} out of ${enrollments.size()} enrollments")
+    }
     
     
               

@@ -17,8 +17,10 @@ class Enrollment {
     ClassSession classSession
     Instruction instruction             // catch participation in a discussion
     
-     
-    Role role = Role.PRIMARY
+    Date dateJoined
+    Date dateLeft
+   
+    EnrollmentType enrollmentType = EnrollmentType.CREDIT
     
     // there will be multiple MtoM associations and Person is not null
     
@@ -26,12 +28,10 @@ class Enrollment {
     Status status = Status.ACTIVE
     Date dateCreated
     Date lastUpdated
-
-
     
     String toString(){
 
-        "$person $role "
+        "$person $enrollmentType "
     }
   
     static constraints = {
@@ -42,6 +42,10 @@ class Enrollment {
         clazs (editable:true, nullable:true)
         classSession (editable:true, nullable:true)
         instruction (editable:true,nullable:true)
+        
+         enrollmentType (editable:true,nullable:true)
+         dateJoined (editable:true,nullable:true)
+         dateLeft (editable:true,nullable:true)
     
         // in future make all other editable false as well
      
