@@ -15,7 +15,8 @@ class Clazs {
     // Location location
     static hasMany = [
         classSessions: ClassSession,
-        enrollments: Enrollment
+        enrollments: Enrollment,
+        locationUses: LocationUse
     ]
     
     TeachingType teachingType = TeachingType.ONLINE       // but a class could be different
@@ -44,6 +45,7 @@ class Clazs {
         term(editable:false, nullable:true) 
         classSessions()
         enrollments()
+        locationUses()
         event(editable:false, nullable:true)
         // Location location
     

@@ -18,7 +18,8 @@ class ClassSession implements Comparable {
     Clazs clazs
     static hasMany = [
         instructions: Instruction,
-        enrollments: Enrollment
+        enrollments: Enrollment,
+        locationUses: LocationUse
        
     ]
     Event event

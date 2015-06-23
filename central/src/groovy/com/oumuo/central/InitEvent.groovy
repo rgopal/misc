@@ -142,6 +142,34 @@ class InitEvent {
                
                     startTime: new Date().parse("MM-dd-yyyy", '09-01-2015'),
                     endTime: new Date().parse("MM-dd-yyyy", '12-31-2015')
+                ),
+                new Event (
+                    name: 'Location Use Event 1',
+               
+                    isRecurring : true,
+                    recurType : Recurring.MWF,
+               
+                    startTime: new Date().parse("MM-dd-yyyy", '09-01-2015'),
+                    endTime: new Date().parse("MM-dd-yyyy", '12-31-2015')
+                ),
+                  new Event(
+                name: 'Location Use Event 2',
+               
+                    isRecurring : true,
+                    recurType : Recurring.TTH,
+               
+                    startTime: new Date().parse("MM-dd-yyyy", '09-01-2015'),
+                    endTime: new Date().parse("MM-dd-yyyy", '12-31-2015')
+                ),
+               
+             new Event(
+                name: 'Location Use Event 3',
+               
+                    isRecurring : false,
+                    
+               
+                    startTime: new Date().parse("MM-dd-yyyy", '09-01-2015'),
+                    endTime: new Date().parse("MM-dd-yyyy", '12-31-2015')
                 )
                
                

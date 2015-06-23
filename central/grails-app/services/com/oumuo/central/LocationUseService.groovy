@@ -37,19 +37,6 @@ class LocationUseService {
         // first find the person who is authoring the comment. Eventually this
         // will be done when some one creates a course (then related LocationUse
         // also gets created.
-        locationUse.person = Person.findByUserName (
-            springSecurityService.authentication.name
-        )
-        
-        
-        // this has to be non null (since comment belongsTo Person
-        if (!locationUse.person) {
-            locationUse.errors.allErrors.each {
-                log.warning ("create: error while getting new locationUse ${locationUse}: ${error}")
-            }
-        } else
-        log.trace "getNew: creating new locationUse for $locationUse.person"
-        // could reach it by any one of the following
         
         if (params.location)
         Location.findById(params.location?.id).addToLocationUses(locationUse)
@@ -57,8 +44,9 @@ class LocationUseService {
         Clazs.findById(params.clazs?.id).addToLocationUses(locationUse)
         else if (params.classSession)
         ClassSession.findById(params.classSession?.id).addToLocationUses(locationUse)
-          else 
-          log.warn "getNew: at least one of location, clazs, or classSession should be non null"
+          else if (params.person)
+        Person.findById(params.person?.id).addToLocationUses(locationUse)
+          log.warn "getNew: at least one of location, person, clazs, or classSession should be non null"
         
         log.trace "getNew: new locationUse $locationUse instance created"
         locationUse

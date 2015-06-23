@@ -9,6 +9,10 @@ class Location {
     String name
 
     Organization organization
+    
+    static hasMany = [
+        locationUses: LocationUse
+    ]
 
     // these are common to all; state is managed by system
     LocationType locationType
@@ -51,6 +55,7 @@ class Location {
         name (nullable:false)
      
         organization (nullable:true, editable:true)
+        locationUses()
         
         locationType(nullable:false)
         capacity(nullable:true)

@@ -17,8 +17,9 @@ class LocationUse {
     ClassSession classSession
     Location location
     State state
+    Person person
     
-    Event event
+    Event event     // this is how a location is used 
      
  
     // there will be multiple MtoM associations and Person is not null
@@ -32,14 +33,15 @@ class LocationUse {
     
     String toString(){
 
-        "$person $role "
+        "$location $state "
     }
   
     static constraints = {
     
-        clazs (editable:true, nullable:false)
+        clazs (editable:true, nullable:true)
         classSession (editable:true, nullable:true)
         location (editable:true, nullable:true)
+        person (editable:true, nullable:true)
          event (editable:true, nullable:true)
       
         state (nullable:false)
