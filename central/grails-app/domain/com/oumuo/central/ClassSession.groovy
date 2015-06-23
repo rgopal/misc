@@ -21,20 +21,11 @@ class ClassSession implements Comparable {
         enrollments: Enrollment
        
     ]
-    
+    Event event
     String name
     String sequence
     // Location location
-    
-    Date earliestStart
-    Date latestStart
-    Date earliestEnd
-    Date latestEnd
-    
-    Integer startHour
-    Integer startMinute
-    Integer duration
-    DurationUnit durationUnit
+ 
     
     Date actualStart
     Date actualEnd
@@ -71,14 +62,7 @@ class ClassSession implements Comparable {
         instructions()
         enrollments()
  
-        earliestStart (nullable:true)
-        latestStart(nullable:true)
-        earliestEnd(nullable:true)
-        latestEnd(nullable:true)
-      startHour(nullable:true, range:0..24) 
-        startMinute(nullable:true, range:0..60) 
-        duration(nullable:true, min:0, max:3600)
-        durationUnit (nullable:true)
+        event(nullable:true)
         
         actualStart(nullable:true)
         actualEnd(nullable:true)

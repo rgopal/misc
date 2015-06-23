@@ -13,6 +13,8 @@ class Course {
     //  keep all associations first
     // course can be in multiple programs so no program association
     // Better to use course Authorship for multiple persons
+    // Course is not referenced (only Many works that way) here
+    // only in Clazs
   
     Organization organization
     SortedSet syllabuss

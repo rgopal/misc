@@ -10,6 +10,8 @@ class Clazs {
     
     Course course       // could be online or real
     Term term
+    Event event
+    
     // Location location
     static hasMany = [
         classSessions: ClassSession,
@@ -18,16 +20,7 @@ class Clazs {
     
     TeachingType teachingType = TeachingType.ONLINE       // but a class could be different
     
-    boolean recurring
-    Recurring recurringDays
-    Integer startHour
-    Integer startMinute
-    Integer duration
-    DurationUnit durationUnit
-    
-    
-    Date startDate
-    Date endDate
+ 
     
     State state
     Integer size
@@ -46,25 +39,17 @@ class Clazs {
         // named association so not needed owner()
       
         name (nullable:false)
-        name
-    
+     
         course (editable:false, nullable:true)       // could be online or real
         term(editable:false, nullable:true) 
         classSessions()
         enrollments()
+        event(editable:false, nullable:true)
         // Location location
     
         teachingType (nullable:true)       // but a class could be different
     
-        recurring(nullable:true) 
-        recurringDays(nullable:true) 
-        startHour(nullable:true, range:0..24) 
-        startMinute(nullable:true, range:0..60) 
-        duration(nullable:true, min:0, max:3600)
-        durationUnit (nullable:true)
-    
-        startDate(nullable:true) 
-        endDate(nullable:true) 
+   
     
         state(nullable:true) 
         size(nullable:true) 

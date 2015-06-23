@@ -61,15 +61,8 @@ class InitClazs {
                 state :State.STARTED,
                 course: Course.
                     findByName('Computer Science I'),
-                teachingType: TeachingType.ONLINE,   
-                recurring : true,
-                recurringDays : Recurring.MWF,
-                startHour: 10,
-                startMinute: 30,
-                duration: 60,
-                durationUnit: DurationUnit.MINUTES,
-                startDate: new Date().parse("MM-dd-yyyy", '01-09-2015'),
-                endDate: new Date().parse("MM-dd-yyyy", '12-31-2015'),
+                teachingType: TeachingType.ONLINE, 
+                event: Event.findByName('Class Event 1'),
                 size:30,
                 language: Language.ENGLISH
             ),
@@ -79,14 +72,7 @@ class InitClazs {
                 course: Course.
                     findByName('Computer Science I'),
                 teachingType: TeachingType.ONLINE,   
-                recurring : true,
-                recurringDays : Recurring.MWF,
-                startHour: 10,
-                startMinute: 30,
-                duration: 60,
-                durationUnit: DurationUnit.MINUTES,
-                  startDate: new Date().parse("MM-dd-yyyy", '01-09-2015'),
-                endDate: new Date().parse("MM-dd-yyyy", '12-31-2015'),
+                event: Event.findByName('Class Event 2'),
                 size:30,
                 language: Language.ENGLISH
                
@@ -97,14 +83,7 @@ class InitClazs {
                 course: Course.
                     findByName('High School Physics'),
                 teachingType: TeachingType.ONLINE,   
-                recurring : true,
-                recurringDays : Recurring.MWF,
-                startHour: 10,
-                startMinute: 30,
-                duration: 60,
-                durationUnit: DurationUnit.MINUTES,
-                   startDate: new Date().parse("MM-dd-yyyy", '01-09-2015'),
-                endDate: new Date().parse("MM-dd-yyyy", '12-31-2015'),
+             event: Event.findByName('Class Event 3'),
                 size:30,
                 language: Language.ENGLISH
             ),
@@ -114,14 +93,7 @@ class InitClazs {
                 course: Course.
                     findByName('Middle School English Drama'),
                 teachingType: TeachingType.ONLINE,   
-                recurring : true,
-                recurringDays : Recurring.MWF,
-                startHour: 10,
-                startMinute: 30,
-                duration: 60,
-                durationUnit: DurationUnit.MINUTES,
-              startDate: new Date().parse("MM-dd-yyyy", '01-09-2015'),
-                endDate: new Date().parse("MM-dd-yyyy", '12-31-2015'),
+         event: Event.findByName('Class Event 4'),
                 size:30,
                 language: Language.ENGLISH
                
@@ -132,14 +104,7 @@ class InitClazs {
                 course: Course.
                     findByName('लखनऊ विश्वविद्यालय कला 1'),
                 teachingType: TeachingType.ONLINE,   
-                recurring : true,
-                recurringDays : Recurring.MWF,
-                startHour: 10,
-                startMinute: 30,
-                duration: 60,
-                durationUnit: DurationUnit.MINUTES,
-                  startDate: new Date().parse("MM-dd-yyyy", '01-09-2015'),
-                endDate: new Date().parse("MM-dd-yyyy", '12-31-2015'),
+            event: Event.findByName('Class Event 5'),
                 size:30,
                 language: Language.ENGLISH
               
@@ -155,7 +120,7 @@ class InitClazs {
                     
             def term = Term.findByName(terms[i])
             if (!term) {
-                log.warn "load: could not find program $terms[i]"
+                log.warn "load: could not find term $terms[i]"
                 return
             }     
             i++

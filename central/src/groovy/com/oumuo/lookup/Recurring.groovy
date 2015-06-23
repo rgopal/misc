@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
 public enum Recurring implements org.springframework.context.MessageSourceResolvable {
  
-    WEEKDAYS, DAILY, MWF, TTH, OTHER, MON, TUE, WED, THU, FRI, SAT, SUN, WEEKEND, MONTHLY, BIWEEKLY, YEARLY
+    WEEKDAYS, DAILY, WEEKEND, MONTHLY, BIWEEKLY, YEARLY, WEEKLY, MWF, TTH
     public Object[] getArguments() { [] as Object[] }
     public String[] getCodes() { [ name() ] }
     public String getDefaultMessage() { name() }    // default is name itself

@@ -59,28 +59,33 @@ class InitClassSession {
             new ClassSession(
                 sequence:'1',
                 name: 'Computer Science I - Fall 2015 Class Session',
+                event: Event.findByName('Class Session Event 1'),
                 state :State.STARTED
              
             ).addToInstructions (
                 new Instruction (
                     learning: Learning.findByName ('Introduction'),
+                    event: Event.findByName('Class Session Event 2'),
                     state: State.STARTED
                 )
             ),
             new ClassSession(
                 sequence:'1',
                 name: 'Computer Science I - Spring 2016 Class Session',
+                event: Event.findByName('Class Session Event 3'),
                 state :State.PLANNED
             ),
             new ClassSession(
                 sequence:'1', 
                 name: 'High School Physics - Fall 2015 Class Session',
+                event: Event.findByName('Class Session Event 4'),
                 state :State.PLANNED
            
             ),
             new ClassSession(
                 sequence:'1',
                 name: 'Middle School English Drama - Summer 2015 Class Sesssion',
+                event: Event.findByName('Class Session Event 5'),
                 state :State.PLANNED
          
                

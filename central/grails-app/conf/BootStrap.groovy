@@ -19,6 +19,7 @@ import com.oumuo.central.InitAssessmentItem
 import com.oumuo.central.InitAuthorship
 import com.oumuo.central.InitTerm
 import com.oumuo.central.InitStudentProgram
+import com.oumuo.central.InitEvent
 import com.oumuo.central.InitClazs
 import com.oumuo.central.InitClassSession       // includes Instruction
 import com.oumuo.central.InitEnrollment
@@ -63,6 +64,7 @@ class BootStrap {
         new InitAuthorship().load()
         new InitTerm().load()
         new InitStudentProgram().load()
+        new InitEvent().load()
         new InitClazs().load()
         new InitClassSession().load()
         new InitEnrollment().load()
