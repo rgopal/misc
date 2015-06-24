@@ -11,7 +11,8 @@ class Instruction {
     ClassSession classSession
     Learning learning
     static hasMany = [
-        enrollments: Enrollment
+        enrollments: Enrollment,
+        studentInstructions: StudentInstruction
     ]
   
     // Does not make sense String sequence
@@ -36,9 +37,10 @@ class Instruction {
   
     static constraints = {
     
-        classSession (editable:true)
-        learning (editable:true)
+        classSession (editable:true, nullable:true)
+        learning (editable:true, nullable:true)
         enrollments()
+        studentInstructions()
         
         state (nullable:false)
         startTime(nullable:true)

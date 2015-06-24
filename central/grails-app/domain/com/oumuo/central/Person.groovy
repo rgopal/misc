@@ -23,7 +23,8 @@ class Person {
         authorships: Authorship,
         studentPrograms: StudentProgram,
         enrollments: Enrollment,
-        locationUses: LocationUse]
+        locationUses: LocationUse,
+        studentInstructions: StudentInstruction]
 
     static belongsTo = [userLogin: UserLogin]
     
@@ -94,6 +95,7 @@ class Person {
         studentPrograms()
         enrollments()
         locationUses()
+        studentInstructions()
         
         sex ()
         dateOfBirth(max: new Date(), min:Date.parse('dd-MM-yyyy','01-01-1901'), nullable:true)

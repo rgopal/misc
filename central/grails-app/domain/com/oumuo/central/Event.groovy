@@ -4,8 +4,8 @@ import com.oumuo.lookup.*
 import groovy.util.logging.Log4j
 
 
-// import org.joda.time.DateTime
-// import org.joda.time.Minutes
+import org.joda.time.DateTime
+import org.joda.time.Minutes
 
 @Log4j
 class Event {
@@ -65,8 +65,8 @@ class Event {
     }
 
     public int getDurationMinutes() {
-        return 999
-       // Minutes.minutesBetween(new DateTime(startTime), new DateTime(endTime)).minutes
+        
+      Minutes.minutesBetween(new DateTime(startTime), new DateTime(endTime)).minutes
     }
 
 
