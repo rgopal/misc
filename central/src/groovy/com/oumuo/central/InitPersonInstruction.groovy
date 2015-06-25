@@ -27,9 +27,9 @@ import groovy.util.logging.Log4j
  * @author rgopal-lt
  */
 @Log4j
-class InitStudentInstruction {
+class InitPersonInstruction {
     
-    // def studentInstructionFactory
+    // def personInstructionFactory
     // def springSecurityService
     def aclService  
     def aclUtilService
@@ -59,12 +59,12 @@ class InitStudentInstruction {
         
         if (!person) {
             person.errors.allErrors.each {
-                log.warning ("create: error while getting new  ${studentInstruction}:${error} for jsmith")
+                log.warning ("create: error while getting new  ${personInstruction}:${error} for jsmith")
             }
         } 
         
-        def studentInstructions = [ 
-            new StudentInstruction(
+        def personInstructions = [ 
+            new PersonInstruction(
                 sequence:'1',
                 state :State.STARTED
                 
@@ -74,12 +74,12 @@ class InitStudentInstruction {
         
         
        
-        // save all the studentInstructionss and create ACLs
+        // save all the personInstructionss and create ACLs
    
-        for (studentInstruction in studentInstructions) {     
-           log.trace "processing  studentInstruction ${studentInstruction} "
+        for (personInstruction in personInstructions) {     
+           log.trace "processing  personInstruction ${personInstruction} "
             
-            person.addToStudentInstructions(studentInstruction)
+            person.addToPersonInstructions(personInstruction)
             
          
        
@@ -92,7 +92,7 @@ class InitStudentInstruction {
             
             // now add it to instruction
             
-            instruction.addToStudentInstructions(studentInstruction)
+            instruction.addToPersonInstructions(personInstruction)
             
                 if (!instruction.save(flush:true)) { 
                 instruction.errors.allErrors.each {error ->
@@ -104,16 +104,16 @@ class InitStudentInstruction {
                 // give permissions to two users
                 for (user in ['jsmith']) {
                     log.trace "   starting ACL creations for $user}"
-                    InitSpringSecurity.grantACL(studentInstruction, user)
+                    InitSpringSecurity.grantACL(personInstruction, user)
               
                 }
              
             }
-            log.debug "created StudentInstruction ${studentInstruction}"
+            log.debug "created PersonInstruction ${personInstruction}"
         }
     
     
-        log.info ("load: loaded ${StudentInstruction.count()} out of ${studentInstructions.size()} studentInstructions")
+        log.info ("load: loaded ${PersonInstruction.count()} out of ${personInstructions.size()} personInstructions")
        
         
     }

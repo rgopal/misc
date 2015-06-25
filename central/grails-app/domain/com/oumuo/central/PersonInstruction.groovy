@@ -6,13 +6,13 @@ import groovy.util.logging.Log4j
 
 // Within a program learning is associated with assessment
 
-class StudentInstruction {
+class PersonInstruction {
   
     Long sequence
     Person person
     Instruction instruction
    /* static hasMany = [
-        studentAssessments: StudentAssessment
+        personAssessments: PersonAssessment
     ]
   */
     // Does not make sense String sequence
@@ -58,16 +58,17 @@ class StudentInstruction {
         def grailsApplication = new Account().domainClass.grailsApplication
         def ctx = grailsApplication.mainContext
         def config = grailsApplication.config
-        def studentInstructionService = ctx.studentInstructionService
+        def personInstructionService = ctx.personInstructionService
      
-        return studentInstructionService.list()
+        return personInstructionService.list()
     }
     // number them after all prior instructions for a person
        def beforeInsert() {
         if (!sequence) {
 
             // InitPerson uses explict 1 for sequence
-            sequence = Person.findById(person.id).studentInstructions*.getAll{it->instruction.id == instruction.id}.size() + 1
+            // sequence = Person.findById(person.id).personInstructions*.getAll{it->instruction.id == instruction.id}.size() + 1
+            sequence = PersonInstruction.countByPersonAndInstruction(person, instruction) + 1
             log.trace "beforeInsert: sequence updated to $sequence"
             
         }
