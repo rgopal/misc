@@ -73,13 +73,27 @@ class Comment {
             sequence = parentComment.sequence + "." + 
             (parentComment.subComments.size() + 1).toString() 
             else
-            sequence = "1"
+            sequence = selectSequence()
         
             log.trace "beforeInsert: sequence updated to $sequence"
                
         }     
     }
     
+    String selectSequence() {
+        if (organization)
+        return Comment.countByPersonAndOrganization(person,organization) + 1
+        else if (course)
+        return Comment.countByPersonAndCourse(person,course) + 1
+        else if (assessment)
+        return Comment.countByPersonAndAssessment(person,assessment) + 1
+        else if (learning)
+        return Comment.countByPersonAndLearning(person,learning) + 1
+        else if (personInstruction)
+        return Comment.countByPersonAndPersonInstruction(person,personInstruction) + 1
+    }
+    
+ 
     // for classes with 1toM relation, may need to control the many side in
     // the popup list.  Used in renderTemplate edit
     static secureList() {
