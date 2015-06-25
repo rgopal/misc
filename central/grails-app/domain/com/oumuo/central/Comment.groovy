@@ -9,6 +9,7 @@ class Comment {
     Course course
     Assessment assessment
     Learning learning
+    PersonInstruction personInstruction
   
     // parent could be null
     Comment parentComment
@@ -34,7 +35,9 @@ class Comment {
     
     String toString(){
 
-        sequence + " " + comment?.substring(0,Math.min(15, comment? comment.length():0))
+        sequence + " " + comment?.substring(0,Math.min(15, comment? comment.length():0)) +
+         "${organization ? 'ORG':' '} ${course ? 'COURSE':' '} ${personInstruction ? 'PINST':' '}" +
+        "${assessment ? 'ASSESM':' '} " +"${assessment ? 'LEARN':' '} "
     }
   
     static constraints = {
@@ -43,6 +46,7 @@ class Comment {
         
         // this allows the user to make parentComment null (and thus a new root)
         person(editable:false)
+        personInstruction(editable:false, nullable:true)
         parentComment (nullable:true, editable:false)
         // this will become editable:false (same for other)
         organization (editable:false, nullable: true)

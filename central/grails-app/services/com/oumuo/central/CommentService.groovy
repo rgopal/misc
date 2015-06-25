@@ -62,7 +62,10 @@ class CommentService {
             Course.findById(params.course.id).addToComments(comment)
             else if (params.assessment)
             Assessment.findById(params.assessment.id).addToComments(comment)
-            log.warn "getNew: root comment $comment cound not find organization, course "
+            else if (params.personInstruction)
+            PersonInstruction.findById(params.personInstruction.id).addToComments(comment)
+            else
+            log.warn "getNew: root comment $comment coud not find organization, course Assessment or PersonInstruction "
             
             // now keep adding all new "owners" such as Organization, Course, etc.
         } else

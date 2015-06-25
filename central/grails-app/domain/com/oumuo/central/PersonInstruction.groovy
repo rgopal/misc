@@ -11,10 +11,12 @@ class PersonInstruction {
     Long sequence
     Person person
     Instruction instruction
-   /* static hasMany = [
-        personAssessments: PersonAssessment
+       static hasMany = [
+       
+       // personAssessments: PersonAssessment,
+        comments : Comment
     ]
-  */
+  
     // Does not make sense String sequence
   
  
@@ -40,6 +42,7 @@ class PersonInstruction {
         sequence(nullable:true, editable:false)
         person (editable:true, nullable:true)
         instruction (editable:true, nullable:true)
+        comments ()
     
         
         state (nullable:false)

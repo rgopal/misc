@@ -63,6 +63,7 @@ class InitPersonInstruction {
             }
         } 
         
+        
         def personInstructions = [ 
             new PersonInstruction(
                 sequence:'1',
@@ -100,7 +101,17 @@ class InitPersonInstruction {
                 }
             }
             
-            else {     
+            else { 
+                // now add an instruction (after setting its peron)
+                 personInstruction.addToComments(
+            new Comment (
+                comment: 'this is a good instruction for me',
+                person: person
+                )
+            )
+            if (personInstruction.save(flush:true))
+            log.warn "could not save personInstruction $personInstruction after adding comment"
+            
                 // give permissions to two users
                 for (user in ['jsmith']) {
                     log.trace "   starting ACL creations for $user}"
@@ -108,6 +119,15 @@ class InitPersonInstruction {
               
                 }
              
+                for (comment in personInstruction.comments) {
+                    for (user in ['jsmith']) {
+                    log.trace "   starting ACL creations for $user}"
+                    InitSpringSecurity.grantACL(comment, user)
+              
+                    }
+                log.trace "created comment $comment for $personInstruction"
+                }
+                log.info "created $personInstruction.comments?.size() comments "
             }
             log.debug "created PersonInstruction ${personInstruction}"
         }
