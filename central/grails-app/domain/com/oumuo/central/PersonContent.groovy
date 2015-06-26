@@ -13,7 +13,7 @@ class PersonContent {
   
     PersonInstruction personInstruction
     Content content
-   // PersonAssessment personAssessment
+   PersonAssessment personAssessment
    // PersonAssessmentItem personAssessmentItem
       static hasMany = [pauseTimes: Date, restartTimes: Date]
       static transients = ['durationSeconds']
@@ -76,7 +76,7 @@ class PersonContent {
     
         content(nullable:true, editable:true)
         personInstruction(nullable:true, editable:false)
-        //personAssessment (editable:true, nullable:true)
+        personAssessment (editable:true, nullable:true)
         // personAssessmentItem (editable:true, nullable:true)
         pauseTimes()
         restartTimes()

@@ -13,7 +13,7 @@ class PersonInstruction {
     Instruction instruction
        static hasMany = [
        
-       // personAssessments: PersonAssessment,
+       personAssessments: PersonAssessment,
         comments : Comment,
         personContents: PersonContent
     ]
@@ -45,6 +45,7 @@ class PersonInstruction {
         instruction (editable:true, nullable:true)
         comments ()
         personContents()
+        personAssessments()
     
         
         state (nullable:false)

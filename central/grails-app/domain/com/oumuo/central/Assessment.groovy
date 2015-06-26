@@ -19,7 +19,8 @@ class Assessment {
         learningAssessments: LearningAssessment,
         assessmentItems: AssessmentItem,
         rankings:Ranking,
-        authorships:Authorship] 
+        authorships:Authorship,
+        personAssessments: PersonAssessment] 
 
     
     // then proper fileds
@@ -69,6 +70,7 @@ class Assessment {
      
         rankings()
         authorships()
+        personAssessments()
         
               name (nullable:false)
         academicStratum(nullable:true)

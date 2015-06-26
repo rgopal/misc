@@ -40,8 +40,10 @@ class PersonContentService {
      
         if (params.personInstruction)
         PersonInstruction.findById(params.personInstruction?.id).addToPersonContents(personContent)
+        else if (params.personAssessment)
+        PersonAssessment.findById(params.personAssessment?.id).addToPersonContents(personContent)
         else
-        log.warn "getNew: personInstruction should be non null"
+        log.warn "getNew: personInstruction or personAssessment/Items should be non null"
     
         log.trace "getNew: new personContent $personContent instance created"
         personContent

@@ -64,6 +64,8 @@ class CommentService {
             Assessment.findById(params.assessment.id).addToComments(comment)
             else if (params.personInstruction)
             PersonInstruction.findById(params.personInstruction.id).addToComments(comment)
+            else if (params.personAssessment)
+            PersonAssessment.findById(params.personAssessment.id).addToComments(comment)
             else
             log.warn "getNew: root comment $comment coud not find organization, course Assessment or PersonInstruction "
             

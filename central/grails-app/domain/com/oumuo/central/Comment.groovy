@@ -10,6 +10,7 @@ class Comment {
     Assessment assessment
     Learning learning
     PersonInstruction personInstruction
+    PersonAssessment personAssessment
   
     // parent could be null
     Comment parentComment
@@ -47,6 +48,7 @@ class Comment {
         // this allows the user to make parentComment null (and thus a new root)
         person(editable:false)
         personInstruction(editable:false, nullable:true)
+        personAssessment(editable:false, nullable:true)
         parentComment (nullable:true, editable:false)
         // this will become editable:false (same for other)
         organization (editable:false, nullable: true)
@@ -91,6 +93,8 @@ class Comment {
         return Comment.countByPersonAndLearning(person,learning) + 1
         else if (personInstruction)
         return Comment.countByPersonAndPersonInstruction(person,personInstruction) + 1
+        else if (personAssessment)
+        return Comment.countByPersonAndPersonAssessment(person,personAssessment) + 1
     }
     
  
