@@ -109,7 +109,7 @@ class InitPersonInstruction {
                 person: person
                 )
             )
-            if (personInstruction.save(flush:true))
+            if (!personInstruction.save(flush:true))
             log.warn "could not save personInstruction $personInstruction after adding comment"
             
                 // give permissions to two users

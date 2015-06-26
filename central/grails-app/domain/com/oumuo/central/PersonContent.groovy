@@ -45,14 +45,16 @@ class PersonContent {
         
         def total = 0
         def prev = startTime
+        def sortedRestartTimes = restartTimes.sort()
         def i = 0
         if (pauseTimes.size() < (restartTimes.size()  -1 ))
           log.warn "getDurationMinutes: pauses are too fiew pauses - ${pauseTimes.size() }" +
                     " restartrs - ${restartTimes.size()}"
-        for (pause in pauseTimes) {
+        for (pause in pauseTimes.sort()) {
+            log.warn ("getDurationSeconds $i $pause")
             total = total + Seconds.secondsBetween(new DateTime(prev), new DateTime(pause)).seconds
-            if (restartTimes[i])
-               prev = restartTimes[i]
+            if (sortedRestartTimes[i])
+               prev = sortedRestartTimes[i]
              i++
         }
         if (endTime)

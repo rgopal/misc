@@ -67,9 +67,17 @@ class InitPersonContent {
         def personContents = [ 
             new PersonContent(
                 
-                state :State.STARTED
+                state :State.STARTED,
+                startTime: new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:00:43")
                 
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:02:43")
+            ).addToRestartTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:04:44")
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:07:45")
             )
+            
             
         ]
         
@@ -111,7 +119,8 @@ class InitPersonContent {
                 }
              
             }
-            log.debug "created PersonContent ${personContent}"
+            log.info "created PersonContent ${personContent} with durationsSeconds " +
+               "${personContent.getDurationSeconds()}"
         }
     
     
