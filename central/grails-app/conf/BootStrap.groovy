@@ -27,6 +27,7 @@ import com.oumuo.central.InitLearningRelation
 import com.oumuo.central.InitLocation
 import com.oumuo.central.InitLocationUse
 import com.oumuo.central.InitPersonInstruction
+import com.oumuo.central.InitPersonContent
 
 class BootStrap {
     def aclService
@@ -74,6 +75,7 @@ class BootStrap {
         new InitLocation().load()
             new InitLocationUse().load()
               new InitPersonInstruction().load()
+              new InitPersonContent().load()
     }
    
     def destory = {

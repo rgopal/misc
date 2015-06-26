@@ -127,7 +127,7 @@ class InitPersonInstruction {
                     }
                 log.trace "created comment $comment for $personInstruction"
                 }
-                log.info "created $personInstruction.comments?.size() comments "
+                log.info "created ${personInstruction.comments?.size()} comments "
             }
             log.debug "created PersonInstruction ${personInstruction}"
         }

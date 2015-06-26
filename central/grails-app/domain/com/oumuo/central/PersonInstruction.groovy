@@ -14,7 +14,8 @@ class PersonInstruction {
        static hasMany = [
        
        // personAssessments: PersonAssessment,
-        comments : Comment
+        comments : Comment,
+        personContents: PersonContent
     ]
   
     // Does not make sense String sequence
@@ -43,6 +44,7 @@ class PersonInstruction {
         person (editable:true, nullable:true)
         instruction (editable:true, nullable:true)
         comments ()
+        personContents()
     
         
         state (nullable:false)
