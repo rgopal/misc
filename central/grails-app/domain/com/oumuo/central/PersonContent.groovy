@@ -51,13 +51,16 @@ class PersonContent {
           log.warn "getDurationMinutes: pauses are too fiew pauses - ${pauseTimes.size() }" +
                     " restartrs - ${restartTimes.size()}"
         for (pause in pauseTimes.sort()) {
-            log.warn ("getDurationSeconds $i $pause")
+            
             total = total + Seconds.secondsBetween(new DateTime(prev), new DateTime(pause)).seconds
             if (sortedRestartTimes[i])
                prev = sortedRestartTimes[i]
+               else 
+               prev = null
              i++
+             log.warn ("getDurationSeconds $i $pause total $total prev $prev")
         }
-        if (endTime)
+        if (endTime && prev)
             total = total + Seconds.secondsBetween(new DateTime(prev), new DateTime(endTime)).seconds
         
       return total

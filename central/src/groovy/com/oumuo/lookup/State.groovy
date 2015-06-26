@@ -12,7 +12,7 @@ package com.oumuo.lookup
  */
 public enum State implements org.springframework.context.MessageSourceResolvable {
  
-    PLANNED, STARTED, IN_USE, PAUSED, ENDED, ENROLLING, CLOSED
+    PLANNED, STARTED, IN_USE, PAUSED, ENDED, ENROLLING, CLOSED, COMPLETED
     public Object[] getArguments() { [] as Object[] }
     public String[] getCodes() { [ name() ] }
     public String getDefaultMessage() { name() }    // default is name itself

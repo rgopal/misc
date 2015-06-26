@@ -36,6 +36,12 @@ class InitPersonContent {
     def objectIdentityRetrievalStrategy
     
    
+    def contents = 
+    [
+        'Introduction Video',
+        'Data Structures',
+        'Trees Text'
+    ]
     void load () {
      
 
@@ -76,15 +82,44 @@ class InitPersonContent {
                     new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:04:44")
             ).addToPauseTimes (          
                     new Date().parse("d/M/yyyy H:m:s","28/09/2015 16:07:45")
-            )
+            ),
+            new PersonContent(
+                
+                state :State.COMPLETED,
+                startTime: new Date().parse("d/M/yyyy H:m:s","18/09/2015 16:00:43"),
+                endTime:new Date().parse("d/M/yyyy H:m:s","18/09/2015 16:10:45")
+                
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","18/09/2015 16:02:43")
+            ).addToRestartTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","18/09/2015 16:04:44")
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","18/09/2015 16:07:45")
+            ),
+            new PersonContent(
+                
+                state :State.COMPLETED,
+                startTime: new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:00:43"),
+                endTime:new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:10:45")
+                
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:02:43")
+            ).addToRestartTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:04:44")
+            ).addToPauseTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:07:45")
+            ).addToRestartTimes (          
+                    new Date().parse("d/M/yyyy H:m:s","08/09/2015 16:08:45")
             
             
+            )     
         ]
         
         
        
         // save all the personContentss and create ACLs
    
+        def i = 0
         for (personContent in personContents) {     
            log.trace "processing  personContent ${personContent} "
             
@@ -100,7 +135,11 @@ class InitPersonContent {
          
             
             // now add it to content
-            def content = Content.findByName ('Introduction Video')
+    
+            def content = Content.findByName (contents[i])
+        
+            
+            i++
             content.addToPersonContents(personContent)
             
                 if (!content.save(flush:true)) { 
