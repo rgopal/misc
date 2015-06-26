@@ -16,7 +16,8 @@ class AssessmentItem implements Comparable {
     SortedSet subAssessmentItems
     static hasMany = [ subAssessmentItems: AssessmentItem,
         questionContents: Content,
-        answerContents:Content] 
+        answerContents:Content,
+        personAssessmentItems: PersonAssessmentItem] 
     static mappedBy = [ subAssessmentItems: 'parentAssessmentItem',
         questionContents:'assessmentItemQuestion',
         answerContents:'assessmentItemAnswer']
@@ -119,6 +120,7 @@ class AssessmentItem implements Comparable {
         assessment(nullable:true)   // this the root but null for children
        
         subAssessmentItems()
+        personAssessmentItems()
 
         academicLevel (nullable:true)
         academicStratum(nullable:true)

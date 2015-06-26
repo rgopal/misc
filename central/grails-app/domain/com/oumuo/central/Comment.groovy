@@ -11,6 +11,7 @@ class Comment {
     Learning learning
     PersonInstruction personInstruction
     PersonAssessment personAssessment
+    PersonAssessmentItem personAssessmentItem
   
     // parent could be null
     Comment parentComment
@@ -49,6 +50,8 @@ class Comment {
         person(editable:false)
         personInstruction(editable:false, nullable:true)
         personAssessment(editable:false, nullable:true)
+        personAssessmentItem(editable:false, nullable:true)
+        
         parentComment (nullable:true, editable:false)
         // this will become editable:false (same for other)
         organization (editable:false, nullable: true)
@@ -95,6 +98,8 @@ class Comment {
         return Comment.countByPersonAndPersonInstruction(person,personInstruction) + 1
         else if (personAssessment)
         return Comment.countByPersonAndPersonAssessment(person,personAssessment) + 1
+        else if (personAssessmentItem)
+        return Comment.countByPersonAndPersonAssessmentItem(person,personAssessment) + 1
     }
     
  

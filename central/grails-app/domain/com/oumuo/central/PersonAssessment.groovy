@@ -13,7 +13,7 @@ class PersonAssessment {
     Assessment assessment
        static hasMany = [
        
-       // personAssessmentItems: PersonAssessmentItem,
+       personAssessmentItems: PersonAssessmentItem,
         comments : Comment,
         personContents: PersonContent
     ]
@@ -43,6 +43,7 @@ class PersonAssessment {
         sequence(nullable:true, editable:false)
         personInstruction (editable:true, nullable:true)
         assessment (editable:true, nullable:true)
+        personAssessmentItems()
         comments ()
         personContents()
     

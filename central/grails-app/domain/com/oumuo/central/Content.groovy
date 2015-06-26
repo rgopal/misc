@@ -20,7 +20,8 @@ class Content {
     AssessmentItem assessmentItemAnswer
     static hasMany = [
         personContents: PersonContent,
-        personAssessments: PersonAssessment
+        personAssessments: PersonAssessment,
+        personAssessmentItems: PersonAssessmentItem
     ]
     
     // through Learning/Assessment static hasMany = [comments: Comment]
@@ -63,6 +64,7 @@ class Content {
         assessmentItemAnswer (nullable:true, editable:true)
         personContents()
         personAssessments()
+        personAssessmentItems()
        
         content(nullable:true)  // if embedded
         contentUrl (nullable:true, url:true)
