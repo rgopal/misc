@@ -37,18 +37,20 @@ class AuthorshipService {
         // first find the person who is authoring the comment. Eventually this
         // will be done when some one creates a course (then related Authorship
         // also gets created.
-        authorship.person = Person.findByUserName (
+        def person = Person.findByUserName (
             springSecurityService.authentication.name
         )
         
         
         // this has to be non null (since comment belongsTo Person
-        if (!authorship.person) {
-            authorship.errors.allErrors.each {
+        if (!person) {
+            person.errors.allErrors.each {
                 log.warning ("create: error while getting new authorship ${authorship}: ${error}")
             }
         } else
         log.trace "getNew: creating new authorship for $authorship.person"
+        person.addToAuthorships(authorship)
+        
         // could reach it by any one of the following
         
         if (params.course)

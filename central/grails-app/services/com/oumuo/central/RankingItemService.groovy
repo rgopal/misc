@@ -60,7 +60,6 @@ class RankingItemService {
             // check if this is for a program
             log.trace ("getNew: found organizatoin $ranking.program")
             rankingItem.programRanking = ranking
-            
         } else if (ranking.organization) {
             // or for the parent Ranking has an organization (can't be both
             log.trace ("getNew: found organization $ranking.organization")
@@ -69,9 +68,13 @@ class RankingItemService {
             // or for the parent Ranking has an organization (can't be both
             log.trace ("getNew: found course $ranking.course")
             rankingItem.courseRanking = ranking   
+        } else if (ranking.job) {
+            // or for the parent Ranking has an organization (can't be both
+            log.trace ("getNew: found course $ranking.job")
+            rankingItem.jobRanking = ranking   
         }
         else
-            log.warn "getNew: did not find either prgoram, course or organization in Ranking"
+            log.warn "getNew: did not find either prgoram, course, job or organization in Ranking"
             
         rankingItem
       

@@ -41,7 +41,7 @@ class RequirementService {
         // println Course.findById(params.cou.id)
         println "Requirements Service " + params.collect{it}.join('\n')
         println "Requirements Service " + flash.collect{it}.join('\n')
-        println Course.findById(params.course.id).properties.collect{it}.join('\n')
+        // println Course.findById(params.course.id)?.properties.collect{it}.join('\n')
         
         // used as requirement for course/program etc.
         // and capability for student/teacher
@@ -64,12 +64,17 @@ class RequirementService {
             
             log.trace "getNew: creating new requirement for $params.oneToManyPropertyName"
         } else if (params.person) {
-            requirement.person = Person.findById(params.person.id)
+            Person.findById(params.person.id).addToRequirements(requirement)
             log.trace "getNew: creating new requirement for $requirement.person"
         } else if (params.program) {
-            requirement.program = Program.findById(params.program.id)
+            
+            Program.findById(params.program.id).addToRequirements(requirement)
+            // requirement.program = Program.findById(params.program.id)
             log.trace "getNew: creating new requirement for $requirement.program"
-        } 
+        } else if (params.job) { 
+            Job.findById(params.job.id).addToRequirements(requirement)
+            log.trace "getNew: creating new requirement for $requirement.job"
+        }
         else {
             requirement.errors.allErrors.each {
                 log.warning ("create: error while getting new requirement ${requirement}: ${it}")

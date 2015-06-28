@@ -56,8 +56,10 @@ class RankingService {
         Course.findById(params.course?.id).addToRankings(ranking)
         else if (params.learning)
         Learning.findById(params.learning?.id).addToRankings(ranking)
-  else if (params.assessment)
+        else if (params.assessment)
         Assessment.findById(params.assessment?.id).addToRankings(ranking)
+        else if (params.job)
+        Job.findById(params.job?.id).addToRankings(ranking)
         // check for other domains which would have ranking (only one would be
         // with non null value in params
         ranking

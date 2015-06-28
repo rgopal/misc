@@ -11,6 +11,7 @@ class RankingItem {
     Ranking organizationRanking     // future would have more rankings
     Ranking programRanking          //
     Ranking courseRanking
+    Ranking jobRanking
     
     static belongsTo = [person:Person]
     
@@ -54,6 +55,7 @@ class RankingItem {
         organizationRanking(editable:false, nullable:true)
         programRanking(editable:false, nullable:true)
          courseRanking(editable:false, nullable:true)
+         jobRanking(editable:false, nullable:true)
         
         overall(range:0..1000, nullable:true)
         prestige(range:0..1000, nullable:true) 

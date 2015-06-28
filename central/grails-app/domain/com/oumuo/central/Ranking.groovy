@@ -17,13 +17,16 @@ class Ranking {
     Course course
     Learning learning
     Assessment assessment
+    Job job
     
     static hasMany =[organizationRankingItems: RankingItem, 
         programRankingItems:RankingItem,
-        courseRankingItems:RankingItem]
+        courseRankingItems:RankingItem,
+        jobRankingItems: RankingItem]
     static mappedBy = [organizationRankingItems:'organizationRanking',
         programRankingItems:'programRanking',
-        courseRankingItems:'courseRanking'] 
+        courseRankingItems:'courseRanking',
+    jobRankingItems:'jobRanking'] 
     static belongsTo = [person:Person]
     
     // Person owner (does not work well with sequence updates)
@@ -75,10 +78,12 @@ class Ranking {
         course(editable:false, nullable:true)
          learning(editable:false, nullable:true)
         assessment(editable:false, nullable:true)
+        job(editable:false, nullable:true)
         
         organizationRankingItems()
         programRankingItems()
         courseRankingItems()
+        jobRankingItems()
         
         overall(range:0..1000, editable:false, nullable:true)
         utility (range:0..1000, editable:false, nullable:true)
