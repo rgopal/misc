@@ -151,6 +151,18 @@ class Ranking {
                 log.trace "beforeInsert: seqeunce is $sequence with assessment "
             
             }
+            if (learning) {
+                // use sequence number for organization
+                sequence = Learning.findById(learning.id).rankings.size()  + 1
+                log.trace "beforeInsert: seqeunce is $sequence with learning "
+            
+            }
+             if (job) {
+                // use sequence number for organization
+                sequence = Job.findById(job.id).rankings.size()  + 1
+                log.trace "beforeInsert: seqeunce is $sequence with job "
+            
+            }
         }
         // don't forget to check for new records also
         checkMain()
@@ -174,6 +186,10 @@ class Ranking {
         updateCurrent(course, 'com.oumuo.central.Course')
         else if (assessment)
         updateCurrent(assessment, 'com.oumuo.central.Assessment')
+        else if (learning)
+        updateCurrent(learning, 'com.oumuo.central.Learning')
+        else if (job)
+        updateCurrent(job, 'com.oumuo.central.Job')
     }
     def updateCurrent(Object instance, String owner)
     {

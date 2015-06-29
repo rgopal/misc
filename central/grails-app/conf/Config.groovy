@@ -137,8 +137,8 @@ log4j.main = {
     }
     // for all domain controller etc.
     // debug customAppender:'central.controller'
-    info 'com.oumuo.central'
-    info 'com.oumuo.lookup'
+    trace 'com.oumuo.central'
+    trace 'com.oumuo.lookup'
     // this used to be error (for below)
     warn   'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP

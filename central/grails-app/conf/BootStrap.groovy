@@ -37,6 +37,7 @@ import com.oumuo.central.InitPersonJob
 import com.oumuo.central.InitJobAvailability
 import com.oumuo.central.InitPosition
 import com.oumuo.central.InitPositionProgram
+import com.oumuo.central.InitPersonResource
 
 class BootStrap {
     def aclService
@@ -93,6 +94,7 @@ class BootStrap {
         new InitJobAvailability().load()
         new InitPosition().load()
         new InitPositionProgram().load()
+        new InitPersonResource().load()
     }
    
     def destory = {
