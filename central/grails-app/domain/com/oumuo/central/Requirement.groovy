@@ -146,23 +146,30 @@ class Requirement {
                 sequence = Person.findById(person.id).capabilitys?.size()  + 1
                 log.trace "beforeInsert: sequence is $sequence with person "
             
-            }
-            if (program) {
+            } else  if (program) {
                 // use sequence number for organization
                 sequence = Program.findById(program.id).requirements?.size()  + 1
                 log.trace "beforeInsert: sequence is $sequence with program "
             
-            }
-            if (learning) {
+            } else            if (learning) {
                 // use sequence number for organization
                 sequence = Course.findById(learning.id).requirements?.size()  + 1
-                log.trace "beforeInsert: sequence is $sequence with course for learning "
+                log.trace "beforeInsert: sequence is $sequence  for learning "
             
-            }
-            if (teaching) {
+            } else            if (teaching) {
                 // use sequence number for organization
                 sequence = Course.findById(teaching.id).teachingRequirements?.size()  + 1
-                log.trace "beforeInsert: sequence is $sequence with course for teaching "
+                log.trace "beforeInsert: sequence is $sequence for teaching "
+            
+            } else             if (job) {
+                // use sequence number for organization
+                sequence = Job.findById(job.id).requirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence for job "
+            
+            } else             if (position) {
+                // use sequence number for organization
+                sequence = Position.findById(position.id).requirements?.size()  + 1
+                log.trace "beforeInsert: sequence is $sequence for position "
             
             }
         }
@@ -189,8 +196,11 @@ class Requirement {
         updateCurrent(learning, 'com.oumuo.central.Course', "requirements")
         else if (teaching)
         updateCurrent(teaching, 'com.oumuo.central.Course', "teachingRequirements")
-        else
-        log.warn "checkMain: neither course nor person non null"
+        else if (job)
+        updateCurrent(job, 'com.oumuo.central.Job', "requirements")
+        else if (position)
+        updateCurrent(position, 'com.oumuo.central.Position', "requirements")else
+        log.warn "checkMain: neither course nor person nor position non null"
     }
     def updateCurrent(Object instance, String owner, String name)
     {
