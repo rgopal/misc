@@ -8,7 +8,8 @@ class Position {
     Job job
     String name
     static hasMany = [
-        requirements: Requirement
+        requirements: Requirement,
+        positionPrograms: PositionProgram
     ]
     String company
     Industry industry = Industry.OTHER
@@ -41,6 +42,8 @@ class Position {
     
         job (editable:false, nullable:true)
         requirements()
+        positionPrograms()
+        
         name(nullable:false)
         
         company(nullable:true)
