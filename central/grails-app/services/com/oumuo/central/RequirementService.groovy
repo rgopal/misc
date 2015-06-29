@@ -74,6 +74,9 @@ class RequirementService {
         } else if (params.job) { 
             Job.findById(params.job.id).addToRequirements(requirement)
             log.trace "getNew: creating new requirement for $requirement.job"
+        } else if (params.position) { 
+            Position.findById(params.position.id).addToRequirements(requirement)
+            log.trace "getNew: creating new requirement for $requirement.position"
         }
         else {
             requirement.errors.allErrors.each {

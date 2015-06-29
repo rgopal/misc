@@ -16,6 +16,8 @@ class Requirement {
     Learning teachingSection
     Program program
     Job job
+    Position position
+    
     static hasMany = [standardizedTests: StandardizedTest]
   
     Person person
@@ -86,6 +88,7 @@ class Requirement {
         program(editable:false, nullable:true)
         person(editable:false, nullable:true)
         job(editable:false, nullable:true)
+        position(editable:false, nullable:true)
     
         standardizedTests()
        

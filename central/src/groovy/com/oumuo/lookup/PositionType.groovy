@@ -12,7 +12,8 @@ package com.oumuo.lookup
  */
 public enum PositionType implements org.springframework.context.MessageSourceResolvable {
  
-    ENGINEER, INTERN, PROGRAMMER, ARCHITECT, RESEARCHER, TEACHER, ASSISTANT, MANAGER, STATISTICIAN, OTHER
+    ENGINEER, INTERN, PROGRAMMER, ARCHITECT, RESEARCHER, TEACHER, ASSISTANT, MANAGER, STATISTICIAN, DOCTOR,
+        LAWYER, ANALYST, BIOLOGIST, ADMINISTRATOR, OTHER
     public Object[] getArguments() { [] as Object[] }
     public String[] getCodes() { [ name() ] }
     public String getDefaultMessage() { name() }    // default is name itself

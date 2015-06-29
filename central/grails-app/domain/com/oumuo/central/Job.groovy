@@ -7,7 +7,9 @@ class Job {
     static hasMany = [
         requirements: Requirement,
         personJobs: PersonJob,
-        rankings: Ranking
+        rankings: Ranking,
+        jobAvailabilitys: JobAvailability,
+        positions: Position
     ]
     String name     // this is full name
 
@@ -49,6 +51,9 @@ class Job {
         requirements()
         personJobs()
         rankings()
+        jobAvailabilitys()
+        positions()
+        
         name (blank:false, size:2..64)      
         status ()
         preferredLanguage(nullable:false)
@@ -64,9 +69,9 @@ class Job {
         varianceSalary(nullable:true, min: 0.0f)
    
     
-        healthBenefit (nullable:true)
-        retirementBenefit(nullable:true)
-        relocationBenefit(nullable:true)
+        healthBenefit ()
+        retirementBenefit()
+        relocationBenefit()
        
   
         city (nullable:true)
