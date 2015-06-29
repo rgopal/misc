@@ -6,6 +6,7 @@ import groovy.util.logging.Log4j
 class Position {
  
     Job job
+    String name
     static hasMany = [
         requirements: Requirement
     ]
@@ -33,13 +34,14 @@ class Position {
     
     String toString(){
 
-        "$job $year"
+        "$job $company $name"
     }
   
     static constraints = {
     
         job (editable:false, nullable:true)
         requirements()
+        name(nullable:false)
         
         company(nullable:true)
         industry()

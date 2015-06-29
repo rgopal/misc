@@ -45,7 +45,7 @@ class InitPosition {
 
         def positions = [ 
             new Position(
-             
+                name: "Software Engineer",
                 source: 'Washington Post',
                 State: 'Maryland',
                 country: Country.USA,
@@ -55,6 +55,7 @@ class InitPosition {
             ),
             new Position(
                
+                name: "Chief Architect",
                 source: 'LinkedIn',
                 State: 'Maryland',
                 salary: 60000.0f,
@@ -74,7 +75,7 @@ class InitPosition {
                 return
             }     
             i++
-            job.addToJobItems(jobItem)
+            job.addToPositions(position)
         
             log.trace "processing  position ${position} "
        
