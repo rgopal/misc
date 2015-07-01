@@ -75,6 +75,7 @@ grails.project.dependency.resolution = {
         compile ":spring-security-ui:1.0-RC2"
         compile ":spring-security-acl:2.0-RC2"
         compile ":joda-time:1.5"
+        compile ":google-visualization:1.0.2"
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"

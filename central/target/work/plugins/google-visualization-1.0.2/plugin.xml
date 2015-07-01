@@ -1,0 +1,11 @@
+<plugin name='google-visualization' version='1.0.2' grailsVersion='1.2 &gt; *'>
+  <author>Benjamin Muschko</author>
+  <authorEmail>benjamin.muschko@gmail.com</authorEmail>
+  <title>Google Visualization API Plugin</title>
+  <description>This is a plugin for Google Visualization API.</description>
+  <documentation>https://github.com/bmuschko/grails-google-visualization/wiki</documentation>
+  <type>GoogleVisualizationGrailsPlugin</type>
+  <resources>
+    <resource>org.grails.plugins.google.visualization.GoogleVisualizationTagLib</resource>
+  </resources>
+</plugin>
